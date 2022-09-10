@@ -1,0 +1,43 @@
+---
+title: 'One year to dissertate: Part 1. The motivation'
+draft: true
+author: Lucy D'Agostino McGowan
+date: '2018-09-16'
+slug: one-year-to-dissertate-part-1-the-motivation
+categories: [phd, "one year dissertation"]
+tags: [phd, "one year dissertation"]
+---
+
+I've compiled some resources that I used when completing my dissertation and I wanted to share them with YOU! Throughout this series, I link to a bunch of different templates that I used throughout my process. You can find them all in [this GitHub repo](https://github.com/LucyMcGowan/dissertation-toolkit).
+
+This series will cover three areas:
+
+*  **The practicals**. _This section will have specifics on how I was able execute certain tasks, such as committee meetings, draft writing, etc._
+* **The planning**. _This section will have details on how I planned out my time over the year to target a specific timeline_.
+* **Other tid bits**. _This section is a mix of other things that didn't quite fit in the first two sections, like some things I found helpful for keeping a positive attitude, etc._
+
+I will be releasing posts in this series over the next couple of weeks, but if you are impatient and want to see the whole thing, you can [find the full post here](https://livefreeordichotomize.com/2018/09/14/one-year-to-dissertate/)!
+
+## Why am I writing this?
+
+::: column-margin
+This is by no means the only way to complete a dissertation (or even the best way!) but maybe you can find something useful from my process `r emo::ji("shrug")`.
+:::
+
+Speaking with current and former PhD students, many of us find / found one of the most difficult parts of the PhD process was the element of unstructured time. I thought it may be useful to lay out _one way_ to structure this time. For that reason, I am specifically focusing on the _dissertating_ phase of a PhD rather than the coursework portion.
+
+## Background
+
+Programs come in all shapes and sizes, so this may not fit your experiences. 
+
+For a bit of context:
+
+* I graduated from [Vanderbilt's Biostatistics program](https://www.vanderbilt.edu/biostatistics-graduate/)
+* At Vanderbilt, we have 2.5 years of mandatory course work 
+* We have two written comprehensive exams taken at the end of Year 1 and the end of Year 2
+* Around the 2.5 year mark (January of Year 3), we have an _oral exam_ - this (roughly) marks the start of your dissertating phase
+* After I completed my oral exam, I had the goal of finishing up my dissertation in 1 year
+
+_I think the tools I am going to lay out here could be easily applied to other timelines if you just shrink or stretch each phase._
+
+**Stay tuned for the next post in the series 

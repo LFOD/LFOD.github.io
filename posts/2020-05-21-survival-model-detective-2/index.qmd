@@ -1,0 +1,345 @@
+---
+title: 'Survival Model Detective:   Part 2'
+author: "Lucy D'Agostino McGowan"
+date: '2020-05-22'
+slug: survival-model-detective-2
+categories: [rstats, covid-19, survival analysis, competing risks]
+tags: [rstats, covid-19, survival analysis, competing risks]
+math: no
+meta: yes
+excerpt: "A paper by Grein et al. was recently published in the New England Journal of Medicine examining a cohort of patients with COVID-19 who were treated with compassionate-use remdesivir. This paper had a flaw in it's main statistical analysis. Let's learn a bit about competing risks!"
+---
+
+A [paper by Grein et al. was recently published in the New England Journal of Medicine](https://www.nejm.org/doi/full/10.1056/NEJMoa2007016) examining a cohort of patients with COVID-19 who were treated with compassionate-use remdesivir. There are two things that were interesting about this paper:
+
+1. They had a very neat figure that included tons of information about their cohort
+2. The primary statistical analysis was not appropriately done
+
+Check out #1 in the [Part 1](https://livefreeordichotomize.com/2020/05/21/survival-model-detective-1/) post. This post focuses on #2, in particular it focuses on _competing risks_. This criticism was made by Stefanos Bonovas and Daniele Piovani in a [letter to the Editor](https://www.nejm.org/doi/full/10.1056/NEJMc2015312?source=nejmtwitter&medium=organic-social) a few days ago. 
+
+## What is their question?
+
+I believe the authors are interested in telling us about _clinical improvement_ in this cohort of patients taking remdesivir, in particular they want to estimate the cumulative incidence of clinical improvement by 28 days. For the purposes of their analysis "clinical improvement" is defined as being discharged alive or having a decrease of 2 points or more in a 6-level ordinal scale of oxygen support:
+
+* ECMO  
+* Mechanical ventilation  
+* NIPPV  
+* High-flow oxygen  
+* Low-flow oxygen 
+* Ambient air
+
+They use a Kaplan Meier plot to show this. Let's recreate it first.
+
+## Recreate their plots
+
+I spent [some time trying to recreate their analysis](https://github.com/LucyMcGowan/nejm-grein-reanalysis) using the data from Figure 2, and I wasn't quite about to do it. So I've painstakingly pulled every number from Figure 3A `r emo::ji("sweat_smile")`
+
+```{r, message = FALSE, warning = FALSE}
+library(tidyverse)
+library(survival)
+library(survminer)
+library(cowplot)
+library(cmprsk)
+d <- read_csv("https://raw.githubusercontent.com/LucyMcGowan/nejm-grein-reanalysis/master/data/data-fig-2.csv")
+```
+
+
+
+```{r}
+fig_3 <- tibble(
+  time = c(4, 6, 6, 7, 7, 7, 7, 7, 7, 7, 8, 8, 9,
+           10, 10, 10, 11, 11, 11, 11, 12, 12, 13,
+           13, 13, 13, 14, 14, 15, 15, 16, 16, 16, 
+           16, 17, 17, 17, 17, 18, 18, 20, 22, 22, 
+           23, 23, 23, 25, 26, 27, 28, 28, 29, 33),
+  event = c(1, 1, 1, 1, 1, 1, 1, 0, 0, 0, 1, 1, 0,
+            1, 1, 0, 1, 1, 0, 0, 1, 1, 1, 1, 1, 0, 
+            1, 1, 0, 0, 1, 1, 1, 1, 1, 1, 0, 0, 1, 
+            0, 1, 0, 0, 0, 0, 0, 1, 1, 1, 1, 0, 0,
+            0)
+)
+```
+
+```{r}
+s <- survfit(
+  Surv(time = time, event = event) ~ 1, 
+  data = fig_3
+)
+
+ggsurvplot(fit = s, 
+           risk.table = TRUE, 
+           break.time.by = 4,
+           risk.table.y.text = FALSE,
+           ylab = "Days",
+           tables.theme = theme_cleantable(),
+           fun = "event")
+```
+
+I haven't quite figured out how to map these back to Figure 2, but it seems it replicates Figure 3A pretty well. Let's estimate the cumulative incidence at 28 days:
+
+```{r}
+s_df <- tibble(
+  time = s$time,
+  cumulative_incidence = 1 - s$surv
+)
+s_df %>%
+  filter(time == 28)
+```
+
+Looks very similar to the 84% reported in the initial paper. Cool, what's the problem? The idea main idea is to examine time to clinical improvement and assess at 28 days what the cumulative incidence of improvement is. The way a typical survival analysis (like the ones the authors did here) works is typically you follow a group of patients for a certain amount of time. If they have an _event_ (for example in the analysis above if they _improve_) you record them as such and the time the event occurred, otherwise you _censor_ them and record the final time they were observed. In the figure here we have 33 patients that _improved_ and 20 that were censored. Sounds fine, what's the problem? A key assumption is that censoring should be "non-informative", in other words, the patient is followed for a certain amount of time, never has the event, and then is no longer followed. Our best guess is that we _know_ they didn't have the event up until the last day we saw them, so we _censor_ them on that day. Maybe they'll have the event the next day, or maybe in a year - in order for the assumptions to be appropriately met, it must be the case that patients who have been censored are just as likely to have the event as those who are still being followed in the study. Let's pull up Figure 2 again.
+
+```{r, echo = FALSE, message = FALSE, warning = FALSE, fig.height = 9}
+long_dat <- d %>%
+  pivot_longer(day_1:day_36)
+
+cats <- tibble(
+  value = 1:6,
+  cat = factor(c("Ambient air", "Low-flow oxygen", "High-flow oxygen", "NIPPV", 
+                 "Mechanical ventilation", "ECMO"),
+               levels = c("ECMO", "Mechanical ventilation", "NIPPV", 
+                          "High-flow oxygen", "Low-flow oxygen", "Ambient air"))
+)
+long_dat %>%
+  left_join(cats, by = "value") %>%
+  filter(!is.na(value)) %>%
+  mutate(day_oxy = as.numeric(gsub("day_", "", name)) - 1,
+         day_oxy = ifelse(day_oxy > 28, 28, day_oxy),
+         day = ifelse(day > 28, 28, day),
+         patient = factor(patient, levels = 53:1),
+         event = ifelse(event == "censor", NA, event)
+  ) %>%
+  ggplot(aes(x = patient, y = day_oxy, fill = cat)) +
+  geom_segment(aes(x = patient, xend = patient,
+                   y = 0, yend = day - 0.5), lty = 3) +
+  geom_tile(width = 0.5) + 
+  scale_fill_manual("Oxygen support",
+                    values = c("#7D3A2C", "#AA3B2F", "#D36446", "#DEA568", 
+                               "#F5D280", "#FCEEBC")) +
+  geom_point(aes(x = patient, y = day - 0.5, shape = event)) +
+  scale_shape_manual("Event", values = c(15, 5),
+                     labels = c("Death", "Discharge", "")) +
+  guides(fill = guide_legend(override.aes = list(shape = NA), order = 1)) +
+  coord_flip() +
+  labs(y = "day", x = "") +
+  theme_classic()
+```
+
+7 of the patients in this cohort _died_. If someone _dies_ we know that they are not going to _improve_ later. This is not non-informative censoring!! Luckily there is a very straightforward way to deal with this in statistics - competing risks!
+
+## Competing Risks
+
+In a competing risk analysis, we can separate out the the _death_ outcome from the remaining _censored_ outcomes. We can then appropriately estimate the cumulative incidence of _improving_. I've recoded the 7 deaths (guessed from Figure 2) below.
+
+```{r}
+fig_3_fixed <- tibble(
+  time = c(4, 6, 6, 7, 7, 7, 7, 7, 7, 7, 8, 8, 9,
+           10, 10, 10, 11, 11, 11, 11, 12, 12, 13,
+           13, 13, 13, 14, 14, 15, 15, 16, 16, 16, 
+           16, 17, 17, 17, 17, 18, 18, 20, 22, 22, 
+           23, 23, 23, 25, 26, 27, 28, 28, 29, 33),
+  event = c(1, 1, 1, 1, 1, 1, 1, 2, 0, 0, 1, 1, 2,
+            1, 1, 0, 1, 1, 2, 0, 1, 1, 1, 1, 1, 0, 
+            1, 1, 2, 2, 1, 1, 1, 1, 1, 1, 0, 2, 1, 
+            2, 1, 0, 0, 0, 0, 0, 1, 1, 1, 1, 0, 0,
+            0)
+)
+```
+
+::: column-margin 
+Interested in learning more about competing risk analyses in R? [Emily Zabor has an amazing tutorial on this](https://www.emilyzabor.com/tutorials/survival_analysis_in_r_tutorial.html#cumulative_incidence_for_competing_risks)
+:::
+
+Let's see how the plot looks now. 
+
+```{r, message = FALSE, warning = FALSE}
+x <- cuminc(fig_3_fixed$time,
+            fig_3_fixed$event, 
+            cencode = 0)
+
+ggcompetingrisks(x, 
+                 conf.int = TRUE,
+                 gnames = c("Improvement Improvement", "Death Death"),
+                 ggtheme = theme_classic())
+```
+
+Ok, let's calculate the cumulative incidence now, taking death into account.
+
+```{r}
+x %>% 
+  map_df(`[`, c("time", "est", "var"), .id = "id") %>% 
+  filter(id %in% c("1 1"), time == 28) %>%
+  slice(2)
+```
+
+The estimated cumulative incidence of clinical improvement by day 28 is 73%. Here's an animation of the difference.
+
+```{r, results = "hide", message = FALSE, warning = FALSE, echo = FALSE}
+library(magick)
+original <- cuminc(fig_3$time, fig_3$event, cencode = 0)
+
+plot_dat1 <-  x %>% 
+  map_df(`[`, c("time", "est", "var"), .id = "id") %>% 
+  filter(id %in% c("1 1")) %>%
+  mutate(std = sqrt(var))
+
+plot_dat2 <-  original %>% 
+  map_df(`[`, c("time", "est", "var"), .id = "id") %>% 
+  filter(id %in% c("1 1")) %>%
+  mutate(std = sqrt(var))
+
+p1 <- ggplot(plot_dat1, aes(x = time, y = est)) +
+  geom_step(lwd = 1.2, color = "cornflower blue")  +
+  geom_ribbon(aes(ymin = est - 1.96 * std, ymax = est + 
+                    1.96 * std), alpha = 0.2, linetype = 0, fill = "cornflower blue") +
+  ylim(c(0, 1)) +
+  theme_classic() +
+  labs(x = "Days", 
+       y = "Cumulative incidence",
+       title = "Cumulative incidence of improvement (Competing risks)") 
+
+
+p2 <- ggplot(plot_dat2, aes(x = time, y = est)) +
+  geom_step(lwd = 1.2, color = "cornflower blue") +
+  geom_ribbon(aes(ymin = est - 1.96 * std, ymax = est + 
+                    1.96 * std), alpha = 0.2, linetype = 0, fill = "cornflower blue") +
+  ylim(c(0, 1)) +
+  theme_classic() +
+  labs(x = "Days", 
+       y = "Cumulative incidence",
+       title = "Cumulative incidence of improvement (Original)") 
+
+fig1 <- image_graph(width = 500, height = 300)
+p1
+dev.off()
+
+fig2 <- image_graph(width = 500, height = 300)
+p2
+dev.off()
+
+```
+
+```{r, echo = FALSE}
+image_join(fig1, fig2) %>%
+  image_animate(fps = 1)
+```
+
+Why does this matter? It's crucial that the questions we answer statistically match the ones we are posing in practice. Understanding the underlying assumptions of the models is so important!
+
+## Figure 3B
+
+It turns out _really_ this is a story about Figure 3B. Why? Because 6/7 of the patients who died were on invasive oxygen support at baseline, so modeling this correctly has the largest impact on the _Invasive_ line on this plot. Here they were examining the same outcome, stratifying by whether patient had _invasive_ or _noninvasive_ baseline oxygen support.
+
+```{r}
+fig_3_fixed <- tibble(
+  time = c(4, 6, 6, 7, 7, 7, 7, 7, 7, 7, 8, 8, 9,
+           10, 10, 10, 11, 11, 11, 11, 12, 12, 13,
+           13, 13, 13, 14, 14, 15, 15, 16, 16, 16, 
+           16, 17, 17, 17, 17, 18, 18, 20, 22, 22, 
+           23, 23, 23, 25, 26, 27, 28, 28, 29, 33),
+  event = c(1, 1, 1, 1, 1, 1, 1, 2, 0, 0, 1, 1, 2,
+            1, 1, 0, 1, 1, 2, 0, 1, 1, 1, 1, 1, 0, 
+            1, 1, 2, 2, 1, 1, 1, 1, 1, 1, 0, 2, 1, 
+            2, 1, 0, 0, 0, 0, 0, 1, 1, 1, 1, 0, 0,
+            0),
+  invasive = c(0, 0, 1, 0, 0, 1, 1, 1, 1, 1, 0, 1, 1, 
+               0, 1, 1, 0, 0, 0, 1, 0, 1, 1, 0, 0, 1, 
+               1, 0, 1, 1, 1, 0, 0, 0, 1, 0, 1, 1, 1, 
+               1, 1, 1, 1, 1, 0, 1, 1, 1, 0, 1, 1, 1,
+               1)
+)
+```
+
+
+```{r, message = FALSE, warning = FALSE}
+fit <- survfit(
+  Surv(time, ifelse(event == 1, 1, 0)) ~ invasive, 
+  data = fig_3_fixed
+)
+ggsurvplot(
+  fit = fit, 
+  risk.table = TRUE,
+  break.time.by = 4,
+  risk.table.y.text = FALSE,
+  xlim = c(0, 36),
+  tables.theme = theme_cleantable(),
+  conf.int = TRUE,
+  fun = "event",
+  legend.labs = c("Noninvasive", "Invasive"))
+```
+
+Now what happens if we do a competing risks model? Let's see what that looks like now
+
+```{r}
+x <- cuminc(fig_3_fixed$time, 
+            fig_3_fixed$event, 
+            group = fig_3_fixed$invasive,
+            cencode = 0)
+```
+
+```{r}
+ggcompetingrisks(x, 
+                 conf.int = TRUE,
+                 gnames = c("Noninvasive Improvement", "Invasive Improvement",
+                            "Noninvasive Death", "Invasive Death"),
+                 ggtheme = theme_classic(),
+                 ylim = c(0, 1))
+```
+
+
+
+We wouldn't expect the _Noninvasive_ group to change much, because only one patient in this stratum died. Let's focus instead on just the _Invasive_ group to compare how that line changes with a proper analysis.
+
+```{r, echo = FALSE, message = FALSE, warning = FALSE, results = "hide"}
+original <- cuminc(fig_3$time,
+                   fig_3$event,
+                   group = fig_3_fixed$invasive,
+                   cencode = 0)
+
+plot_dat1 <-  x %>% 
+  list_modify("Tests" = NULL) %>% 
+  map_df(`[`, c("time", "est", "var"), .id = "id") %>% 
+  filter(id %in% c("1 1")) %>%
+  mutate(std = sqrt(var))
+
+plot_dat2 <-  original %>% 
+  list_modify("Tests" = NULL) %>% 
+  map_df(`[`, c("time", "est", "var"), .id = "id") %>% 
+  filter(id %in% c("1 1")) %>%
+  mutate(std = sqrt(var))
+
+p1 <- ggplot(plot_dat1, aes(x = time, y = est)) +
+  geom_step(lwd = 1.2, color = "cornflower blue")  +
+  geom_ribbon(aes(ymin = est - 1.96 * std, ymax = est + 
+                    1.96 * std), alpha = 0.2, linetype = 0, fill = "cornflower blue") +
+  ylim(c(0, 1)) +
+  theme_classic() +
+  labs(x = "Days", 
+       y = "Cumulative incidence",
+       title = "Cumulative incidence of improvement\n among those with invasive oxygen support at baseline (Competing risks)") 
+
+
+p2 <- ggplot(plot_dat2, aes(x = time, y = est)) +
+  geom_step(lwd = 1.2, color = "cornflower blue") +
+  geom_ribbon(aes(ymin = est - 1.96 * std, ymax = est + 
+                    1.96 * std), alpha = 0.2, linetype = 0, fill = "cornflower blue") +
+  ylim(c(0, 1)) +
+  theme_classic() +
+  labs(x = "Days", 
+       y = "Cumulative incidence",
+       title = "Cumulative incidence of improvement\n among those with invasive oxygen support at baseline (Original)") 
+
+fig1 <- image_graph(width = 500, height = 300)
+p1
+dev.off()
+
+fig2 <- image_graph(width = 500, height = 300)
+p2
+dev.off()
+```
+
+```{r, echo = FALSE}
+image_join(fig1, fig2) %>%
+  image_animate(fps = 1)
+```
+
+Basically, all this is to say that a competing risk analysis would have been more appropriate here. Hopefully this code-through has been helpful! 

@@ -1,0 +1,29 @@
+---
+title: 'Emoji Annotations'
+author: "Lucy D'Agostino McGowan"
+date: '2020-05-18'
+slug: graph-detective
+categories: [rstats, emoji, ggplot, data visualizations]
+tags: [rstats, emoji, ggplot, data visualizations]
+draft: true
+excerpt: "A quick how-to on adding emojis to your ggplots"
+---
+
+
+```{r, eval = FALSE}
+remotes::install_github("wilkelab/ggtext")
+```
+
+```{r, message = FALSE, warning = FALSE}
+library(ggtext)
+library(emo)
+library(tidyverse)
+```
+
+
+```{r}
+ggplot(starwars, aes(x = mass, y = height)) +
+  geom_point() + 
+  geom_richtext(label = emo::ji("scream"), aes(x = 1250, y = 200))
+```
+

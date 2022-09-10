@@ -1,0 +1,276 @@
+---
+author: "Lucy D'Agostino McGowan"
+date: 2017-06-03T20:47:20-05:00
+title: "runconf17, an analysis of emoji use"
+categories: ["rOpenSci","rstats","conferences", "emojis"]
+tags: ["rOpenSci","rstats","conferences", "emojis"]
+share: true
+excerpt: "I had such a delightful time at rOpenSci's unconference. Not only was it extremely productive (21 packages were produced!), but in between the crazy productivity was some epic community building."
+---
+
+`r tufte::newthought("I had *such* a delightful time")` at rOpenSci's [unconference](http://unconf17.ropensci.org) last week. 
+`r tufte::margin_note(paste("21", emo::ji("package"), "were produced!"))`
+Not only was it [extremely productive](https://ropenscilabs.github.io/runconf17-projects/), but in between the crazy productivity was some epic community building.
+
+[Stefanie](https://twitter.com/StefanieButland) kicked the conference off with ice breakers, where we explored topics ranging from #rcatladies & #rdogfellas `r tufte::margin_note("for the record, I'm an #rchickenlady, [IT'S HAPPENING](https://twitter.com/search?q=%23RChickenLadies&src=typd)")` to impostor syndrome. It was an excellent way to get conversations starting!
+
+## work
+`r tufte::newthought("[Karthik](https://twitter.com/_inundata) and I worked on")` two packages:
+
+[arresteddev](https://github.com/ropenscilabs/arresteddev): a package for when your development is going awry! 
+::: column-margin
+Mostly, this was a good excuse to look up Arrested Development gifs, which, we established, is pronounced with a g like giraffe.
+<img src = "https://img.buzzfeed.com/buzzfeed-static/static/2016-11/17/13/asset/buzzfeed-prod-fastlane01/anigif_sub-buzz-29187-1479408030-4.gif"></img>
+:::
+Includes functions such as `lmgtfy()`, that will seamlessly google your last error message, [David Robinson's](https://twitter.com/drob) `tracestack()` that will query your last error message on Stack Overflow, and `squirrel()`, a function that will randomly send you to a distracting website - for when things are really going poorly `r emo::ji("tipping_hand_woman")`. 
+
+[ponyexpress](https://github.com/ropenscilabs/ponyexpress): a package for automating speedy emails from R - copy and paste neigh more `r emo::ji("horse")`. This package allows you to send templated emails to a list of contacts. Great for conferences, birthday parties, or karaoke invitations.
+
+## play
+`r tufte::newthought("Between our package building")`, there were SO many opportunities to get to know some of the most talented people.
+
+::: column-margin
+<img src = "https://github.com/LFOD/real-blog/raw/master/static/images/jenny_lucy.jpg""> </img><br>
+*Jenny & I enthusiastically working on [googledrive](https://github.com/tidyverse/googledrive).*
+:::
+
+More than anything, this was an excellent opportunity to feel like a part of a community -- and a community that certainly extends beyond the people that attended the unconference! There were so many people following along, tweeting along, and assisting along the way.
+
+
+
+a few highlights: 
+
+* `r emo::ji("ice_cream")` ice cream outings
+* `r emo::ji("microphone")` karaoke adventures  
+* `r emo::ji("cocktail")` happy hours (complete with [R-themed drinks](https://twitter.com/revodavid/status/867901254466506752))
+* `r emo::ji("tongue"); emo::ji("muscle")` Karthik attempting to [lick his elbow](https://twitter.com/kara_woo/status/868353913296044032)
+
+## analysis 
+
+`r tufte::newthought("In an effort to stay on brand")`, I decided to do a small analysis of the tweets that came out of #runconf17. I designed a small study:
+`r tufte::margin_note("*Note: this is not particularly statistically rigorous, but it is VERY fun.*")`
+
+* pulled all tweets (excluding retweets) using the hashtag #runconf17 between May 24th and May 30th
+* also pulled all tweets (excluding retweets) using the hashtag #rstats during the same time period
+
+<span style="color:#EB6864">
+**Question**: Are twitter users who used the #runconf17 hashtag more likely to use emojis than those who only tweeted with the #rstats hashtag during the same time period?
+</span>
+
+
+`r tufte::margin_note("I used the **rtweet** package to pull the tweets, **dplyr** and **fuzzyjoin** to wrangle the data a bit, and **rms** to analyze it.")`
+
+```{r, message = FALSE, warnings = FALSE}
+library("rtweet")
+library("dplyr")
+library("fuzzyjoin")
+library("rms")
+```
+
+
+```{r, eval = FALSE}
+runconf <- search_tweets(q = "#runconf17 AND since:2017-05-23 AND until:2017-05-31",
+                         n = 1e4, 
+                         include_rts = FALSE)
+
+rstats <- search_tweets(q = "#rstats AND since:2017-05-23 AND until:2017-05-31",
+                        n = 1e4,
+                        include_rts = FALSE)
+```
+
+
+```{r, echo = FALSE, eval = FALSE}
+save(runconf, file = "runconf.rda")
+save(rstats, file = "rstats.rda")
+```
+
+```{r, echo = FALSE}
+load("../../media/data/runconf.rda")
+load("../../media/data/rstats.rda")
+```
+
+`r tufte::newthought("After pulling in the tweets")`, I categorized tweeters as either using the #runconf17 hashtag during the week or not. I then merged the tweets with an emoji dictionary `r tufte::margin_note("The emoji dictionary was discoved by the lovely [Maëlle](https://twitter.com/ma_salmon)!")`, and grouped by tweeter. If the tweeter used an emoji at any point during the week, they were categorized as an emoji-user, if not, they were sad (jk, there is room for all here!).
+
+```{r}
+## create variable for whether tweeted about runconf
+runconf$runconf <- "yes"
+
+rstats <- rstats %>%
+  mutate(runconf = ifelse(screen_name %in% runconf$screen_name, "yes", "no"))
+
+## load in the emoji dictionary
+dico <- readr::read_csv2("https://raw.githubusercontent.com/today-is-a-good-day/emojis/master/emDict.csv")
+
+## combine datasets, keep only unique tweets
+data <- bind_rows(runconf, rstats) %>%
+  distinct(text, .keep_all = TRUE)
+
+## summarize by user, did they tweet about runconf in the past week 
+## & did they use an emoji in the past week?
+used_emoji <- regex_left_join(data, dico, by = c(text = "Native")) %>%
+  select(screen_name, 
+         text,
+         runconf,
+         emoji = Native) %>%
+  group_by(screen_name) %>%
+  mutate(tot_emoji = sum(!is.na(emoji)),
+         used_emoji = ifelse(tot_emoji > 0, "yes", "no"),
+         tot_tweets = n_distinct(text)) %>%
+  distinct(screen_name, .keep_all = TRUE)
+```
+
+## results
+`r tufte::newthought("We had 526 tweeters")` that just used the #rstats hashtag, and 107 that tweeted with the #runconf17 hashtag. `r tufte::margin_note(paste("THESE ARE MY PEOPLE", emo::ji("raised_hands")))` Among the #rstats tweeters, 5.9% used at least one emoji in their tweets, whereas among #runconf17 tweeters, 25.2% used emojis! 
+
+```{r}
+used_emoji %>%
+  group_by(`tweeted #runconf` = runconf, `used emoji` = used_emoji) %>%
+  tally() %>%
+  mutate(`%` = 100*prop.table(n)) %>%
+  knitr::kable(digits = 1)
+```
+
+
+`r tufte::newthought("Alright, that looks pretty promising")`, but let's get some confidence intervals. It's time to model it! `r emo::ji("dancer")`  
+
+
+```{r}
+## modeling time!
+dd <- datadist(used_emoji)
+options(datadist = "dd")
+
+lrm(used_emoji~runconf, data = used_emoji) %>%
+  summary() %>%
+  html()
+```
+
+::: column-margin
+<img src = "http://media.tumblr.com/4d904a2237a400973c9ba6bfd7ef8404/tumblr_inline_mtwlrqiTCg1qih9gi.gif">
+</img>
+:::
+
+
+<span style="color:#EB6864">
+**Tweeting the #runconf17 hashtag seems undeniably associated with a higher odds of emoji use (OR: 5.4, 95% CI: 3.1, 9.5).**
+</span>
+
+## most popular emojis
+
+`r tufte::newthought("Now let's checkout")` which emojis were most popular among #runconf17 tweeters. This time I'll allow for retweets `r emo::ji("dancing_women")`
+
+`r tufte::margin_note("For this I used ggplot2, magick, and  [webshot](https://github.com/wch/webshot).")`
+```{r, message = FALSE, warning = FALSE}
+library("ggplot2")
+library("webshot")
+library("magick")
+```
+
+```{r, eval = FALSE}
+runconf_emojis <- search_tweets(q = "#runconf17 AND since:2017-05-23 AND until:2017-05-31",
+                                n = 1e4)
+```
+
+```{r, echo = FALSE, eval = FALSE}
+save(runconf_emojis, file = "runconf_emojis.rda")
+```
+
+```{r, echo = FALSE}
+load("../../media/data/runconf_emojis.rda")
+```
+
+```{r, eval = FALSE}
+emojis <- regex_left_join(runconf_emojis, dico, by = c(text = "Native")) %>%
+  group_by(Native) %>%
+  filter(!is.na(Native)) %>%
+  summarise(n = n()) %>%
+  arrange(desc(n)) %>%
+  head(15) %>%
+  mutate(num = 1:15)
+```
+
+```{r, eval = FALSE, echo = FALSE}
+base <- "file:///Users/LucyMcGowan/Documents/wonderland/live-free-or-dichotomize/static/images/emojis/"
+
+plot_emojis <- function(limit) {
+  emojis_filter <- emojis %>%
+    filter(emojis$n <= limit)
+  out_svg <- paste0(base,"emojis_", limit,".svg")
+  out_png <- paste0("../../media/images/emojis/emojis_", limit, ".png")
+  p <- ggplot(emojis_filter, aes(num, n)) + 
+    geom_col() + 
+    xlim(c(0,16)) +
+    geom_text(aes(x = num, 
+                  y = n + 1,
+                  label = Native), size = 5)  +
+    theme(axis.text.y=element_blank(),
+          axis.ticks=element_blank(),
+          legend.position="none") + 
+    ylim(c(0, max(emojis$n) + 10)) +
+    xlab("emoji") + 
+    ggtitle("#runconf17 emojis") +
+    coord_flip() 
+  print(p)
+  gridSVG::grid.export(out_svg)
+  webshot(out_svg,
+          out_png,
+          vwidth = 100,
+          vheight = 100,
+          zoom = 3)
+  out_png
+}
+
+out_png <- purrr::map_chr(emojis$n, plot_emojis)
+
+purrr::map(unique(rev(out_png)), image_read) %>%
+  image_join() %>%
+  image_animate(fps=1) %>%
+  image_write("../../media/images/runconf_emojis.gif")
+```
+
+This (like many things I do) was very much inspired by Maëlle's [post](http://www.masalmon.eu/2017/02/18/complot/).
+
+```{r, eval = FALSE}
+plot_emojis <- function(limit) {
+  emojis_filter <- emojis %>%
+    filter(emojis$n <= limit)
+  out_svg <- paste0("file://emojis_", limit,".svg")
+  out_png <- paste0("emojis_", limit, ".png")
+  p <- ggplot(emojis_filter, aes(num, n)) + 
+    geom_col() + 
+    xlim(c(0,16)) +
+    geom_text(aes(x = num, 
+                  y = n + 1,
+                  label = Native), size = 5)  +
+    theme(axis.text.y=element_blank(),
+          axis.ticks=element_blank(),
+          legend.position="none") + 
+    ylim(c(0, max(emojis$n) + 10)) +
+    xlab("emoji") + 
+    ggtitle("#runconf17 emojis") +
+    coord_flip() 
+  print(p)
+  gridSVG::grid.export(out_svg)
+  webshot(out_svg,
+          out_png,
+          vwidth = 100,
+          vheight = 100,
+          zoom = 3)
+  out_png
+}
+```
+
+Now let's make them into a gif!
+```{r, eval = FALSE}
+out_png <- purrr::map_chr(emojis$n, plot_emojis)
+
+purrr::map(unique(rev(out_png)), image_read) %>%
+  image_join() %>%
+  image_animate(fps=1) %>%
+  image_write("runconf_emojis.gif")
+```
+
+<img src = "https://github.com/LFOD/real-blog/raw/master/static/images/runconf_emojis.gif" width = "110%"> </img>
+
+`r tufte::margin_note(paste("Phew, the", emo::ji("chicken"), "just barely made the cut."))` The purple heart seems to be the most popular emoji, which makes sense given [25% of us were #RLadies](https://twitter.com/nistara_r/status/867974699044687872)! I think it's a credit to the awesome geographic diversity that we have two different globe emojis in our top 15!
+
+All in all, it was an epic experience. Thank you so much to the conference organizers, attendees, and #runconf17 tweeters for such a delightful week!

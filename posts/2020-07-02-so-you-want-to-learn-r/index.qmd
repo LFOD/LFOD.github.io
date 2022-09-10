@@ -1,0 +1,175 @@
+---
+title: So you want to learn R...
+author: "Lucy D'Agostino McGowan"
+date: '2020-07-02'
+slug: so-you-want-to-learn-r
+categories: [rstats]
+tags: [rstats]
+math: no
+meta: yes
+excerpt: "There have been several twitter threads circulating with (free!) resources for learning R - I wanted to collect some of my favorites here."
+---
+
+There have been several twitter threads circulating with (free!) resources for learning R - I wanted to collect some of my favorites here. Thanks to [Jessica Lavery](https://twitter.com/jessicallavs), [Danielle Navarro](https://twitter.com/djnavarro), [Kelly Bodwin](https://www.twitter.com/kellybodwin), [Jon Harmon](https://twitter.com/Jonthegeek), [Tyler Morgan-Wall](https://twitter.com/tylermorganwall), [Rachael Tatman](https://twitter.com/rctatman) for their awesome threads on these topics!
+
+## Beginnner
+
+<span style="font-size:30px">**1. Teacup Giraffes and Stats [[link](https://tinystats.github.io/teacups-giraffes-and-statistics)]**</span>
+
+### What is it?
+
+This is a series of fabulous self-paced interactive modules by Hasse Walum and [Desirée De Leon](https://twitter.com/dcossyle). They begin by walking through the very basics of R and then teach basic statistics concepts such as measures of central tendency and variability, all with adorable illustrations of giraffes!
+
+### This is good for you if you
+
+* Learn best with self-paced interactive modules
+* Are a beginner interested in getting acquainted with the basics of R and statistics
+* Love giraffes
+
+<span style="font-size:30px">**2. Swirl [[link](https://swirlstats.com/students.html)]**</span>
+
+### What is it?
+
+This is an R package that helps you learn R from *within* R. It's an interactive course that runs from your R console!
+
+### This is good for you if you
+
+* Learn best with self-paced learning-while-doing coding
+* Are a beginner interested in getting acquainted with the basics of R
+
+<span style="font-size:30px"> **3. RYouWithMe [[link](https://rladiessydney.org/courses/ryouwithme/)]**</span>
+
+### What is it?
+
+This is a series of online learning resources for using R geared for beginners by [Lisa Williams](https://twitter.com/williamslisaphd), [Jen Richmond](https://twitter.com/JenRichmondPhD), and [Danielle Navarro](https://twitter.com/djnavarro) as part of R-Ladies Sydney.
+
+### This is good for you if you
+
+* Learn best with self-paced modules
+* Are interested in learning data science skills such as data wrangling and data visualization
+
+<span style="font-size:30px">**4. Adventures in R [[link](https://www.adventures-in-r.com/)]**</span>
+
+### What is it?
+
+This is a college-level online course taught by [Kelly Bodwin](https://www.twitter.com/kellybodwin) focusing on using R for Statistics and Data Science.
+
+### This is good for you if you
+
+* Learn best with a structured of a full course
+* Have some knowledge of basic statistics and basic programming
+
+<span style="font-size:30px">**5. R4DataScience learning community [[link](https://r4ds.io)] [[join](https://r4ds.io/join)]**</span>
+
+### What is it?
+
+This is a learning community started by [Jessie Mostipak](https://twitter.com/kierisi) that intitially went through Garret Grolemund and Hadley Wickham's [R For Data Science](https://r4ds.had.co.nz/) book. The group has since expanded to broadly welcome folks interested in learning R and / or improving their skills! The community is centered around a Slack group ([join here:](https://r4ds.io/join)) and you can join as a learner or a mentor.
+
+### This is good for you if you
+
+* Learn best in a community
+* Are looking for other folks interested in Data Science that use / are learning R
+
+<span style="font-size:30px">**6. Data Science: Foundations using R Specialization [[link](https://www.coursera.org/specializations/data-science-foundations-r)]** </span>
+
+### What is it?
+
+This is a Cousera course by the amazing JHU Data Science Lab team: Jeff Leek, Roger Peng, and Brian Caffo. This course will help you ask the right questions, manipulate data sets, and create visualizations to communicate results in R.
+
+### This is good for you if you
+
+* Learn best with a structured full course
+* Are interested in beefing up your data science skills
+
+<span style="font-size:30px">**7. RStudio Primers [[link](https://rstudio.cloud/learn/primers)]**</span>
+
+### What is it?
+
+These are interactive tutorials that teach everything from basic R skills to iterating and writing functions
+
+### This is good for you if you
+
+* Learn best from self-paced interactive modules
+* Are interested in learning everything from the basics in R to more advanced skill
+
+<span style="font-size:30px">**8.** *Suggested by [Giulio Centorame](https://twitter.com/GiulioCentorame)*
+**Ready for R [[link](https://ready4r.netlify.app/)]**</span>
+
+### What is it?
+
+A course by [Ted Laderas](https://twitter.com/tladeras) meant to be a gentle introduction to using R/Rstudio in your daily work. 
+
+### This is good for you if you
+
+* Learn best from a self-paced online course
+* Are interested in learning the basics of R and RStudio
+
+## A little past beginner
+
+<span style="font-size:30px">**1. Creating dynamic dashboards with the shinydashboard R package [[link](https://leanpub.com/c/shinydashboard)]**</span>
+
+### What is it?
+
+An online course (by me!) on the shinydashboard package. This expects you know a *bit* about R and shiny, but aimed mostly at beginner / intermediate users.
+
+### This is good for you if you
+
+* Learn best with self-paced modules
+* Are looking to build a simple, dynamic dashboard in R.
+
+<span style="font-size:30px">**2. Text Mining with R: A Tidy Approach [[link](https://tidytextmining.com)]**</span>
+
+### What is it?
+
+This [Rachael Tatman](https://twitter.com/rctatman) described this as a "code-along" - I love that description! This book by [Julia Silge](https://twitter.com/JuliaSilge) and [David Robinson](https://twitter.com/drob) is a great introduction to text mining the tidy way!
+
+### This is good for you if you
+
+* Learn best working through a self-pased book
+* Are interested in natural language processing
+
+<span style="font-size:30px">**3. MasterClass Featuring Tyler Morgan-Wall: 3D Mapping and Dataviz in R [[link](https://penniur.upenn.edu/events/musamasterclass-featuring-tyler-morgan-wall-3d-mapping-dataviz-in-r)]**</span>
+
+### What is it?
+
+A video-lecture by [Tyler Morgan-Wall](https://twitter.com/tylermorganwall) on making 3D maps in R with rayshader.
+
+### This is good for you if you
+
+* Learn best from video lectures
+* Are interested in 3D visualizations in R
+
+<span style="font-size:30px">**4.** *Suggested by [Alireza Akhondi-asl](https://twitter.com/AkhondiAsl)* **Interactive web-based data visualization with R, plotly, and shiny [[link](https://plotly-r.com)]**</span>
+
+### What is it?
+
+A book by [Carson Sievert](https://twitter.com/cpsievert) describing how to create interactive visualizations in R.
+
+### This is good for you if you
+
+* Learn best working through a self-paced book
+* Are interested in creating interactive visualizations
+
+<span style="font-size:30px">**5.** *Suggested by [Lisa Lendway](https://twitter.com/lisalendway)* **Getting Started with Tidymodels [[link](https://www.tidymodels.org/start/)]** </span>
+
+### What is it?
+
+An set of modules by RStudio focused on the tidymodels package.
+
+### This is good for you if you
+
+* Learn best working through self-paced coding modules
+* Are interested in learning advanced statistical modeling in R
+
+<span style="font-size:30px">**6.** *Suggested by [Lisa Lendway](https://twitter.com/lisalendway) and [Alex Hayes](https://twitter.com/alexpghayes)* **Tidy machine learning in R [[link](https://www.rebeccabarter.com/blog/2020-03-25_machine_learning/)]**</span>
+
+### What is it?
+
+A tutorial code-along by [Rebecca Barter](https://twitter.com/rlbarter) on machine learning focusing on the tidymodels package. 
+
+### This is good for you if you
+
+* Learn best working through self-paced code-alongs
+* Are interested in learning advanced statistical modeling in R 
+
+**Did I miss one of your favorites? Please let me know!**
