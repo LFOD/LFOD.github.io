@@ -40,11 +40,13 @@ exdata_rr
 Using this data, we could estimate the exposure-outcome relationship using the measured confounder as follows:
 
 ```{r}
-mod <- glm(outcome ~ exposure + measured_confounder,
-           data = exdata_rr,
-           family = poisson)
+mod <- glm(
+  outcome ~ exposure +  measured_confounder,
+  data = exdata_rr,
+  family = poisson)
 
-## calculate the risk ratio by exponentiating the coefficient
+## calculate the risk ratio by exponentiating 
+## the coefficient
 coef(mod) %>%
   exp()
 ```
@@ -87,7 +89,8 @@ We could then plot these results:
 library(ggplot2)
 
 ggplot(tip_df,
-       aes(x = exposure_confounder_effect, y = confounder_outcome_effect)) + 
+       aes(x = exposure_confounder_effect, 
+           y = confounder_outcome_effect)) + 
   geom_point() + 
   geom_line() + 
   labs(x = "Exposure - unmeasured confounder effect",
@@ -99,9 +102,10 @@ The line represents the values needed for the unobserved confounder to tip this 
 Since this data was simulated, we can calculated what the *actual* effect is.
 
 ```{r}
-mod_actual <- glm(outcome ~ exposure + measured_confounder + .unmeasured_confounder,
-    data = exdata_rr,
-    family = poisson)
+mod_actual <- glm(
+  outcome ~ exposure + measured_confounder + .unmeasured_confounder,
+  data = exdata_rr,
+  family = poisson)
 
 coef(mod_actual) %>%
   exp()
@@ -123,7 +127,8 @@ The actual difference is `0.5`. Returning to our plot, we can see that this poin
 
 ```{r}
 ggplot(tip_df,
-       aes(x = exposure_confounder_effect, y = confounder_outcome_effect)) + 
+       aes(x = exposure_confounder_effect, 
+           y = confounder_outcome_effect)) + 
   geom_point() + 
   geom_line() + 
   annotate(

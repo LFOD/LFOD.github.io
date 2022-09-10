@@ -7,12 +7,8 @@ execute:
 website:
   title: "livefreeordichotomize"
   navbar:
-    right:
+    left:
       - about.qmd
-      - icon: github
-        href: https://github.com/lfod
-      - icon: twitter
-        href: https://twitter.com/lucystats
   comments: 
     utterances:
       repo: lfod/real-blog
