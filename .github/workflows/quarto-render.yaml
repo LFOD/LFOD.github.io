@@ -18,6 +18,7 @@ jobs:
         run: | 
           sudo apt install libcurl4-openssl-dev
           sudo apt-get install libmagick++-dev
+          sudo apt install libudunits2-dev
       
       - uses: r-lib/actions/setup-r@v2
             
