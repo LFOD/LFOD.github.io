@@ -1,0 +1,9 @@
+---
+title: Page Not Found
+listing:
+  contents: posts
+  type: table
+  sort: "date"
+---
+
+The page you requested cannot be found -- this blog was recently migrated, so it is likely the post you are looking for moved. Below is a list of all posts, perhaps you can find the one you are looking for.

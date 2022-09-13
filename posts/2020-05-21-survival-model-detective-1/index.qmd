@@ -4,9 +4,6 @@ author: "Lucy D'Agostino McGowan"
 date: '2020-05-21'
 slug: survival-model-detective-1
 categories: [rstats, covid-19, survival analysis, competing risks]
-tags: [rstats, covid-19, survival analysis, competing risks]
-math: no
-meta: yes
 excerpt: "A paper by Grein et al. was recently published in the New England Journal of Medicine examining a cohort of patients with COVID-19 who were treated with compassionate-use remdesivir. This paper had a very cool figure - here's how to recreate it in R!"
 ---
 

@@ -5,9 +5,10 @@ execute:
   freeze: auto
   
 website:
-  title: "livefreeordichotomize"
   navbar:
     left:
+      - text: "Home"
+        file: index.qmd
       - about.qmd
   comments: 
     utterances:
