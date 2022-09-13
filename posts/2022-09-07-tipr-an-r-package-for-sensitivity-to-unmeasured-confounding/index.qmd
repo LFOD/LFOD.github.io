@@ -206,4 +206,4 @@ Below is a copy of the table included in a [recent JOSS article](https://doi.org
 |          |                    | `outcome_exposure_r2`
 +----------+--------------------+----------------------------------------------+
 
-You can find full documentation here: https://lucymcgowan.github.io/tipr/
+You can find full documentation here: [lucymcgowan.github.io/tipr/](https://lucymcgowan.github.io/tipr/)
