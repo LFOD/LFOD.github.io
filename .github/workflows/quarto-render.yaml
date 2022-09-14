@@ -30,7 +30,16 @@ jobs:
         run: |
           R -e 'install.packages("renv")'
           R -e 'renv::restore()'
-
+          
+      - name: Create and populate .Renviron file
+        run: |
+          echo OPENCAGE_KEY="$MAPPED_OPENCAGE_KEY" >> ~/.Renviron
+          echo CENSUS_API_KEY="$MAPPED_CENSUS_API_KEY " >> ~/.Renviron
+        shell: bash
+        env:
+          MAPPED_OPENCAGE_KEY: ${{ secrets.OPENCAGE_KEY}}
+          MAPPED_CENSUS_API_KEY : ${{ secrets.CENSUS_API_KEY }}
+          
       - name: Set up Quarto
         uses: quarto-dev/quarto-actions/setup@v2
 
