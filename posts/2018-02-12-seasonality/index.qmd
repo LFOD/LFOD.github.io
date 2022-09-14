@@ -17,6 +17,7 @@ library(tidyverse)
 library(RColorBrewer) 
 library(tufte)
 library(showtext)
+library(maps)
 
 interpolated_swings <- readRDS('../../media/seasons/interpolated_swings.rds')
 ```
