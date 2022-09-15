@@ -34,9 +34,14 @@ library(plotly)
 
 First we can pull the spreadsheet into R using the googlesheets package.
 
-```{r, message = FALSE, warning = FALSE}
+```{r}
+#| eval: false
 ## Read the sheet into R
 dishes_df <- read_sheet("https://docs.google.com/spreadsheets/d/1k-H3CjkQRQJv7Ni8SA9Ghse8Y-kuKSLVAV4R4w4xXRE/edit?usp=sharing")
+```
+```{r}
+#| echo: false
+load("../../media/dishes_df.rds")
 ```
 
 ## Clean up a bit `r emo::ji("bath")`
