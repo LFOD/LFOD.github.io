@@ -33,9 +33,9 @@ __Getting a posterior from dropout__
 The bayes-by-dropout paper points out that if you simply leave the dropout on at test time and sample a ton of predictions from your model, `r margin_note("The original paper explains this in much better words and also shows that, while this relationship is intuitively appealing, it really is mathematically true. It's great work.")` you are effectively sampling from a distribution of different models. Thus the results from that sampling reflect an approximate posterior of your model's predictions. 
 
 
-```{r, echo = FALSE, fig.cap = "Example output of 100 passes through a convolutional network trained to recognize MNIST digits. You can see the model's uncertainty by the scatter of a given classification over the passes. Taken from [the bayes-by-droput paper](https://arxiv.org/pdf/1506.02142.pdf)."}
-knitr::include_graphics("../../media/uncertainty_paper/dropout_distributions.png")
-```
+![](../../media/uncertainty_paper/dropout_distributions.png)
+Example output of 100 passes through a convolutional network trained to recognize MNIST digits. You can see the model's uncertainty by the scatter of a given classification over the passes. Taken from [the bayes-by-droput paper](https://arxiv.org/pdf/1506.02142.pdf).
+
 
 This is great because it lowers the boundary to Bayesian neural networks by an immense amount. You don't need to break out a fancy probabilistic programming language and setup all your priors, you can simply train with dropout and leave it on. In addition, you can leverage the substantial prior information stored in previously trained models via transfer learning. 
 
@@ -53,9 +53,10 @@ The paper also dives in bit into the use of Bayesian uncertainty to try and diag
 
 Took standard convolutional architectures for image prediction and trained them with dropout to predict the presence of the disease [Diabetic Retinopathy](http://wjscottmd.com/diabetic-retinopathy/). At testing time they kept the dropout on and assembled a monte-carlo approximation of the posterior of the predictions. 
 
-```{r, echo = FALSE, fig.cap = "Demonstration of how Diabetic Retinopahy manifests itself in an individuals eye. Figure taken from [Dr. Winston J. Scott's website.](http://wjscottmd.com/diabetic-retinopathy/)"}
-knitr::include_graphics("../../media/uncertainty_paper/DR_explain.png")
-```
+
+![](../../media/uncertainty_paper/DR_explain.png)
+
+Demonstration of how Diabetic Retinopahy manifests itself in an individuals eye. Figure taken from [Dr. Winston J. Scott's website.](http://wjscottmd.com/diabetic-retinopathy/)
 
 The mean of this posterior was used as the final prediction value (p(disease|image) ) and the width of the distribution was used as a measure of how uncertain the model is about its prediction. 
 
@@ -78,17 +79,17 @@ First they run predictions from the Bayesian model and the standard model on the
 
 Using the first uncertainty cutoff boundary they saw that, as they made their threshold more picky, the model performance monotonically increased. This shows that the model was correctly labeling the observations that it was getting wrong as uncertain more often than not. They showed this as well by simply looking at the distributions of uncertainty for the correctly classified observations and the incorrectly classified ones, with the incorrectly classified ones having a higher average uncertainty. 
 
-```{r, echo = FALSE, fig.cap = "Results of sliding the level of uncertainty tollerated for a prediction by the model (a) and sliding the proportion of the predictions that are not predicted (compared to a random baseline) (b)."}
-knitr::include_graphics("https://media.springernature.com/lw900/springer-static/image/art%3A10.1038%2Fs41598-017-17876-z/MediaObjects/41598_2017_17876_Fig3_HTML.jpg")
-```
+
+![](https://media.springernature.com/lw900/springer-static/image/art%3A10.1038%2Fs41598-017-17876-z/MediaObjects/41598_2017_17876_Fig3_HTML.jpg)
+
+Results of sliding the level of uncertainty tollerated for a prediction by the model (a) and sliding the proportion of the predictions that are not predicted (compared to a random baseline) (b).
 
 Their second test setup, where they compared the standard model with no dropout at test time to the model with dropout at test time they saw that the dropout uncertainty always outperformed the random discarding of cases, where as the Bernoulli-based uncertainty actually performed worse than the random subset approach for a large range of the thresholds. 
 
 
-```{r, echo = FALSE, fig.width=200, fig.cap = "Showing the effect of sliding the proportion of data predictions are performed on on the AUC of different models. Shows that the bayes by dropout approach is always better than the random baseline, and even is better than a deep gaussian process approach. Surprisingly the nieve uncertainty approach ('standard dropout') is often worse than random."}
-knitr::include_graphics("../../media/uncertainty_paper/auc_performance.png")
-```
 
+![](../../media/uncertainty_paper/auc_performance.png)
+Showing the effect of sliding the proportion of data predictions are performed on on the AUC of different models. Shows that the bayes by dropout approach is always better than the random baseline, and even is better than a deep gaussian process approach. Surprisingly the nieve uncertainty approach ('standard dropout') is often worse than random.
 
 ## What implications does this have?
 
