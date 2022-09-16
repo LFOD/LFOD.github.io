@@ -171,10 +171,9 @@ x %>%
   slice(2)
 ```
 
-The estimated cumulative incidence of clinical improvement by day 28 is 73%. Here's an animation of the difference.
+The estimated cumulative incidence of clinical improvement by day 28 is 73%. Here's two plots that show the difference.
 
 ```{r, results = "hide", message = FALSE, warning = FALSE, echo = FALSE}
-library(magick)
 original <- cuminc(fig_3$time, fig_3$event, cencode = 0)
 
 plot_dat1 <-  x %>% 
@@ -187,7 +186,7 @@ plot_dat2 <-  original %>%
   filter(id %in% c("1 1")) %>%
   mutate(std = sqrt(var))
 
-p1 <- ggplot(plot_dat1, aes(x = time, y = est)) +
+ggplot(plot_dat1, aes(x = time, y = est)) +
   geom_step(lwd = 1.2, color = "cornflower blue")  +
   geom_ribbon(aes(ymin = est - 1.96 * std, ymax = est + 
                     1.96 * std), alpha = 0.2, linetype = 0, fill = "cornflower blue") +
@@ -198,7 +197,7 @@ p1 <- ggplot(plot_dat1, aes(x = time, y = est)) +
        title = "Cumulative incidence of improvement (Competing risks)") 
 
 
-p2 <- ggplot(plot_dat2, aes(x = time, y = est)) +
+ggplot(plot_dat2, aes(x = time, y = est)) +
   geom_step(lwd = 1.2, color = "cornflower blue") +
   geom_ribbon(aes(ymin = est - 1.96 * std, ymax = est + 
                     1.96 * std), alpha = 0.2, linetype = 0, fill = "cornflower blue") +
@@ -208,19 +207,7 @@ p2 <- ggplot(plot_dat2, aes(x = time, y = est)) +
        y = "Cumulative incidence",
        title = "Cumulative incidence of improvement (Original)") 
 
-fig1 <- image_graph(width = 500, height = 300)
-p1
-dev.off()
 
-fig2 <- image_graph(width = 500, height = 300)
-p2
-dev.off()
-
-```
-
-```{r, echo = FALSE}
-image_join(fig1, fig2) %>%
-  image_animate(fps = 1)
 ```
 
 Why does this matter? It's crucial that the questions we answer statistically match the ones we are posing in practice. Understanding the underlying assumptions of the models is so important!
