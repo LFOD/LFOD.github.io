@@ -1610,6 +1610,18 @@
         "rlang"
       ]
     },
+    "listviewer": {
+      "Package": "listviewer",
+      "Version": "3.0.0",
+      "Source": "Repository",
+      "Repository": "CRAN",
+      "Hash": "99ae030cd035dbcd18623179891fadb2",
+      "Requirements": [
+        "htmltools",
+        "htmlwidgets",
+        "shiny"
+      ]
+    },
     "lme4": {
       "Package": "lme4",
       "Version": "1.1-28",
