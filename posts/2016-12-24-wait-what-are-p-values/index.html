@@ -1,0 +1,705 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml" lang="en" xml:lang="en"><head>
+
+<meta charset="utf-8">
+<meta name="generator" content="quarto-1.1.251">
+
+<meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
+
+<meta name="author" content="Nick Strayer">
+<meta name="dcterms.date" content="2016-12-24">
+
+<title>Wait, what are P-values?</title>
+<style>
+code{white-space: pre-wrap;}
+span.smallcaps{font-variant: small-caps;}
+div.columns{display: flex; gap: min(4vw, 1.5em);}
+div.column{flex: auto; overflow-x: auto;}
+div.hanging-indent{margin-left: 1.5em; text-indent: -1.5em;}
+ul.task-list{list-style: none;}
+ul.task-list li input[type="checkbox"] {
+  width: 0.8em;
+  margin: 0 0.8em 0.2em -1.6em;
+  vertical-align: middle;
+}
+pre > code.sourceCode { white-space: pre; position: relative; }
+pre > code.sourceCode > span { display: inline-block; line-height: 1.25; }
+pre > code.sourceCode > span:empty { height: 1.2em; }
+.sourceCode { overflow: visible; }
+code.sourceCode > span { color: inherit; text-decoration: inherit; }
+div.sourceCode { margin: 1em 0; }
+pre.sourceCode { margin: 0; }
+@media screen {
+div.sourceCode { overflow: auto; }
+}
+@media print {
+pre > code.sourceCode { white-space: pre-wrap; }
+pre > code.sourceCode > span { text-indent: -5em; padding-left: 5em; }
+}
+pre.numberSource code
+  { counter-reset: source-line 0; }
+pre.numberSource code > span
+  { position: relative; left: -4em; counter-increment: source-line; }
+pre.numberSource code > span > a:first-child::before
+  { content: counter(source-line);
+    position: relative; left: -1em; text-align: right; vertical-align: baseline;
+    border: none; display: inline-block;
+    -webkit-touch-callout: none; -webkit-user-select: none;
+    -khtml-user-select: none; -moz-user-select: none;
+    -ms-user-select: none; user-select: none;
+    padding: 0 4px; width: 4em;
+    color: #aaaaaa;
+  }
+pre.numberSource { margin-left: 3em; border-left: 1px solid #aaaaaa;  padding-left: 4px; }
+div.sourceCode
+  {   }
+@media screen {
+pre > code.sourceCode > span > a:first-child::before { text-decoration: underline; }
+}
+code span.al { color: #ff0000; font-weight: bold; } /* Alert */
+code span.an { color: #60a0b0; font-weight: bold; font-style: italic; } /* Annotation */
+code span.at { color: #7d9029; } /* Attribute */
+code span.bn { color: #40a070; } /* BaseN */
+code span.bu { color: #008000; } /* BuiltIn */
+code span.cf { color: #007020; font-weight: bold; } /* ControlFlow */
+code span.ch { color: #4070a0; } /* Char */
+code span.cn { color: #880000; } /* Constant */
+code span.co { color: #60a0b0; font-style: italic; } /* Comment */
+code span.cv { color: #60a0b0; font-weight: bold; font-style: italic; } /* CommentVar */
+code span.do { color: #ba2121; font-style: italic; } /* Documentation */
+code span.dt { color: #902000; } /* DataType */
+code span.dv { color: #40a070; } /* DecVal */
+code span.er { color: #ff0000; font-weight: bold; } /* Error */
+code span.ex { } /* Extension */
+code span.fl { color: #40a070; } /* Float */
+code span.fu { color: #06287e; } /* Function */
+code span.im { color: #008000; font-weight: bold; } /* Import */
+code span.in { color: #60a0b0; font-weight: bold; font-style: italic; } /* Information */
+code span.kw { color: #007020; font-weight: bold; } /* Keyword */
+code span.op { color: #666666; } /* Operator */
+code span.ot { color: #007020; } /* Other */
+code span.pp { color: #bc7a00; } /* Preprocessor */
+code span.sc { color: #4070a0; } /* SpecialChar */
+code span.ss { color: #bb6688; } /* SpecialString */
+code span.st { color: #4070a0; } /* String */
+code span.va { color: #19177c; } /* Variable */
+code span.vs { color: #4070a0; } /* VerbatimString */
+code span.wa { color: #60a0b0; font-weight: bold; font-style: italic; } /* Warning */
+</style>
+
+
+<script src="../../site_libs/quarto-nav/quarto-nav.js"></script>
+<script src="../../site_libs/quarto-nav/headroom.min.js"></script>
+<script src="../../site_libs/clipboard/clipboard.min.js"></script>
+<script src="../../site_libs/quarto-search/autocomplete.umd.js"></script>
+<script src="../../site_libs/quarto-search/fuse.min.js"></script>
+<script src="../../site_libs/quarto-search/quarto-search.js"></script>
+<meta name="quarto:offset" content="../../">
+<script src="../../site_libs/quarto-html/quarto.js"></script>
+<script src="../../site_libs/quarto-html/popper.min.js"></script>
+<script src="../../site_libs/quarto-html/tippy.umd.min.js"></script>
+<script src="../../site_libs/quarto-html/anchor.min.js"></script>
+<link href="../../site_libs/quarto-html/tippy.css" rel="stylesheet">
+<link href="../../site_libs/quarto-html/quarto-syntax-highlighting.css" rel="stylesheet" id="quarto-text-highlighting-styles">
+<script src="../../site_libs/bootstrap/bootstrap.min.js"></script>
+<link href="../../site_libs/bootstrap/bootstrap-icons.css" rel="stylesheet">
+<link href="../../site_libs/bootstrap/bootstrap.min.css" rel="stylesheet" id="quarto-bootstrap" data-mode="light">
+<script id="quarto-search-options" type="application/json">{
+  "location": "navbar",
+  "copy-button": false,
+  "collapse-after": 3,
+  "panel-placement": "end",
+  "type": "overlay",
+  "limit": 20,
+  "language": {
+    "search-no-results-text": "No results",
+    "search-matching-documents-text": "matching documents",
+    "search-copy-link-title": "Copy link to search",
+    "search-hide-matches-text": "Hide additional matches",
+    "search-more-match-text": "more match in this document",
+    "search-more-matches-text": "more matches in this document",
+    "search-clear-button-title": "Clear",
+    "search-detached-cancel-button-title": "Cancel",
+    "search-submit-button-title": "Submit"
+  }
+}</script>
+<script src="https://code.jquery.com/jquery-3.2.1.min.js" integrity="sha256-hwg4gsxgFZhOsEEamdOYGBf13FyQuiTwlAQgxVSNgt4=" crossorigin="anonymous"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/d3/4.9.1/d3.min.js"></script>
+
+<style>
+  #custom-header {
+    height: 30vh;
+    width: 100%;
+    position:relative;
+    z-index:1;
+    margin:0 auto;
+  }
+</style>
+
+
+</head><body class="nav-fixed fullcontent"><header id="custom-header">
+  <div id="header_viz"></div>
+</header>
+
+<script>
+  $( document ).ready(() => {
+
+    //javascript for intro loader
+
+    //Function to immitate R's seq
+    function seq(start, end, increment) {
+      var length = Math.round((end - start)/increment);
+      return Array(length).fill().map((_, idx) => start + idx*increment)
+    }
+
+
+    //define the pdf of the distribution.
+    var logistic = function(x, theta, i) {
+        var mu = 0.1;
+        sign = 1
+        var y = sign * (1 / (Math.sqrt(2 * Math.PI) * theta)) * (1 / x) *
+            Math.exp(-Math.pow((Math.log(x) - mu), 2) / (2 * Math.pow(theta, 2)))
+        return y;
+    }
+
+    var width   = $("#custom-header").width() ,
+        height  = $("#custom-header").outerHeight(),
+        padding = 0,
+        numOfLines = 20,
+        xs = seq(0.01, 5, .01),
+        colors = ['rgb(165,0,38)', 'rgb(215,48,39)', 'rgb(244,109,67)', 'rgb(253,174,97)', 'rgb(254,224,144)',
+            'rgb(224,243,248)', 'rgb(171,217,233)', 'rgb(116,173,209)', 'rgb(69,117,180)', 'rgb(49,54,149)'
+        ];
+  
+    console.log("trying to run this shit.")
+    //define the svg.
+    var svg = d3.select("#header_viz").append("svg")
+        .attr("width", width)
+        .attr("height", height + 2 * padding)
+        .append("g")
+
+
+    var animatelines = function(whichline) {
+        d3.selectAll(".line").style("opacity","0.5");
+
+        //Select All of the lines and process them one by one
+        d3.selectAll(".line").each(function(d,i){
+            // Get the length of each line in turn
+            var totalLength = d3.select("#line" + i).node().getTotalLength();
+
+            d3.selectAll("#line" + i).attr("stroke-dasharray", totalLength + " " + totalLength)
+              .attr("stroke-dashoffset", totalLength)
+              .transition()
+              .duration(5000)
+              .delay(100*i)
+              .attr("stroke-dashoffset", 0)
+              .style("stroke-width",2)
+        })
+
+        writeGreeting()
+    }
+
+
+
+    // The Scales:
+    var thetaMap = d3.scaleLinear() //name the values from 0 to 20 and make their values from .1-.7
+        .domain([0, numOfLines])
+        .range([0.8, 0.085])
+
+    var yPos = d3.scaleLinear() //scalling for creating horizontal lines
+        .domain([0, numOfLines])
+        .range([0, 4])
+
+    var x = d3.scaleLinear()
+        .domain([0, 5])
+        .range([0, width]);
+
+    var y = d3.scaleLinear()
+        .domain([0, 4.5])
+        .range([height, 0]);
+
+    // The line functions:
+    var logistic = d3.range(numOfLines).map(function(i) {
+        var odd = true
+        var toReturn = xs.map(function(num) {
+            return {
+                "x": num,
+                "y": logistic(num, thetaMap(i), i)
+            }
+        })
+        return toReturn;
+    })
+
+    //make a greeting message for after the line animation.
+    function writeGreeting(){
+
+        var text_scale = width < 500 ? 1 : 0.65;
+        console.log(text_scale);
+        var intro_text = "Live Free or Dichotomize";
+
+        var title = svg.append("text")
+            .attr("font-size", 30)
+            .attr("font-family", "optima")
+            .attr("text-anchor", "end")
+            .attr("fill-opacity", 0.65)
+            .attr("x", width < 500 ? x(4.8) : x(4.2))
+            .attr("y", width < 500 ? y(3.12) : y(2.1) )
+            .attr("opacity", 0)
+            .text(intro_text)
+            .attr("font-size", function(d) { return ( text_scale*width - 8) / this.getComputedTextLength() * 24 + "px"; })
+            .text("")
+            .attr("opacity", 1);
+
+        (function drawGreeting (i, start, greeting) {
+            setTimeout(function () {
+
+                //add next letter to the greeting in progress
+                start += greeting[i];
+
+                title.html(start) //append this to the html
+
+                if (start.length < greeting.length) { //if the in progress greeting is less than the full, keep going.
+                    drawGreeting(i+1,start,greeting);      //  increment i and call again.
+                };
+            }, 100)
+        })(0, "", intro_text);
+    }
+
+
+    // The d3 stuff
+    var line = d3.line()
+        // .interpolate("basis")
+        .x(function(d) { return x(d.x); })
+        .y(function(d) { return y(d.y); });
+
+
+    svg.selectAll(".line")
+        .data(logistic)
+        .enter().append("path")
+        .attr("class", "line")
+        .attr("id" , function(d, i){ return "line" + i;})
+        .attr("d", line)
+        .style("stroke-width", 2)
+        .style("stroke", function(d, i) { return colors[i % 10] })
+        .style("opacity", 0)
+        .style("fill", "none")
+        .on("mouseover", function(d){
+            d3.select(this).style("stroke", "black")
+        })
+        .on("mouseout", function(d,i){
+            d3.select(this).style("stroke", colors[i % 10])
+        })
+
+    // var introMessage = isMobile ? "tap" : "click"
+    // var introMessage = "click"
+    //
+    // var intro = svg.append("text")
+    //     .text(introMessage)
+    //     .attr("font-size", 35)
+    //     .attr("font-family", "optima")
+    //     .attr("text-anchor", "middle")
+    //     .attr("x", x(2.5))
+    //     .attr("y", y(2.01))
+
+    //kick it off on a click. (or tap)
+    animatelines(2)
+    // d3.select("svg").on("click", function() { animatelines(2) })
+
+})
+
+</script>
+
+  <script src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-chtml-full.js" type="text/javascript"></script>
+
+
+
+
+
+<div id="quarto-search-results"></div>
+  <header id="quarto-header" class="headroom fixed-top">
+    <nav class="navbar navbar-expand-lg navbar-dark ">
+      <div class="navbar-container container-fluid">
+          <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarCollapse" aria-controls="navbarCollapse" aria-expanded="false" aria-label="Toggle navigation" onclick="if (window.quartoToggleHeadroom) { window.quartoToggleHeadroom(); }">
+  <span class="navbar-toggler-icon"></span>
+</button>
+          <div class="collapse navbar-collapse" id="navbarCollapse">
+            <ul class="navbar-nav navbar-nav-scroll me-auto">
+  <li class="nav-item">
+    <a class="nav-link" href="../../index.html">Home</a>
+  </li>  
+  <li class="nav-item">
+    <a class="nav-link" href="../../about.html">About</a>
+  </li>  
+</ul>
+              <div id="quarto-search" class="" title="Search"></div>
+          </div> <!-- /navcollapse -->
+      </div> <!-- /container-fluid -->
+    </nav>
+</header>
+<!-- content -->
+<header id="title-block-header" class="quarto-title-block default page-columns page-full">
+  <div class="quarto-title-banner page-columns page-full">
+    <div class="quarto-title column-body">
+      <h1 class="title">Wait, what are P-values?</h1>
+                      </div>
+  </div>
+    
+  
+  <div class="quarto-title-meta">
+
+      <div>
+      <div class="quarto-title-meta-heading">Author</div>
+      <div class="quarto-title-meta-contents">
+               <p>Nick Strayer </p>
+            </div>
+    </div>
+      
+      <div>
+      <div class="quarto-title-meta-heading">Published</div>
+      <div class="quarto-title-meta-contents">
+        <p class="date">December 24, 2016</p>
+      </div>
+    </div>
+      
+    </div>
+    
+  
+  </header><div id="quarto-content" class="quarto-container page-columns page-rows-contents page-layout-article page-navbar">
+<!-- sidebar -->
+<!-- margin-sidebar -->
+    
+<!-- main -->
+<main class="content quarto-banner-title-block" id="quarto-document-content">
+
+
+
+
+<p>Frequently, and especially <a href="http://www.nytimes.com/2016/11/09/podcasts/election-analysis-run-up.html">recently</a>, misunderstandings of common statistical terms/ concepts have caused confusion and even <a href="http://www.theverge.com/2016/11/8/13571216/new-york-times-election-forecast-jitter-needle">anger</a>. I would like to (attempt) to clear up a big player in the world of commonly used (and commonly misunderstood) statistical concepts: the <strong><em>p</em>-value</strong>.</p>
+<p style="font-size: 7; font-style:italic">
+<a href="http://imgs.xkcd.com/comics/p_values.png"> <img style="width:40%" src="http://imgs.xkcd.com/comics/p_values.png" align="middle"> </a> <br> Stealing <a href="https://twitter.com/LucyStats">Lucy D’Agostino McGowan’s</a> <a href="http://xkcd.com">XKCD</a> embedding strategy.
+</p>
+<p>##TL DR</p>
+<p>A <em>p</em>-value is not a probability of the true parameter being something, but the percentage of times that the data you saw, or more extreme data, would occur given some “null” model. These are subtly, but importantly, different concepts.</p>
+<section id="setup" class="level2">
+<h2 class="anchored" data-anchor-id="setup">Setup:</h2>
+<p>We will illustrate this concept with a story.</p>
+<p>Say you are a cheating detection analyst at a casino. One day one of the casino’s employees comes up to you and tells you that there potentially are unfair coins being used in the casino (they seem to land on tails more frequently). It’s your job to figure out if they are fair or not. The employee hands you a piece of paper with something written on it and then runs away to attend to more important things than statistics. The paper says the following:</p>
+<blockquote class="blockquote">
+<p>Heads = <span class="math inline">\(h\)</span>, Tails = <span class="math inline">\(t\)</span> | <span class="math inline">\(t,t,h,t,t,h\)</span></p>
+</blockquote>
+<p>After staring at this paper for a few minutes, you decide what you have is data on which face of a coin landed upright on a given flip, for a total of 6 flips. A fair coin in your opinion is one that has the same chance of falling on heads as it does tails, or 50-50. This is your <strong>null hypothesis: <span class="math inline">\(P(\text{tails}) = 0.5\)</span></strong>. The employee said they thought the coins were biased towards tails, you want to test if they are, this is your <strong>alternative hypothesis: <span class="math inline">\(P(\text{tails}) &gt; 0.5\)</span></strong>. Your job as a statistician is to take this incredibly complex data and distill it to a single decision, the coin is fair (null), or the coin is biased towards tails (alternative).</p>
+<p style="font-size: 4; font-style:italic">
+<img style="width:60%" src="http://i.onionstatic.com/avclub/5621/63/animated/original.gif" align="middle"> <br> <a href="http://i.onionstatic.com/avclub/5621/63/animated/original.gif">Fox Sports</a>.
+</p>
+</section>
+<section id="procedure" class="level2">
+<h2 class="anchored" data-anchor-id="procedure">Procedure</h2>
+<p>You have a problem: you don’t even know how to find an unfair coin (or how unfair of a coin to find). You do, however, have a normal quarter in your back pocket (that you’re sure is fair). You decide that instead of getting up and finding a tail-biased coin, you can use your quarter to test if the data you have is <em>not</em> from a fair coin. (You also enjoy injecting negatives into your statements to obfuscate your point as much as possible.)</p>
+<p>You roll over to your coin flipping table, get out your laptop and flip your quarter 6 times.</p>
+<div class="cell" data-layout-align="center">
+<div class="sourceCode cell-code" id="cb1"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb1-1"><a href="#cb1-1" aria-hidden="true" tabindex="-1"></a><span class="co">#Write down coin flip results</span></span>
+<span id="cb1-2"><a href="#cb1-2" aria-hidden="true" tabindex="-1"></a>flip_data <span class="ot">&lt;-</span>  <span class="fu">data_frame</span>(<span class="at">flip =</span> <span class="fu">c</span>(<span class="st">"tails"</span>, <span class="st">"tails"</span>, <span class="st">"heads"</span>, <span class="st">"heads"</span>, <span class="st">"tails"</span>, <span class="st">"tails"</span>))</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stderr">
+<pre><code>Warning: `data_frame()` was deprecated in tibble 1.1.0.
+Please use `tibble()` instead.
+This warning is displayed once every 8 hours.
+Call `lifecycle::last_lifecycle_warnings()` to see where this warning was generated.</code></pre>
+</div>
+<div class="sourceCode cell-code" id="cb3"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb3-1"><a href="#cb3-1" aria-hidden="true" tabindex="-1"></a><span class="co">#Plot the coin flips. </span></span>
+<span id="cb3-2"><a href="#cb3-2" aria-hidden="true" tabindex="-1"></a><span class="co">#Code for plot_flips() is at the end of this document (it's ugly)</span></span>
+<span id="cb3-3"><a href="#cb3-3" aria-hidden="true" tabindex="-1"></a>flip_data <span class="sc">%&gt;%</span> <span class="fu">plot_flips</span>()</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output-display">
+<div class="quarto-figure quarto-figure-center">
+<figure class="figure">
+<p><img src="index_files/figure-html/unnamed-chunk-2-1.png" class="img-fluid figure-img" width="672"></p>
+</figure>
+</div>
+</div>
+</div>
+<p>Okay, so we got <strong>2</strong> heads on our <strong>6</strong> flips. Obviously the data given to us is from an unfair coin. You’re a good <a href="https://en.wikipedia.org/wiki/Frequentist_inference">frequentist</a> however, so you decide that, to be safe, you should repeat the experiment again to see what you get.</p>
+<p><em>Oh no, you dropped your coin, better use R instead.</em></p>
+<div class="cell" data-layout-align="center">
+<div class="sourceCode cell-code" id="cb4"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb4-1"><a href="#cb4-1" aria-hidden="true" tabindex="-1"></a><span class="co">#Function to flip our coin 6 times</span></span>
+<span id="cb4-2"><a href="#cb4-2" aria-hidden="true" tabindex="-1"></a>flip_coin <span class="ot">&lt;-</span> <span class="cf">function</span>(<span class="at">numberOfCoins =</span> <span class="dv">6</span>, <span class="at">probHeads =</span> <span class="fl">0.5</span>){</span>
+<span id="cb4-3"><a href="#cb4-3" aria-hidden="true" tabindex="-1"></a>  heads <span class="ot">&lt;-</span> <span class="fu">runif</span>(numberOfCoins) <span class="sc">&gt;</span> probHeads</span>
+<span id="cb4-4"><a href="#cb4-4" aria-hidden="true" tabindex="-1"></a>  <span class="fu">return</span>(<span class="fu">data_frame</span>(<span class="at">flip =</span> <span class="fu">ifelse</span>(heads, <span class="st">"heads"</span>, <span class="st">"tails"</span>)))</span>
+<span id="cb4-5"><a href="#cb4-5" aria-hidden="true" tabindex="-1"></a>}</span>
+<span id="cb4-6"><a href="#cb4-6" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb4-7"><a href="#cb4-7" aria-hidden="true" tabindex="-1"></a><span class="co">#flip our virtual coin 6 times</span></span>
+<span id="cb4-8"><a href="#cb4-8" aria-hidden="true" tabindex="-1"></a>second_flip <span class="ot">&lt;-</span> <span class="fu">flip_coin</span>()</span>
+<span id="cb4-9"><a href="#cb4-9" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb4-10"><a href="#cb4-10" aria-hidden="true" tabindex="-1"></a><span class="co">#plot it</span></span>
+<span id="cb4-11"><a href="#cb4-11" aria-hidden="true" tabindex="-1"></a>second_flip <span class="sc">%&gt;%</span> <span class="fu">plot_flips</span>()</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output-display">
+<div class="quarto-figure quarto-figure-center">
+<figure class="figure">
+<p><img src="index_files/figure-html/unnamed-chunk-4-1.png" class="img-fluid figure-img" width="672"></p>
+</figure>
+</div>
+</div>
+</div>
+<p>Oh look at that… 2 heads… that’s nice, but maybe we should do this a few more times. Maybe 100?</p>
+<p>Back to R…</p>
+<div class="cell" data-layout-align="center">
+<div class="sourceCode cell-code" id="cb5"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb5-1"><a href="#cb5-1" aria-hidden="true" tabindex="-1"></a><span class="co">#Dataframe to hold our coin flips</span></span>
+<span id="cb5-2"><a href="#cb5-2" aria-hidden="true" tabindex="-1"></a>flip_results <span class="ot">&lt;-</span> <span class="fu">data_frame</span>(<span class="at">flip =</span> <span class="fu">character</span>(), <span class="at">trial =</span> <span class="fu">numeric</span>())</span>
+<span id="cb5-3"><a href="#cb5-3" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb5-4"><a href="#cb5-4" aria-hidden="true" tabindex="-1"></a><span class="co">#Number of trials of flipping our coin 6 times we want to do. </span></span>
+<span id="cb5-5"><a href="#cb5-5" aria-hidden="true" tabindex="-1"></a>number_of_trials <span class="ot">&lt;-</span> <span class="dv">100</span></span>
+<span id="cb5-6"><a href="#cb5-6" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb5-7"><a href="#cb5-7" aria-hidden="true" tabindex="-1"></a><span class="co">#Actually run the trials </span></span>
+<span id="cb5-8"><a href="#cb5-8" aria-hidden="true" tabindex="-1"></a><span class="cf">for</span>(trial_number <span class="cf">in</span> <span class="dv">1</span><span class="sc">:</span>number_of_trials){</span>
+<span id="cb5-9"><a href="#cb5-9" aria-hidden="true" tabindex="-1"></a>  </span>
+<span id="cb5-10"><a href="#cb5-10" aria-hidden="true" tabindex="-1"></a>  <span class="co">#Flip Coin 6 times and record results along with trial number</span></span>
+<span id="cb5-11"><a href="#cb5-11" aria-hidden="true" tabindex="-1"></a>  flips <span class="ot">&lt;-</span> <span class="fu">flip_coin</span>() <span class="sc">%&gt;%</span></span>
+<span id="cb5-12"><a href="#cb5-12" aria-hidden="true" tabindex="-1"></a>    <span class="fu">mutate</span>(<span class="at">trial =</span> trial_number)</span>
+<span id="cb5-13"><a href="#cb5-13" aria-hidden="true" tabindex="-1"></a>  </span>
+<span id="cb5-14"><a href="#cb5-14" aria-hidden="true" tabindex="-1"></a>  <span class="co">#Append this to our big results dataframe</span></span>
+<span id="cb5-15"><a href="#cb5-15" aria-hidden="true" tabindex="-1"></a>  flip_results <span class="ot">&lt;-</span> flip_results <span class="sc">%&gt;%</span> <span class="fu">bind_rows</span>(flips)</span>
+<span id="cb5-16"><a href="#cb5-16" aria-hidden="true" tabindex="-1"></a>}</span>
+<span id="cb5-17"><a href="#cb5-17" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb5-18"><a href="#cb5-18" aria-hidden="true" tabindex="-1"></a><span class="co">#Let's plot all of these results into one big mega-graph</span></span>
+<span id="cb5-19"><a href="#cb5-19" aria-hidden="true" tabindex="-1"></a>flip_results <span class="sc">%&gt;%</span> </span>
+<span id="cb5-20"><a href="#cb5-20" aria-hidden="true" tabindex="-1"></a>  <span class="fu">plot_flips</span>() <span class="sc">+</span> </span>
+<span id="cb5-21"><a href="#cb5-21" aria-hidden="true" tabindex="-1"></a>  <span class="fu">facet_wrap</span>(<span class="sc">~</span>trial) <span class="sc">+</span> <span class="co">#make a new mini plot for each trial</span></span>
+<span id="cb5-22"><a href="#cb5-22" aria-hidden="true" tabindex="-1"></a>  <span class="fu">labs</span>(<span class="at">title =</span> <span class="st">"Six Coin Flips | 100 Trials"</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output-display">
+<div class="quarto-figure quarto-figure-center">
+<figure class="figure">
+<p><img src="index_files/figure-html/unnamed-chunk-6-1.png" class="img-fluid figure-img" width="960"></p>
+</figure>
+</div>
+</div>
+</div>
+<p>Well look at that, investigating this plot it doesn’t actually seem that out of the ordinary to get 4 tails in 6 flips, even though intuitively that sounds like tails happening twice as often as heads.</p>
+<p>Just to make sure lets simplify the above plot to summarize the number of tails we saw for each of our 100 trials.</p>
+<div class="cell" data-layout-align="center">
+<div class="sourceCode cell-code" id="cb6"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb6-1"><a href="#cb6-1" aria-hidden="true" tabindex="-1"></a><span class="co">#Count how many tails we got in each trial</span></span>
+<span id="cb6-2"><a href="#cb6-2" aria-hidden="true" tabindex="-1"></a>tails_by_trial <span class="ot">&lt;-</span> flip_results <span class="sc">%&gt;%</span>   <span class="co">#Take our results</span></span>
+<span id="cb6-3"><a href="#cb6-3" aria-hidden="true" tabindex="-1"></a>  <span class="fu">filter</span>(flip <span class="sc">==</span> <span class="st">"tails"</span>) <span class="sc">%&gt;%</span>        <span class="co">#Look at only tails results</span></span>
+<span id="cb6-4"><a href="#cb6-4" aria-hidden="true" tabindex="-1"></a>  <span class="fu">group_by</span>(trial) <span class="sc">%&gt;%</span>                <span class="co">#Collapse per trial</span></span>
+<span id="cb6-5"><a href="#cb6-5" aria-hidden="true" tabindex="-1"></a>  <span class="fu">summarise</span>(<span class="at">number_of_tails =</span> <span class="fu">n</span>())   <span class="co">#Count the number of heads per trial</span></span>
+<span id="cb6-6"><a href="#cb6-6" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb6-7"><a href="#cb6-7" aria-hidden="true" tabindex="-1"></a><span class="co">#Look at the first few of our results....</span></span>
+<span id="cb6-8"><a href="#cb6-8" aria-hidden="true" tabindex="-1"></a>tails_by_trial <span class="sc">%&gt;%</span> </span>
+<span id="cb6-9"><a href="#cb6-9" aria-hidden="true" tabindex="-1"></a>  <span class="fu">head</span>() <span class="sc">%&gt;%</span> </span>
+<span id="cb6-10"><a href="#cb6-10" aria-hidden="true" tabindex="-1"></a>  <span class="fu">kable</span>(<span class="at">align =</span> <span class="fu">c</span>(<span class="st">"r"</span>, <span class="st">"c"</span>))</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output-display">
+<table class="table table-sm table-striped">
+<thead>
+<tr class="header">
+<th style="text-align: right;">trial</th>
+<th style="text-align: center;">number_of_tails</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td style="text-align: right;">1</td>
+<td style="text-align: center;">5</td>
+</tr>
+<tr class="even">
+<td style="text-align: right;">2</td>
+<td style="text-align: center;">3</td>
+</tr>
+<tr class="odd">
+<td style="text-align: right;">3</td>
+<td style="text-align: center;">4</td>
+</tr>
+<tr class="even">
+<td style="text-align: right;">4</td>
+<td style="text-align: center;">3</td>
+</tr>
+<tr class="odd">
+<td style="text-align: right;">5</td>
+<td style="text-align: center;">4</td>
+</tr>
+<tr class="even">
+<td style="text-align: right;">6</td>
+<td style="text-align: center;">3</td>
+</tr>
+</tbody>
+</table>
+</div>
+</div>
+<p>Looking at the first few results we can see that we have a range of tails counts, looking at tables is boring though. Let’s plot our data to really see what’s going on.</p>
+<div class="cell" data-layout-align="center">
+<div class="sourceCode cell-code" id="cb7"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb7-1"><a href="#cb7-1" aria-hidden="true" tabindex="-1"></a>tails_by_trial <span class="sc">%&gt;%</span></span>
+<span id="cb7-2"><a href="#cb7-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">mutate</span>(<span class="st">`</span><span class="at">bias to tails</span><span class="st">`</span> <span class="ot">=</span> <span class="fu">ifelse</span>(number_of_tails <span class="sc">&gt;=</span> <span class="dv">4</span>, <span class="st">"equal or more "</span>, <span class="st">"less than observed data"</span>)) <span class="sc">%&gt;%</span> </span>
+<span id="cb7-3"><a href="#cb7-3" aria-hidden="true" tabindex="-1"></a>  <span class="fu">ggplot</span>(<span class="fu">aes</span>(<span class="at">x =</span> number_of_tails, <span class="at">fill =</span> <span class="st">`</span><span class="at">bias to tails</span><span class="st">`</span>)) <span class="sc">+</span> </span>
+<span id="cb7-4"><a href="#cb7-4" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_bar</span>() <span class="sc">+</span> </span>
+<span id="cb7-5"><a href="#cb7-5" aria-hidden="true" tabindex="-1"></a>  <span class="fu">labs</span>(<span class="at">title =</span> <span class="st">"Number of Tails Seen in 6 Flips"</span>, </span>
+<span id="cb7-6"><a href="#cb7-6" aria-hidden="true" tabindex="-1"></a>       <span class="at">subtitle =</span> <span class="st">"100 Trials"</span>, <span class="at">x =</span> <span class="st">"# of tails"</span>, <span class="at">y =</span> <span class="st">"times seen"</span>) <span class="sc">+</span> </span>
+<span id="cb7-7"><a href="#cb7-7" aria-hidden="true" tabindex="-1"></a>  <span class="fu">scale_x_continuous</span>(<span class="at">breaks =</span> <span class="dv">0</span><span class="sc">:</span><span class="dv">6</span>) <span class="sc">+</span>               <span class="co">#Beyond here is unneccesary ggplot style stuff. </span></span>
+<span id="cb7-8"><a href="#cb7-8" aria-hidden="true" tabindex="-1"></a>  <span class="fu">theme_minimal</span>() <span class="sc">+</span>                                <span class="co">#I like pretty graphs</span></span>
+<span id="cb7-9"><a href="#cb7-9" aria-hidden="true" tabindex="-1"></a>  <span class="fu">theme</span>(<span class="at">panel.grid.major.x =</span> <span class="fu">element_blank</span>(),</span>
+<span id="cb7-10"><a href="#cb7-10" aria-hidden="true" tabindex="-1"></a>        <span class="at">panel.grid.major.y =</span> <span class="fu">element_line</span>( <span class="at">size=</span>.<span class="dv">1</span>, <span class="at">color=</span><span class="st">"black"</span> ),</span>
+<span id="cb7-11"><a href="#cb7-11" aria-hidden="true" tabindex="-1"></a>        <span class="at">panel.grid.minor =</span> <span class="fu">element_blank</span>(),</span>
+<span id="cb7-12"><a href="#cb7-12" aria-hidden="true" tabindex="-1"></a>        <span class="at">legend.position =</span> <span class="st">"top"</span>) <span class="sc">+</span> </span>
+<span id="cb7-13"><a href="#cb7-13" aria-hidden="true" tabindex="-1"></a>  <span class="fu">scale_fill_discrete</span>(<span class="at">guide =</span> <span class="fu">guide_legend</span>(<span class="at">reverse=</span>T))</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output-display">
+<div class="quarto-figure quarto-figure-center">
+<figure class="figure">
+<p><img src="index_files/figure-html/unnamed-chunk-10-1.png" class="img-fluid figure-img" width="672"></p>
+</figure>
+</div>
+</div>
+</div>
+<p>The data we have: <strong>4</strong> tails out of <strong>6</strong> flips, looks pretty darn normal if our coin was fair. Case closed, right? Well you are a statistician so it’s your job to distill this down to a number, so let’s see exactly how “normal” our result is. We will do this by simply counting. Looking at the 100 trials that we did, how many times did the number of tails look at least as unfair as our data? Aka, how many times did we flip 4 or more tails in our 100 trials?</p>
+<div class="cell" data-layout-align="center">
+<div class="sourceCode cell-code" id="cb8"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb8-1"><a href="#cb8-1" aria-hidden="true" tabindex="-1"></a>unusualness <span class="ot">&lt;-</span> <span class="fu">sum</span>(tails_by_trial<span class="sc">$</span>number_of_tails <span class="sc">&gt;=</span> <span class="dv">4</span>) </span>
+<span id="cb8-2"><a href="#cb8-2" aria-hidden="true" tabindex="-1"></a>unusualness</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>[1] 31</code></pre>
+</div>
+</div>
+<p>So, we have just shown that, given the coin is truly fair, in 100 trials we saw 31 of them to be as “biased” towards tails as the data we were given. <span class="math display">\[\frac{31}{100} = 0.31= \boxed{\text{our p-value}}\]</span></p>
+<p>Note that this is not “the probability that our coin is not fair”, it is simply, “given the coin <em>was fair</em>, how odd are our results?”</p>
+<p><em>Note: This is not actually how most p-value are calculated. This is because when lots of this p-value stuff was developed we didn’t have computers around to do our coin-flipping-bidding so smart people come up with mathematical formulas that describe the behavior, thus allowing p-values to be calculated with pen and paper. These formulas are also more accurate than what we did in that they mimic flipping the coin an infinite amount of times.</em></p>
+<p style="font-size: 4; font-style:italic">
+<img style="width:60%" src="http://starecat.com/content/wp-content/uploads/dog-calculating-how-to-carry-a-stick-on-a-bridge.gif" align="middle"> <br> Me trying to understand p-values for the first time: <a href="http://starecat.com/content/wp-content/uploads/dog-calculating-how-to-carry-a-stick-on-a-bridge.gif">starecat.com</a>.
+</p>
+</section>
+<section id="the-caveat" class="level2">
+<h2 class="anchored" data-anchor-id="the-caveat">The Caveat</h2>
+<p>But wait, you can’t leave just yet. We made one very important assumption in constructing this <em>p</em>-value. We assumed the “model” that our data came from. In this case we assumed that the “heads” and “tails” written on the page were from a single coin, flipped 6 times with two possible results (“heads” or “tails”). What if it wasn’t the case? What if in fact our data came from a mysterious 3 sided coin (all coins technically are). Then our p-value is totally wrong.</p>
+<p>Something to always be aware of when looking at statistical results is that, to quote statistician George Box,</p>
+<blockquote class="blockquote">
+<p>All models are wrong, but some are useful.</p>
+</blockquote>
+<p>Almost never in real life are the <em>p</em>-values you see in the newspaper or a scientific journal article using the perfectly correct model. Lots of work has been done to make sure that we’re not making huge mistakes (or else statisticians like me would be out of a job), but very rarely (even in the example just given) are we using the correct model to generate our <em>p</em>-value.</p>
+</section>
+<section id="addendum" class="level2">
+<h2 class="anchored" data-anchor-id="addendum">Addendum</h2>
+<p>I most likely made some mistakes somewhere in this article. If you catch them and feel them important enough to be fixed send me a message on twitter or if you are feeling particularly altruistic, submit a pull request on the repo for this article</p>
+<p>Here is the plotting code I used for the head tails plots. It’s kind of ugly and I’m sure there’s a more elegant way to code it.</p>
+<div class="cell" data-layout-align="center">
+<pre class="eval cell-code"><code>#Function for plotting coin flips. 
+#Takes a dataframe with at least the column "flip" containing heads or tails in character value
+plot_flips &lt;- function(flip_data){
+  flip_data %&gt;% 
+    mutate(value = 1, flip_num = 1:dim(flip_data)[1]) %&gt;% 
+    ggplot(aes(x = flip, y = value, group = flip_num, fill = flip)) +
+    geom_bar(position = "stack", stat = "identity", color = "white") +
+    labs(x = "", y = "times seen", title = "Six Coin Flips") +
+    theme_minimal() + 
+    theme(panel.grid.major = element_blank(),
+          panel.grid.minor = element_blank(),
+          strip.background = element_blank(),
+          strip.text = element_blank(),
+          axis.title = element_blank(),
+          axis.text = element_blank(),
+          axis.ticks = element_blank(),
+          legend.position = "bottom",
+          legend.title = element_blank()) 
+}</code></pre>
+</div>
+
+
+</section>
+
+</main> <!-- /main -->
+<script id="quarto-html-after-body" type="application/javascript">
+window.document.addEventListener("DOMContentLoaded", function (event) {
+  const toggleBodyColorMode = (bsSheetEl) => {
+    const mode = bsSheetEl.getAttribute("data-mode");
+    const bodyEl = window.document.querySelector("body");
+    if (mode === "dark") {
+      bodyEl.classList.add("quarto-dark");
+      bodyEl.classList.remove("quarto-light");
+    } else {
+      bodyEl.classList.add("quarto-light");
+      bodyEl.classList.remove("quarto-dark");
+    }
+  }
+  const toggleBodyColorPrimary = () => {
+    const bsSheetEl = window.document.querySelector("link#quarto-bootstrap");
+    if (bsSheetEl) {
+      toggleBodyColorMode(bsSheetEl);
+    }
+  }
+  toggleBodyColorPrimary();  
+  const icon = "";
+  const anchorJS = new window.AnchorJS();
+  anchorJS.options = {
+    placement: 'right',
+    icon: icon
+  };
+  anchorJS.add('.anchored');
+  const clipboard = new window.ClipboardJS('.code-copy-button', {
+    target: function(trigger) {
+      return trigger.previousElementSibling;
+    }
+  });
+  clipboard.on('success', function(e) {
+    // button target
+    const button = e.trigger;
+    // don't keep focus
+    button.blur();
+    // flash "checked"
+    button.classList.add('code-copy-button-checked');
+    var currentTitle = button.getAttribute("title");
+    button.setAttribute("title", "Copied!");
+    setTimeout(function() {
+      button.setAttribute("title", currentTitle);
+      button.classList.remove('code-copy-button-checked');
+    }, 1000);
+    // clear code selection
+    e.clearSelection();
+  });
+  function tippyHover(el, contentFn) {
+    const config = {
+      allowHTML: true,
+      content: contentFn,
+      maxWidth: 500,
+      delay: 100,
+      arrow: false,
+      appendTo: function(el) {
+          return el.parentElement;
+      },
+      interactive: true,
+      interactiveBorder: 10,
+      theme: 'quarto',
+      placement: 'bottom-start'
+    };
+    window.tippy(el, config); 
+  }
+  const noterefs = window.document.querySelectorAll('a[role="doc-noteref"]');
+  for (var i=0; i<noterefs.length; i++) {
+    const ref = noterefs[i];
+    tippyHover(ref, function() {
+      // use id or data attribute instead here
+      let href = ref.getAttribute('data-footnote-href') || ref.getAttribute('href');
+      try { href = new URL(href).hash; } catch {}
+      const id = href.replace(/^#\/?/, "");
+      const note = window.document.getElementById(id);
+      return note.innerHTML;
+    });
+  }
+  var bibliorefs = window.document.querySelectorAll('a[role="doc-biblioref"]');
+  for (var i=0; i<bibliorefs.length; i++) {
+    const ref = bibliorefs[i];
+    const cites = ref.parentNode.getAttribute('data-cites').split(' ');
+    tippyHover(ref, function() {
+      var popup = window.document.createElement('div');
+      cites.forEach(function(cite) {
+        var citeDiv = window.document.createElement('div');
+        citeDiv.classList.add('hanging-indent');
+        citeDiv.classList.add('csl-entry');
+        var biblioDiv = window.document.getElementById('ref-' + cite);
+        if (biblioDiv) {
+          citeDiv.innerHTML = biblioDiv.innerHTML;
+        }
+        popup.appendChild(citeDiv);
+      });
+      return popup.innerHTML;
+    });
+  }
+});
+</script>
+<script src="https://utteranc.es/client.js" repo="lfod/real-blog" issue-term="pathname" theme="github-light" crossorigin="anonymous" async="">
+</script>
+</div> <!-- /content -->
+
+
+
+</body></html>

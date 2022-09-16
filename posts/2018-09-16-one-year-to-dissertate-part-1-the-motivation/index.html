@@ -1,0 +1,456 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml" lang="en" xml:lang="en"><head>
+
+<meta charset="utf-8">
+<meta name="generator" content="quarto-1.1.251">
+
+<meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
+
+<meta name="author" content="Lucy D’Agostino McGowan">
+<meta name="dcterms.date" content="2018-09-16">
+
+<title>One year to dissertate: Part 1. The motivation</title>
+<style>
+code{white-space: pre-wrap;}
+span.smallcaps{font-variant: small-caps;}
+div.columns{display: flex; gap: min(4vw, 1.5em);}
+div.column{flex: auto; overflow-x: auto;}
+div.hanging-indent{margin-left: 1.5em; text-indent: -1.5em;}
+ul.task-list{list-style: none;}
+ul.task-list li input[type="checkbox"] {
+  width: 0.8em;
+  margin: 0 0.8em 0.2em -1.6em;
+  vertical-align: middle;
+}
+</style>
+
+
+<script src="../../site_libs/quarto-nav/quarto-nav.js"></script>
+<script src="../../site_libs/quarto-nav/headroom.min.js"></script>
+<script src="../../site_libs/clipboard/clipboard.min.js"></script>
+<script src="../../site_libs/quarto-search/autocomplete.umd.js"></script>
+<script src="../../site_libs/quarto-search/fuse.min.js"></script>
+<script src="../../site_libs/quarto-search/quarto-search.js"></script>
+<meta name="quarto:offset" content="../../">
+<script src="../../site_libs/quarto-html/quarto.js"></script>
+<script src="../../site_libs/quarto-html/popper.min.js"></script>
+<script src="../../site_libs/quarto-html/tippy.umd.min.js"></script>
+<script src="../../site_libs/quarto-html/anchor.min.js"></script>
+<link href="../../site_libs/quarto-html/tippy.css" rel="stylesheet">
+<link href="../../site_libs/quarto-html/quarto-syntax-highlighting.css" rel="stylesheet" id="quarto-text-highlighting-styles">
+<script src="../../site_libs/bootstrap/bootstrap.min.js"></script>
+<link href="../../site_libs/bootstrap/bootstrap-icons.css" rel="stylesheet">
+<link href="../../site_libs/bootstrap/bootstrap.min.css" rel="stylesheet" id="quarto-bootstrap" data-mode="light">
+<script id="quarto-search-options" type="application/json">{
+  "location": "navbar",
+  "copy-button": false,
+  "collapse-after": 3,
+  "panel-placement": "end",
+  "type": "overlay",
+  "limit": 20,
+  "language": {
+    "search-no-results-text": "No results",
+    "search-matching-documents-text": "matching documents",
+    "search-copy-link-title": "Copy link to search",
+    "search-hide-matches-text": "Hide additional matches",
+    "search-more-match-text": "more match in this document",
+    "search-more-matches-text": "more matches in this document",
+    "search-clear-button-title": "Clear",
+    "search-detached-cancel-button-title": "Cancel",
+    "search-submit-button-title": "Submit"
+  }
+}</script>
+<script src="https://code.jquery.com/jquery-3.2.1.min.js" integrity="sha256-hwg4gsxgFZhOsEEamdOYGBf13FyQuiTwlAQgxVSNgt4=" crossorigin="anonymous"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/d3/4.9.1/d3.min.js"></script>
+
+<style>
+  #custom-header {
+    height: 30vh;
+    width: 100%;
+    position:relative;
+    z-index:1;
+    margin:0 auto;
+  }
+</style>
+
+
+</head><body class="nav-fixed"><header id="custom-header">
+  <div id="header_viz"></div>
+</header>
+
+<script>
+  $( document ).ready(() => {
+
+    //javascript for intro loader
+
+    //Function to immitate R's seq
+    function seq(start, end, increment) {
+      var length = Math.round((end - start)/increment);
+      return Array(length).fill().map((_, idx) => start + idx*increment)
+    }
+
+
+    //define the pdf of the distribution.
+    var logistic = function(x, theta, i) {
+        var mu = 0.1;
+        sign = 1
+        var y = sign * (1 / (Math.sqrt(2 * Math.PI) * theta)) * (1 / x) *
+            Math.exp(-Math.pow((Math.log(x) - mu), 2) / (2 * Math.pow(theta, 2)))
+        return y;
+    }
+
+    var width   = $("#custom-header").width() ,
+        height  = $("#custom-header").outerHeight(),
+        padding = 0,
+        numOfLines = 20,
+        xs = seq(0.01, 5, .01),
+        colors = ['rgb(165,0,38)', 'rgb(215,48,39)', 'rgb(244,109,67)', 'rgb(253,174,97)', 'rgb(254,224,144)',
+            'rgb(224,243,248)', 'rgb(171,217,233)', 'rgb(116,173,209)', 'rgb(69,117,180)', 'rgb(49,54,149)'
+        ];
+  
+    console.log("trying to run this shit.")
+    //define the svg.
+    var svg = d3.select("#header_viz").append("svg")
+        .attr("width", width)
+        .attr("height", height + 2 * padding)
+        .append("g")
+
+
+    var animatelines = function(whichline) {
+        d3.selectAll(".line").style("opacity","0.5");
+
+        //Select All of the lines and process them one by one
+        d3.selectAll(".line").each(function(d,i){
+            // Get the length of each line in turn
+            var totalLength = d3.select("#line" + i).node().getTotalLength();
+
+            d3.selectAll("#line" + i).attr("stroke-dasharray", totalLength + " " + totalLength)
+              .attr("stroke-dashoffset", totalLength)
+              .transition()
+              .duration(5000)
+              .delay(100*i)
+              .attr("stroke-dashoffset", 0)
+              .style("stroke-width",2)
+        })
+
+        writeGreeting()
+    }
+
+
+
+    // The Scales:
+    var thetaMap = d3.scaleLinear() //name the values from 0 to 20 and make their values from .1-.7
+        .domain([0, numOfLines])
+        .range([0.8, 0.085])
+
+    var yPos = d3.scaleLinear() //scalling for creating horizontal lines
+        .domain([0, numOfLines])
+        .range([0, 4])
+
+    var x = d3.scaleLinear()
+        .domain([0, 5])
+        .range([0, width]);
+
+    var y = d3.scaleLinear()
+        .domain([0, 4.5])
+        .range([height, 0]);
+
+    // The line functions:
+    var logistic = d3.range(numOfLines).map(function(i) {
+        var odd = true
+        var toReturn = xs.map(function(num) {
+            return {
+                "x": num,
+                "y": logistic(num, thetaMap(i), i)
+            }
+        })
+        return toReturn;
+    })
+
+    //make a greeting message for after the line animation.
+    function writeGreeting(){
+
+        var text_scale = width < 500 ? 1 : 0.65;
+        console.log(text_scale);
+        var intro_text = "Live Free or Dichotomize";
+
+        var title = svg.append("text")
+            .attr("font-size", 30)
+            .attr("font-family", "optima")
+            .attr("text-anchor", "end")
+            .attr("fill-opacity", 0.65)
+            .attr("x", width < 500 ? x(4.8) : x(4.2))
+            .attr("y", width < 500 ? y(3.12) : y(2.1) )
+            .attr("opacity", 0)
+            .text(intro_text)
+            .attr("font-size", function(d) { return ( text_scale*width - 8) / this.getComputedTextLength() * 24 + "px"; })
+            .text("")
+            .attr("opacity", 1);
+
+        (function drawGreeting (i, start, greeting) {
+            setTimeout(function () {
+
+                //add next letter to the greeting in progress
+                start += greeting[i];
+
+                title.html(start) //append this to the html
+
+                if (start.length < greeting.length) { //if the in progress greeting is less than the full, keep going.
+                    drawGreeting(i+1,start,greeting);      //  increment i and call again.
+                };
+            }, 100)
+        })(0, "", intro_text);
+    }
+
+
+    // The d3 stuff
+    var line = d3.line()
+        // .interpolate("basis")
+        .x(function(d) { return x(d.x); })
+        .y(function(d) { return y(d.y); });
+
+
+    svg.selectAll(".line")
+        .data(logistic)
+        .enter().append("path")
+        .attr("class", "line")
+        .attr("id" , function(d, i){ return "line" + i;})
+        .attr("d", line)
+        .style("stroke-width", 2)
+        .style("stroke", function(d, i) { return colors[i % 10] })
+        .style("opacity", 0)
+        .style("fill", "none")
+        .on("mouseover", function(d){
+            d3.select(this).style("stroke", "black")
+        })
+        .on("mouseout", function(d,i){
+            d3.select(this).style("stroke", colors[i % 10])
+        })
+
+    // var introMessage = isMobile ? "tap" : "click"
+    // var introMessage = "click"
+    //
+    // var intro = svg.append("text")
+    //     .text(introMessage)
+    //     .attr("font-size", 35)
+    //     .attr("font-family", "optima")
+    //     .attr("text-anchor", "middle")
+    //     .attr("x", x(2.5))
+    //     .attr("y", y(2.01))
+
+    //kick it off on a click. (or tap)
+    animatelines(2)
+    // d3.select("svg").on("click", function() { animatelines(2) })
+
+})
+
+</script>
+
+
+
+
+
+
+<div id="quarto-search-results"></div>
+  <header id="quarto-header" class="headroom fixed-top">
+    <nav class="navbar navbar-expand-lg navbar-dark ">
+      <div class="navbar-container container-fluid">
+          <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarCollapse" aria-controls="navbarCollapse" aria-expanded="false" aria-label="Toggle navigation" onclick="if (window.quartoToggleHeadroom) { window.quartoToggleHeadroom(); }">
+  <span class="navbar-toggler-icon"></span>
+</button>
+          <div class="collapse navbar-collapse" id="navbarCollapse">
+            <ul class="navbar-nav navbar-nav-scroll me-auto">
+  <li class="nav-item">
+    <a class="nav-link" href="../../index.html">Home</a>
+  </li>  
+  <li class="nav-item">
+    <a class="nav-link" href="../../about.html">About</a>
+  </li>  
+</ul>
+              <div id="quarto-search" class="" title="Search"></div>
+          </div> <!-- /navcollapse -->
+      </div> <!-- /container-fluid -->
+    </nav>
+</header>
+<!-- content -->
+<header id="title-block-header" class="quarto-title-block default page-columns page-full">
+  <div class="quarto-title-banner page-columns page-full">
+    <div class="quarto-title column-body">
+      <h1 class="title">One year to dissertate: Part 1. The motivation</h1>
+                                <div class="quarto-categories">
+                <div class="quarto-category">phd</div>
+                <div class="quarto-category">one year dissertation</div>
+              </div>
+                  </div>
+  </div>
+    
+  
+  <div class="quarto-title-meta">
+
+      <div>
+      <div class="quarto-title-meta-heading">Author</div>
+      <div class="quarto-title-meta-contents">
+               <p>Lucy D’Agostino McGowan </p>
+            </div>
+    </div>
+      
+      <div>
+      <div class="quarto-title-meta-heading">Published</div>
+      <div class="quarto-title-meta-contents">
+        <p class="date">September 16, 2018</p>
+      </div>
+    </div>
+      
+    </div>
+    
+  
+  </header><div id="quarto-content" class="quarto-container page-columns page-rows-contents page-layout-article page-navbar">
+<!-- sidebar -->
+<!-- margin-sidebar -->
+    <div id="quarto-margin-sidebar" class="sidebar margin-sidebar">
+        
+    </div>
+<!-- main -->
+<main class="content quarto-banner-title-block page-columns page-full" id="quarto-document-content">
+
+
+
+
+<p>I’ve compiled some resources that I used when completing my dissertation and I wanted to share them with YOU! Throughout this series, I link to a bunch of different templates that I used throughout my process. You can find them all in <a href="https://github.com/LucyMcGowan/dissertation-toolkit">this GitHub repo</a>.</p>
+<p>This series will cover three areas:</p>
+<ul>
+<li><strong>The practicals</strong>. <em>This section will have specifics on how I was able execute certain tasks, such as committee meetings, draft writing, etc.</em></li>
+<li><strong>The planning</strong>. <em>This section will have details on how I planned out my time over the year to target a specific timeline</em>.</li>
+<li><strong>Other tid bits</strong>. <em>This section is a mix of other things that didn’t quite fit in the first two sections, like some things I found helpful for keeping a positive attitude, etc.</em></li>
+</ul>
+<p>I will be releasing posts in this series over the next couple of weeks, but if you are impatient and want to see the whole thing, you can <a href="https://livefreeordichotomize.com/2018/09/14/one-year-to-dissertate/">find the full post here</a>!</p>
+<section id="why-am-i-writing-this" class="level2 page-columns page-full">
+<h2 class="anchored" data-anchor-id="why-am-i-writing-this">Why am I writing this?</h2>
+
+<div class="no-row-height column-margin column-container"><div class="">
+<p>This is by no means the only way to complete a dissertation (or even the best way!) but maybe you can find something useful from my process 🤷.</p>
+</div></div><p>Speaking with current and former PhD students, many of us find / found one of the most difficult parts of the PhD process was the element of unstructured time. I thought it may be useful to lay out <em>one way</em> to structure this time. For that reason, I am specifically focusing on the <em>dissertating</em> phase of a PhD rather than the coursework portion.</p>
+</section>
+<section id="background" class="level2">
+<h2 class="anchored" data-anchor-id="background">Background</h2>
+<p>Programs come in all shapes and sizes, so this may not fit your experiences.</p>
+<p>For a bit of context:</p>
+<ul>
+<li>I graduated from <a href="https://www.vanderbilt.edu/biostatistics-graduate/">Vanderbilt’s Biostatistics program</a></li>
+<li>At Vanderbilt, we have 2.5 years of mandatory course work</li>
+<li>We have two written comprehensive exams taken at the end of Year 1 and the end of Year 2</li>
+<li>Around the 2.5 year mark (January of Year 3), we have an <em>oral exam</em> - this (roughly) marks the start of your dissertating phase</li>
+<li>After I completed my oral exam, I had the goal of finishing up my dissertation in 1 year</li>
+</ul>
+<p><em>I think the tools I am going to lay out here could be easily applied to other timelines if you just shrink or stretch each phase.</em></p>
+<p>**Stay tuned for the next post in the series</p>
+
+
+</section>
+
+</main> <!-- /main -->
+<script id="quarto-html-after-body" type="application/javascript">
+window.document.addEventListener("DOMContentLoaded", function (event) {
+  const toggleBodyColorMode = (bsSheetEl) => {
+    const mode = bsSheetEl.getAttribute("data-mode");
+    const bodyEl = window.document.querySelector("body");
+    if (mode === "dark") {
+      bodyEl.classList.add("quarto-dark");
+      bodyEl.classList.remove("quarto-light");
+    } else {
+      bodyEl.classList.add("quarto-light");
+      bodyEl.classList.remove("quarto-dark");
+    }
+  }
+  const toggleBodyColorPrimary = () => {
+    const bsSheetEl = window.document.querySelector("link#quarto-bootstrap");
+    if (bsSheetEl) {
+      toggleBodyColorMode(bsSheetEl);
+    }
+  }
+  toggleBodyColorPrimary();  
+  const icon = "";
+  const anchorJS = new window.AnchorJS();
+  anchorJS.options = {
+    placement: 'right',
+    icon: icon
+  };
+  anchorJS.add('.anchored');
+  const clipboard = new window.ClipboardJS('.code-copy-button', {
+    target: function(trigger) {
+      return trigger.previousElementSibling;
+    }
+  });
+  clipboard.on('success', function(e) {
+    // button target
+    const button = e.trigger;
+    // don't keep focus
+    button.blur();
+    // flash "checked"
+    button.classList.add('code-copy-button-checked');
+    var currentTitle = button.getAttribute("title");
+    button.setAttribute("title", "Copied!");
+    setTimeout(function() {
+      button.setAttribute("title", currentTitle);
+      button.classList.remove('code-copy-button-checked');
+    }, 1000);
+    // clear code selection
+    e.clearSelection();
+  });
+  function tippyHover(el, contentFn) {
+    const config = {
+      allowHTML: true,
+      content: contentFn,
+      maxWidth: 500,
+      delay: 100,
+      arrow: false,
+      appendTo: function(el) {
+          return el.parentElement;
+      },
+      interactive: true,
+      interactiveBorder: 10,
+      theme: 'quarto',
+      placement: 'bottom-start'
+    };
+    window.tippy(el, config); 
+  }
+  const noterefs = window.document.querySelectorAll('a[role="doc-noteref"]');
+  for (var i=0; i<noterefs.length; i++) {
+    const ref = noterefs[i];
+    tippyHover(ref, function() {
+      // use id or data attribute instead here
+      let href = ref.getAttribute('data-footnote-href') || ref.getAttribute('href');
+      try { href = new URL(href).hash; } catch {}
+      const id = href.replace(/^#\/?/, "");
+      const note = window.document.getElementById(id);
+      return note.innerHTML;
+    });
+  }
+  var bibliorefs = window.document.querySelectorAll('a[role="doc-biblioref"]');
+  for (var i=0; i<bibliorefs.length; i++) {
+    const ref = bibliorefs[i];
+    const cites = ref.parentNode.getAttribute('data-cites').split(' ');
+    tippyHover(ref, function() {
+      var popup = window.document.createElement('div');
+      cites.forEach(function(cite) {
+        var citeDiv = window.document.createElement('div');
+        citeDiv.classList.add('hanging-indent');
+        citeDiv.classList.add('csl-entry');
+        var biblioDiv = window.document.getElementById('ref-' + cite);
+        if (biblioDiv) {
+          citeDiv.innerHTML = biblioDiv.innerHTML;
+        }
+        popup.appendChild(citeDiv);
+      });
+      return popup.innerHTML;
+    });
+  }
+});
+</script>
+<script src="https://utteranc.es/client.js" repo="lfod/real-blog" issue-term="pathname" theme="github-light" crossorigin="anonymous" async="">
+</script>
+</div> <!-- /content -->
+
+
+
+</body></html>

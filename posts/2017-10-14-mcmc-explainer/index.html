@@ -1,0 +1,493 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml" lang="en" xml:lang="en"><head>
+
+<meta charset="utf-8">
+<meta name="generator" content="quarto-1.1.251">
+
+<meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
+
+<meta name="author" content="Nick Strayer">
+<meta name="dcterms.date" content="2017-10-14">
+
+<title>MCMC and the case of the spilled seeds</title>
+<style>
+code{white-space: pre-wrap;}
+span.smallcaps{font-variant: small-caps;}
+div.columns{display: flex; gap: min(4vw, 1.5em);}
+div.column{flex: auto; overflow-x: auto;}
+div.hanging-indent{margin-left: 1.5em; text-indent: -1.5em;}
+ul.task-list{list-style: none;}
+ul.task-list li input[type="checkbox"] {
+  width: 0.8em;
+  margin: 0 0.8em 0.2em -1.6em;
+  vertical-align: middle;
+}
+</style>
+
+
+<script src="../../site_libs/quarto-nav/quarto-nav.js"></script>
+<script src="../../site_libs/quarto-nav/headroom.min.js"></script>
+<script src="../../site_libs/clipboard/clipboard.min.js"></script>
+<script src="../../site_libs/quarto-search/autocomplete.umd.js"></script>
+<script src="../../site_libs/quarto-search/fuse.min.js"></script>
+<script src="../../site_libs/quarto-search/quarto-search.js"></script>
+<meta name="quarto:offset" content="../../">
+<script src="../../site_libs/quarto-html/quarto.js"></script>
+<script src="../../site_libs/quarto-html/popper.min.js"></script>
+<script src="../../site_libs/quarto-html/tippy.umd.min.js"></script>
+<script src="../../site_libs/quarto-html/anchor.min.js"></script>
+<link href="../../site_libs/quarto-html/tippy.css" rel="stylesheet">
+<link href="../../site_libs/quarto-html/quarto-syntax-highlighting.css" rel="stylesheet" id="quarto-text-highlighting-styles">
+<script src="../../site_libs/bootstrap/bootstrap.min.js"></script>
+<link href="../../site_libs/bootstrap/bootstrap-icons.css" rel="stylesheet">
+<link href="../../site_libs/bootstrap/bootstrap.min.css" rel="stylesheet" id="quarto-bootstrap" data-mode="light">
+<script id="quarto-search-options" type="application/json">{
+  "location": "navbar",
+  "copy-button": false,
+  "collapse-after": 3,
+  "panel-placement": "end",
+  "type": "overlay",
+  "limit": 20,
+  "language": {
+    "search-no-results-text": "No results",
+    "search-matching-documents-text": "matching documents",
+    "search-copy-link-title": "Copy link to search",
+    "search-hide-matches-text": "Hide additional matches",
+    "search-more-match-text": "more match in this document",
+    "search-more-matches-text": "more matches in this document",
+    "search-clear-button-title": "Clear",
+    "search-detached-cancel-button-title": "Cancel",
+    "search-submit-button-title": "Submit"
+  }
+}</script>
+<script src="https://code.jquery.com/jquery-3.2.1.min.js" integrity="sha256-hwg4gsxgFZhOsEEamdOYGBf13FyQuiTwlAQgxVSNgt4=" crossorigin="anonymous"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/d3/4.9.1/d3.min.js"></script>
+
+<style>
+  #custom-header {
+    height: 30vh;
+    width: 100%;
+    position:relative;
+    z-index:1;
+    margin:0 auto;
+  }
+</style>
+
+
+</head><body class="nav-fixed fullcontent"><header id="custom-header">
+  <div id="header_viz"></div>
+</header>
+
+<script>
+  $( document ).ready(() => {
+
+    //javascript for intro loader
+
+    //Function to immitate R's seq
+    function seq(start, end, increment) {
+      var length = Math.round((end - start)/increment);
+      return Array(length).fill().map((_, idx) => start + idx*increment)
+    }
+
+
+    //define the pdf of the distribution.
+    var logistic = function(x, theta, i) {
+        var mu = 0.1;
+        sign = 1
+        var y = sign * (1 / (Math.sqrt(2 * Math.PI) * theta)) * (1 / x) *
+            Math.exp(-Math.pow((Math.log(x) - mu), 2) / (2 * Math.pow(theta, 2)))
+        return y;
+    }
+
+    var width   = $("#custom-header").width() ,
+        height  = $("#custom-header").outerHeight(),
+        padding = 0,
+        numOfLines = 20,
+        xs = seq(0.01, 5, .01),
+        colors = ['rgb(165,0,38)', 'rgb(215,48,39)', 'rgb(244,109,67)', 'rgb(253,174,97)', 'rgb(254,224,144)',
+            'rgb(224,243,248)', 'rgb(171,217,233)', 'rgb(116,173,209)', 'rgb(69,117,180)', 'rgb(49,54,149)'
+        ];
+  
+    console.log("trying to run this shit.")
+    //define the svg.
+    var svg = d3.select("#header_viz").append("svg")
+        .attr("width", width)
+        .attr("height", height + 2 * padding)
+        .append("g")
+
+
+    var animatelines = function(whichline) {
+        d3.selectAll(".line").style("opacity","0.5");
+
+        //Select All of the lines and process them one by one
+        d3.selectAll(".line").each(function(d,i){
+            // Get the length of each line in turn
+            var totalLength = d3.select("#line" + i).node().getTotalLength();
+
+            d3.selectAll("#line" + i).attr("stroke-dasharray", totalLength + " " + totalLength)
+              .attr("stroke-dashoffset", totalLength)
+              .transition()
+              .duration(5000)
+              .delay(100*i)
+              .attr("stroke-dashoffset", 0)
+              .style("stroke-width",2)
+        })
+
+        writeGreeting()
+    }
+
+
+
+    // The Scales:
+    var thetaMap = d3.scaleLinear() //name the values from 0 to 20 and make their values from .1-.7
+        .domain([0, numOfLines])
+        .range([0.8, 0.085])
+
+    var yPos = d3.scaleLinear() //scalling for creating horizontal lines
+        .domain([0, numOfLines])
+        .range([0, 4])
+
+    var x = d3.scaleLinear()
+        .domain([0, 5])
+        .range([0, width]);
+
+    var y = d3.scaleLinear()
+        .domain([0, 4.5])
+        .range([height, 0]);
+
+    // The line functions:
+    var logistic = d3.range(numOfLines).map(function(i) {
+        var odd = true
+        var toReturn = xs.map(function(num) {
+            return {
+                "x": num,
+                "y": logistic(num, thetaMap(i), i)
+            }
+        })
+        return toReturn;
+    })
+
+    //make a greeting message for after the line animation.
+    function writeGreeting(){
+
+        var text_scale = width < 500 ? 1 : 0.65;
+        console.log(text_scale);
+        var intro_text = "Live Free or Dichotomize";
+
+        var title = svg.append("text")
+            .attr("font-size", 30)
+            .attr("font-family", "optima")
+            .attr("text-anchor", "end")
+            .attr("fill-opacity", 0.65)
+            .attr("x", width < 500 ? x(4.8) : x(4.2))
+            .attr("y", width < 500 ? y(3.12) : y(2.1) )
+            .attr("opacity", 0)
+            .text(intro_text)
+            .attr("font-size", function(d) { return ( text_scale*width - 8) / this.getComputedTextLength() * 24 + "px"; })
+            .text("")
+            .attr("opacity", 1);
+
+        (function drawGreeting (i, start, greeting) {
+            setTimeout(function () {
+
+                //add next letter to the greeting in progress
+                start += greeting[i];
+
+                title.html(start) //append this to the html
+
+                if (start.length < greeting.length) { //if the in progress greeting is less than the full, keep going.
+                    drawGreeting(i+1,start,greeting);      //  increment i and call again.
+                };
+            }, 100)
+        })(0, "", intro_text);
+    }
+
+
+    // The d3 stuff
+    var line = d3.line()
+        // .interpolate("basis")
+        .x(function(d) { return x(d.x); })
+        .y(function(d) { return y(d.y); });
+
+
+    svg.selectAll(".line")
+        .data(logistic)
+        .enter().append("path")
+        .attr("class", "line")
+        .attr("id" , function(d, i){ return "line" + i;})
+        .attr("d", line)
+        .style("stroke-width", 2)
+        .style("stroke", function(d, i) { return colors[i % 10] })
+        .style("opacity", 0)
+        .style("fill", "none")
+        .on("mouseover", function(d){
+            d3.select(this).style("stroke", "black")
+        })
+        .on("mouseout", function(d,i){
+            d3.select(this).style("stroke", colors[i % 10])
+        })
+
+    // var introMessage = isMobile ? "tap" : "click"
+    // var introMessage = "click"
+    //
+    // var intro = svg.append("text")
+    //     .text(introMessage)
+    //     .attr("font-size", 35)
+    //     .attr("font-family", "optima")
+    //     .attr("text-anchor", "middle")
+    //     .attr("x", x(2.5))
+    //     .attr("y", y(2.01))
+
+    //kick it off on a click. (or tap)
+    animatelines(2)
+    // d3.select("svg").on("click", function() { animatelines(2) })
+
+})
+
+</script>
+
+  <script src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-chtml-full.js" type="text/javascript"></script>
+
+
+
+
+
+<div id="quarto-search-results"></div>
+  <header id="quarto-header" class="headroom fixed-top">
+    <nav class="navbar navbar-expand-lg navbar-dark ">
+      <div class="navbar-container container-fluid">
+          <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarCollapse" aria-controls="navbarCollapse" aria-expanded="false" aria-label="Toggle navigation" onclick="if (window.quartoToggleHeadroom) { window.quartoToggleHeadroom(); }">
+  <span class="navbar-toggler-icon"></span>
+</button>
+          <div class="collapse navbar-collapse" id="navbarCollapse">
+            <ul class="navbar-nav navbar-nav-scroll me-auto">
+  <li class="nav-item">
+    <a class="nav-link" href="../../index.html">Home</a>
+  </li>  
+  <li class="nav-item">
+    <a class="nav-link" href="../../about.html">About</a>
+  </li>  
+</ul>
+              <div id="quarto-search" class="" title="Search"></div>
+          </div> <!-- /navcollapse -->
+      </div> <!-- /container-fluid -->
+    </nav>
+</header>
+<!-- content -->
+<header id="title-block-header" class="quarto-title-block default page-columns page-full">
+  <div class="quarto-title-banner page-columns page-full">
+    <div class="quarto-title column-body">
+      <h1 class="title">MCMC and the case of the spilled seeds</h1>
+                                <div class="quarto-categories">
+                <div class="quarto-category">interactive</div>
+                <div class="quarto-category">algorithms</div>
+                <div class="quarto-category">visualization</div>
+              </div>
+                  </div>
+  </div>
+    
+  
+  <div class="quarto-title-meta">
+
+      <div>
+      <div class="quarto-title-meta-heading">Author</div>
+      <div class="quarto-title-meta-contents">
+               <p>Nick Strayer </p>
+            </div>
+    </div>
+      
+      <div>
+      <div class="quarto-title-meta-heading">Published</div>
+      <div class="quarto-title-meta-contents">
+        <p class="date">October 14, 2017</p>
+      </div>
+    </div>
+      
+    </div>
+    
+  
+  </header><div id="quarto-content" class="quarto-container page-columns page-rows-contents page-layout-article page-navbar">
+<!-- sidebar -->
+<!-- margin-sidebar -->
+    
+<!-- main -->
+<main class="content quarto-banner-title-block" id="quarto-document-content">
+
+
+
+
+<p>Earlier this month I did a post on simulated annealing, an algorithm that I learned in the class I’m currently taking: <a href="http://stronginference.com/Bios8366/">Advanced Statistical Computing</a> taught by <a href="https://twitter.com/fonnesbeck">Chris Fonnesbeck</a> here at Vanderbilt. Recently we have moved on to more traditionally “statistics” algorithms, and one that Dr.&nbsp;Fonnesbeck is particularly well versed in, Markov-Chain Monte-Carlo (or MCMC). <label for="tufte-mn-" class="margin-toggle">⊕</label><input type="checkbox" id="tufte-mn-" class="margin-toggle"><span class="marginnote">Dr.&nbsp;Fonnesbeck is the creator of the very popular python library <a href="http://docs.pymc.io/">pymc</a>.</span> In this post I hope to elucidate what MCMC is, why we need it, and show how one particular way of doing it (the metropolis hastings sampler) works.</p>
+<section id="what-is-mcmc" class="level2">
+<h2 class="anchored" data-anchor-id="what-is-mcmc">What is MCMC?</h2>
+<p>If you want to sound smart, next time someone asks you what you like thinking about, say “Markov-Chain Monte-Carlo”, <label for="tufte-mn-" class="margin-toggle">⊕</label><input type="checkbox" id="tufte-mn-" class="margin-toggle"><span class="marginnote"><img src="http://nbwsblog.com/wp-content/uploads/2017/08/Marco-Polo.gif" class="img-fluid"> I always think of Marco Polo when I think of Monte-Carlo.</span> it’s a nice long mouthful of sciency soundings words that cause most people to zone out after about two syllables. What does it mean in normal language? <strong>Markov-Chain</strong> <label for="tufte-mn-" class="margin-toggle">⊕</label><input type="checkbox" id="tufte-mn-" class="margin-toggle"><span class="marginnote"><img src="https://cdn-images-1.medium.com/max/2000/1*my_udGVBPa4U5L6U_9m81Q.png" class="img-fluid"> Markov Chains are used in lots of cool places. For instance, <a href="https://chatbotslife.com/notes-on-remixing-noon-generative-text-and-markov-chains-84ff4ec23937">generating fake text.</a></span>refers to the idea of a sequence of draws such that the only thing that all you need to know about what the next value will be is the one just prior to it. Think of it like the mathematical equivalent to Dory from Finding Nemo, once she’s in a place she has no memory of where she was before and her next action is based only upon her current situation. <strong>Monte-Carlo</strong> refers to the act of estimating something by simulation. Basically the concept of, if you want to understand a process, repeat it a bunch of times and look at the aggregate behavior. <label for="tufte-mn-" class="margin-toggle">⊕</label><input type="checkbox" id="tufte-mn-" class="margin-toggle"><span class="marginnote">Another example of monte carlo methods in statistics can be seen in my previous post <a href="http://livefreeordichotomize.com/2016/12/24/wait-what-are-p-values/">Wait, what are P-values?</a> </span></p>
+</section>
+<section id="why-do-we-need-mcmc" class="level2">
+<h2 class="anchored" data-anchor-id="why-do-we-need-mcmc">Why do we need MCMC?</h2>
+<p>When I say ‘we’ in this context I mean Bayesian statisticians (which, while reading this article, you are), or statisticians that like to think in terms of probabilities instead of frequencies. I won’t go into the Bayesian vs Frequentest debate here as it would be way too long and boring, but there’s plenty of literature on it to be found. <label for="tufte-mn-" class="margin-toggle">⊕</label><input type="checkbox" id="tufte-mn-" class="margin-toggle"><span class="marginnote">Like all of life’s problems, stack overflow has a <a href="https://stats.stackexchange.com/questions/22/bayesian-and-frequentist-reasoning-in-plain-english">good answer.</a></span></p>
+<p>A huge reason why Bayesian statistics was so unpopular up until very recently is because when calculating the “posterior” distribution a large portion of the time the math simply wasn’t tractable. To see what I mean it helps to think about the form of a posterior distribution.</p>
+<p><span class="math display">\[\begin{aligned}
+\text{Posterior of parameter} &amp;= \frac{P(\text{data given parameter}) \cdot P(\text{parameter})}{\int P(\text{data given parameter}) \cdot P(\text{parameter})}
+\end{aligned}\]</span></p>
+<p>The top of this equation is rather straightforward, you simply multiply the distribution you believe your data is derived from by the distribution you believe the true parameter of interest follows. E.g. the density function of the normal distribution multiplied by the density function of another normal representing the distribution of the mean of the data’s distribution. The problem comes with the integral below. Since it’s integrating over the entire possible space of the parameter of interest it is simply a constant, but finding what constant it is is tricky. Even if you did some optimization method to find it, you still have the problem that most of the math you would want to do with the posterior distribution involves taking an integral over the same values again so just having the normalizing constant is not of much help. <label for="tufte-mn-" class="margin-toggle">⊕</label><input type="checkbox" id="tufte-mn-" class="margin-toggle"><span class="marginnote">One of my mottos in life is, ‘if the math is at all hard, just simulate it’, which turns out to be rather helpful in a lot of statistics.</span></p>
+<p>What MCMC does to solve this is, using the numerator of that posterior (also known as the un-normalized posterior), it generates data that fits the distribution, once you have a bunch of samples of data from a given distribution you can do almost any inference you would desire. Want to know how often you would see parameter values greater than <span class="math inline">\(p\)</span>? Just take the samples MCMC generated for you and count how many were above <span class="math inline">\(p\)</span> and divide by the total number of samples.</p>
+</section>
+<section id="how-does-mcmc-work" class="level2">
+<h2 class="anchored" data-anchor-id="how-does-mcmc-work">How does MCMC work?</h2>
+<p>There are a few ways of performing MCMC and the way I am going to demonstrate here (Metropolis-Hastings) is not the state of the art,<label for="tufte-mn-" class="margin-toggle">⊕</label><input type="checkbox" id="tufte-mn-" class="margin-toggle"><span class="marginnote">For a fantastic overview of the more cutting edge Hamiltonian Monte-Carlo methods, I recomend taking a look at the lecture notes for my class <a href="https://github.com/fonnesbeck/Bios8366/blob/master/notebooks/Section4_4-Hamiltonian-Monte-Carlo.ipynb">on github.</a> </span> however, it is the most straightforward and intuitive method of MCMC and I think is valuable to understand. Essentially the algorithm works like this (I am going to demonstrate for a single parameter but the concept extends to multiple dimensions with the exact same logic):</p>
+<ol type="1">
+<li>Choose a random initial value of the parameter of interest <span class="math inline">\(\theta_0\)</span></li>
+<li>Calculate the value of your un-normalized posterior multiplied by this <span class="math inline">\(\theta_0\)</span> and remember it (<span class="math inline">\(P_0\)</span>).</li>
+<li>Randomly jump from <span class="math inline">\(\theta_0\)</span> to some new value nearby, <span class="math inline">\(\theta_1\)</span>.</li>
+<li>Calculate the value of your un-normalized posterior at this new location, <span class="math inline">\(P_1\)</span>.</li>
+<li>Choose to move to <span class="math inline">\(\theta_1\)</span> with probability proportional to how much better or worse <span class="math inline">\(P_1\)</span> is than <span class="math inline">\(P_0\)</span>, if you don’t move make your next <span class="math inline">\(\theta\)</span> a duplicate of <span class="math inline">\(\theta_0\)</span>.</li>
+<li>Repeat steps 3-5 for a while, recording each step’s <span class="math inline">\(\theta_i\)</span>.</li>
+<li>Treat all of your recorded <span class="math inline">\(\theta\)</span>s as observations from the posterior distribution and relish in the wonderful bayesianness of this whole endeavor.</li>
+</ol>
+<p>Like all good algorithms there are knobs to turn. For instance, how big of a jump your algorithm takes at any given step is very important. Too large and it will almost never be accepted and the algorithm will take forever to converge to the posterior, too small and the steps nearby each other will be too correlated and the algorithm will focus too much on a given area of the posterior. For metropolis hastings the sweet spot seems to be making your jumps distributed widely enough to have roughly 23% of the proposals accepted. <label for="tufte-mn-" class="margin-toggle">⊕</label><input type="checkbox" id="tufte-mn-" class="margin-toggle"><span class="marginnote"><a href="http://probability.ca/jeff/ftpdir/mylene2.pdf">Optimal Acceptance Rates for Metropolis Algorithms:Moving Beyond 0.234</a> is a good paper to read if you’re interested in how these things are calculated and why that single number is still not perfect.</span></p>
+<p>However, I’ve just spewed a bunch of words and complex math terms at you, and I had the same thing done to me many times before I truly understood the algorithm. What got me to understand it? Playing with the knobs and seeing how it works. I’ve tried to distill the algorithm to its fundamental parts below for you to tinker with yourself.</p>
+</section>
+<section id="problem-setup" class="level2">
+<h2 class="anchored" data-anchor-id="problem-setup">Problem Setup</h2>
+<p>Let’s say you have a bird feeder on your porch and you have two bird species that visit it: a Cardinal <label for="tufte-mn-" class="margin-toggle">⊕</label><input type="checkbox" id="tufte-mn-" class="margin-toggle"><span class="marginnote"><a href="https://www.allaboutbirds.org/guide/Northern_Cardinal/id"><img src="https://www.allaboutbirds.org/guide/PHOTO/LARGE/northern_cardinal_1.jpg" class="img-fluid"></a> Cardinal</span> and a Carolina Wren<label for="tufte-mn-" class="margin-toggle">⊕</label><input type="checkbox" id="tufte-mn-" class="margin-toggle"><span class="marginnote"><a href="https://www.allaboutbirds.org/guide/Carolina_Wren/id"><img src="https://www.allaboutbirds.org/guide/PHOTO/LARGE/carolina_wren_glamor.jpg" class="img-fluid"></a> Carolina Wren</span>. You have noticed that there tend to be a lot of seeds spilled on the ground around the feeder. This annoys you because you spent a lot of money on those seeds and those ungrateful birds are wasting a lot of them. You decide to Google the problem and find a handy website that lays out the seed spilling habits of both the Cardinal and the Carolina Wren. This site says that the Cardinal’s seed spillage amount per feeding follows a normal distribution with a mean of 65 and a standard deviation of 10, and the Carolina Wren’s happen to follow a normal distribution with a mean of 85 seeds and a standard deviation of 10 as well. <label for="tufte-mn-" class="margin-toggle">⊕</label><input type="checkbox" id="tufte-mn-" class="margin-toggle"><span class="marginnote">Sometimes the birds carry seeds with them and thus can possibly spill negative seeds, so this truly is normal…</span></p>
+<p>The thing is, you want to know what the makeup of your bird spillers are so you can know which bird species to be more mad at. You put a scale beneath the feeder that can automatically measure the spillage from a single feeding. <label for="tufte-mn-" class="margin-toggle">⊕</label><input type="checkbox" id="tufte-mn-" class="margin-toggle"><span class="marginnote">It’s a single bird feeder so only one bird feeds at a time.</span> So you have data on how much seed was spilled at each feeding, and you know the distribution of spillage for each bird species, but you have a job so you can’t actually sit there and watch the birds feed, plus you understand that the real distribution of birds feeding probably is just that, a distribution. What can you do? You can do Bayesian statistics!</p>
+<p>The data likelihood is a normal mixture: <span class="math inline">\(L(\delta|\text{seeds}) = \delta N(\text{Cardinal}) + (1 - \delta)N(\text{Carolina Wren})\)</span></p>
+<p>You don’t have any real idea about which bird will be more likely so your prior is a uniform distribution over the range 0 and 1 (<span class="math inline">\(U(0,1)\)</span>).</p>
+<p><label for="tufte-mn-" class="margin-toggle">⊕</label><input type="checkbox" id="tufte-mn-" class="margin-toggle"><span class="marginnote">Turns out they actually make <a href="https://www.uniquebirdhouseboutique.com/category/bird-accessories/seed-catchers-birdseed-tray/">products to catch spilled seeds</a> so this convoluted example isn’t too crazy. <img src="https://www.uniquebirdhouseboutique.com/wp-content/uploads/2013/04/seedhoop.jpg" class="img-fluid"></span></p>
+<p>Your proposal distribution is another random uniform with a width of 2, aka <span class="math inline">\(U(-1,1)\)</span>.</p>
+<p>You can fiddle with the sliders below to change the true mean of seeds dropped by two birds, the true percentage of times the Cardinal is at the feeder, the size of your observation data and how wide your proposals are. Play around with the dials to see how the algorithm reacts. The plot below will show the real-time results of MCMC running including the current 95% credible interval (aka what people think a confidence interval is) and the acceptance rate. The algorithms proposed values for the proportion that are rejected are displayed as red circles.</p>
+<link rel="stylesheet" href="../../js/mcmcExplainer/style.css">
+<div class="fullwidth">
+<div id="data_plot">
+
+</div>
+<div id="data_histogram">
+
+</div>
+<div id="sample_trace">
+
+</div>
+<div id="sample_histogram">
+
+</div>
+<div id="trace_viz">
+
+</div>
+</div>
+<script src="../../js/mcmcExplainer/bundle.js"></script>
+<p>Here are a few experiments you may want to run to explore the algorithm’s behavior:</p>
+<ul>
+<li>Can you fool the credible interval? Try setting the true means of the two birds very close and your number of observations really low, intuitively this will be much harder to discern between each bird in the data.</li>
+<li>See how increasing the number of observations results in a skinnier posterior.</li>
+<li>If you’re really adventurous, try forking the code for this simulation from <a href="https://github.com/nstrayer/mcmcDemo">github</a> and switching the prior to a beta distribution in <a href="https://github.com/nstrayer/mcmcDemo/blob/master/src/main.js#L27-L28">this file</a>. The beta will allow you to give opinionated priors about the distribution of the parameter of interest, but sometimes at a cost of accuracy.</li>
+</ul>
+<p><strong>Still confused?</strong> MCMC is non-trivial to say the least, so don’t feel bad if you don’t get it. Please let me know in the comments or on <a href="https://www.twitter.com/NicholasStrayer">twitter</a> what is confusing so I can try and make this explanation better!</p>
+
+
+</section>
+
+</main> <!-- /main -->
+<script id="quarto-html-after-body" type="application/javascript">
+window.document.addEventListener("DOMContentLoaded", function (event) {
+  const toggleBodyColorMode = (bsSheetEl) => {
+    const mode = bsSheetEl.getAttribute("data-mode");
+    const bodyEl = window.document.querySelector("body");
+    if (mode === "dark") {
+      bodyEl.classList.add("quarto-dark");
+      bodyEl.classList.remove("quarto-light");
+    } else {
+      bodyEl.classList.add("quarto-light");
+      bodyEl.classList.remove("quarto-dark");
+    }
+  }
+  const toggleBodyColorPrimary = () => {
+    const bsSheetEl = window.document.querySelector("link#quarto-bootstrap");
+    if (bsSheetEl) {
+      toggleBodyColorMode(bsSheetEl);
+    }
+  }
+  toggleBodyColorPrimary();  
+  const icon = "";
+  const anchorJS = new window.AnchorJS();
+  anchorJS.options = {
+    placement: 'right',
+    icon: icon
+  };
+  anchorJS.add('.anchored');
+  const clipboard = new window.ClipboardJS('.code-copy-button', {
+    target: function(trigger) {
+      return trigger.previousElementSibling;
+    }
+  });
+  clipboard.on('success', function(e) {
+    // button target
+    const button = e.trigger;
+    // don't keep focus
+    button.blur();
+    // flash "checked"
+    button.classList.add('code-copy-button-checked');
+    var currentTitle = button.getAttribute("title");
+    button.setAttribute("title", "Copied!");
+    setTimeout(function() {
+      button.setAttribute("title", currentTitle);
+      button.classList.remove('code-copy-button-checked');
+    }, 1000);
+    // clear code selection
+    e.clearSelection();
+  });
+  function tippyHover(el, contentFn) {
+    const config = {
+      allowHTML: true,
+      content: contentFn,
+      maxWidth: 500,
+      delay: 100,
+      arrow: false,
+      appendTo: function(el) {
+          return el.parentElement;
+      },
+      interactive: true,
+      interactiveBorder: 10,
+      theme: 'quarto',
+      placement: 'bottom-start'
+    };
+    window.tippy(el, config); 
+  }
+  const noterefs = window.document.querySelectorAll('a[role="doc-noteref"]');
+  for (var i=0; i<noterefs.length; i++) {
+    const ref = noterefs[i];
+    tippyHover(ref, function() {
+      // use id or data attribute instead here
+      let href = ref.getAttribute('data-footnote-href') || ref.getAttribute('href');
+      try { href = new URL(href).hash; } catch {}
+      const id = href.replace(/^#\/?/, "");
+      const note = window.document.getElementById(id);
+      return note.innerHTML;
+    });
+  }
+  var bibliorefs = window.document.querySelectorAll('a[role="doc-biblioref"]');
+  for (var i=0; i<bibliorefs.length; i++) {
+    const ref = bibliorefs[i];
+    const cites = ref.parentNode.getAttribute('data-cites').split(' ');
+    tippyHover(ref, function() {
+      var popup = window.document.createElement('div');
+      cites.forEach(function(cite) {
+        var citeDiv = window.document.createElement('div');
+        citeDiv.classList.add('hanging-indent');
+        citeDiv.classList.add('csl-entry');
+        var biblioDiv = window.document.getElementById('ref-' + cite);
+        if (biblioDiv) {
+          citeDiv.innerHTML = biblioDiv.innerHTML;
+        }
+        popup.appendChild(citeDiv);
+      });
+      return popup.innerHTML;
+    });
+  }
+});
+</script>
+<script src="https://utteranc.es/client.js" repo="lfod/real-blog" issue-term="pathname" theme="github-light" crossorigin="anonymous" async="">
+</script>
+</div> <!-- /content -->
+
+
+
+</body></html>

@@ -1,0 +1,566 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml" lang="en" xml:lang="en"><head>
+
+<meta charset="utf-8">
+<meta name="generator" content="quarto-1.1.251">
+
+<meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
+
+<meta name="author" content="Lucy D’Agostino McGowan">
+<meta name="dcterms.date" content="2017-01-27">
+
+<title>Yoga for modeling</title>
+<style>
+code{white-space: pre-wrap;}
+span.smallcaps{font-variant: small-caps;}
+div.columns{display: flex; gap: min(4vw, 1.5em);}
+div.column{flex: auto; overflow-x: auto;}
+div.hanging-indent{margin-left: 1.5em; text-indent: -1.5em;}
+ul.task-list{list-style: none;}
+ul.task-list li input[type="checkbox"] {
+  width: 0.8em;
+  margin: 0 0.8em 0.2em -1.6em;
+  vertical-align: middle;
+}
+pre > code.sourceCode { white-space: pre; position: relative; }
+pre > code.sourceCode > span { display: inline-block; line-height: 1.25; }
+pre > code.sourceCode > span:empty { height: 1.2em; }
+.sourceCode { overflow: visible; }
+code.sourceCode > span { color: inherit; text-decoration: inherit; }
+div.sourceCode { margin: 1em 0; }
+pre.sourceCode { margin: 0; }
+@media screen {
+div.sourceCode { overflow: auto; }
+}
+@media print {
+pre > code.sourceCode { white-space: pre-wrap; }
+pre > code.sourceCode > span { text-indent: -5em; padding-left: 5em; }
+}
+pre.numberSource code
+  { counter-reset: source-line 0; }
+pre.numberSource code > span
+  { position: relative; left: -4em; counter-increment: source-line; }
+pre.numberSource code > span > a:first-child::before
+  { content: counter(source-line);
+    position: relative; left: -1em; text-align: right; vertical-align: baseline;
+    border: none; display: inline-block;
+    -webkit-touch-callout: none; -webkit-user-select: none;
+    -khtml-user-select: none; -moz-user-select: none;
+    -ms-user-select: none; user-select: none;
+    padding: 0 4px; width: 4em;
+    color: #aaaaaa;
+  }
+pre.numberSource { margin-left: 3em; border-left: 1px solid #aaaaaa;  padding-left: 4px; }
+div.sourceCode
+  {   }
+@media screen {
+pre > code.sourceCode > span > a:first-child::before { text-decoration: underline; }
+}
+code span.al { color: #ff0000; font-weight: bold; } /* Alert */
+code span.an { color: #60a0b0; font-weight: bold; font-style: italic; } /* Annotation */
+code span.at { color: #7d9029; } /* Attribute */
+code span.bn { color: #40a070; } /* BaseN */
+code span.bu { color: #008000; } /* BuiltIn */
+code span.cf { color: #007020; font-weight: bold; } /* ControlFlow */
+code span.ch { color: #4070a0; } /* Char */
+code span.cn { color: #880000; } /* Constant */
+code span.co { color: #60a0b0; font-style: italic; } /* Comment */
+code span.cv { color: #60a0b0; font-weight: bold; font-style: italic; } /* CommentVar */
+code span.do { color: #ba2121; font-style: italic; } /* Documentation */
+code span.dt { color: #902000; } /* DataType */
+code span.dv { color: #40a070; } /* DecVal */
+code span.er { color: #ff0000; font-weight: bold; } /* Error */
+code span.ex { } /* Extension */
+code span.fl { color: #40a070; } /* Float */
+code span.fu { color: #06287e; } /* Function */
+code span.im { color: #008000; font-weight: bold; } /* Import */
+code span.in { color: #60a0b0; font-weight: bold; font-style: italic; } /* Information */
+code span.kw { color: #007020; font-weight: bold; } /* Keyword */
+code span.op { color: #666666; } /* Operator */
+code span.ot { color: #007020; } /* Other */
+code span.pp { color: #bc7a00; } /* Preprocessor */
+code span.sc { color: #4070a0; } /* SpecialChar */
+code span.ss { color: #bb6688; } /* SpecialString */
+code span.st { color: #4070a0; } /* String */
+code span.va { color: #19177c; } /* Variable */
+code span.vs { color: #4070a0; } /* VerbatimString */
+code span.wa { color: #60a0b0; font-weight: bold; font-style: italic; } /* Warning */
+</style>
+
+
+<script src="../../site_libs/quarto-nav/quarto-nav.js"></script>
+<script src="../../site_libs/quarto-nav/headroom.min.js"></script>
+<script src="../../site_libs/clipboard/clipboard.min.js"></script>
+<script src="../../site_libs/quarto-search/autocomplete.umd.js"></script>
+<script src="../../site_libs/quarto-search/fuse.min.js"></script>
+<script src="../../site_libs/quarto-search/quarto-search.js"></script>
+<meta name="quarto:offset" content="../../">
+<script src="../../site_libs/quarto-html/quarto.js"></script>
+<script src="../../site_libs/quarto-html/popper.min.js"></script>
+<script src="../../site_libs/quarto-html/tippy.umd.min.js"></script>
+<script src="../../site_libs/quarto-html/anchor.min.js"></script>
+<link href="../../site_libs/quarto-html/tippy.css" rel="stylesheet">
+<link href="../../site_libs/quarto-html/quarto-syntax-highlighting.css" rel="stylesheet" id="quarto-text-highlighting-styles">
+<script src="../../site_libs/bootstrap/bootstrap.min.js"></script>
+<link href="../../site_libs/bootstrap/bootstrap-icons.css" rel="stylesheet">
+<link href="../../site_libs/bootstrap/bootstrap.min.css" rel="stylesheet" id="quarto-bootstrap" data-mode="light">
+<script id="quarto-search-options" type="application/json">{
+  "location": "navbar",
+  "copy-button": false,
+  "collapse-after": 3,
+  "panel-placement": "end",
+  "type": "overlay",
+  "limit": 20,
+  "language": {
+    "search-no-results-text": "No results",
+    "search-matching-documents-text": "matching documents",
+    "search-copy-link-title": "Copy link to search",
+    "search-hide-matches-text": "Hide additional matches",
+    "search-more-match-text": "more match in this document",
+    "search-more-matches-text": "more matches in this document",
+    "search-clear-button-title": "Clear",
+    "search-detached-cancel-button-title": "Cancel",
+    "search-submit-button-title": "Submit"
+  }
+}</script>
+<script src="https://code.jquery.com/jquery-3.2.1.min.js" integrity="sha256-hwg4gsxgFZhOsEEamdOYGBf13FyQuiTwlAQgxVSNgt4=" crossorigin="anonymous"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/d3/4.9.1/d3.min.js"></script>
+
+<style>
+  #custom-header {
+    height: 30vh;
+    width: 100%;
+    position:relative;
+    z-index:1;
+    margin:0 auto;
+  }
+</style>
+
+
+</head><body class="nav-fixed fullcontent"><header id="custom-header">
+  <div id="header_viz"></div>
+</header>
+
+<script>
+  $( document ).ready(() => {
+
+    //javascript for intro loader
+
+    //Function to immitate R's seq
+    function seq(start, end, increment) {
+      var length = Math.round((end - start)/increment);
+      return Array(length).fill().map((_, idx) => start + idx*increment)
+    }
+
+
+    //define the pdf of the distribution.
+    var logistic = function(x, theta, i) {
+        var mu = 0.1;
+        sign = 1
+        var y = sign * (1 / (Math.sqrt(2 * Math.PI) * theta)) * (1 / x) *
+            Math.exp(-Math.pow((Math.log(x) - mu), 2) / (2 * Math.pow(theta, 2)))
+        return y;
+    }
+
+    var width   = $("#custom-header").width() ,
+        height  = $("#custom-header").outerHeight(),
+        padding = 0,
+        numOfLines = 20,
+        xs = seq(0.01, 5, .01),
+        colors = ['rgb(165,0,38)', 'rgb(215,48,39)', 'rgb(244,109,67)', 'rgb(253,174,97)', 'rgb(254,224,144)',
+            'rgb(224,243,248)', 'rgb(171,217,233)', 'rgb(116,173,209)', 'rgb(69,117,180)', 'rgb(49,54,149)'
+        ];
+  
+    console.log("trying to run this shit.")
+    //define the svg.
+    var svg = d3.select("#header_viz").append("svg")
+        .attr("width", width)
+        .attr("height", height + 2 * padding)
+        .append("g")
+
+
+    var animatelines = function(whichline) {
+        d3.selectAll(".line").style("opacity","0.5");
+
+        //Select All of the lines and process them one by one
+        d3.selectAll(".line").each(function(d,i){
+            // Get the length of each line in turn
+            var totalLength = d3.select("#line" + i).node().getTotalLength();
+
+            d3.selectAll("#line" + i).attr("stroke-dasharray", totalLength + " " + totalLength)
+              .attr("stroke-dashoffset", totalLength)
+              .transition()
+              .duration(5000)
+              .delay(100*i)
+              .attr("stroke-dashoffset", 0)
+              .style("stroke-width",2)
+        })
+
+        writeGreeting()
+    }
+
+
+
+    // The Scales:
+    var thetaMap = d3.scaleLinear() //name the values from 0 to 20 and make their values from .1-.7
+        .domain([0, numOfLines])
+        .range([0.8, 0.085])
+
+    var yPos = d3.scaleLinear() //scalling for creating horizontal lines
+        .domain([0, numOfLines])
+        .range([0, 4])
+
+    var x = d3.scaleLinear()
+        .domain([0, 5])
+        .range([0, width]);
+
+    var y = d3.scaleLinear()
+        .domain([0, 4.5])
+        .range([height, 0]);
+
+    // The line functions:
+    var logistic = d3.range(numOfLines).map(function(i) {
+        var odd = true
+        var toReturn = xs.map(function(num) {
+            return {
+                "x": num,
+                "y": logistic(num, thetaMap(i), i)
+            }
+        })
+        return toReturn;
+    })
+
+    //make a greeting message for after the line animation.
+    function writeGreeting(){
+
+        var text_scale = width < 500 ? 1 : 0.65;
+        console.log(text_scale);
+        var intro_text = "Live Free or Dichotomize";
+
+        var title = svg.append("text")
+            .attr("font-size", 30)
+            .attr("font-family", "optima")
+            .attr("text-anchor", "end")
+            .attr("fill-opacity", 0.65)
+            .attr("x", width < 500 ? x(4.8) : x(4.2))
+            .attr("y", width < 500 ? y(3.12) : y(2.1) )
+            .attr("opacity", 0)
+            .text(intro_text)
+            .attr("font-size", function(d) { return ( text_scale*width - 8) / this.getComputedTextLength() * 24 + "px"; })
+            .text("")
+            .attr("opacity", 1);
+
+        (function drawGreeting (i, start, greeting) {
+            setTimeout(function () {
+
+                //add next letter to the greeting in progress
+                start += greeting[i];
+
+                title.html(start) //append this to the html
+
+                if (start.length < greeting.length) { //if the in progress greeting is less than the full, keep going.
+                    drawGreeting(i+1,start,greeting);      //  increment i and call again.
+                };
+            }, 100)
+        })(0, "", intro_text);
+    }
+
+
+    // The d3 stuff
+    var line = d3.line()
+        // .interpolate("basis")
+        .x(function(d) { return x(d.x); })
+        .y(function(d) { return y(d.y); });
+
+
+    svg.selectAll(".line")
+        .data(logistic)
+        .enter().append("path")
+        .attr("class", "line")
+        .attr("id" , function(d, i){ return "line" + i;})
+        .attr("d", line)
+        .style("stroke-width", 2)
+        .style("stroke", function(d, i) { return colors[i % 10] })
+        .style("opacity", 0)
+        .style("fill", "none")
+        .on("mouseover", function(d){
+            d3.select(this).style("stroke", "black")
+        })
+        .on("mouseout", function(d,i){
+            d3.select(this).style("stroke", colors[i % 10])
+        })
+
+    // var introMessage = isMobile ? "tap" : "click"
+    // var introMessage = "click"
+    //
+    // var intro = svg.append("text")
+    //     .text(introMessage)
+    //     .attr("font-size", 35)
+    //     .attr("font-family", "optima")
+    //     .attr("text-anchor", "middle")
+    //     .attr("x", x(2.5))
+    //     .attr("y", y(2.01))
+
+    //kick it off on a click. (or tap)
+    animatelines(2)
+    // d3.select("svg").on("click", function() { animatelines(2) })
+
+})
+
+</script>
+
+  <script src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-chtml-full.js" type="text/javascript"></script>
+
+
+
+
+
+<div id="quarto-search-results"></div>
+  <header id="quarto-header" class="headroom fixed-top">
+    <nav class="navbar navbar-expand-lg navbar-dark ">
+      <div class="navbar-container container-fluid">
+          <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarCollapse" aria-controls="navbarCollapse" aria-expanded="false" aria-label="Toggle navigation" onclick="if (window.quartoToggleHeadroom) { window.quartoToggleHeadroom(); }">
+  <span class="navbar-toggler-icon"></span>
+</button>
+          <div class="collapse navbar-collapse" id="navbarCollapse">
+            <ul class="navbar-nav navbar-nav-scroll me-auto">
+  <li class="nav-item">
+    <a class="nav-link" href="../../index.html">Home</a>
+  </li>  
+  <li class="nav-item">
+    <a class="nav-link" href="../../about.html">About</a>
+  </li>  
+</ul>
+              <div id="quarto-search" class="" title="Search"></div>
+          </div> <!-- /navcollapse -->
+      </div> <!-- /container-fluid -->
+    </nav>
+</header>
+<!-- content -->
+<header id="title-block-header" class="quarto-title-block default page-columns page-full">
+  <div class="quarto-title-banner page-columns page-full">
+    <div class="quarto-title column-body">
+      <h1 class="title">Yoga for modeling</h1>
+                      </div>
+  </div>
+    
+  
+  <div class="quarto-title-meta">
+
+      <div>
+      <div class="quarto-title-meta-heading">Author</div>
+      <div class="quarto-title-meta-contents">
+               <p>Lucy D’Agostino McGowan </p>
+            </div>
+    </div>
+      
+      <div>
+      <div class="quarto-title-meta-heading">Published</div>
+      <div class="quarto-title-meta-contents">
+        <p class="date">January 27, 2017</p>
+      </div>
+    </div>
+      
+    </div>
+    
+  
+  </header><div id="quarto-content" class="quarto-container page-columns page-rows-contents page-layout-article page-navbar">
+<!-- sidebar -->
+<!-- margin-sidebar -->
+    
+<!-- main -->
+<main class="content quarto-banner-title-block" id="quarto-document-content">
+
+
+
+
+<p>A New Year’s resolution for all of our models: get more flexible!</p>
+<p><em>As an aside, I’m better at implementing yoga for my models than yoga for myself, most of the time I end up like this:</em></p>
+<p><img src="http://imgs.xkcd.com/comics/picture_a_grassy_field.png" class="img-fluid"></p>
+<p>Anyways, let’s make our models flexible! By flexible, we mean let’s be more intentional about fitting nonlinear parametric models.</p>
+<p>##What do you mean by nonlinear modeling</p>
+<p>By nonlinear modeling, we mean fitting parametric models with nonlinear terms. In particular, Professor Harrell suggests restricted cubic splines (more on this below). So by this definition, you could be fitting a “linear” model (as on ordinary least squares), with nonlinear terms. We brought up in class that this can cause some confusion, and setting on calling it “Gaussian regression” So you heard it here first, folks, from now on, refer to your ordinary least squares models as “Gaussian”.</p>
+<p style="text-align:right; color:#EB6864; font-size: 10pt;  LINE-HEIGHT:15px;">
+Update: Professor Harrell proofed this and suggested <br> “what about just calling it OLS?”, so nevermind on <br> Gaussian, it had a good run…
+</p>
+<p>I spent a really long time trying to think up a whitty pun/slogan for this name change, alas, all you get is this:</p>
+<p><img src="http://imgs.xkcd.com/comics/math_paper.png" class="img-fluid"></p>
+<p><em>If you have a particulary clever slogan, <a href="http://twitter.com/LucyStats">send it to me.</a></em></p>
+<p style="text-align:right; color:#EB6864; font-size: 10pt;  LINE-HEIGHT:15px;">
+Update 2: Actually! We’re putting it to a vote. <br> Gaussian may have another chance. <br> Will update in a further post.
+</p>
+<p>To do this nonlinear modeling, restricted cubic splines are suggested because</p>
+<ol type="1">
+<li><p><strong>they allow for flexibility without costing too many degrees of freedom</strong> (it only costs <span class="math inline">\(k-1\)</span> degrees of freedom, here <span class="math inline">\(k\)</span> is the total number of knots) <em>for comparison, unrestricted cubic splines require <span class="math inline">\(k+3\)</span> parameters to be estimated</em></p></li>
+<li><p><strong>they force linearity in the tails</strong> (that is before the first knot and after the last knot) <em>this is good because cubic spline functions can have weird behavior in the tails</em></p></li>
+<li><p><strong>regression coeffcients can be estimated using standard techniques</strong></p></li>
+<li><p><strong>there are easy functions in <code>R</code> to do it</strong> Harrell’s <code>rms</code> package makes restricted cubic spines very easy to implement. Simply wrap your predictor in the <code>rcs()</code> function within your model statement. For example, if I were to fit a Gaussian model (see what I did there 😉), I would run the following code to fit <code>x</code> flexibly with 4 knots:</p></li>
+</ol>
+<pre><code>library('rms')
+k &lt;- 4
+ols(y~rcs(x, k))</code></pre>
+<p>##Why should I care about nonlinear modeling</p>
+<p>Fitting flexible models is an excellent way to avoid having to test a whole bunch of assumptions that are hard to prove/disprove! Additionally, once you’ve fit a model, changing it based on “model checking” procedures has the danger of inflating your type 1 error 😱. We discuss an excellent paper by <a href="http://onlinelibrary.wiley.com/doi/10.1002/sim.4780100504/full">Grambsch and O’Brien</a> demonstrating that testing for nonlinear effects &amp; then proceeding to drop from from the model if the test is not significant has real implications for the type 1 error. Might as well just model everything flexibly from the get-go! <em>But what about my degrees of freedom? ah yes, the next section is just for you!</em></p>
+<p>##What if I don’t have enough degrees of freedom for nonlinear modeling</p>
+<p>In predictive modeling, we are always concerned with <em>overfitting</em>, or creating models that describe the population we’ve sampled very well, but are not generalizable. In the extreme case, you can imagine if you fit a model with 50 participants and included 50 covariates, one for each participant, you could perfectly predict any outcome (but that would be a pretty silly model). In order to avoid overfitting disasters, there are useful rules of thumb we try to follow. In general, we try to fit models that have around <span class="math inline">\(m/15\)</span> covariates, where <span class="math inline">\(m\)</span> varies depending on the type of model in the following manner (for those following along, this is on page 74 of <a href="https://www.amazon.com/Regression-Modeling-Strategies-Applications-Statistics/dp/3319194240/ref=sr_1_1?ie=UTF8&amp;qid=1484713166&amp;sr=8-1&amp;keywords=regression+modeling+strategies">Regression Modeling Strategies</a>).</p>
+<table class="table">
+<thead>
+<tr class="header">
+<th>Response</th>
+<th>m</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td>continuous</td>
+<td>the total sample size</td>
+</tr>
+<tr class="even">
+<td>binary</td>
+<td># of events</td>
+</tr>
+<tr class="odd">
+<td>survival</td>
+<td># of failures</td>
+</tr>
+</tbody>
+</table>
+<p>Now that we’ve convinced you that degrees of freedom matter, I’m sure you’re thinking “but nonlinear terms add degrees of freedom!” True. Restricted cubic splines are a bit less aggressive that regular cubic splines in terms of degrees of freedom usage, but even still sometimes that is not enough. In those cases, we need to determine how to best utilize our degrees of freedom. Professor Harrell recommends the following (page 67 of <a href="https://www.amazon.com/Regression-Modeling-Strategies-Applications-Statistics/dp/3319194240/ref=sr_1_1?ie=UTF8&amp;qid=1484713166&amp;sr=8-1&amp;keywords=regression+modeling+strategies">RMS</a>):</p>
+<ul>
+<li>Let all continuous predictors be represented as restricted cubic splines</li>
+<li>Let all categorical predictors retain their original categories except for pooling of very low prevalence categories (e.g., ones containing &lt; 6 observations).</li>
+<li>Fit this general main effects model.</li>
+<li>Compute the partial <span class="math inline">\(\chi^2\)</span> statistic for testing the association of each predictor with the response, adjusted for all other predictors.</li>
+<li>Sort the partial association statistics in descending order.</li>
+<li>Assign more degrees of freedom for variables high on the list (ie allow for nonlinear terms/more knots for highly ranked covariates)</li>
+</ul>
+<p><span style="color:#EB6864; font-size: 15pt"> VERY IMPORTANT: Make certain that tests of nonlinearity are not revealed as this would bias the analyst.</span></p>
+<p>Here is a little snippet of <code>R</code> code to do just that in a logistic regression case. We are using the <code>support2</code> dataset as an example.</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb2"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb2-1"><a href="#cb2-1" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(<span class="st">'rms'</span>)</span>
+<span id="cb2-2"><a href="#cb2-2" aria-hidden="true" tabindex="-1"></a><span class="fu">getHdata</span>(support2)</span>
+<span id="cb2-3"><a href="#cb2-3" aria-hidden="true" tabindex="-1"></a>f <span class="ot">&lt;-</span> <span class="fu">lrm</span>(hospdead <span class="sc">~</span> <span class="fu">rcs</span>(age,<span class="dv">5</span>) <span class="sc">+</span> <span class="fu">rcs</span>(temp, <span class="dv">5</span>) <span class="sc">+</span> <span class="fu">rcs</span>(hrt, <span class="dv">5</span>) <span class="sc">+</span> <span class="fu">rcs</span>(pafi, <span class="dv">5</span>) <span class="sc">+</span> edu <span class="sc">+</span> sex, <span class="at">data =</span> support2)</span>
+<span id="cb2-4"><a href="#cb2-4" aria-hidden="true" tabindex="-1"></a><span class="fu">plot</span>(<span class="fu">anova</span>(f))</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output-display">
+<p><img src="index_files/figure-html/unnamed-chunk-2-1.png" class="img-fluid" width="672"></p>
+</div>
+</div>
+<p>And there you have it.</p>
+<p><img src="https://raw.githubusercontent.com/LucyMcGowan/lucymcgowan.github.io/master/figs/df_meme.png" width="60%"> <em>meme cred: Nick Strayer</em></p>
+<section id="take-away" class="level2">
+<h2 class="anchored" data-anchor-id="take-away">Take Away</h2>
+<ul>
+<li>Always fit flexible models using restricted cubic splines</li>
+<li>Never test for linearity &amp; proceed to remove a nonlinear term based on the result</li>
+<li>If necessary be choosy about where to spend degrees of freedom</li>
+</ul>
+
+
+</section>
+
+</main> <!-- /main -->
+<script id="quarto-html-after-body" type="application/javascript">
+window.document.addEventListener("DOMContentLoaded", function (event) {
+  const toggleBodyColorMode = (bsSheetEl) => {
+    const mode = bsSheetEl.getAttribute("data-mode");
+    const bodyEl = window.document.querySelector("body");
+    if (mode === "dark") {
+      bodyEl.classList.add("quarto-dark");
+      bodyEl.classList.remove("quarto-light");
+    } else {
+      bodyEl.classList.add("quarto-light");
+      bodyEl.classList.remove("quarto-dark");
+    }
+  }
+  const toggleBodyColorPrimary = () => {
+    const bsSheetEl = window.document.querySelector("link#quarto-bootstrap");
+    if (bsSheetEl) {
+      toggleBodyColorMode(bsSheetEl);
+    }
+  }
+  toggleBodyColorPrimary();  
+  const icon = "";
+  const anchorJS = new window.AnchorJS();
+  anchorJS.options = {
+    placement: 'right',
+    icon: icon
+  };
+  anchorJS.add('.anchored');
+  const clipboard = new window.ClipboardJS('.code-copy-button', {
+    target: function(trigger) {
+      return trigger.previousElementSibling;
+    }
+  });
+  clipboard.on('success', function(e) {
+    // button target
+    const button = e.trigger;
+    // don't keep focus
+    button.blur();
+    // flash "checked"
+    button.classList.add('code-copy-button-checked');
+    var currentTitle = button.getAttribute("title");
+    button.setAttribute("title", "Copied!");
+    setTimeout(function() {
+      button.setAttribute("title", currentTitle);
+      button.classList.remove('code-copy-button-checked');
+    }, 1000);
+    // clear code selection
+    e.clearSelection();
+  });
+  function tippyHover(el, contentFn) {
+    const config = {
+      allowHTML: true,
+      content: contentFn,
+      maxWidth: 500,
+      delay: 100,
+      arrow: false,
+      appendTo: function(el) {
+          return el.parentElement;
+      },
+      interactive: true,
+      interactiveBorder: 10,
+      theme: 'quarto',
+      placement: 'bottom-start'
+    };
+    window.tippy(el, config); 
+  }
+  const noterefs = window.document.querySelectorAll('a[role="doc-noteref"]');
+  for (var i=0; i<noterefs.length; i++) {
+    const ref = noterefs[i];
+    tippyHover(ref, function() {
+      // use id or data attribute instead here
+      let href = ref.getAttribute('data-footnote-href') || ref.getAttribute('href');
+      try { href = new URL(href).hash; } catch {}
+      const id = href.replace(/^#\/?/, "");
+      const note = window.document.getElementById(id);
+      return note.innerHTML;
+    });
+  }
+  var bibliorefs = window.document.querySelectorAll('a[role="doc-biblioref"]');
+  for (var i=0; i<bibliorefs.length; i++) {
+    const ref = bibliorefs[i];
+    const cites = ref.parentNode.getAttribute('data-cites').split(' ');
+    tippyHover(ref, function() {
+      var popup = window.document.createElement('div');
+      cites.forEach(function(cite) {
+        var citeDiv = window.document.createElement('div');
+        citeDiv.classList.add('hanging-indent');
+        citeDiv.classList.add('csl-entry');
+        var biblioDiv = window.document.getElementById('ref-' + cite);
+        if (biblioDiv) {
+          citeDiv.innerHTML = biblioDiv.innerHTML;
+        }
+        popup.appendChild(citeDiv);
+      });
+      return popup.innerHTML;
+    });
+  }
+});
+</script>
+<script src="https://utteranc.es/client.js" repo="lfod/real-blog" issue-term="pathname" theme="github-light" crossorigin="anonymous" async="">
+</script>
+</div> <!-- /content -->
+
+
+
+</body></html>

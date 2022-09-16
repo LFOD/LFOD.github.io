@@ -1,0 +1,609 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml" lang="en" xml:lang="en"><head>
+
+<meta charset="utf-8">
+<meta name="generator" content="quarto-1.1.251">
+
+<meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
+
+<meta name="author" content="Lucy D’Agostino McGowan">
+<meta name="dcterms.date" content="2017-09-28">
+
+<title>R release names</title>
+<style>
+code{white-space: pre-wrap;}
+span.smallcaps{font-variant: small-caps;}
+div.columns{display: flex; gap: min(4vw, 1.5em);}
+div.column{flex: auto; overflow-x: auto;}
+div.hanging-indent{margin-left: 1.5em; text-indent: -1.5em;}
+ul.task-list{list-style: none;}
+ul.task-list li input[type="checkbox"] {
+  width: 0.8em;
+  margin: 0 0.8em 0.2em -1.6em;
+  vertical-align: middle;
+}
+</style>
+
+
+<script src="../../site_libs/quarto-nav/quarto-nav.js"></script>
+<script src="../../site_libs/quarto-nav/headroom.min.js"></script>
+<script src="../../site_libs/clipboard/clipboard.min.js"></script>
+<script src="../../site_libs/quarto-search/autocomplete.umd.js"></script>
+<script src="../../site_libs/quarto-search/fuse.min.js"></script>
+<script src="../../site_libs/quarto-search/quarto-search.js"></script>
+<meta name="quarto:offset" content="../../">
+<script src="../../site_libs/quarto-html/quarto.js"></script>
+<script src="../../site_libs/quarto-html/popper.min.js"></script>
+<script src="../../site_libs/quarto-html/tippy.umd.min.js"></script>
+<script src="../../site_libs/quarto-html/anchor.min.js"></script>
+<link href="../../site_libs/quarto-html/tippy.css" rel="stylesheet">
+<link href="../../site_libs/quarto-html/quarto-syntax-highlighting.css" rel="stylesheet" id="quarto-text-highlighting-styles">
+<script src="../../site_libs/bootstrap/bootstrap.min.js"></script>
+<link href="../../site_libs/bootstrap/bootstrap-icons.css" rel="stylesheet">
+<link href="../../site_libs/bootstrap/bootstrap.min.css" rel="stylesheet" id="quarto-bootstrap" data-mode="light">
+<script id="quarto-search-options" type="application/json">{
+  "location": "navbar",
+  "copy-button": false,
+  "collapse-after": 3,
+  "panel-placement": "end",
+  "type": "overlay",
+  "limit": 20,
+  "language": {
+    "search-no-results-text": "No results",
+    "search-matching-documents-text": "matching documents",
+    "search-copy-link-title": "Copy link to search",
+    "search-hide-matches-text": "Hide additional matches",
+    "search-more-match-text": "more match in this document",
+    "search-more-matches-text": "more matches in this document",
+    "search-clear-button-title": "Clear",
+    "search-detached-cancel-button-title": "Cancel",
+    "search-submit-button-title": "Submit"
+  }
+}</script>
+<script src="https://code.jquery.com/jquery-3.2.1.min.js" integrity="sha256-hwg4gsxgFZhOsEEamdOYGBf13FyQuiTwlAQgxVSNgt4=" crossorigin="anonymous"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/d3/4.9.1/d3.min.js"></script>
+
+<style>
+  #custom-header {
+    height: 30vh;
+    width: 100%;
+    position:relative;
+    z-index:1;
+    margin:0 auto;
+  }
+</style>
+
+
+</head><body class="nav-fixed"><header id="custom-header">
+  <div id="header_viz"></div>
+</header>
+
+<script>
+  $( document ).ready(() => {
+
+    //javascript for intro loader
+
+    //Function to immitate R's seq
+    function seq(start, end, increment) {
+      var length = Math.round((end - start)/increment);
+      return Array(length).fill().map((_, idx) => start + idx*increment)
+    }
+
+
+    //define the pdf of the distribution.
+    var logistic = function(x, theta, i) {
+        var mu = 0.1;
+        sign = 1
+        var y = sign * (1 / (Math.sqrt(2 * Math.PI) * theta)) * (1 / x) *
+            Math.exp(-Math.pow((Math.log(x) - mu), 2) / (2 * Math.pow(theta, 2)))
+        return y;
+    }
+
+    var width   = $("#custom-header").width() ,
+        height  = $("#custom-header").outerHeight(),
+        padding = 0,
+        numOfLines = 20,
+        xs = seq(0.01, 5, .01),
+        colors = ['rgb(165,0,38)', 'rgb(215,48,39)', 'rgb(244,109,67)', 'rgb(253,174,97)', 'rgb(254,224,144)',
+            'rgb(224,243,248)', 'rgb(171,217,233)', 'rgb(116,173,209)', 'rgb(69,117,180)', 'rgb(49,54,149)'
+        ];
+  
+    console.log("trying to run this shit.")
+    //define the svg.
+    var svg = d3.select("#header_viz").append("svg")
+        .attr("width", width)
+        .attr("height", height + 2 * padding)
+        .append("g")
+
+
+    var animatelines = function(whichline) {
+        d3.selectAll(".line").style("opacity","0.5");
+
+        //Select All of the lines and process them one by one
+        d3.selectAll(".line").each(function(d,i){
+            // Get the length of each line in turn
+            var totalLength = d3.select("#line" + i).node().getTotalLength();
+
+            d3.selectAll("#line" + i).attr("stroke-dasharray", totalLength + " " + totalLength)
+              .attr("stroke-dashoffset", totalLength)
+              .transition()
+              .duration(5000)
+              .delay(100*i)
+              .attr("stroke-dashoffset", 0)
+              .style("stroke-width",2)
+        })
+
+        writeGreeting()
+    }
+
+
+
+    // The Scales:
+    var thetaMap = d3.scaleLinear() //name the values from 0 to 20 and make their values from .1-.7
+        .domain([0, numOfLines])
+        .range([0.8, 0.085])
+
+    var yPos = d3.scaleLinear() //scalling for creating horizontal lines
+        .domain([0, numOfLines])
+        .range([0, 4])
+
+    var x = d3.scaleLinear()
+        .domain([0, 5])
+        .range([0, width]);
+
+    var y = d3.scaleLinear()
+        .domain([0, 4.5])
+        .range([height, 0]);
+
+    // The line functions:
+    var logistic = d3.range(numOfLines).map(function(i) {
+        var odd = true
+        var toReturn = xs.map(function(num) {
+            return {
+                "x": num,
+                "y": logistic(num, thetaMap(i), i)
+            }
+        })
+        return toReturn;
+    })
+
+    //make a greeting message for after the line animation.
+    function writeGreeting(){
+
+        var text_scale = width < 500 ? 1 : 0.65;
+        console.log(text_scale);
+        var intro_text = "Live Free or Dichotomize";
+
+        var title = svg.append("text")
+            .attr("font-size", 30)
+            .attr("font-family", "optima")
+            .attr("text-anchor", "end")
+            .attr("fill-opacity", 0.65)
+            .attr("x", width < 500 ? x(4.8) : x(4.2))
+            .attr("y", width < 500 ? y(3.12) : y(2.1) )
+            .attr("opacity", 0)
+            .text(intro_text)
+            .attr("font-size", function(d) { return ( text_scale*width - 8) / this.getComputedTextLength() * 24 + "px"; })
+            .text("")
+            .attr("opacity", 1);
+
+        (function drawGreeting (i, start, greeting) {
+            setTimeout(function () {
+
+                //add next letter to the greeting in progress
+                start += greeting[i];
+
+                title.html(start) //append this to the html
+
+                if (start.length < greeting.length) { //if the in progress greeting is less than the full, keep going.
+                    drawGreeting(i+1,start,greeting);      //  increment i and call again.
+                };
+            }, 100)
+        })(0, "", intro_text);
+    }
+
+
+    // The d3 stuff
+    var line = d3.line()
+        // .interpolate("basis")
+        .x(function(d) { return x(d.x); })
+        .y(function(d) { return y(d.y); });
+
+
+    svg.selectAll(".line")
+        .data(logistic)
+        .enter().append("path")
+        .attr("class", "line")
+        .attr("id" , function(d, i){ return "line" + i;})
+        .attr("d", line)
+        .style("stroke-width", 2)
+        .style("stroke", function(d, i) { return colors[i % 10] })
+        .style("opacity", 0)
+        .style("fill", "none")
+        .on("mouseover", function(d){
+            d3.select(this).style("stroke", "black")
+        })
+        .on("mouseout", function(d,i){
+            d3.select(this).style("stroke", colors[i % 10])
+        })
+
+    // var introMessage = isMobile ? "tap" : "click"
+    // var introMessage = "click"
+    //
+    // var intro = svg.append("text")
+    //     .text(introMessage)
+    //     .attr("font-size", 35)
+    //     .attr("font-family", "optima")
+    //     .attr("text-anchor", "middle")
+    //     .attr("x", x(2.5))
+    //     .attr("y", y(2.01))
+
+    //kick it off on a click. (or tap)
+    animatelines(2)
+    // d3.select("svg").on("click", function() { animatelines(2) })
+
+})
+
+</script>
+
+
+
+
+
+
+<div id="quarto-search-results"></div>
+  <header id="quarto-header" class="headroom fixed-top">
+    <nav class="navbar navbar-expand-lg navbar-dark ">
+      <div class="navbar-container container-fluid">
+          <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarCollapse" aria-controls="navbarCollapse" aria-expanded="false" aria-label="Toggle navigation" onclick="if (window.quartoToggleHeadroom) { window.quartoToggleHeadroom(); }">
+  <span class="navbar-toggler-icon"></span>
+</button>
+          <div class="collapse navbar-collapse" id="navbarCollapse">
+            <ul class="navbar-nav navbar-nav-scroll me-auto">
+  <li class="nav-item">
+    <a class="nav-link" href="../../index.html">Home</a>
+  </li>  
+  <li class="nav-item">
+    <a class="nav-link" href="../../about.html">About</a>
+  </li>  
+</ul>
+              <div id="quarto-search" class="" title="Search"></div>
+          </div> <!-- /navcollapse -->
+      </div> <!-- /container-fluid -->
+    </nav>
+</header>
+<!-- content -->
+<header id="title-block-header" class="quarto-title-block default page-columns page-full">
+  <div class="quarto-title-banner page-columns page-full">
+    <div class="quarto-title column-body">
+      <h1 class="title">R release names</h1>
+                                <div class="quarto-categories">
+                <div class="quarto-category">rstats</div>
+              </div>
+                  </div>
+  </div>
+    
+  
+  <div class="quarto-title-meta">
+
+      <div>
+      <div class="quarto-title-meta-heading">Author</div>
+      <div class="quarto-title-meta-contents">
+               <p>Lucy D’Agostino McGowan </p>
+            </div>
+    </div>
+      
+      <div>
+      <div class="quarto-title-meta-heading">Published</div>
+      <div class="quarto-title-meta-contents">
+        <p class="date">September 28, 2017</p>
+      </div>
+    </div>
+      
+    </div>
+    
+  
+  </header><div id="quarto-content" class="quarto-container page-columns page-rows-contents page-layout-article page-navbar">
+<!-- sidebar -->
+<!-- margin-sidebar -->
+    <div id="quarto-margin-sidebar" class="sidebar margin-sidebar">
+        
+    </div>
+<!-- main -->
+<main class="content quarto-banner-title-block page-columns page-full" id="quarto-document-content">
+
+
+
+
+<p>I always love <a href="https://stackoverflow.com/questions/13478375/is-there-any-authoritative-documentation-on-r-release-nicknames">discussions</a> about R release names and their origin. I have been working on this list for a while – with the release of “Short Summer” today, I thought it’d be a good time to post!</p>
+<p>All of the release names are references to Peanuts strips/films. I think this is just so delightful! A few months ago, I attempted to get permission to embed the strips on our blog, but unfortunately it was denied (unless with a limited audience and password protection 🤷‍♀), so I’ve just linked to the comics – Enjoy!</p>
+<section id="r-devel-unreleased-development-version-unsuffered-consequences" class="level2">
+<h2 class="anchored" data-anchor-id="r-devel-unreleased-development-version-unsuffered-consequences">r-devel (unreleased development version) Unsuffered Consequences</h2>
+<p><strong>Reference</strong>: <a href="http://www.gocomics.com/peanuts/1967/08/17">Peanuts August 17, 1967</a></p>
+</section>
+<section id="great-pumpkin" class="level2">
+<h2 class="anchored" data-anchor-id="great-pumpkin">2.14.0 (2011-10-31) Great Pumpkin</h2>
+<p><strong>Reference</strong>: <a href="http://www.gocomics.com/peanuts/1973/10/29">Peanuts October 29, 1973</a></p>
+</section>
+<section id="december-snowflakes" class="level2 page-columns page-full">
+<h2 class="anchored" data-anchor-id="december-snowflakes">2.14.1 (2011-12-22) December Snowflakes</h2>
+
+<div class="no-row-height column-margin column-container"><div class="">
+<iframe src="https://www.youtube.com/embed/L1wSn2FgbWw" frameborder="0" allowfullscreen="">
+</iframe>
+</div></div><p><strong>Reference</strong>: <a href="http://peanuts.wikia.com/wiki/A_Charlie_Brown_Christmas"><em>A Charlie Brown Christmas</em></a></p>
+<p><em>This is very close to the <a href="http://www.gocomics.com/peanuts/1960/01/05">Peanuts January 5, 1960</a>, however they mention January snowflakes rather than December. The “December Snowflakes” quote is from <a href="http://peanuts.wikia.com/wiki/A_Charlie_Brown_Christmas">A Charlie Brown Christmas</a>.</em></p>
+</section>
+<section id="gift-getting-season" class="level2 page-columns page-full">
+<h2 class="anchored" data-anchor-id="gift-getting-season">2.14.2 (2012-02-29) Gift-Getting Season</h2>
+<p><strong>Reference</strong>: This is a line Lucy says in the short film <a href="http://peanuts.wikia.com/wiki/It%27s_the_Easter_Beagle,_Charlie_Brown"><em>It’s the Easter Beagle, Charlie Brown!</em></a> – referring to Easter as the “gift-getting season”.</p>
+
+<div class="no-row-height column-margin column-container"><div class="">
+<iframe src="https://www.youtube.com/embed/TbRi1hflGvM" frameborder="0" allowfullscreen="">
+</iframe>
+</div></div></section>
+<section id="easter-beagle" class="level2">
+<h2 class="anchored" data-anchor-id="easter-beagle">2.15.0 (2012-03-30) Easter Beagle</h2>
+<p><strong>Reference</strong>: <a href="http://www.gocomics.com/peanuts/1971/04/11">Peanuts April 11, 1971</a></p>
+<p><em>This also likely references the <a href="http://peanuts.wikia.com/wiki/It%27s_the_Easter_Beagle,_Charlie_Brown">It’s the Easter Beagle, Charlie Brown!</a>.</em></p>
+</section>
+<section id="roasted-marshmallows" class="level2">
+<h2 class="anchored" data-anchor-id="roasted-marshmallows">2.15.1 (2012-06-22) Roasted Marshmallows</h2>
+<p><strong>Reference</strong>: <a href="http://www.gocomics.com/peanuts/1987/06/06">Peanuts June 6, 1987</a></p>
+</section>
+<section id="trick-or-treat" class="level2">
+<h2 class="anchored" data-anchor-id="trick-or-treat">2.15.2 (2012-10-26) Trick or Treat</h2>
+<p><strong>Reference</strong>: <a href="http://www.gocomics.com/peanuts/1969/10/31">Peanuts October 31, 1969</a></p>
+</section>
+<section id="security-blanket" class="level2 page-columns page-full">
+<h2 class="anchored" data-anchor-id="security-blanket">2.15.3 (2013-03-01) Security Blanket</h2>
+<p><strong>Reference</strong>: <a href="http://www.gocomics.com/peanuts/1965/10/23">Peanuts October 23, 1965</a></p>
+
+<div class="no-row-height column-margin column-container"><div class="">
+<iframe src="https://www.youtube.com/embed/BYQF2H2W6Go" frameborder="0" allowfullscreen="">
+</iframe>
+</div></div></section>
+<section id="masked-marvel" class="level2 page-columns page-full">
+<h2 class="anchored" data-anchor-id="masked-marvel">3.0.0 (2013-04-03) Masked Marvel</h2>
+<p><strong>Reference</strong>: <a href="http://www.gocomics.com/peanuts/1981/06/23">Peanuts June 23, 1981</a></p>
+<p><strong>Edit</strong>: Got some insider info from the source himself that this is from <a href="http://peanuts.wikia.com/wiki/The_Charlie_Brown_and_Snoopy_Show"><em>Charlie Brown and Snoopy Show</em></a>!</p>
+
+<div class="no-row-height column-margin column-container"><div class="">
+<iframe frameborder="0" src="//www.dailymotion.com/embed/video/x4imafq?start=1" allowfullscreen="">
+</iframe>
+<p><br><a href="http://www.dailymotion.com/video/x4imafq?start=1" target="_blank"></a> <i>Source <a href="http://www.dailymotion.com/MoviesAfterMidnight" target="_blank">MoviesAfterMidnight</a></i></p>
+</div></div></section>
+<section id="good-sport" class="level2">
+<h2 class="anchored" data-anchor-id="good-sport">3.0.1 (2013-05-16) Good Sport</h2>
+<p><strong>Reference</strong>: <a href="http://peanuts.wikia.com/wiki/You're_a_Good_Sport%2C_Charlie_Brown"><em>You’re a Good Sport, Charlie Brown</em></a></p>
+<p><em>This is likely from the film You’re a Good Sport Charlie Brown, however there <a href="http://www.gocomics.com/peanuts/1953/11/22">Peanuts November 22, 1953</a> does refer to being a “Good Sport” as well!</em></p>
+</section>
+<section id="frisbee-sailing" class="level2">
+<h2 class="anchored" data-anchor-id="frisbee-sailing">3.0.2 (2013-09-25) Frisbee Sailing</h2>
+<p><strong>Reference</strong>: <a href="http://www.gocomics.com/peanuts/1971/09/03">Peanuts September 3, 1971</a></p>
+</section>
+<section id="warm-puppy" class="level2">
+<h2 class="anchored" data-anchor-id="warm-puppy">3.0.3 (2014-03-06) Warm Puppy</h2>
+<p><label for="tufte-mn-" class="margin-toggle">⊕</label><input type="checkbox" id="tufte-mn-" class="margin-toggle"><span class="marginnote">There is also a book titled <a href="https://www.goodreads.com/book/show/82191.Happiness_is_a_Warm_Puppy"><em>Happiness is a Warm Puppy</em></a>.</span> <strong>Reference</strong>: <a href="http://www.gocomics.com/peanuts/1965/01/11">Peanuts January 11, 1965</a></p>
+</section>
+<section id="spring-dance" class="level2 page-columns page-full">
+<h2 class="anchored" data-anchor-id="spring-dance">3.1.0 (2014-04-10) Spring Dance</h2>
+<p><strong>Reference</strong>: <a href="http://www.gocomics.com/peanuts/1971/03/22">Peanuts March 22, 1971</a></p>
+
+<div class="no-row-height column-margin column-container"><div class="">
+<p><a href="../../media/images/2017-09-28/sock-it-to-me.jpg"> <img class="img-responsive" src="../../media/images/2017-09-28/sock-it-to-me.jpg" alt="Sock it to me" width="100"> </a> <em>Source</em> <a href="http://www.ebay.com/itm/Snoopy-Puzzle-Peanuts-Mini-Jigsaw-New-Sock-It-To-Me-70-Plus-Pieces-/282512908108">ebay</a></p>
+</div></div></section>
+<section id="sock-it-to-me" class="level2 page-columns page-full">
+<h2 class="anchored" data-anchor-id="sock-it-to-me">3.1.1 (2014-07-10) Sock it to Me</h2>
+<p><strong>Reference</strong>: This seems to be referring to a mini jigsaw puzzle, available on <a href="http://www.ebay.com/itm/Snoopy-Puzzle-Peanuts-Mini-Jigsaw-New-Sock-It-To-Me-70-Plus-Pieces-/282512908108">ebay</a>!</p>
+
+<div class="no-row-height column-margin column-container"><div class="">
+<iframe frameborder="0" src="//www.dailymotion.com/embed/video/x4imafq?start=995" allowfullscreen="">
+</iframe>
+<p><br><a href="http://www.dailymotion.com/video/x4imafq?start=995" target="_blank"></a> <i>Source <a href="http://www.dailymotion.com/MoviesAfterMidnight" target="_blank">MoviesAfterMidnight</a></i></p>
+</div></div></section>
+<section id="pumpkin-helmet" class="level2">
+<h2 class="anchored" data-anchor-id="pumpkin-helmet">3.1.2 (2014-10-31) Pumpkin Helmet</h2>
+<p><strong>Reference</strong>: <a href="http://peanuts.wikia.com/wiki/You're_a_Good_Sport%2C_Charlie_Brown"><em>You’re a Good Sport, Charlie Brown</em></a></p>
+<p><em>It’s a bit later in the clip, around 16:45.</em></p>
+<p><label for="tufte-mn-" class="margin-toggle">⊕</label><input type="checkbox" id="tufte-mn-" class="margin-toggle"><span class="marginnote"><a href="../../media/images/2017-09-28/happiness-sidewalk.jpg"> <img src="../../media/images/2017-09-28/happiness-sidewalk.jpg" width="200"></a><br> <em>Source</em> <a href="http://www.somethingtobefound.com/2013/04/somethings-books-desk-papers-and-pottery.html">Something to be Found</a></span></p>
+</section>
+<section id="smooth-sidewalk" class="level2">
+<h2 class="anchored" data-anchor-id="smooth-sidewalk">3.1.3 (2015-03-09) Smooth Sidewalk</h2>
+<p><strong>Reference</strong>: This is a page from the <a href="https://www.goodreads.com/book/show/82191.Happiness_is_a_Warm_Puppy"><em>Happiness is a Warm Puppy</em></a> book.</p>
+</section>
+<section id="full-of-ingredients" class="level2">
+<h2 class="anchored" data-anchor-id="full-of-ingredients">3.2.0 (2015-04-16) Full of Ingredients</h2>
+<p><strong>Reference</strong>: <a href="http://www.gocomics.com/peanuts/1966/04/07">Peanuts April 7, 1966</a></p>
+</section>
+<section id="world-famous-astronaut" class="level2">
+<h2 class="anchored" data-anchor-id="world-famous-astronaut">3.2.1 (2015-06-18) World-Famous Astronaut</h2>
+<p><strong>Reference</strong>: <a href="http://www.gocomics.com/peanuts/1969/03/10">Peanuts March 10, 1969</a></p>
+<p><label for="tufte-mn-" class="margin-toggle">⊕</label><input type="checkbox" id="tufte-mn-" class="margin-toggle"><span class="marginnote"><a href="../../media/images/2017-09-28/fire-saftey.jpg"><img src="../../media/images/2017-09-28/fire-saftey.jpg" width="200"></a><br> <em>Source</em> <a href="http://www.businesswire.com/news/home/20041006005405/en/Brush-Fire-Safety-Basics-MetLife-Auto-Home">Business Wire</a></span></p>
+</section>
+<section id="fire-safety" class="level2">
+<h2 class="anchored" data-anchor-id="fire-safety">3.2.2 (2015-08-14) Fire Safety</h2>
+<p><strong>Reference</strong>: <em>It seems that MetLife created a Peanuts themed <a href="http://www.businesswire.com/news/home/20041006005405/en/Brush-Fire-Safety-Basics-MetLife-Auto-Home">Fire Saftey Brochure</a> coloring and activity book.</em></p>
+</section>
+<section id="wooden-christmas-tree" class="level2">
+<h2 class="anchored" data-anchor-id="wooden-christmas-tree">3.2.3 (2015-12-10) Wooden Christmas-Tree</h2>
+<p><strong>Reference</strong>: This is a line from <a href="http://peanuts.wikia.com/wiki/A_Charlie_Brown_Christmas"><em>A Charlie Brown Christmas</em></a> – Linus says “Gee, I didn’t know they still made wooden Christmas trees”.</p>
+</section>
+<section id="very-secure-dishes" class="level2">
+<h2 class="anchored" data-anchor-id="very-secure-dishes">3.2.4 (2016-03-11) Very Secure Dishes</h2>
+<p><strong>Reference</strong>: <a href="http://www.gocomics.com/peanuts/1964/02/20">Peanuts February 20, 1964</a></p>
+</section>
+<section id="very-very-secure-dishes-a-rebadged-3.2.4-revised" class="level2">
+<h2 class="anchored" data-anchor-id="very-very-secure-dishes-a-rebadged-3.2.4-revised">3.2.5 (2016-04-11) Very, Very Secure Dishes (a rebadged 3.2.4-revised)</h2>
+<p><em>I assume this is still a reference to <a href="http://www.gocomics.com/peanuts/1964/02/20">Peanuts February 20, 1964</a></em></p>
+</section>
+<section id="supposedly-educational" class="level2">
+<h2 class="anchored" data-anchor-id="supposedly-educational">3.3.0 (2016-05-03) Supposedly Educational</h2>
+<p><strong>Reference</strong>: <a href="http://www.gocomics.com/peanuts/1971/05/07">Peanuts May 7, 1971</a></p>
+</section>
+<section id="bug-in-your-hair" class="level2">
+<h2 class="anchored" data-anchor-id="bug-in-your-hair">3.3.1 (2016-06-21) Bug in Your Hair</h2>
+<p><strong>Reference</strong>: <a href="http://www.gocomics.com/peanuts/1967/06/15">Peanuts June 15, 1967</a></p>
+</section>
+<section id="sincere-pumpkin-patch" class="level2">
+<h2 class="anchored" data-anchor-id="sincere-pumpkin-patch">3.3.2 (2016-10-31) Sincere Pumpkin Patch</h2>
+<p><strong>Reference</strong>: <a href="http://www.gocomics.com/peanuts/1968/10/30">Peanuts Oct 30, 1968</a></p>
+</section>
+<section id="another-canoe" class="level2">
+<h2 class="anchored" data-anchor-id="another-canoe">3.3.3 (2017-03-06) Another Canoe</h2>
+<p><strong>Reference</strong>: <a href="http://www.gocomics.com/peanuts/1966/06/29">Peanuts June 29, 1966</a></p>
+</section>
+<section id="you-stupid-darkness" class="level2">
+<h2 class="anchored" data-anchor-id="you-stupid-darkness">3.4.0 (2017-04-21) You Stupid Darkness</h2>
+<p><strong>Reference</strong>: <a href="http://www.gocomics.com/peanuts/1965/09/09">Peanuts September 9, 1965</a></p>
+</section>
+<section id="single-candle" class="level2">
+<h2 class="anchored" data-anchor-id="single-candle">3.4.1 (2017-06-30) Single Candle</h2>
+<p><strong>Reference</strong>: <a href="http://www.gocomics.com/peanuts/1965/09/09">Peanuts September 9, 1965</a></p>
+</section>
+<section id="short-summer" class="level2 page-columns page-full">
+<h2 class="anchored" data-anchor-id="short-summer">3.4.2 (2017-09-28) Short Summer</h2>
+<p><strong>Reference</strong>: <a href="http://peanuts.wikia.com/wiki/It_Was_a_Short_Summer,_Charlie_Brown"><em>It was a Short Summer, Charlie Brown</em></a></p>
+
+<div class="no-row-height column-margin column-container"><div class="">
+<iframe src="https://www.youtube.com/embed/R6m16pbkKtU" frameborder="0" allowfullscreen="">
+</iframe>
+</div></div></section>
+<section id="kite-eating-tree" class="level2">
+<h2 class="anchored" data-anchor-id="kite-eating-tree">3.4.3 (2017-11-30) Kite-eating Tree</h2>
+<p><strong>Reference</strong>: <a href="http://www.gocomics.com/peanuts/1967/02/19">Peanuts February 19, 1967</a></p>
+<p><a href="http://twitter.com/pdalgd">Peter Dalgaard</a> made a gif to commemorate the momentous occasion!</p>
+<p><img src="../../media/images/2017-09-28/kite-eating-tree.gif" class="img-fluid"></p>
+<p><label for="tufte-mn-" class="margin-toggle">⊕</label><input type="checkbox" id="tufte-mn-" class="margin-toggle"><span class="marginnote"><a href="../../media/images/2017-09-28/someone-to-lean-on.jpg"><img src="../../media/images/2017-09-28/someone-to-lean-on.jpg" width="200"></a><br> <em>Source</em> <a href="https://auction.catawiki.com/kavels/2493737-peanuts-charlie-brown-snoopy-happiness-is-having-someone-to-lean-on-1971">catawiki auctions</a></span></p>
+</section>
+<section id="someone-to-lean-on" class="level2">
+<h2 class="anchored" data-anchor-id="someone-to-lean-on">3.4.4 (2018-03-15) Someone to Lean On</h2>
+<p><strong>Reference</strong>: <em>Peanuts Figurine (1971). There are a couple of different versions of this, some with Charlie Brown and Snoopy, one with Linus and Snoopy, and one with Woodstock and Snoopy. Many of them were Hallmark cards, but there was also a <a href="https://collectpeanuts.com/Collection/ImagesW/Plaques/201405/IMG_4892.jpg">badge</a> and this figurine. The oldest (dated) one I could find was this one from 1971, so we went with that!</em></p>
+</section>
+<section id="joy-in-playing" class="level2">
+<h2 class="anchored" data-anchor-id="joy-in-playing">3.5.0 (2018-04-23) Joy in Playing</h2>
+<p><strong>Reference</strong>: <a href="http://www.gocomics.com/peanuts/1973/01/27">Peanuts January 27, 1973</a></p>
+</section>
+<section id="feather-spray" class="level2">
+<h2 class="anchored" data-anchor-id="feather-spray">3.5.1 (2018-07-02) Feather Spray</h2>
+<p><strong>Reference</strong>: <a href="http://www.gocomics.com/peanuts/1972/03/09">Peanuts March 9, 1972</a></p>
+<hr>
+<p>Looks like we have some validation (thanks Peter!) – I’ve updated the Masked Marvel accordingly 🎉.</p>
+<blockquote class="twitter-tweet blockquote" data-conversation="none" data-lang="en">
+<p lang="en" dir="ltr">
+Mostly on target. A few are from films/badges rather than strips. Notably Masked Marvel from the unforgettable arm-wrestling w/Lucy.
+</p>
+— Peter Dalgaard (<span class="citation" data-cites="pdalgd">@pdalgd</span>) <a href="https://twitter.com/pdalgd/status/913459973304279040?ref_src=twsrc%5Etfw">September 28, 2017</a>
+</blockquote>
+<script async="" src="//platform.twitter.com/widgets.js" charset="utf-8"></script>
+<!-- http://amureprints.com/reprints -->
+
+
+</section>
+
+</main> <!-- /main -->
+<script id="quarto-html-after-body" type="application/javascript">
+window.document.addEventListener("DOMContentLoaded", function (event) {
+  const toggleBodyColorMode = (bsSheetEl) => {
+    const mode = bsSheetEl.getAttribute("data-mode");
+    const bodyEl = window.document.querySelector("body");
+    if (mode === "dark") {
+      bodyEl.classList.add("quarto-dark");
+      bodyEl.classList.remove("quarto-light");
+    } else {
+      bodyEl.classList.add("quarto-light");
+      bodyEl.classList.remove("quarto-dark");
+    }
+  }
+  const toggleBodyColorPrimary = () => {
+    const bsSheetEl = window.document.querySelector("link#quarto-bootstrap");
+    if (bsSheetEl) {
+      toggleBodyColorMode(bsSheetEl);
+    }
+  }
+  toggleBodyColorPrimary();  
+  const icon = "";
+  const anchorJS = new window.AnchorJS();
+  anchorJS.options = {
+    placement: 'right',
+    icon: icon
+  };
+  anchorJS.add('.anchored');
+  const clipboard = new window.ClipboardJS('.code-copy-button', {
+    target: function(trigger) {
+      return trigger.previousElementSibling;
+    }
+  });
+  clipboard.on('success', function(e) {
+    // button target
+    const button = e.trigger;
+    // don't keep focus
+    button.blur();
+    // flash "checked"
+    button.classList.add('code-copy-button-checked');
+    var currentTitle = button.getAttribute("title");
+    button.setAttribute("title", "Copied!");
+    setTimeout(function() {
+      button.setAttribute("title", currentTitle);
+      button.classList.remove('code-copy-button-checked');
+    }, 1000);
+    // clear code selection
+    e.clearSelection();
+  });
+  function tippyHover(el, contentFn) {
+    const config = {
+      allowHTML: true,
+      content: contentFn,
+      maxWidth: 500,
+      delay: 100,
+      arrow: false,
+      appendTo: function(el) {
+          return el.parentElement;
+      },
+      interactive: true,
+      interactiveBorder: 10,
+      theme: 'quarto',
+      placement: 'bottom-start'
+    };
+    window.tippy(el, config); 
+  }
+  const noterefs = window.document.querySelectorAll('a[role="doc-noteref"]');
+  for (var i=0; i<noterefs.length; i++) {
+    const ref = noterefs[i];
+    tippyHover(ref, function() {
+      // use id or data attribute instead here
+      let href = ref.getAttribute('data-footnote-href') || ref.getAttribute('href');
+      try { href = new URL(href).hash; } catch {}
+      const id = href.replace(/^#\/?/, "");
+      const note = window.document.getElementById(id);
+      return note.innerHTML;
+    });
+  }
+  var bibliorefs = window.document.querySelectorAll('a[role="doc-biblioref"]');
+  for (var i=0; i<bibliorefs.length; i++) {
+    const ref = bibliorefs[i];
+    const cites = ref.parentNode.getAttribute('data-cites').split(' ');
+    tippyHover(ref, function() {
+      var popup = window.document.createElement('div');
+      cites.forEach(function(cite) {
+        var citeDiv = window.document.createElement('div');
+        citeDiv.classList.add('hanging-indent');
+        citeDiv.classList.add('csl-entry');
+        var biblioDiv = window.document.getElementById('ref-' + cite);
+        if (biblioDiv) {
+          citeDiv.innerHTML = biblioDiv.innerHTML;
+        }
+        popup.appendChild(citeDiv);
+      });
+      return popup.innerHTML;
+    });
+  }
+});
+</script>
+<script src="https://utteranc.es/client.js" repo="lfod/real-blog" issue-term="pathname" theme="github-light" crossorigin="anonymous" async="">
+</script>
+</div> <!-- /content -->
+
+
+
+</body></html>

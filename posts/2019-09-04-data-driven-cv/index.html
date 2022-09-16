@@ -1,0 +1,1167 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml" lang="en" xml:lang="en"><head>
+
+<meta charset="utf-8">
+<meta name="generator" content="quarto-1.1.251">
+
+<meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
+
+<meta name="author" content="Nick Strayer">
+<meta name="dcterms.date" content="2019-09-04">
+
+<title>Building a data-driven CV with R</title>
+<style>
+code{white-space: pre-wrap;}
+span.smallcaps{font-variant: small-caps;}
+div.columns{display: flex; gap: min(4vw, 1.5em);}
+div.column{flex: auto; overflow-x: auto;}
+div.hanging-indent{margin-left: 1.5em; text-indent: -1.5em;}
+ul.task-list{list-style: none;}
+ul.task-list li input[type="checkbox"] {
+  width: 0.8em;
+  margin: 0 0.8em 0.2em -1.6em;
+  vertical-align: middle;
+}
+pre > code.sourceCode { white-space: pre; position: relative; }
+pre > code.sourceCode > span { display: inline-block; line-height: 1.25; }
+pre > code.sourceCode > span:empty { height: 1.2em; }
+.sourceCode { overflow: visible; }
+code.sourceCode > span { color: inherit; text-decoration: inherit; }
+div.sourceCode { margin: 1em 0; }
+pre.sourceCode { margin: 0; }
+@media screen {
+div.sourceCode { overflow: auto; }
+}
+@media print {
+pre > code.sourceCode { white-space: pre-wrap; }
+pre > code.sourceCode > span { text-indent: -5em; padding-left: 5em; }
+}
+pre.numberSource code
+  { counter-reset: source-line 0; }
+pre.numberSource code > span
+  { position: relative; left: -4em; counter-increment: source-line; }
+pre.numberSource code > span > a:first-child::before
+  { content: counter(source-line);
+    position: relative; left: -1em; text-align: right; vertical-align: baseline;
+    border: none; display: inline-block;
+    -webkit-touch-callout: none; -webkit-user-select: none;
+    -khtml-user-select: none; -moz-user-select: none;
+    -ms-user-select: none; user-select: none;
+    padding: 0 4px; width: 4em;
+    color: #aaaaaa;
+  }
+pre.numberSource { margin-left: 3em; border-left: 1px solid #aaaaaa;  padding-left: 4px; }
+div.sourceCode
+  {   }
+@media screen {
+pre > code.sourceCode > span > a:first-child::before { text-decoration: underline; }
+}
+code span.al { color: #ff0000; font-weight: bold; } /* Alert */
+code span.an { color: #60a0b0; font-weight: bold; font-style: italic; } /* Annotation */
+code span.at { color: #7d9029; } /* Attribute */
+code span.bn { color: #40a070; } /* BaseN */
+code span.bu { color: #008000; } /* BuiltIn */
+code span.cf { color: #007020; font-weight: bold; } /* ControlFlow */
+code span.ch { color: #4070a0; } /* Char */
+code span.cn { color: #880000; } /* Constant */
+code span.co { color: #60a0b0; font-style: italic; } /* Comment */
+code span.cv { color: #60a0b0; font-weight: bold; font-style: italic; } /* CommentVar */
+code span.do { color: #ba2121; font-style: italic; } /* Documentation */
+code span.dt { color: #902000; } /* DataType */
+code span.dv { color: #40a070; } /* DecVal */
+code span.er { color: #ff0000; font-weight: bold; } /* Error */
+code span.ex { } /* Extension */
+code span.fl { color: #40a070; } /* Float */
+code span.fu { color: #06287e; } /* Function */
+code span.im { color: #008000; font-weight: bold; } /* Import */
+code span.in { color: #60a0b0; font-weight: bold; font-style: italic; } /* Information */
+code span.kw { color: #007020; font-weight: bold; } /* Keyword */
+code span.op { color: #666666; } /* Operator */
+code span.ot { color: #007020; } /* Other */
+code span.pp { color: #bc7a00; } /* Preprocessor */
+code span.sc { color: #4070a0; } /* SpecialChar */
+code span.ss { color: #bb6688; } /* SpecialString */
+code span.st { color: #4070a0; } /* String */
+code span.va { color: #19177c; } /* Variable */
+code span.vs { color: #4070a0; } /* VerbatimString */
+code span.wa { color: #60a0b0; font-weight: bold; font-style: italic; } /* Warning */
+</style>
+
+
+<script src="../../site_libs/quarto-nav/quarto-nav.js"></script>
+<script src="../../site_libs/quarto-nav/headroom.min.js"></script>
+<script src="../../site_libs/clipboard/clipboard.min.js"></script>
+<script src="../../site_libs/quarto-search/autocomplete.umd.js"></script>
+<script src="../../site_libs/quarto-search/fuse.min.js"></script>
+<script src="../../site_libs/quarto-search/quarto-search.js"></script>
+<meta name="quarto:offset" content="../../">
+<script src="../../site_libs/quarto-html/quarto.js"></script>
+<script src="../../site_libs/quarto-html/popper.min.js"></script>
+<script src="../../site_libs/quarto-html/tippy.umd.min.js"></script>
+<script src="../../site_libs/quarto-html/anchor.min.js"></script>
+<link href="../../site_libs/quarto-html/tippy.css" rel="stylesheet">
+<link href="../../site_libs/quarto-html/quarto-syntax-highlighting.css" rel="stylesheet" id="quarto-text-highlighting-styles">
+<script src="../../site_libs/bootstrap/bootstrap.min.js"></script>
+<link href="../../site_libs/bootstrap/bootstrap-icons.css" rel="stylesheet">
+<link href="../../site_libs/bootstrap/bootstrap.min.css" rel="stylesheet" id="quarto-bootstrap" data-mode="light">
+<script id="quarto-search-options" type="application/json">{
+  "location": "navbar",
+  "copy-button": false,
+  "collapse-after": 3,
+  "panel-placement": "end",
+  "type": "overlay",
+  "limit": 20,
+  "language": {
+    "search-no-results-text": "No results",
+    "search-matching-documents-text": "matching documents",
+    "search-copy-link-title": "Copy link to search",
+    "search-hide-matches-text": "Hide additional matches",
+    "search-more-match-text": "more match in this document",
+    "search-more-matches-text": "more matches in this document",
+    "search-clear-button-title": "Clear",
+    "search-detached-cancel-button-title": "Cancel",
+    "search-submit-button-title": "Submit"
+  }
+}</script>
+<script src="https://code.jquery.com/jquery-3.2.1.min.js" integrity="sha256-hwg4gsxgFZhOsEEamdOYGBf13FyQuiTwlAQgxVSNgt4=" crossorigin="anonymous"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/d3/4.9.1/d3.min.js"></script>
+
+<style>
+  #custom-header {
+    height: 30vh;
+    width: 100%;
+    position:relative;
+    z-index:1;
+    margin:0 auto;
+  }
+</style>
+
+
+</head><body class="nav-fixed fullcontent"><header id="custom-header">
+  <div id="header_viz"></div>
+</header>
+
+<script>
+  $( document ).ready(() => {
+
+    //javascript for intro loader
+
+    //Function to immitate R's seq
+    function seq(start, end, increment) {
+      var length = Math.round((end - start)/increment);
+      return Array(length).fill().map((_, idx) => start + idx*increment)
+    }
+
+
+    //define the pdf of the distribution.
+    var logistic = function(x, theta, i) {
+        var mu = 0.1;
+        sign = 1
+        var y = sign * (1 / (Math.sqrt(2 * Math.PI) * theta)) * (1 / x) *
+            Math.exp(-Math.pow((Math.log(x) - mu), 2) / (2 * Math.pow(theta, 2)))
+        return y;
+    }
+
+    var width   = $("#custom-header").width() ,
+        height  = $("#custom-header").outerHeight(),
+        padding = 0,
+        numOfLines = 20,
+        xs = seq(0.01, 5, .01),
+        colors = ['rgb(165,0,38)', 'rgb(215,48,39)', 'rgb(244,109,67)', 'rgb(253,174,97)', 'rgb(254,224,144)',
+            'rgb(224,243,248)', 'rgb(171,217,233)', 'rgb(116,173,209)', 'rgb(69,117,180)', 'rgb(49,54,149)'
+        ];
+  
+    console.log("trying to run this shit.")
+    //define the svg.
+    var svg = d3.select("#header_viz").append("svg")
+        .attr("width", width)
+        .attr("height", height + 2 * padding)
+        .append("g")
+
+
+    var animatelines = function(whichline) {
+        d3.selectAll(".line").style("opacity","0.5");
+
+        //Select All of the lines and process them one by one
+        d3.selectAll(".line").each(function(d,i){
+            // Get the length of each line in turn
+            var totalLength = d3.select("#line" + i).node().getTotalLength();
+
+            d3.selectAll("#line" + i).attr("stroke-dasharray", totalLength + " " + totalLength)
+              .attr("stroke-dashoffset", totalLength)
+              .transition()
+              .duration(5000)
+              .delay(100*i)
+              .attr("stroke-dashoffset", 0)
+              .style("stroke-width",2)
+        })
+
+        writeGreeting()
+    }
+
+
+
+    // The Scales:
+    var thetaMap = d3.scaleLinear() //name the values from 0 to 20 and make their values from .1-.7
+        .domain([0, numOfLines])
+        .range([0.8, 0.085])
+
+    var yPos = d3.scaleLinear() //scalling for creating horizontal lines
+        .domain([0, numOfLines])
+        .range([0, 4])
+
+    var x = d3.scaleLinear()
+        .domain([0, 5])
+        .range([0, width]);
+
+    var y = d3.scaleLinear()
+        .domain([0, 4.5])
+        .range([height, 0]);
+
+    // The line functions:
+    var logistic = d3.range(numOfLines).map(function(i) {
+        var odd = true
+        var toReturn = xs.map(function(num) {
+            return {
+                "x": num,
+                "y": logistic(num, thetaMap(i), i)
+            }
+        })
+        return toReturn;
+    })
+
+    //make a greeting message for after the line animation.
+    function writeGreeting(){
+
+        var text_scale = width < 500 ? 1 : 0.65;
+        console.log(text_scale);
+        var intro_text = "Live Free or Dichotomize";
+
+        var title = svg.append("text")
+            .attr("font-size", 30)
+            .attr("font-family", "optima")
+            .attr("text-anchor", "end")
+            .attr("fill-opacity", 0.65)
+            .attr("x", width < 500 ? x(4.8) : x(4.2))
+            .attr("y", width < 500 ? y(3.12) : y(2.1) )
+            .attr("opacity", 0)
+            .text(intro_text)
+            .attr("font-size", function(d) { return ( text_scale*width - 8) / this.getComputedTextLength() * 24 + "px"; })
+            .text("")
+            .attr("opacity", 1);
+
+        (function drawGreeting (i, start, greeting) {
+            setTimeout(function () {
+
+                //add next letter to the greeting in progress
+                start += greeting[i];
+
+                title.html(start) //append this to the html
+
+                if (start.length < greeting.length) { //if the in progress greeting is less than the full, keep going.
+                    drawGreeting(i+1,start,greeting);      //  increment i and call again.
+                };
+            }, 100)
+        })(0, "", intro_text);
+    }
+
+
+    // The d3 stuff
+    var line = d3.line()
+        // .interpolate("basis")
+        .x(function(d) { return x(d.x); })
+        .y(function(d) { return y(d.y); });
+
+
+    svg.selectAll(".line")
+        .data(logistic)
+        .enter().append("path")
+        .attr("class", "line")
+        .attr("id" , function(d, i){ return "line" + i;})
+        .attr("d", line)
+        .style("stroke-width", 2)
+        .style("stroke", function(d, i) { return colors[i % 10] })
+        .style("opacity", 0)
+        .style("fill", "none")
+        .on("mouseover", function(d){
+            d3.select(this).style("stroke", "black")
+        })
+        .on("mouseout", function(d,i){
+            d3.select(this).style("stroke", colors[i % 10])
+        })
+
+    // var introMessage = isMobile ? "tap" : "click"
+    // var introMessage = "click"
+    //
+    // var intro = svg.append("text")
+    //     .text(introMessage)
+    //     .attr("font-size", 35)
+    //     .attr("font-family", "optima")
+    //     .attr("text-anchor", "middle")
+    //     .attr("x", x(2.5))
+    //     .attr("y", y(2.01))
+
+    //kick it off on a click. (or tap)
+    animatelines(2)
+    // d3.select("svg").on("click", function() { animatelines(2) })
+
+})
+
+</script>
+
+
+
+
+
+
+<div id="quarto-search-results"></div>
+  <header id="quarto-header" class="headroom fixed-top">
+    <nav class="navbar navbar-expand-lg navbar-dark ">
+      <div class="navbar-container container-fluid">
+          <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarCollapse" aria-controls="navbarCollapse" aria-expanded="false" aria-label="Toggle navigation" onclick="if (window.quartoToggleHeadroom) { window.quartoToggleHeadroom(); }">
+  <span class="navbar-toggler-icon"></span>
+</button>
+          <div class="collapse navbar-collapse" id="navbarCollapse">
+            <ul class="navbar-nav navbar-nav-scroll me-auto">
+  <li class="nav-item">
+    <a class="nav-link" href="../../index.html">Home</a>
+  </li>  
+  <li class="nav-item">
+    <a class="nav-link" href="../../about.html">About</a>
+  </li>  
+</ul>
+              <div id="quarto-search" class="" title="Search"></div>
+          </div> <!-- /navcollapse -->
+      </div> <!-- /container-fluid -->
+    </nav>
+</header>
+<!-- content -->
+<header id="title-block-header" class="quarto-title-block default page-columns page-full">
+  <div class="quarto-title-banner page-columns page-full">
+    <div class="quarto-title column-body">
+      <h1 class="title">Building a data-driven CV with R</h1>
+                                <div class="quarto-categories">
+                <div class="quarto-category">career</div>
+                <div class="quarto-category">R</div>
+                <div class="quarto-category">RMarkdown</div>
+                <div class="quarto-category">CSS</div>
+              </div>
+                  </div>
+  </div>
+    
+  
+  <div class="quarto-title-meta">
+
+      <div>
+      <div class="quarto-title-meta-heading">Author</div>
+      <div class="quarto-title-meta-contents">
+               <p>Nick Strayer </p>
+            </div>
+    </div>
+      
+      <div>
+      <div class="quarto-title-meta-heading">Published</div>
+      <div class="quarto-title-meta-contents">
+        <p class="date">September 4, 2019</p>
+      </div>
+    </div>
+      
+    </div>
+    
+  
+  </header><div id="quarto-content" class="quarto-container page-columns page-rows-contents page-layout-article page-navbar">
+<!-- sidebar -->
+<!-- margin-sidebar -->
+    
+<!-- main -->
+<main class="content quarto-banner-title-block" id="quarto-document-content">
+
+
+
+
+<div class="cell">
+<style type="text/css">
+/* I forgot to add color styles for lists which makes them ugly, this is a temporary fix*/
+li {
+  color: #3a4145;
+}
+
+td, th {
+    padding: 3px;
+    border: 1px solid grey;
+}
+</style>
+</div>
+<p>A confession: I always put off updating my CV and Resume. Every time I go to update it, I end up deciding that I don’t like the style and then start from scratch. Upon starting over, I need to manually extract all relevant information for each position and conform it to my new layout. I don’t have a long CV yet, but even now, this takes much too long.</p>
+<p>A programmer would look at a problem like this and say, “any scenario where I repeat the same actions I should write a script.” Since I self-identify as a “data scientist” - an unholy mashup of programmer and statistician - I figured I could write a script to do the formatting and store all my information in… spreadsheets! <label for="tufte-mn-" class="margin-toggle">⊕</label><input type="checkbox" id="tufte-mn-" class="margin-toggle"><span class="marginnote">In a hurry and just want to know how you can build your CV or resume this way? Skip to <a href="#want-to-build-your-cv-this-way">here</a></span></p>
+<p>The goal of this post is to walk you through the techniques I used and help you do the same.</p>
+<p>First, let’s talk about the framework that allows this.</p>
+<section id="rmarkdown-pagedown" class="level2">
+<h2 class="anchored" data-anchor-id="rmarkdown-pagedown">RMarkdown &amp; Pagedown</h2>
+<p><label for="tufte-mn-" class="margin-toggle">⊕</label><input type="checkbox" id="tufte-mn-" class="margin-toggle"><span class="marginnote">RMarkdown is just one of a number of tools that allow you to use the <a href="https://en.wikipedia.org/wiki/Literate_programming">literate programming paradigm</a>, invented/popularized by the computer scientist Donald Knuth.</span> If you are familiar with the world of R programming, you will likely have heard of <a href="https://rmarkdown.rstudio.com/">Rmarkdown</a>. RMarkdown is a file-format/package that takes a standard markdown document and allows the code chunks within to be executed and their outputs recorded.</p>
+<p><a href="https://pagedown.rbind.io">Pagedown</a> is a new R package that formats the final output from your Rmarkdown into paginated HTML. <label for="tufte-mn-" class="margin-toggle">⊕</label><input type="checkbox" id="tufte-mn-" class="margin-toggle"><span class="marginnote">I had the pleasure of sitting in the very back of a packed conference hall at RStudio::conf 2019 when Yihui Xie introduced Pagedown. You can watch the presentation from a much better vantage point than I had on the <a href="https://resources.rstudio.com/rstudio-conf-2019/pagedown-creating-beautiful-pdfs-with-r-markdown-and-css">RStudioConf presentations site.</a></span> This HTML can then be easily turned into a PDF by using the print function in your browser. Previously, if you wanted to generate a PDF from RMarkdown, you had two options. You could just print unpaginated HTML (ugly), or you could compile to Latex, which meant you losing out on a lot of niceties that are provided by CSS formatting. Personally, I know a lot more about formatting with CSS than I do with Latex, so this was a perfect fit for me.</p>
+<p><label for="tufte-mn-" class="margin-toggle">⊕</label><input type="checkbox" id="tufte-mn-" class="margin-toggle"><span class="marginnote">It’s beautiful</span> <img src="../../media/nicks_resume_data/pagedown_example.png" class="img-fluid"></p>
+<p>Included in the Pagedown package is a template called ‘Resume.’ <label for="tufte-mn-" class="margin-toggle">⊕</label><input type="checkbox" id="tufte-mn-" class="margin-toggle"><span class="marginnote">The result of the un-touched resume template: <img src="https://user-images.githubusercontent.com/163582/49983676-c940a880-ff29-11e8-9487-3b4c94614fcc.png" class="img-fluid" alt="Default pagedown resume example"></span> This template generates a beautiful resume with the main content section on the left and a sidebar for supplementary information on the right. The main section displays your positions in an elegant timeline format.</p>
+<p>To add an entry for a position, you write markdown like so…</p>
+<pre><code>### PhD. Candidate, Biostatistics
+
+Vanderbilt University
+
+Nashville, TN
+
+2011-2015
+
+- Working on Bayesian network models &amp; interactive visualization platforms
+- University Graduate Fellow
+</code></pre>
+</section>
+<section id="resultsasis" class="level2">
+<h2 class="anchored" data-anchor-id="resultsasis">results=‘asis’</h2>
+<p><label for="tufte-mn-" class="margin-toggle">⊕</label><input type="checkbox" id="tufte-mn-" class="margin-toggle"><span class="marginnote">You can set this options for all chunks with <code>knitr::opts_chunk$set(results=‘asis’)</code> in the first chunk of the RMD.</span></p>
+<p>In RMarkdown, the output from code chunks is typically used to print tables or plots. However, by using the chunk command <code>results = 'asis'</code>, we can also generate text that looks the same to pandoc as if we typed it ourselves.</p>
+<p>This means that we can use R to write our document for us. <label for="tufte-mn-" class="margin-toggle">⊕</label><input type="checkbox" id="tufte-mn-" class="margin-toggle"><span class="marginnote">I have been doing this for a while with my personal website. My ‘projects’ section is stored in a JSON file that gets rendered to HTML by some simple R functions.</span> The trouble is, how do we write the code do to this?</p>
+</section>
+<section id="held-together-by-glue" class="level2">
+<h2 class="anchored" data-anchor-id="held-together-by-glue">Held together by glue</h2>
+<p>Up until recently, if you wanted to generate long text output with R from multiple variables, you had to use the paste function. <label for="tufte-mn-" class="margin-toggle">⊕</label><input type="checkbox" id="tufte-mn-" class="margin-toggle"><span class="marginnote">Technically the <code>sprintf()</code> function was an option as well, but that was just annoying.</span> As its name implies, <code>paste()</code> paste’s its arguments together into a character string. It’s great if you want to join two or so values together, but when you start writing longer, more complicated output, it gets a bit hairy.</p>
+<blockquote class="twitter-tweet blockquote">
+<p lang="en" dir="ltr">
+Making a CV/ Resume is something I always put off. But thanks to the {pagedown}, {purrr}, and {glue} packages I can store my positions in lists and build the output programatically. This way I tell myself I'm doing 'data-aggregation' and 'presentation' for my career. <a href="https://twitter.com/hashtag/rstats?src=hash&amp;ref_src=twsrc%5Etfw">#rstats</a> <a href="https://t.co/VDgMAqWmQ8">pic.twitter.com/VDgMAqWmQ8</a>
+</p>
+— Nick Strayer (<span class="citation" data-cites="NicholasStrayer">@NicholasStrayer</span>) <a href="https://twitter.com/NicholasStrayer/status/1177258660260544512?ref_src=twsrc%5Etfw">September 26, 2019</a>
+</blockquote>
+<script async="" src="https://platform.twitter.com/widgets.js" charset="utf-8"></script>
+<p>This sticking point was one of the inspirations for the package <code>glue</code>, by the brilliant <a href="https://twitter.com/jimhester_">Jim Hester</a>. Glue works by allowing you to write your output string in a natural template format. You tell R where you want each variable placed by writing the variable name wrapped in curly braces in the desired position in your template. Then when <code>glue()</code> evaluates, it pastes the values of each variable into its respective curly-braced location. <label for="tufte-mn-" class="margin-toggle">⊕</label><input type="checkbox" id="tufte-mn-" class="margin-toggle"><span class="marginnote">You can change what character is used to wrap variables with the arguments <code>.open</code> and <code>.close</code>. In case you want a curly brace in your output.</span></p>
+<p>This means we can write the markdown for a resume position by encoding all the necessary details about the position in variables and passing those variables to <code>glue()</code>…</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb2"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb2-1"><a href="#cb2-1" aria-hidden="true" tabindex="-1"></a>title <span class="ot">&lt;-</span> <span class="st">"PhD. Candidate, Biostatistics"</span></span>
+<span id="cb2-2"><a href="#cb2-2" aria-hidden="true" tabindex="-1"></a>loc <span class="ot">&lt;-</span> <span class="st">"Nashville, TN"</span></span>
+<span id="cb2-3"><a href="#cb2-3" aria-hidden="true" tabindex="-1"></a>institution <span class="ot">&lt;-</span> <span class="st">"Vanderbilt University"</span></span>
+<span id="cb2-4"><a href="#cb2-4" aria-hidden="true" tabindex="-1"></a>timeline <span class="ot">&lt;-</span> <span class="st">"2011-2015"</span></span>
+<span id="cb2-5"><a href="#cb2-5" aria-hidden="true" tabindex="-1"></a>description_bullets <span class="ot">&lt;-</span> <span class="st">"- Working on Bayesian network models &amp; interactive visualization platforms</span></span>
+<span id="cb2-6"><a href="#cb2-6" aria-hidden="true" tabindex="-1"></a><span class="st">- University Graduate Fellow</span></span>
+<span id="cb2-7"><a href="#cb2-7" aria-hidden="true" tabindex="-1"></a><span class="st">"</span></span>
+<span id="cb2-8"><a href="#cb2-8" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb2-9"><a href="#cb2-9" aria-hidden="true" tabindex="-1"></a><span class="fu">glue</span>(</span>
+<span id="cb2-10"><a href="#cb2-10" aria-hidden="true" tabindex="-1"></a>  <span class="st">"### {title}"</span>,</span>
+<span id="cb2-11"><a href="#cb2-11" aria-hidden="true" tabindex="-1"></a>  <span class="st">"</span><span class="sc">\n\n</span><span class="st">"</span>,   <span class="co"># Add two new lines</span></span>
+<span id="cb2-12"><a href="#cb2-12" aria-hidden="true" tabindex="-1"></a>  <span class="st">"{loc}"</span>,</span>
+<span id="cb2-13"><a href="#cb2-13" aria-hidden="true" tabindex="-1"></a>  <span class="st">"</span><span class="sc">\n\n</span><span class="st">"</span>,</span>
+<span id="cb2-14"><a href="#cb2-14" aria-hidden="true" tabindex="-1"></a>  <span class="st">"{institution}"</span>,</span>
+<span id="cb2-15"><a href="#cb2-15" aria-hidden="true" tabindex="-1"></a>  <span class="st">"</span><span class="sc">\n\n</span><span class="st">"</span>,</span>
+<span id="cb2-16"><a href="#cb2-16" aria-hidden="true" tabindex="-1"></a>  <span class="st">"{timeline}"</span>, </span>
+<span id="cb2-17"><a href="#cb2-17" aria-hidden="true" tabindex="-1"></a>  <span class="st">"</span><span class="sc">\n\n</span><span class="st">"</span>,</span>
+<span id="cb2-18"><a href="#cb2-18" aria-hidden="true" tabindex="-1"></a>  <span class="st">"{description_bullets}"</span></span>
+<span id="cb2-19"><a href="#cb2-19" aria-hidden="true" tabindex="-1"></a>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>### PhD. Candidate, Biostatistics
+
+Nashville, TN
+
+Vanderbilt University
+
+2011-2015
+
+- Working on Bayesian network models &amp; interactive visualization platforms
+- University Graduate Fellow</code></pre>
+</div>
+</div>
+</section>
+<section id="bring-in-the-spreadsheets" class="level2">
+<h2 class="anchored" data-anchor-id="bring-in-the-spreadsheets">Bring in the spreadsheets!</h2>
+<p>So we have a pagedown template, and we know how to turn variables into an entry. Now we need to decide how to store those variables for all the positions.</p>
+<p><label for="tufte-mn-" class="margin-toggle">⊕</label><input type="checkbox" id="tufte-mn-" class="margin-toggle"><span class="marginnote">A little secret: however, much data scientists love to talk about database systems, scraping frameworks, or distributed file stores, we still all wish everything came in CSVs.</span> I decided to do one final copy and paste of my positions into a CSV.</p>
+<p><img src="../../media/nicks_resume_data/spreadsheet.png" class="img-fluid"></p>
+<p>For each ‘position,’ I had columns describing the primary details: <code>title</code>, <code>loc</code>(ation), <code>institution</code>, <code>start</code> (date), and <code>end</code> (date).</p>
+<p>I also added a column for the <code>section</code> the entry fell into. For me this consists of <code>'education'</code>, <code>'research_positions'</code>, <code>'industry_positions'</code>, <code>'data_science_writings'</code>, etc..</p>
+<p>Last, I needed a way to store the description for the positions. This was a tiny bit tricky as I didn’t always want the same number of description bullets. Some positions just get one, some may have three…</p>
+</section>
+<section id="enter-tidyrpivot_longer" class="level2">
+<h2 class="anchored" data-anchor-id="enter-tidyrpivot_longer">Enter <code>tidyr::pivot_longer()</code></h2>
+<p>To deal with this, I reached into the shiny new <a href="https://www.tidyverse.org/articles/2019/09/tidyr-1-0-0/"><code>tidyr</code> V1</a> functions toolbox for the function <code>pivot_longer</code>.</p>
+<blockquote class="twitter-tweet blockquote">
+<p lang="en" dir="ltr">
+🤦 ♀️ this worked much better in my imagination…<br>😬 <code>tidyr::pivot_longer()</code>-ing<br>/* for actual good <a href="https://twitter.com/hashtag/rstats?src=hash&amp;ref_src=twsrc%5Etfw">#rstats</a> animations, see <a href="https://twitter.com/grrrck?ref_src=twsrc%5Etfw"><span class="citation" data-cites="grrrck">@grrrck</span></a>'s tidyexplain repo <a href="https://t.co/CL9IEuUlXe">https://t.co/CL9IEuUlXe</a> */ <a href="https://t.co/ohgGXlyCOA">pic.twitter.com/ohgGXlyCOA</a>
+</p>
+— Mara Averick (<span class="citation" data-cites="dataandme">@dataandme</span>) <a href="https://twitter.com/dataandme/status/1175010415341985793?ref_src=twsrc%5Etfw">September 20, 2019</a>
+</blockquote>
+<script async="" src="https://platform.twitter.com/widgets.js" charset="utf-8"></script>
+<p>I made multiple columns for description and creatively titled them <code>description_1</code>, <code>description_2</code>, and <code>description_3</code>. <label for="tufte-mn-" class="margin-toggle">⊕</label><input type="checkbox" id="tufte-mn-" class="margin-toggle"><span class="marginnote">If I had an entry with four description bullet points, I would have just added a <code>description_4</code>, and so on.</span>I filled in the columns for each entry until all bullets had been pasted and then left the remaining columns empty.</p>
+<p>For the rest of this post, I will use the actual position dataframe that my CV is using to demonstrate, it’s loaded currently as <code>positions</code>.</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb4"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb4-1"><a href="#cb4-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Helper function to print table without overwhelming output</span></span>
+<span id="cb4-2"><a href="#cb4-2" aria-hidden="true" tabindex="-1"></a>print_head <span class="ot">&lt;-</span> <span class="cf">function</span>(data, <span class="at">size =</span> <span class="dv">5</span>){</span>
+<span id="cb4-3"><a href="#cb4-3" aria-hidden="true" tabindex="-1"></a>  <span class="fu">head</span>(data, size) <span class="sc">%&gt;%</span> </span>
+<span id="cb4-4"><a href="#cb4-4" aria-hidden="true" tabindex="-1"></a>    knitr<span class="sc">::</span><span class="fu">kable</span>()</span>
+<span id="cb4-5"><a href="#cb4-5" aria-hidden="true" tabindex="-1"></a>}</span>
+<span id="cb4-6"><a href="#cb4-6" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb4-7"><a href="#cb4-7" aria-hidden="true" tabindex="-1"></a><span class="co"># Add an id to keep track of each entry</span></span>
+<span id="cb4-8"><a href="#cb4-8" aria-hidden="true" tabindex="-1"></a>position_data <span class="ot">&lt;-</span> positions <span class="sc">%&gt;%</span> </span>
+<span id="cb4-9"><a href="#cb4-9" aria-hidden="true" tabindex="-1"></a>  <span class="fu">mutate</span>(<span class="at">id =</span> <span class="dv">1</span><span class="sc">:</span><span class="fu">n</span>()) </span>
+<span id="cb4-10"><a href="#cb4-10" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb4-11"><a href="#cb4-11" aria-hidden="true" tabindex="-1"></a>position_data <span class="sc">%&gt;%</span> </span>
+<span id="cb4-12"><a href="#cb4-12" aria-hidden="true" tabindex="-1"></a>  <span class="fu">select</span>(</span>
+<span id="cb4-13"><a href="#cb4-13" aria-hidden="true" tabindex="-1"></a>    id, </span>
+<span id="cb4-14"><a href="#cb4-14" aria-hidden="true" tabindex="-1"></a>    description_1, </span>
+<span id="cb4-15"><a href="#cb4-15" aria-hidden="true" tabindex="-1"></a>    description_2, </span>
+<span id="cb4-16"><a href="#cb4-16" aria-hidden="true" tabindex="-1"></a>    description_3 ) <span class="sc">%&gt;%</span></span>
+<span id="cb4-17"><a href="#cb4-17" aria-hidden="true" tabindex="-1"></a>  <span class="fu">print_head</span>()</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output-display">
+<table class="table table-sm table-striped">
+<colgroup>
+<col style="width: 0%">
+<col style="width: 37%">
+<col style="width: 33%">
+<col style="width: 28%">
+</colgroup>
+<thead>
+<tr class="header">
+<th style="text-align: right;">id</th>
+<th style="text-align: left;">description_1</th>
+<th style="text-align: left;">description_2</th>
+<th style="text-align: left;">description_3</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td style="text-align: right;">1</td>
+<td style="text-align: left;">Working on Bayesian network models &amp; interactive visualization platforms</td>
+<td style="text-align: left;">University Graduate Fellow</td>
+<td style="text-align: left;">NA</td>
+</tr>
+<tr class="even">
+<td style="text-align: right;">2</td>
+<td style="text-align: left;">Thesis: An agent based model of Diel Vertical Migration patterns of Mysis diluviana</td>
+<td style="text-align: left;">NA</td>
+<td style="text-align: left;">NA</td>
+</tr>
+<tr class="odd">
+<td style="text-align: right;">3</td>
+<td style="text-align: left;">Independently analyzed and constructed statistical models for large data sets pertaining to carbon decomposition rates.</td>
+<td style="text-align: left;">NA</td>
+<td style="text-align: left;">NA</td>
+</tr>
+<tr class="even">
+<td style="text-align: right;">4</td>
+<td style="text-align: left;">Developed mathematical model to predict the transport of sulfur through the environment with applications in waste cleanup.</td>
+<td style="text-align: left;">NA</td>
+<td style="text-align: left;">NA</td>
+</tr>
+<tr class="odd">
+<td style="text-align: right;">5</td>
+<td style="text-align: left;">Analyzed and visualized data for CATOS fish tracking project.</td>
+<td style="text-align: left;">Head of data mining project to establish temporal trends in population densities of Mysis diluviana (Mysis).</td>
+<td style="text-align: left;">Ran project to mathematically model the migration patterns of Mysis (honors thesis project.)</td>
+</tr>
+</tbody>
+</table>
+</div>
+</div>
+<p>Using <code>pivot_longer</code>, I targeted the description columns using <code>tidyr::starts_with('description')</code> and transformed each individual position row into a series of rows with each description stored as <code>'description'</code> and its value as <code>'description_num'</code>. All the other columns were simply repeated.</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb5"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb5-1"><a href="#cb5-1" aria-hidden="true" tabindex="-1"></a>pivoted_positions <span class="ot">&lt;-</span> position_data <span class="sc">%&gt;%</span> </span>
+<span id="cb5-2"><a href="#cb5-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">pivot_longer</span>(</span>
+<span id="cb5-3"><a href="#cb5-3" aria-hidden="true" tabindex="-1"></a>     <span class="fu">starts_with</span>(<span class="st">'description'</span>),</span>
+<span id="cb5-4"><a href="#cb5-4" aria-hidden="true" tabindex="-1"></a>     <span class="at">names_to =</span> <span class="st">'description_num'</span>,</span>
+<span id="cb5-5"><a href="#cb5-5" aria-hidden="true" tabindex="-1"></a>     <span class="at">values_to =</span> <span class="st">'description'</span>,</span>
+<span id="cb5-6"><a href="#cb5-6" aria-hidden="true" tabindex="-1"></a>     <span class="at">values_drop_na =</span> <span class="cn">TRUE</span></span>
+<span id="cb5-7"><a href="#cb5-7" aria-hidden="true" tabindex="-1"></a>   )</span>
+<span id="cb5-8"><a href="#cb5-8" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb5-9"><a href="#cb5-9" aria-hidden="true" tabindex="-1"></a>pivoted_positions <span class="sc">%&gt;%</span> </span>
+<span id="cb5-10"><a href="#cb5-10" aria-hidden="true" tabindex="-1"></a>  <span class="fu">select</span>(</span>
+<span id="cb5-11"><a href="#cb5-11" aria-hidden="true" tabindex="-1"></a>    title, </span>
+<span id="cb5-12"><a href="#cb5-12" aria-hidden="true" tabindex="-1"></a>    description_num, </span>
+<span id="cb5-13"><a href="#cb5-13" aria-hidden="true" tabindex="-1"></a>    description) <span class="sc">%&gt;%</span> </span>
+<span id="cb5-14"><a href="#cb5-14" aria-hidden="true" tabindex="-1"></a>  <span class="fu">print_head</span>()</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output-display">
+<table class="table table-sm table-striped">
+<colgroup>
+<col style="width: 23%">
+<col style="width: 8%">
+<col style="width: 67%">
+</colgroup>
+<thead>
+<tr class="header">
+<th style="text-align: left;">title</th>
+<th style="text-align: left;">description_num</th>
+<th style="text-align: left;">description</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td style="text-align: left;">PhD. Candidate, Biostatistics</td>
+<td style="text-align: left;">description_1</td>
+<td style="text-align: left;">Working on Bayesian network models &amp; interactive visualization platforms</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">PhD. Candidate, Biostatistics</td>
+<td style="text-align: left;">description_2</td>
+<td style="text-align: left;">University Graduate Fellow</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;">B.S., Mathematics, Statistics (minor C.S.)</td>
+<td style="text-align: left;">description_1</td>
+<td style="text-align: left;">Thesis: An agent based model of Diel Vertical Migration patterns of Mysis diluviana</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">Research Assistant</td>
+<td style="text-align: left;">description_1</td>
+<td style="text-align: left;">Independently analyzed and constructed statistical models for large data sets pertaining to carbon decomposition rates.</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;">Undergraduate Researcher</td>
+<td style="text-align: left;">description_1</td>
+<td style="text-align: left;">Developed mathematical model to predict the transport of sulfur through the environment with applications in waste cleanup.</td>
+</tr>
+</tbody>
+</table>
+</div>
+</div>
+<p>Once this was completed, I got back to a single row per entry by using <code>group_by()</code> and <code>mutate()</code> to generate a list column that contained every description for a given position. Finally, I just kept the first row for each entry. <label for="tufte-mn-" class="margin-toggle">⊕</label><input type="checkbox" id="tufte-mn-" class="margin-toggle"><span class="marginnote">I am almost sure there’s a more elegant way to do this whole step, but I couldn’t figure it out. Know a better way? Please let me know!</span></p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb6"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb6-1"><a href="#cb6-1" aria-hidden="true" tabindex="-1"></a>pos_w_descrip_list <span class="ot">&lt;-</span> pivoted_positions <span class="sc">%&gt;%</span> </span>
+<span id="cb6-2"><a href="#cb6-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">group_by</span>(id) <span class="sc">%&gt;%</span> </span>
+<span id="cb6-3"><a href="#cb6-3" aria-hidden="true" tabindex="-1"></a>  <span class="co"># Wrap all descriptions into a list column</span></span>
+<span id="cb6-4"><a href="#cb6-4" aria-hidden="true" tabindex="-1"></a>  <span class="fu">mutate</span>(<span class="at">descriptions =</span> <span class="fu">list</span>(description) ) <span class="sc">%&gt;%</span> </span>
+<span id="cb6-5"><a href="#cb6-5" aria-hidden="true" tabindex="-1"></a>  <span class="fu">ungroup</span>() <span class="sc">%&gt;%</span> </span>
+<span id="cb6-6"><a href="#cb6-6" aria-hidden="true" tabindex="-1"></a>  <span class="co"># Only keep first row of each expanded position rows</span></span>
+<span id="cb6-7"><a href="#cb6-7" aria-hidden="true" tabindex="-1"></a>  <span class="fu">filter</span>(description_num <span class="sc">==</span> <span class="st">'description_1'</span>) <span class="sc">%&gt;%</span> </span>
+<span id="cb6-8"><a href="#cb6-8" aria-hidden="true" tabindex="-1"></a>  <span class="co"># We don't need these columns any more</span></span>
+<span id="cb6-9"><a href="#cb6-9" aria-hidden="true" tabindex="-1"></a>  <span class="fu">select</span>(<span class="sc">-</span>description_num, <span class="sc">-</span>description)</span>
+<span id="cb6-10"><a href="#cb6-10" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb6-11"><a href="#cb6-11" aria-hidden="true" tabindex="-1"></a>pos_w_descrip_list <span class="sc">%&gt;%</span> </span>
+<span id="cb6-12"><a href="#cb6-12" aria-hidden="true" tabindex="-1"></a>  <span class="fu">select</span>(id, title, descriptions) <span class="sc">%&gt;%</span> </span>
+<span id="cb6-13"><a href="#cb6-13" aria-hidden="true" tabindex="-1"></a>  <span class="fu">print_head</span>()</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output-display">
+<table class="table table-sm table-striped">
+<colgroup>
+<col style="width: 0%">
+<col style="width: 11%">
+<col style="width: 87%">
+</colgroup>
+<thead>
+<tr class="header">
+<th style="text-align: right;">id</th>
+<th style="text-align: left;">title</th>
+<th style="text-align: left;">descriptions</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td style="text-align: right;">1</td>
+<td style="text-align: left;">PhD. Candidate, Biostatistics</td>
+<td style="text-align: left;">Working on Bayesian network models &amp; interactive visualization platforms, University Graduate Fellow</td>
+</tr>
+<tr class="even">
+<td style="text-align: right;">2</td>
+<td style="text-align: left;">B.S., Mathematics, Statistics (minor C.S.)</td>
+<td style="text-align: left;">Thesis: An agent based model of Diel Vertical Migration patterns of Mysis diluviana</td>
+</tr>
+<tr class="odd">
+<td style="text-align: right;">3</td>
+<td style="text-align: left;">Research Assistant</td>
+<td style="text-align: left;">Independently analyzed and constructed statistical models for large data sets pertaining to carbon decomposition rates.</td>
+</tr>
+<tr class="even">
+<td style="text-align: right;">4</td>
+<td style="text-align: left;">Undergraduate Researcher</td>
+<td style="text-align: left;">Developed mathematical model to predict the transport of sulfur through the environment with applications in waste cleanup.</td>
+</tr>
+<tr class="odd">
+<td style="text-align: right;">5</td>
+<td style="text-align: left;">Undergraduate Researcher</td>
+<td style="text-align: left;">Analyzed and visualized data for CATOS fish tracking project. , Head of data mining project to establish temporal trends in population densities of Mysis diluviana (Mysis)., Ran project to mathematically model the migration patterns of Mysis (honors thesis project.)</td>
+</tr>
+</tbody>
+</table>
+</div>
+</div>
+<p>Now I had the data in a nice tibble with all the information I need for a given position in the row in a format I can run through glue.</p>
+</section>
+<section id="glue_data-to-the-rescue" class="level2">
+<h2 class="anchored" data-anchor-id="glue_data-to-the-rescue"><code>glue_data</code> to the rescue</h2>
+<p><code>glue::glue_data()</code> is a sister-function to <code>glue::glue()</code> that allows you to use a glue template in a dplyr pipe. You write out the column name in your curly braces, and glue runs row-by-row through your tibble, building a string for each.</p>
+<p>Before I could do this, I needed to take care of a few things. One was the dates. Some positions didn’t have both start and end date, or they were less than a year-long. In these scenarios, I just wanted to print a single date rather than a range. To do this, I used a <code>mutate</code> and an <code>ifelse</code> to build a <code>timeline</code> column.</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb7"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb7-1"><a href="#cb7-1" aria-hidden="true" tabindex="-1"></a><span class="co"># If missing start or start is same as end</span></span>
+<span id="cb7-2"><a href="#cb7-2" aria-hidden="true" tabindex="-1"></a><span class="co"># date, just use end date. otw build range</span></span>
+<span id="cb7-3"><a href="#cb7-3" aria-hidden="true" tabindex="-1"></a>positions_w_timeline <span class="ot">&lt;-</span> pos_w_descrip_list <span class="sc">%&gt;%</span> </span>
+<span id="cb7-4"><a href="#cb7-4" aria-hidden="true" tabindex="-1"></a>  <span class="fu">mutate</span>(</span>
+<span id="cb7-5"><a href="#cb7-5" aria-hidden="true" tabindex="-1"></a>    <span class="at">timeline =</span> <span class="fu">ifelse</span>(</span>
+<span id="cb7-6"><a href="#cb7-6" aria-hidden="true" tabindex="-1"></a>      <span class="fu">is.na</span>(start) <span class="sc">|</span> start <span class="sc">==</span> end,</span>
+<span id="cb7-7"><a href="#cb7-7" aria-hidden="true" tabindex="-1"></a>      end,</span>
+<span id="cb7-8"><a href="#cb7-8" aria-hidden="true" tabindex="-1"></a>      <span class="fu">glue</span>(<span class="st">'{end} - {start}'</span>)</span>
+<span id="cb7-9"><a href="#cb7-9" aria-hidden="true" tabindex="-1"></a>    )</span>
+<span id="cb7-10"><a href="#cb7-10" aria-hidden="true" tabindex="-1"></a>  )</span>
+<span id="cb7-11"><a href="#cb7-11" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb7-12"><a href="#cb7-12" aria-hidden="true" tabindex="-1"></a>positions_w_timeline <span class="sc">%&gt;%</span> </span>
+<span id="cb7-13"><a href="#cb7-13" aria-hidden="true" tabindex="-1"></a>  <span class="fu">select</span>(title, timeline) <span class="sc">%&gt;%</span> </span>
+<span id="cb7-14"><a href="#cb7-14" aria-hidden="true" tabindex="-1"></a>  <span class="fu">print_head</span>(<span class="dv">8</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output-display">
+<table class="table table-sm table-striped">
+<thead>
+<tr class="header">
+<th style="text-align: left;">title</th>
+<th style="text-align: left;">timeline</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td style="text-align: left;">PhD. Candidate, Biostatistics</td>
+<td style="text-align: left;">2020 - 2015</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">B.S., Mathematics, Statistics (minor C.S.)</td>
+<td style="text-align: left;">2015 - 2011</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;">Research Assistant</td>
+<td style="text-align: left;">2013 - 2012</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">Undergraduate Researcher</td>
+<td style="text-align: left;">2014 - 2013</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;">Undergraduate Researcher</td>
+<td style="text-align: left;">2015 - 2013</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">Human Computer Interaction Researcher</td>
+<td style="text-align: left;">2015</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;">Graduate Research Assistant</td>
+<td style="text-align: left;">2020 - 2015</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">Data Science Researcher</td>
+<td style="text-align: left;">2018 - 2017</td>
+</tr>
+</tbody>
+</table>
+</div>
+</div>
+<p>Second, I needed to collapse my list column of descriptions into the one-bullet-per-line format that the Pagedown resume template uses. I used <code>purrr::map_chr</code> and the <code>paste</code> function.</p>
+<p><label for="tufte-mn-" class="margin-toggle">⊕</label><input type="checkbox" id="tufte-mn-" class="margin-toggle"><span class="marginnote">Every time I write a quoted dash character, I always feel like it’s a non-plussed face that is judging me: <code>‘-’</code></span></p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb8"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb8-1"><a href="#cb8-1" aria-hidden="true" tabindex="-1"></a>positions_collapsed_bullets <span class="ot">&lt;-</span> positions_w_timeline <span class="sc">%&gt;%</span> </span>
+<span id="cb8-2"><a href="#cb8-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">mutate</span>(</span>
+<span id="cb8-3"><a href="#cb8-3" aria-hidden="true" tabindex="-1"></a>     <span class="at">description_bullets =</span> <span class="fu">map_chr</span>(</span>
+<span id="cb8-4"><a href="#cb8-4" aria-hidden="true" tabindex="-1"></a>       descriptions, </span>
+<span id="cb8-5"><a href="#cb8-5" aria-hidden="true" tabindex="-1"></a>       <span class="sc">~</span><span class="fu">paste</span>(<span class="st">'-'</span>, ., <span class="at">collapse =</span> <span class="st">'</span><span class="sc">\n</span><span class="st">'</span>)),</span>
+<span id="cb8-6"><a href="#cb8-6" aria-hidden="true" tabindex="-1"></a>  )</span>
+<span id="cb8-7"><a href="#cb8-7" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb8-8"><a href="#cb8-8" aria-hidden="true" tabindex="-1"></a>positions_collapsed_bullets <span class="sc">%&gt;%</span> </span>
+<span id="cb8-9"><a href="#cb8-9" aria-hidden="true" tabindex="-1"></a>  <span class="fu">pull</span>(description_bullets) <span class="sc">%&gt;%</span> </span>
+<span id="cb8-10"><a href="#cb8-10" aria-hidden="true" tabindex="-1"></a>  <span class="fu">head</span>(<span class="dv">3</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>[1] "- Working on Bayesian network models &amp; interactive visualization platforms\n- University Graduate Fellow"                 
+[2] "- Thesis: An agent based model of Diel Vertical Migration patterns of Mysis diluviana"                                    
+[3] "- Independently analyzed and constructed statistical models for large data sets pertaining to carbon decomposition rates."</code></pre>
+</div>
+</div>
+<p>Last, the template will ignore parts of an entry if it is passed as <code>'N/A'</code>. Unfortunately, printing an <code>na</code> value in R returns <code>'na'</code>, so I used <code>mutate_all()</code> to turn every missing value in the dataframe into the string <code>'N/A'</code>.</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb10"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb10-1"><a href="#cb10-1" aria-hidden="true" tabindex="-1"></a>positions_no_na <span class="ot">&lt;-</span> positions_collapsed_bullets <span class="sc">%&gt;%</span> </span>
+<span id="cb10-2"><a href="#cb10-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">mutate_all</span>(<span class="sc">~</span><span class="fu">ifelse</span>(<span class="fu">is.na</span>(.), <span class="st">'N/A'</span>, .))</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+<p>After all that, we just plop our glue template into <code>glue_data</code> and pipe in our newly modified positions dataframe.</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb11"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb11-1"><a href="#cb11-1" aria-hidden="true" tabindex="-1"></a>positions_no_na <span class="sc">%&gt;%</span> </span>
+<span id="cb11-2"><a href="#cb11-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">head</span>(<span class="dv">2</span>) <span class="sc">%&gt;%</span> </span>
+<span id="cb11-3"><a href="#cb11-3" aria-hidden="true" tabindex="-1"></a>  <span class="fu">glue_data</span>(</span>
+<span id="cb11-4"><a href="#cb11-4" aria-hidden="true" tabindex="-1"></a>   <span class="st">"### {title}"</span>,</span>
+<span id="cb11-5"><a href="#cb11-5" aria-hidden="true" tabindex="-1"></a>   <span class="st">"</span><span class="sc">\n\n</span><span class="st">"</span>,</span>
+<span id="cb11-6"><a href="#cb11-6" aria-hidden="true" tabindex="-1"></a>   <span class="st">"{loc}"</span>,</span>
+<span id="cb11-7"><a href="#cb11-7" aria-hidden="true" tabindex="-1"></a>   <span class="st">"</span><span class="sc">\n\n</span><span class="st">"</span>,</span>
+<span id="cb11-8"><a href="#cb11-8" aria-hidden="true" tabindex="-1"></a>   <span class="st">"{institution}"</span>,</span>
+<span id="cb11-9"><a href="#cb11-9" aria-hidden="true" tabindex="-1"></a>   <span class="st">"</span><span class="sc">\n\n</span><span class="st">"</span>,</span>
+<span id="cb11-10"><a href="#cb11-10" aria-hidden="true" tabindex="-1"></a>   <span class="st">"{timeline}"</span>, </span>
+<span id="cb11-11"><a href="#cb11-11" aria-hidden="true" tabindex="-1"></a>   <span class="st">"</span><span class="sc">\n\n</span><span class="st">"</span>,</span>
+<span id="cb11-12"><a href="#cb11-12" aria-hidden="true" tabindex="-1"></a>   <span class="st">"{description_bullets}"</span>,</span>
+<span id="cb11-13"><a href="#cb11-13" aria-hidden="true" tabindex="-1"></a>   <span class="st">"</span><span class="sc">\n\n\n</span><span class="st">"</span></span>
+<span id="cb11-14"><a href="#cb11-14" aria-hidden="true" tabindex="-1"></a> )</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>### PhD. Candidate, Biostatistics
+
+Vanderbilt University
+
+Nashville, TN
+
+2020 - 2015
+
+- Working on Bayesian network models &amp; interactive visualization platforms
+- University Graduate Fellow
+
+
+### B.S., Mathematics, Statistics (minor C.S.)
+
+University of Vermont
+
+Burlington, VT
+
+2015 - 2011
+
+- Thesis: An agent based model of Diel Vertical Migration patterns of Mysis diluviana</code></pre>
+</div>
+</div>
+<p>I wrapped all this code in a function that takes a position’s dataframe and the name of the section I want it to print and then runs all the transformations above and prints.</p>
+<p>Here’s what <a href="https://github.com/nstrayer/cv/blob/master/parsing_functions.R#L47-L88">the final function looks like</a>. <label for="tufte-mn-" class="margin-toggle">⊕</label><input type="checkbox" id="tufte-mn-" class="margin-toggle"><span class="marginnote">You may notice a function <code>strip_links_from_cols()</code> in this that I haven’t mentioned yet. We will get to that!</span></p>
+<div class="quarto-figure quarto-figure-center">
+<figure class="figure">
+<p><a href="https://github.com/nstrayer/cv/blob/master/parsing_functions.R#L47-L88"><img src="../../media/nicks_resume_data/print_section_function.png" class="img-fluid figure-img"></a></p>
+</figure>
+</div>
+<p>Now I can just go through and draft my resume by dropping in an R chunk with output <code>asis</code>. If I end up wanting to change the layout in the future, I just need to rearrange my glue template.</p>
+</section>
+<section id="building-a-resume" class="level2">
+<h2 class="anchored" data-anchor-id="building-a-resume">Building a resume</h2>
+<p>I used this new-layout flexibility almost immediately. As some people doing hiring may not want - or have time - to scan through multiple pages of a CV, I built a template for a single-page resume. All this took was adding a single column to the spreadsheet that contained a boolean indicating if I wanted the position in my resume or not.</p>
+<p><label for="tufte-mn-" class="margin-toggle">⊕</label><input type="checkbox" id="tufte-mn-" class="margin-toggle"><span class="marginnote">The fact I had an extra curly brace to start {pagedown} in this tweet has caused me large quantities of distress.</span></p>
+<blockquote class="twitter-tweet blockquote">
+<p lang="en" dir="ltr">
+Added a 1 page resume to my <a href="https://twitter.com/hashtag/rstats?src=hash&amp;ref_src=twsrc%5Etfw">#rstats</a> {{pagedown}-built CV repo. To filter what gets into resume I just modify a column in my positions spreadsheet. No more starting from scratch when I want a new template! <br>gh: <a href="https://t.co/NYJNg7daj7">https://t.co/NYJNg7daj7</a> <a href="https://t.co/J0JQJz5Xpb">pic.twitter.com/J0JQJz5Xpb</a>
+</p>
+— Nick Strayer (<span class="citation" data-cites="NicholasStrayer">@NicholasStrayer</span>) <a href="https://twitter.com/NicholasStrayer/status/1178754342289121280?ref_src=twsrc%5Etfw">September 30, 2019</a>
+</blockquote>
+<script async="" src="https://platform.twitter.com/widgets.js" charset="utf-8"></script>
+</section>
+<section id="dealing-with-links" class="level2">
+<h2 class="anchored" data-anchor-id="dealing-with-links">Dealing with links</h2>
+<p>One of the beautiful things about HTML is that you can interact with it. The most common type of interaction is clicking on links. In my positions, I liberally added links to things for people to click on. This works great when people view my CV on the web, but what if someone wants to print it out and read it in real life? After all, pagedown is paginated for precisely that purpose.</p>
+<p>In the standard pagedown format, there is a YAML header option (<code>links-to-footnotes: true</code>) <label for="tufte-mn-" class="margin-toggle">⊕</label><input type="checkbox" id="tufte-mn-" class="margin-toggle"><span class="marginnote">For all the available options, check out the <a href="https://pagedown.rbind.io/#links">excellent docs for pagedown</a>.</span> that replaces every link with a footnote and then adds a superscript to the link text guiding the reader to the correct reference. This is a great solution. Unfortunately, the option isn’t available for the resume template.</p>
+<p><label for="tufte-mn-" class="margin-toggle">⊕</label><input type="checkbox" id="tufte-mn-" class="margin-toggle"><span class="marginnote">There is a <a href="https://github.com/rstudio/pagedown/blob/master/inst/resources/lua/uri-to-fn.lua">pandoc processing function</a> for parsing links that <a href="https://github.com/rstudio/pagedown/blob/master/R/paged.R#L43">is passed to the standard paged format</a> but <a href="https://github.com/rstudio/pagedown/blob/master/R/resume.R#L13-L17">is not passed to the Resume template</a>. I tried to add it by modifying the Pagedown package itself could never get it to respect the sidebar layout. If I had more time, I would like to fix this at the package-level to make it more elegant.</span></p>
+<p>Since I liked the resume template, I decided to roll my own solution.</p>
+<p>I wrote a function <code>sanitize_links()</code> that takes a chunk of text as input and identifies the markdown links in it with a regular expression. The function then replaces the markdown link with plain text and adds a sequential superscript. Each link it replaces is placed in a bookkeeping array: <code>links</code>. At the very end of the document, <code>links</code> is printed out as a numbered list.</p>
+<p><label for="tufte-mn-" class="margin-toggle">⊕</label><input type="checkbox" id="tufte-mn-" class="margin-toggle"><span class="marginnote">I just found out you can write comments in your regular expressions, and it makes me very happy.</span></p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb13"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb13-1"><a href="#cb13-1" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(stringr)</span>
+<span id="cb13-2"><a href="#cb13-2" aria-hidden="true" tabindex="-1"></a><span class="co"># Regex to locate links in text</span></span>
+<span id="cb13-3"><a href="#cb13-3" aria-hidden="true" tabindex="-1"></a>find_link <span class="ot">&lt;-</span> <span class="fu">regex</span>(<span class="st">"</span></span>
+<span id="cb13-4"><a href="#cb13-4" aria-hidden="true" tabindex="-1"></a><span class="st">  </span><span class="sc">\\</span><span class="st">[   # Grab opening square bracket</span></span>
+<span id="cb13-5"><a href="#cb13-5" aria-hidden="true" tabindex="-1"></a><span class="st">  .+?   # Find smallest internal text as possible</span></span>
+<span id="cb13-6"><a href="#cb13-6" aria-hidden="true" tabindex="-1"></a><span class="st">  </span><span class="sc">\\</span><span class="st">]   # Closing square bracket</span></span>
+<span id="cb13-7"><a href="#cb13-7" aria-hidden="true" tabindex="-1"></a><span class="st">  </span><span class="sc">\\</span><span class="st">(   # Opening parenthesis</span></span>
+<span id="cb13-8"><a href="#cb13-8" aria-hidden="true" tabindex="-1"></a><span class="st">  .+?   # Link text, again as small as possible</span></span>
+<span id="cb13-9"><a href="#cb13-9" aria-hidden="true" tabindex="-1"></a><span class="st">  </span><span class="sc">\\</span><span class="st">)   # Closing parenthesis</span></span>
+<span id="cb13-10"><a href="#cb13-10" aria-hidden="true" tabindex="-1"></a><span class="st">  "</span>,</span>
+<span id="cb13-11"><a href="#cb13-11" aria-hidden="true" tabindex="-1"></a> <span class="at">comments =</span> <span class="cn">TRUE</span>)</span>
+<span id="cb13-12"><a href="#cb13-12" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb13-13"><a href="#cb13-13" aria-hidden="true" tabindex="-1"></a><span class="co"># Function that removes links from text and replaces them with superscripts that are </span></span>
+<span id="cb13-14"><a href="#cb13-14" aria-hidden="true" tabindex="-1"></a><span class="co"># referenced in an end-of-document list. </span></span>
+<span id="cb13-15"><a href="#cb13-15" aria-hidden="true" tabindex="-1"></a>sanitize_links <span class="ot">&lt;-</span> <span class="cf">function</span>(text){</span>
+<span id="cb13-16"><a href="#cb13-16" aria-hidden="true" tabindex="-1"></a>  <span class="fu">str_extract_all</span>(text, find_link) <span class="sc">%&gt;%</span> </span>
+<span id="cb13-17"><a href="#cb13-17" aria-hidden="true" tabindex="-1"></a>    <span class="fu">pluck</span>(<span class="dv">1</span>) <span class="sc">%&gt;%</span> </span>
+<span id="cb13-18"><a href="#cb13-18" aria-hidden="true" tabindex="-1"></a>    <span class="fu">walk</span>(<span class="cf">function</span>(link_from_text){</span>
+<span id="cb13-19"><a href="#cb13-19" aria-hidden="true" tabindex="-1"></a>      title <span class="ot">&lt;-</span> link_from_text <span class="sc">%&gt;%</span> </span>
+<span id="cb13-20"><a href="#cb13-20" aria-hidden="true" tabindex="-1"></a>        <span class="fu">str_extract</span>(<span class="st">'</span><span class="sc">\\</span><span class="st">[.+</span><span class="sc">\\</span><span class="st">]'</span>) <span class="sc">%&gt;%</span> </span>
+<span id="cb13-21"><a href="#cb13-21" aria-hidden="true" tabindex="-1"></a>        <span class="fu">str_remove_all</span>(<span class="st">'</span><span class="sc">\\</span><span class="st">[|</span><span class="sc">\\</span><span class="st">]'</span>) </span>
+<span id="cb13-22"><a href="#cb13-22" aria-hidden="true" tabindex="-1"></a>      </span>
+<span id="cb13-23"><a href="#cb13-23" aria-hidden="true" tabindex="-1"></a>      link <span class="ot">&lt;-</span> link_from_text <span class="sc">%&gt;%</span> </span>
+<span id="cb13-24"><a href="#cb13-24" aria-hidden="true" tabindex="-1"></a>        <span class="fu">str_extract</span>(<span class="st">'</span><span class="sc">\\</span><span class="st">(.+</span><span class="sc">\\</span><span class="st">)'</span>) <span class="sc">%&gt;%</span> </span>
+<span id="cb13-25"><a href="#cb13-25" aria-hidden="true" tabindex="-1"></a>        <span class="fu">str_remove_all</span>(<span class="st">'</span><span class="sc">\\</span><span class="st">(|</span><span class="sc">\\</span><span class="st">)'</span>)</span>
+<span id="cb13-26"><a href="#cb13-26" aria-hidden="true" tabindex="-1"></a>      </span>
+<span id="cb13-27"><a href="#cb13-27" aria-hidden="true" tabindex="-1"></a>      <span class="co"># add link to links array</span></span>
+<span id="cb13-28"><a href="#cb13-28" aria-hidden="true" tabindex="-1"></a>      links <span class="ot">&lt;&lt;-</span> <span class="fu">c</span>(links, link)</span>
+<span id="cb13-29"><a href="#cb13-29" aria-hidden="true" tabindex="-1"></a>      </span>
+<span id="cb13-30"><a href="#cb13-30" aria-hidden="true" tabindex="-1"></a>      <span class="co"># Build replacement text</span></span>
+<span id="cb13-31"><a href="#cb13-31" aria-hidden="true" tabindex="-1"></a>      new_text <span class="ot">&lt;-</span> <span class="fu">glue</span>(<span class="st">'{title}&lt;sup&gt;{length(links)}&lt;/sup&gt;'</span>)</span>
+<span id="cb13-32"><a href="#cb13-32" aria-hidden="true" tabindex="-1"></a>      </span>
+<span id="cb13-33"><a href="#cb13-33" aria-hidden="true" tabindex="-1"></a>      <span class="co"># Replace text</span></span>
+<span id="cb13-34"><a href="#cb13-34" aria-hidden="true" tabindex="-1"></a>      text <span class="ot">&lt;&lt;-</span> text <span class="sc">%&gt;%</span> </span>
+<span id="cb13-35"><a href="#cb13-35" aria-hidden="true" tabindex="-1"></a>        <span class="fu">str_replace</span>(<span class="fu">fixed</span>(link_from_text), new_text)</span>
+<span id="cb13-36"><a href="#cb13-36" aria-hidden="true" tabindex="-1"></a>    })</span>
+<span id="cb13-37"><a href="#cb13-37" aria-hidden="true" tabindex="-1"></a>  </span>
+<span id="cb13-38"><a href="#cb13-38" aria-hidden="true" tabindex="-1"></a>  text</span>
+<span id="cb13-39"><a href="#cb13-39" aria-hidden="true" tabindex="-1"></a>}</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+<p>To demonstrate how this works, let’s ‘sanitize’ some sample text with two links in it.</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb14"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb14-1"><a href="#cb14-1" aria-hidden="true" tabindex="-1"></a>links <span class="ot">&lt;-</span> <span class="fu">c</span>() </span>
+<span id="cb14-2"><a href="#cb14-2" aria-hidden="true" tabindex="-1"></a>text_w_links <span class="ot">&lt;-</span> <span class="st">"This is some [text](www.with_links.com). It would be nice if it was just [plain](www.and_without_links.com)."</span></span>
+<span id="cb14-3"><a href="#cb14-3" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb14-4"><a href="#cb14-4" aria-hidden="true" tabindex="-1"></a>text_wo_links <span class="ot">&lt;-</span> text_w_links <span class="sc">%&gt;%</span> <span class="fu">sanitize_links</span>()</span>
+<span id="cb14-5"><a href="#cb14-5" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb14-6"><a href="#cb14-6" aria-hidden="true" tabindex="-1"></a>text_wo_links <span class="sc">%&gt;%</span> <span class="fu">print</span>()</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>[1] "This is some text&lt;sup&gt;1&lt;/sup&gt;. It would be nice if it was just plain&lt;sup&gt;2&lt;/sup&gt;."</code></pre>
+</div>
+<div class="sourceCode cell-code" id="cb16"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb16-1"><a href="#cb16-1" aria-hidden="true" tabindex="-1"></a>links <span class="sc">%&gt;%</span> <span class="fu">print</span>()</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>[1] "www.with_links.com"        "www.and_without_links.com"</code></pre>
+</div>
+</div>
+<p>Notice the use of the <code>&lt;&lt;-</code> assignment for <code>links</code> in the function. <label for="tufte-mn-" class="margin-toggle">⊕</label><input type="checkbox" id="tufte-mn-" class="margin-toggle"><span class="marginnote">Usually, I am very against mutating variables, especially out of scope, but this seemed like an acceptable use of the technique since its just a static text document and the code isn’t running live somewhere.</span> This is because by default, the <code>link</code> array that the function is appending to will only get modified <em>within</em> the function scope, and thus we won’t have the output for later. <code>&lt;&lt;-</code> lets R know that it should modify the variable reference <em>outside</em> of the current scope.</p>
+<p>I wrapped <code>sanitize_links()</code> in another function that returns the positions tibble with the links all sanitized in order of their appearance on the page.</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb18"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb18-1"><a href="#cb18-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Take entire positions section and removes the links </span></span>
+<span id="cb18-2"><a href="#cb18-2" aria-hidden="true" tabindex="-1"></a>strip_links_from_cols <span class="ot">&lt;-</span> <span class="cf">function</span>(data, cols_to_strip){</span>
+<span id="cb18-3"><a href="#cb18-3" aria-hidden="true" tabindex="-1"></a>  <span class="cf">for</span>(i <span class="cf">in</span> <span class="dv">1</span><span class="sc">:</span><span class="fu">nrow</span>(data)){</span>
+<span id="cb18-4"><a href="#cb18-4" aria-hidden="true" tabindex="-1"></a>    <span class="co"># Remove by position so numbers stay together</span></span>
+<span id="cb18-5"><a href="#cb18-5" aria-hidden="true" tabindex="-1"></a>    <span class="cf">for</span>(col <span class="cf">in</span> cols_to_strip){</span>
+<span id="cb18-6"><a href="#cb18-6" aria-hidden="true" tabindex="-1"></a>      data[i, col] <span class="ot">&lt;-</span> <span class="fu">sanitize_links</span>(data[i, col])</span>
+<span id="cb18-7"><a href="#cb18-7" aria-hidden="true" tabindex="-1"></a>    }</span>
+<span id="cb18-8"><a href="#cb18-8" aria-hidden="true" tabindex="-1"></a>  }</span>
+<span id="cb18-9"><a href="#cb18-9" aria-hidden="true" tabindex="-1"></a>  <span class="co"># Give back now sanitized position data</span></span>
+<span id="cb18-10"><a href="#cb18-10" aria-hidden="true" tabindex="-1"></a>  data</span>
+<span id="cb18-11"><a href="#cb18-11" aria-hidden="true" tabindex="-1"></a>}</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+<p>I wrapped links in the free text section in <code>sanitize_links()</code> so they would get stripped as well. This means that the links sequentially decrease as the page goes down. Is this actually important? Probably not.</p>
+<p>Now when I want to generate the CV for printing to PDF, I just flip a boolean <code>PDF_EXPORT</code> at the top of the RMD, and all the links are stripped out.</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb19"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb19-1"><a href="#cb19-1" aria-hidden="true" tabindex="-1"></a>sanitize_links <span class="ot">&lt;-</span> <span class="cf">function</span>(text){</span>
+<span id="cb19-2"><a href="#cb19-2" aria-hidden="true" tabindex="-1"></a>  <span class="co"># Only do stuff to text if we're exporting PDF</span></span>
+<span id="cb19-3"><a href="#cb19-3" aria-hidden="true" tabindex="-1"></a>  <span class="cf">if</span>(PDF_EXPORT){</span>
+<span id="cb19-4"><a href="#cb19-4" aria-hidden="true" tabindex="-1"></a>    ...</span>
+<span id="cb19-5"><a href="#cb19-5" aria-hidden="true" tabindex="-1"></a>  }</span>
+<span id="cb19-6"><a href="#cb19-6" aria-hidden="true" tabindex="-1"></a>  text</span>
+<span id="cb19-7"><a href="#cb19-7" aria-hidden="true" tabindex="-1"></a>}</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+</section>
+<section id="context-aware-content" class="level2">
+<h2 class="anchored" data-anchor-id="context-aware-content">Context-aware content</h2>
+<p>I took advantage of this PDF export value to add a conditional text entry at the top of the document. This tells readers of the PDF version that there is an HTML version and gives readers of the HTML version a link to download the PDF version.</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb20"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb20-1"><a href="#cb20-1" aria-hidden="true" tabindex="-1"></a><span class="cf">if</span>(PDF_EXPORT){</span>
+<span id="cb20-2"><a href="#cb20-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">cat</span>(<span class="st">"View this CV online with links at _nickstrayer.me/cv_"</span>)</span>
+<span id="cb20-3"><a href="#cb20-3" aria-hidden="true" tabindex="-1"></a>} <span class="cf">else</span> {</span>
+<span id="cb20-4"><a href="#cb20-4" aria-hidden="true" tabindex="-1"></a>  <span class="fu">cat</span>(<span class="st">"[&lt;i class='fas fa-download'&gt;&lt;/i&gt; Download a PDF of this CV](https://github.com/nstrayer/cv/raw/master/strayer_cv.pdf)"</span>)</span>
+<span id="cb20-5"><a href="#cb20-5" aria-hidden="true" tabindex="-1"></a>}</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+<p><img src="../../media/nicks_resume_data/custom_messages.png" class="img-fluid"></p>
+</section>
+<section id="customizing-the-css" class="level2">
+<h2 class="anchored" data-anchor-id="customizing-the-css">Customizing the CSS</h2>
+<p>Previously we focused on how to get the positions in, but one of the more compelling aspects of a CV is how you can stand out by making it unique. Because of this, I didn’t want to just use the default (but beautiful) resume template; so I modified the CSS using the CSS override option available in RMarkdown.</p>
+<p>This involves just writing your new styles in a <code>.css</code> file somewhere in the same directory as your markdown and then referencing it in the YAML header:</p>
+<p><label for="tufte-mn-" class="margin-toggle">⊕</label><input type="checkbox" id="tufte-mn-" class="margin-toggle"><span class="marginnote">I left in the original <code>‘resume’</code> CSS file so I didn’t lose all the niceness it provides and my styles just stack on top of it.</span></p>
+<pre><code>---
+title: "Nick Strayer's CV"
+output:
+  pagedown::html_resume:
+    css: ['css/styles.css', 'resume']
+---</code></pre>
+<p>For instance, I decided to change the fonts to a pair I really love from <a href="https://fonts.google.com/">Google Fonts</a>…</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb22"><pre class="sourceCode css code-with-copy"><code class="sourceCode css"><span id="cb22-1"><a href="#cb22-1" aria-hidden="true" tabindex="-1"></a><span class="im">@import</span> <span class="fu">url(</span><span class="st">"https://fonts.googleapis.com/css?family=Montserrat|Playfair+Display&amp;display=swap"</span><span class="fu">)</span><span class="op">;</span></span>
+<span id="cb22-2"><a href="#cb22-2" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb22-3"><a href="#cb22-3" aria-hidden="true" tabindex="-1"></a><span class="co">/* Main text is monserrat*/</span></span>
+<span id="cb22-4"><a href="#cb22-4" aria-hidden="true" tabindex="-1"></a>body {</span>
+<span id="cb22-5"><a href="#cb22-5" aria-hidden="true" tabindex="-1"></a>  <span class="kw">font-family</span>: <span class="st">"Montserrat"</span><span class="op">,</span> <span class="dv">sans-serif</span><span class="op">;</span></span>
+<span id="cb22-6"><a href="#cb22-6" aria-hidden="true" tabindex="-1"></a>  <span class="kw">font-weight</span>: <span class="dv">300</span><span class="op">;</span></span>
+<span id="cb22-7"><a href="#cb22-7" aria-hidden="true" tabindex="-1"></a>  <span class="kw">line-height</span>: <span class="dv">1.3</span><span class="op">;</span></span>
+<span id="cb22-8"><a href="#cb22-8" aria-hidden="true" tabindex="-1"></a>  <span class="kw">color</span>: <span class="cn">#444</span><span class="op">;</span></span>
+<span id="cb22-9"><a href="#cb22-9" aria-hidden="true" tabindex="-1"></a>}</span>
+<span id="cb22-10"><a href="#cb22-10" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb22-11"><a href="#cb22-11" aria-hidden="true" tabindex="-1"></a><span class="co">/* Give headers playfair font */</span></span>
+<span id="cb22-12"><a href="#cb22-12" aria-hidden="true" tabindex="-1"></a>h1<span class="op">,</span></span>
+<span id="cb22-13"><a href="#cb22-13" aria-hidden="true" tabindex="-1"></a>h2<span class="op">,</span></span>
+<span id="cb22-14"><a href="#cb22-14" aria-hidden="true" tabindex="-1"></a>h3 {</span>
+<span id="cb22-15"><a href="#cb22-15" aria-hidden="true" tabindex="-1"></a>  <span class="kw">font-family</span>: <span class="st">"Playfair Display"</span><span class="op">,</span> <span class="dv">serif</span><span class="op">;</span></span>
+<span id="cb22-16"><a href="#cb22-16" aria-hidden="true" tabindex="-1"></a>  <span class="kw">color</span>: <span class="cn">#000</span><span class="op">;</span></span>
+<span id="cb22-17"><a href="#cb22-17" aria-hidden="true" tabindex="-1"></a>}</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+<p>This blog is not one you’re probably reading to get CSS tips, so I will not go into the specifics. <label for="tufte-mn-" class="margin-toggle">⊕</label><input type="checkbox" id="tufte-mn-" class="margin-toggle"><span class="marginnote">If you are interested in learning more about CSS I really like <a href="https://www.youtube.com/channel/UCJZv4d5rbIKd4QHMPkcABCw">Kevin Powell’s youtube channel</a>. It transformed the way I view and write CSS for the better.</span> I mainly went in and made the sidebar a bit smaller and changed the way some of the lists were formatted. If you want to see all the CSS I used for my CV check out the <a href="https://github.com/nstrayer/cv/blob/master/css/styles.css">main style file on github</a>. The singe-paged resume also has an additional <a href="https://github.com/nstrayer/cv/blob/master/css/custom_resume.css">set of styles</a> that stack on top of both the default style sheet and my CV styles.</p>
+</section>
+<section id="want-to-build-your-cv-this-way" class="level2">
+<h2 class="anchored" data-anchor-id="want-to-build-your-cv-this-way">Want to build your CV this way?</h2>
+<p>Okay, we can dispense with the formalities. The quickest and easiest way to build your CV this way is to:</p>
+<ul>
+<li>Copy the files from <a href="https://github.com/nstrayer/cv">my CV</a></li>
+<li>Replace the positions data with your own data</li>
+<li>Personalize the text main document text…</li>
+</ul>
+<section id="copy-the-files" class="level3">
+<h3 class="anchored" data-anchor-id="copy-the-files">Copy the files</h3>
+<p>If you are familiar with git/ github you can fork <a href="https://github.com/nstrayer/cv">the repo</a>, if you just want the files, here’s <a href="https://github.com/nstrayer/cv/archive/master.zip">a link to download a zip of all the files needed</a>.</p>
+<p><img src="../../media/nicks_resume_data/layout_of_files.png" class="img-fluid"></p>
+</section>
+<section id="replace-position-data" class="level3">
+<h3 class="anchored" data-anchor-id="replace-position-data">Replace position data</h3>
+<p>The main file you need to change is <code>positions.csv</code>. Once you have all your positions in then go into the main <code>index.Rmd</code> if you’re making a CV or <code>resume.Rmd</code> if you’re making a resume.</p>
+<p>Then fill in your sections. If my sections don’t fit your profile (likely) you can add a new section in <code>positions.csv</code> (, say <code>'serious_workthings'</code>.) You can include this new section by placing the following in the document.</p>
+<p><label for="tufte-mn-" class="margin-toggle">⊕</label><input type="checkbox" id="tufte-mn-" class="margin-toggle"><span class="marginnote">A huge thanks to Mark Scheuerell, who <a href="https://twitter.com/mark_scheuerell/status/1181271306177613824">showed me how to properly render meta-rmarkdown!</a></span></p>
+<pre><code>Serious Work Things {data-icon=book}
+--------------------------------------------------------------------------------
+
+```{r, results = 'asis'}
+position_data %&gt;% print_section('serious_workthings')
+```</code></pre>
+</section>
+<section id="personalize-text" class="level3">
+<h3 class="anchored" data-anchor-id="personalize-text">Personalize text</h3>
+<p>Last, change the <a href="https://github.com/nstrayer/cv/blob/master/index.Rmd#L51-L119">personalized text</a> for skills and header text etc..</p>
+<p><label for="tufte-mn-" class="margin-toggle">⊕</label><input type="checkbox" id="tufte-mn-" class="margin-toggle"><span class="marginnote">I didn’t put <em>everything</em> into a spreadsheet.</span></p>
+<div class="quarto-figure quarto-figure-center">
+<figure class="figure">
+<p><a href="https://github.com/nstrayer/cv/blob/master/index.Rmd#L51-L119"><img src="../../media/nicks_resume_data/code_to_change.png" class="img-fluid figure-img"></a></p>
+</figure>
+</div>
+<p>Finally, knit your results by pressing ‘Knit’ at the top of the <code>.Rmd</code> in RStudio. <label for="tufte-mn-" class="margin-toggle">⊕</label><input type="checkbox" id="tufte-mn-" class="margin-toggle"><span class="marginnote">Not using RStudio? Then just run <code>rmarkdown::render(‘index.Rmd’)</code>.</span></p>
+</section>
+</section>
+<section id="the-giants-upon-whos-shoulders-i-stand" class="level2">
+<h2 class="anchored" data-anchor-id="the-giants-upon-whos-shoulders-i-stand">The giants upon who’s shoulders I stand</h2>
+<p>I want to emphasise that I have done nothing particularly special here. Everything is possible because of a series of amazing contributions by the R community.</p>
+<p>In particular for this you should thank:</p>
+<ul>
+<li><a href="https://twitter.com/xieyihui">Yihui Xie</a>: For <code>markdown</code>, and <code>pagedown</code> (, and <code>blogdown</code> that I am using to write this blog post.)</li>
+<li><a href="https://twitter.com/RLesur">Romain Lesur</a>: For <code>pagedown</code></li>
+<li><a href="https://twitter.com/dataandme">Mara Averick</a>: For somehow keeping on top of every new R package and giving demos on how to use them</li>
+<li><a href="https://twitter.com/jimhester_">Jim Hester</a>: For glue</li>
+<li><a href="https://twitter.com/hadleywickham">Hadley Wickham</a> and <a href="https://twitter.com/_lionelhenry">Lionel Henry</a>: for <code>purrr</code></li>
+<li>Many more that I have neglected to mention.</li>
+</ul>
+<p>Also, because I have no original thoughts. The ‘data-driven CV’ concept has been done before by others. For instance:</p>
+<ul>
+<li><a href="https://twitter.com/LucyStats">Lucy D’Agostino-McGowan</a> (aka the better half of this blog) has a <a href="https://github.com/LucyMcGowan/lazyacademic">data-driven academic website</a>.</li>
+<li>The <a href="https://www.r-bloggers.com/vitae-dynamic-cvs-with-r-markdown/">Vitae package</a> by <a href="https://twitter.com/mitchoharawild">Mitchell O’Hara-Wild</a> and <a href="https://twitter.com/robjhyndman">Rob J Hyndman</a>.</li>
+</ul>
+</section>
+<section id="share-your-product" class="level2">
+<h2 class="anchored" data-anchor-id="share-your-product">Share your product!</h2>
+<p>If you end up building your CV or resume using these techniques let me know! Tweet it out and let me know and I will gladly retweet it!</p>
+<blockquote class="twitter-tweet blockquote">
+<p lang="en" dir="ltr">
+new version my CV, <a href="https://t.co/tWYjP6hxKf">https://t.co/tWYjP6hxKf</a> many thanks to <a href="https://twitter.com/NicholasStrayer?ref_src=twsrc%5Etfw"><span class="citation" data-cites="NicholasStrayer">@NicholasStrayer</span></a>
+</p>
+— Guangchuang Yu (<span class="citation" data-cites="guangchuangyu">@guangchuangyu</span>) <a href="https://twitter.com/guangchuangyu/status/1178236765762543616?ref_src=twsrc%5Etfw">September 29, 2019</a>
+</blockquote>
+<script async="" src="https://platform.twitter.com/widgets.js" charset="utf-8"></script>
+<blockquote class="twitter-tweet blockquote" data-conversation="none">
+<p lang="en" dir="ltr">
+I already had an resume made from pagedown. But thanks to this tweet and the code you made available, now it's really easy to update the 2 versions (long and short). Thank you so much! This is my resume (thanks to your code): <a href="https://t.co/QQ5NO5T9mJ">https://t.co/QQ5NO5T9mJ</a>
+</p>
+— Beatriz Milz (<span class="citation" data-cites="BeaMilz">@BeaMilz</span>) <a href="https://twitter.com/BeaMilz/status/1180971502625263626?ref_src=twsrc%5Etfw">October 6, 2019</a>
+</blockquote>
+<script async="" src="https://platform.twitter.com/widgets.js" charset="utf-8"></script>
+<blockquote class="twitter-tweet blockquote" data-conversation="none">
+<p lang="en" dir="ltr">
+Thanks <a href="https://twitter.com/NicholasStrayer?ref_src=twsrc%5Etfw"><span class="citation" data-cites="NicholasStrayer">@NicholasStrayer</span></a> ! I use your your framework to build my new CV, and it looks great ! <a href="https://t.co/zyOTEalcqK">https://t.co/zyOTEalcqK</a>
+</p>
+— Félix M. (<span class="citation" data-cites="felix_mil_">@felix_mil_</span>) <a href="https://twitter.com/felix_mil_/status/1181545597138083840?ref_src=twsrc%5Etfw">October 8, 2019</a>
+</blockquote>
+<script async="" src="https://platform.twitter.com/widgets.js" charset="utf-8"></script>
+<p><label for="tufte-mn-" class="margin-toggle">⊕</label><input type="checkbox" id="tufte-mn-" class="margin-toggle"><span class="marginnote">Check out the slick skills visualization!</span></p>
+<blockquote class="twitter-tweet blockquote" data-conversation="none">
+<p lang="en" dir="ltr">
+Thanks very much! Here my cv in R created with pagedown <a href="https://twitter.com/hashtag/rstats?src=hash&amp;ref_src=twsrc%5Etfw">#rstats</a> <a href="https://twitter.com/hashtag/RLover?src=hash&amp;ref_src=twsrc%5Etfw">#RLover</a> <a href="https://t.co/jcbokatnyM">pic.twitter.com/jcbokatnyM</a>
+</p>
+— Antony.Barja (<span class="citation" data-cites="AntonyBarja1">@AntonyBarja1</span>) <a href="https://twitter.com/AntonyBarja1/status/1181422605091385344?ref_src=twsrc%5Etfw">October 8, 2019</a>
+</blockquote>
+<script async="" src="https://platform.twitter.com/widgets.js" charset="utf-8"></script>
+</section>
+<section id="questions" class="level2">
+<h2 class="anchored" data-anchor-id="questions">Questions</h2>
+<p>This was a rather high-level skim over the process that left out some details. If any of those details I ommited was more important than I realized and you’re stuck. Don’t hesitate to leave a comment here, message me on Twitter, or email me.</p>
+
+
+</section>
+
+</main> <!-- /main -->
+<script id="quarto-html-after-body" type="application/javascript">
+window.document.addEventListener("DOMContentLoaded", function (event) {
+  const toggleBodyColorMode = (bsSheetEl) => {
+    const mode = bsSheetEl.getAttribute("data-mode");
+    const bodyEl = window.document.querySelector("body");
+    if (mode === "dark") {
+      bodyEl.classList.add("quarto-dark");
+      bodyEl.classList.remove("quarto-light");
+    } else {
+      bodyEl.classList.add("quarto-light");
+      bodyEl.classList.remove("quarto-dark");
+    }
+  }
+  const toggleBodyColorPrimary = () => {
+    const bsSheetEl = window.document.querySelector("link#quarto-bootstrap");
+    if (bsSheetEl) {
+      toggleBodyColorMode(bsSheetEl);
+    }
+  }
+  toggleBodyColorPrimary();  
+  const icon = "";
+  const anchorJS = new window.AnchorJS();
+  anchorJS.options = {
+    placement: 'right',
+    icon: icon
+  };
+  anchorJS.add('.anchored');
+  const clipboard = new window.ClipboardJS('.code-copy-button', {
+    target: function(trigger) {
+      return trigger.previousElementSibling;
+    }
+  });
+  clipboard.on('success', function(e) {
+    // button target
+    const button = e.trigger;
+    // don't keep focus
+    button.blur();
+    // flash "checked"
+    button.classList.add('code-copy-button-checked');
+    var currentTitle = button.getAttribute("title");
+    button.setAttribute("title", "Copied!");
+    setTimeout(function() {
+      button.setAttribute("title", currentTitle);
+      button.classList.remove('code-copy-button-checked');
+    }, 1000);
+    // clear code selection
+    e.clearSelection();
+  });
+  function tippyHover(el, contentFn) {
+    const config = {
+      allowHTML: true,
+      content: contentFn,
+      maxWidth: 500,
+      delay: 100,
+      arrow: false,
+      appendTo: function(el) {
+          return el.parentElement;
+      },
+      interactive: true,
+      interactiveBorder: 10,
+      theme: 'quarto',
+      placement: 'bottom-start'
+    };
+    window.tippy(el, config); 
+  }
+  const noterefs = window.document.querySelectorAll('a[role="doc-noteref"]');
+  for (var i=0; i<noterefs.length; i++) {
+    const ref = noterefs[i];
+    tippyHover(ref, function() {
+      // use id or data attribute instead here
+      let href = ref.getAttribute('data-footnote-href') || ref.getAttribute('href');
+      try { href = new URL(href).hash; } catch {}
+      const id = href.replace(/^#\/?/, "");
+      const note = window.document.getElementById(id);
+      return note.innerHTML;
+    });
+  }
+  var bibliorefs = window.document.querySelectorAll('a[role="doc-biblioref"]');
+  for (var i=0; i<bibliorefs.length; i++) {
+    const ref = bibliorefs[i];
+    const cites = ref.parentNode.getAttribute('data-cites').split(' ');
+    tippyHover(ref, function() {
+      var popup = window.document.createElement('div');
+      cites.forEach(function(cite) {
+        var citeDiv = window.document.createElement('div');
+        citeDiv.classList.add('hanging-indent');
+        citeDiv.classList.add('csl-entry');
+        var biblioDiv = window.document.getElementById('ref-' + cite);
+        if (biblioDiv) {
+          citeDiv.innerHTML = biblioDiv.innerHTML;
+        }
+        popup.appendChild(citeDiv);
+      });
+      return popup.innerHTML;
+    });
+  }
+});
+</script>
+<script src="https://utteranc.es/client.js" repo="lfod/real-blog" issue-term="pathname" theme="github-light" crossorigin="anonymous" async="">
+</script>
+</div> <!-- /content -->
+
+
+
+</body></html>

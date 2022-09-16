@@ -1,0 +1,782 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml" lang="en" xml:lang="en"><head>
+
+<meta charset="utf-8">
+<meta name="generator" content="quarto-1.1.251">
+
+<meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
+
+<meta name="author" content="Nick Strayer">
+<meta name="dcterms.date" content="2017-01-24">
+
+<title>Custom JavaScript visualizations in RMarkdown</title>
+<style>
+code{white-space: pre-wrap;}
+span.smallcaps{font-variant: small-caps;}
+div.columns{display: flex; gap: min(4vw, 1.5em);}
+div.column{flex: auto; overflow-x: auto;}
+div.hanging-indent{margin-left: 1.5em; text-indent: -1.5em;}
+ul.task-list{list-style: none;}
+ul.task-list li input[type="checkbox"] {
+  width: 0.8em;
+  margin: 0 0.8em 0.2em -1.6em;
+  vertical-align: middle;
+}
+pre > code.sourceCode { white-space: pre; position: relative; }
+pre > code.sourceCode > span { display: inline-block; line-height: 1.25; }
+pre > code.sourceCode > span:empty { height: 1.2em; }
+.sourceCode { overflow: visible; }
+code.sourceCode > span { color: inherit; text-decoration: inherit; }
+div.sourceCode { margin: 1em 0; }
+pre.sourceCode { margin: 0; }
+@media screen {
+div.sourceCode { overflow: auto; }
+}
+@media print {
+pre > code.sourceCode { white-space: pre-wrap; }
+pre > code.sourceCode > span { text-indent: -5em; padding-left: 5em; }
+}
+pre.numberSource code
+  { counter-reset: source-line 0; }
+pre.numberSource code > span
+  { position: relative; left: -4em; counter-increment: source-line; }
+pre.numberSource code > span > a:first-child::before
+  { content: counter(source-line);
+    position: relative; left: -1em; text-align: right; vertical-align: baseline;
+    border: none; display: inline-block;
+    -webkit-touch-callout: none; -webkit-user-select: none;
+    -khtml-user-select: none; -moz-user-select: none;
+    -ms-user-select: none; user-select: none;
+    padding: 0 4px; width: 4em;
+    color: #aaaaaa;
+  }
+pre.numberSource { margin-left: 3em; border-left: 1px solid #aaaaaa;  padding-left: 4px; }
+div.sourceCode
+  {   }
+@media screen {
+pre > code.sourceCode > span > a:first-child::before { text-decoration: underline; }
+}
+code span.al { color: #ff0000; font-weight: bold; } /* Alert */
+code span.an { color: #60a0b0; font-weight: bold; font-style: italic; } /* Annotation */
+code span.at { color: #7d9029; } /* Attribute */
+code span.bn { color: #40a070; } /* BaseN */
+code span.bu { color: #008000; } /* BuiltIn */
+code span.cf { color: #007020; font-weight: bold; } /* ControlFlow */
+code span.ch { color: #4070a0; } /* Char */
+code span.cn { color: #880000; } /* Constant */
+code span.co { color: #60a0b0; font-style: italic; } /* Comment */
+code span.cv { color: #60a0b0; font-weight: bold; font-style: italic; } /* CommentVar */
+code span.do { color: #ba2121; font-style: italic; } /* Documentation */
+code span.dt { color: #902000; } /* DataType */
+code span.dv { color: #40a070; } /* DecVal */
+code span.er { color: #ff0000; font-weight: bold; } /* Error */
+code span.ex { } /* Extension */
+code span.fl { color: #40a070; } /* Float */
+code span.fu { color: #06287e; } /* Function */
+code span.im { color: #008000; font-weight: bold; } /* Import */
+code span.in { color: #60a0b0; font-weight: bold; font-style: italic; } /* Information */
+code span.kw { color: #007020; font-weight: bold; } /* Keyword */
+code span.op { color: #666666; } /* Operator */
+code span.ot { color: #007020; } /* Other */
+code span.pp { color: #bc7a00; } /* Preprocessor */
+code span.sc { color: #4070a0; } /* SpecialChar */
+code span.ss { color: #bb6688; } /* SpecialString */
+code span.st { color: #4070a0; } /* String */
+code span.va { color: #19177c; } /* Variable */
+code span.vs { color: #4070a0; } /* VerbatimString */
+code span.wa { color: #60a0b0; font-weight: bold; font-style: italic; } /* Warning */
+</style>
+
+
+<script src="../../site_libs/quarto-nav/quarto-nav.js"></script>
+<script src="../../site_libs/quarto-nav/headroom.min.js"></script>
+<script src="../../site_libs/clipboard/clipboard.min.js"></script>
+<script src="../../site_libs/quarto-search/autocomplete.umd.js"></script>
+<script src="../../site_libs/quarto-search/fuse.min.js"></script>
+<script src="../../site_libs/quarto-search/quarto-search.js"></script>
+<meta name="quarto:offset" content="../../">
+<script src="../../site_libs/quarto-html/quarto.js"></script>
+<script src="../../site_libs/quarto-html/popper.min.js"></script>
+<script src="../../site_libs/quarto-html/tippy.umd.min.js"></script>
+<script src="../../site_libs/quarto-html/anchor.min.js"></script>
+<link href="../../site_libs/quarto-html/tippy.css" rel="stylesheet">
+<link href="../../site_libs/quarto-html/quarto-syntax-highlighting.css" rel="stylesheet" id="quarto-text-highlighting-styles">
+<script src="../../site_libs/bootstrap/bootstrap.min.js"></script>
+<link href="../../site_libs/bootstrap/bootstrap-icons.css" rel="stylesheet">
+<link href="../../site_libs/bootstrap/bootstrap.min.css" rel="stylesheet" id="quarto-bootstrap" data-mode="light">
+<script id="quarto-search-options" type="application/json">{
+  "location": "navbar",
+  "copy-button": false,
+  "collapse-after": 3,
+  "panel-placement": "end",
+  "type": "overlay",
+  "limit": 20,
+  "language": {
+    "search-no-results-text": "No results",
+    "search-matching-documents-text": "matching documents",
+    "search-copy-link-title": "Copy link to search",
+    "search-hide-matches-text": "Hide additional matches",
+    "search-more-match-text": "more match in this document",
+    "search-more-matches-text": "more matches in this document",
+    "search-clear-button-title": "Clear",
+    "search-detached-cancel-button-title": "Cancel",
+    "search-submit-button-title": "Submit"
+  }
+}</script>
+<script src="https://code.jquery.com/jquery-3.2.1.min.js" integrity="sha256-hwg4gsxgFZhOsEEamdOYGBf13FyQuiTwlAQgxVSNgt4=" crossorigin="anonymous"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/d3/4.9.1/d3.min.js"></script>
+
+<style>
+  #custom-header {
+    height: 30vh;
+    width: 100%;
+    position:relative;
+    z-index:1;
+    margin:0 auto;
+  }
+</style>
+
+
+</head><body class="nav-fixed fullcontent"><header id="custom-header">
+  <div id="header_viz"></div>
+</header>
+
+<script>
+  $( document ).ready(() => {
+
+    //javascript for intro loader
+
+    //Function to immitate R's seq
+    function seq(start, end, increment) {
+      var length = Math.round((end - start)/increment);
+      return Array(length).fill().map((_, idx) => start + idx*increment)
+    }
+
+
+    //define the pdf of the distribution.
+    var logistic = function(x, theta, i) {
+        var mu = 0.1;
+        sign = 1
+        var y = sign * (1 / (Math.sqrt(2 * Math.PI) * theta)) * (1 / x) *
+            Math.exp(-Math.pow((Math.log(x) - mu), 2) / (2 * Math.pow(theta, 2)))
+        return y;
+    }
+
+    var width   = $("#custom-header").width() ,
+        height  = $("#custom-header").outerHeight(),
+        padding = 0,
+        numOfLines = 20,
+        xs = seq(0.01, 5, .01),
+        colors = ['rgb(165,0,38)', 'rgb(215,48,39)', 'rgb(244,109,67)', 'rgb(253,174,97)', 'rgb(254,224,144)',
+            'rgb(224,243,248)', 'rgb(171,217,233)', 'rgb(116,173,209)', 'rgb(69,117,180)', 'rgb(49,54,149)'
+        ];
+  
+    console.log("trying to run this shit.")
+    //define the svg.
+    var svg = d3.select("#header_viz").append("svg")
+        .attr("width", width)
+        .attr("height", height + 2 * padding)
+        .append("g")
+
+
+    var animatelines = function(whichline) {
+        d3.selectAll(".line").style("opacity","0.5");
+
+        //Select All of the lines and process them one by one
+        d3.selectAll(".line").each(function(d,i){
+            // Get the length of each line in turn
+            var totalLength = d3.select("#line" + i).node().getTotalLength();
+
+            d3.selectAll("#line" + i).attr("stroke-dasharray", totalLength + " " + totalLength)
+              .attr("stroke-dashoffset", totalLength)
+              .transition()
+              .duration(5000)
+              .delay(100*i)
+              .attr("stroke-dashoffset", 0)
+              .style("stroke-width",2)
+        })
+
+        writeGreeting()
+    }
+
+
+
+    // The Scales:
+    var thetaMap = d3.scaleLinear() //name the values from 0 to 20 and make their values from .1-.7
+        .domain([0, numOfLines])
+        .range([0.8, 0.085])
+
+    var yPos = d3.scaleLinear() //scalling for creating horizontal lines
+        .domain([0, numOfLines])
+        .range([0, 4])
+
+    var x = d3.scaleLinear()
+        .domain([0, 5])
+        .range([0, width]);
+
+    var y = d3.scaleLinear()
+        .domain([0, 4.5])
+        .range([height, 0]);
+
+    // The line functions:
+    var logistic = d3.range(numOfLines).map(function(i) {
+        var odd = true
+        var toReturn = xs.map(function(num) {
+            return {
+                "x": num,
+                "y": logistic(num, thetaMap(i), i)
+            }
+        })
+        return toReturn;
+    })
+
+    //make a greeting message for after the line animation.
+    function writeGreeting(){
+
+        var text_scale = width < 500 ? 1 : 0.65;
+        console.log(text_scale);
+        var intro_text = "Live Free or Dichotomize";
+
+        var title = svg.append("text")
+            .attr("font-size", 30)
+            .attr("font-family", "optima")
+            .attr("text-anchor", "end")
+            .attr("fill-opacity", 0.65)
+            .attr("x", width < 500 ? x(4.8) : x(4.2))
+            .attr("y", width < 500 ? y(3.12) : y(2.1) )
+            .attr("opacity", 0)
+            .text(intro_text)
+            .attr("font-size", function(d) { return ( text_scale*width - 8) / this.getComputedTextLength() * 24 + "px"; })
+            .text("")
+            .attr("opacity", 1);
+
+        (function drawGreeting (i, start, greeting) {
+            setTimeout(function () {
+
+                //add next letter to the greeting in progress
+                start += greeting[i];
+
+                title.html(start) //append this to the html
+
+                if (start.length < greeting.length) { //if the in progress greeting is less than the full, keep going.
+                    drawGreeting(i+1,start,greeting);      //  increment i and call again.
+                };
+            }, 100)
+        })(0, "", intro_text);
+    }
+
+
+    // The d3 stuff
+    var line = d3.line()
+        // .interpolate("basis")
+        .x(function(d) { return x(d.x); })
+        .y(function(d) { return y(d.y); });
+
+
+    svg.selectAll(".line")
+        .data(logistic)
+        .enter().append("path")
+        .attr("class", "line")
+        .attr("id" , function(d, i){ return "line" + i;})
+        .attr("d", line)
+        .style("stroke-width", 2)
+        .style("stroke", function(d, i) { return colors[i % 10] })
+        .style("opacity", 0)
+        .style("fill", "none")
+        .on("mouseover", function(d){
+            d3.select(this).style("stroke", "black")
+        })
+        .on("mouseout", function(d,i){
+            d3.select(this).style("stroke", colors[i % 10])
+        })
+
+    // var introMessage = isMobile ? "tap" : "click"
+    // var introMessage = "click"
+    //
+    // var intro = svg.append("text")
+    //     .text(introMessage)
+    //     .attr("font-size", 35)
+    //     .attr("font-family", "optima")
+    //     .attr("text-anchor", "middle")
+    //     .attr("x", x(2.5))
+    //     .attr("y", y(2.01))
+
+    //kick it off on a click. (or tap)
+    animatelines(2)
+    // d3.select("svg").on("click", function() { animatelines(2) })
+
+})
+
+</script>
+
+
+
+
+
+
+<div id="quarto-search-results"></div>
+  <header id="quarto-header" class="headroom fixed-top">
+    <nav class="navbar navbar-expand-lg navbar-dark ">
+      <div class="navbar-container container-fluid">
+          <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarCollapse" aria-controls="navbarCollapse" aria-expanded="false" aria-label="Toggle navigation" onclick="if (window.quartoToggleHeadroom) { window.quartoToggleHeadroom(); }">
+  <span class="navbar-toggler-icon"></span>
+</button>
+          <div class="collapse navbar-collapse" id="navbarCollapse">
+            <ul class="navbar-nav navbar-nav-scroll me-auto">
+  <li class="nav-item">
+    <a class="nav-link" href="../../index.html">Home</a>
+  </li>  
+  <li class="nav-item">
+    <a class="nav-link" href="../../about.html">About</a>
+  </li>  
+</ul>
+              <div id="quarto-search" class="" title="Search"></div>
+          </div> <!-- /navcollapse -->
+      </div> <!-- /container-fluid -->
+    </nav>
+</header>
+<!-- content -->
+<header id="title-block-header" class="quarto-title-block default page-columns page-full">
+  <div class="quarto-title-banner page-columns page-full">
+    <div class="quarto-title column-body">
+      <h1 class="title">Custom JavaScript visualizations in RMarkdown</h1>
+                                <div class="quarto-categories">
+                <div class="quarto-category">javascript</div>
+                <div class="quarto-category">visualization</div>
+              </div>
+                  </div>
+  </div>
+    
+  
+  <div class="quarto-title-meta">
+
+      <div>
+      <div class="quarto-title-meta-heading">Author</div>
+      <div class="quarto-title-meta-contents">
+               <p>Nick Strayer </p>
+            </div>
+    </div>
+      
+      <div>
+      <div class="quarto-title-meta-heading">Published</div>
+      <div class="quarto-title-meta-contents">
+        <p class="date">January 24, 2017</p>
+      </div>
+    </div>
+      
+    </div>
+    
+  
+  </header><div id="quarto-content" class="quarto-container page-columns page-rows-contents page-layout-article page-navbar">
+<!-- sidebar -->
+<!-- margin-sidebar -->
+    
+<!-- main -->
+<main class="content quarto-banner-title-block" id="quarto-document-content">
+
+
+
+
+<p><br></p>
+<p>I happened to stumble upon the <a href="https://www.rstudio.com/products/rstudio/download/preview/">preview release page</a> for RStudio recently and noticed something that made me exorbitantly happy.</p>
+<blockquote class="blockquote">
+<p>A preview release of RStudio v1.0.136 is now available for testing and feedback. This release includes… Support for JavaScript and CSS chunks in R Notebooks…</p>
+</blockquote>
+<p><em>“Support for JavaScript and CSS chunks in R Notebooks”</em>! As someone who loves using javascript for plotting (and secretly for manipulating) data this is massively exciting. Previously my workflow for generating an interactive graphic would be something like:</p>
+<ul>
+<li>Download data</li>
+<li>Clean data and do preliminary visualization in R</li>
+<li>Export what I liked to a csv file and make a new directory with a set of <code>.html, .js, .css</code> files in it.</li>
+<li>Load data into javascript/d3.js in the new javascript file.</li>
+<li>Plot.</li>
+</ul>
+<p>This workflow has served me very well, I did it probably 20 times a day when working at the New York Times and I am very fast with it. If you want to just make a stand alone visualization it’s fantastic, however, as a biostatistician who works with a lot of other biostatisticians, people tend to want to see where the data comes from.</p>
+<p>With Javascript chunks in <code>.Rmd</code> files you can explicitly show the code for data gathering/cleaning etc. in a language that your collaborators can understand, along with making custom d3 charts with that data. All without ever leaving RStudio. I will show you my quick and dirty solution to doing so.</p>
+<section id="getting-data-into-javascript" class="level2">
+<h2 class="anchored" data-anchor-id="getting-data-into-javascript">Getting data into Javascript</h2>
+<p>Instead of generating a csv file in R and then loading that into javascript we will instead send the data directly through the html to javascript. (<em>Note:</em> This wont work well with super large data).</p>
+<p>Inspired by <a href="https://medium.com/@becausealice2/getting-r-and-d3-js-to-play-nicely-in-r-markdown-270e302a52d3#.772g93eb3">this</a> medium post I wrote a little function that takes a dataframe and sends it to the html document in the <code>.json</code> format.</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb1"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb1-1"><a href="#cb1-1" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(tidyverse)</span>
+<span id="cb1-2"><a href="#cb1-2" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(jsonlite)</span>
+<span id="cb1-3"><a href="#cb1-3" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb1-4"><a href="#cb1-4" aria-hidden="true" tabindex="-1"></a>send_df_to_js <span class="ot">&lt;-</span> <span class="cf">function</span>(df){</span>
+<span id="cb1-5"><a href="#cb1-5" aria-hidden="true" tabindex="-1"></a>  <span class="fu">cat</span>(</span>
+<span id="cb1-6"><a href="#cb1-6" aria-hidden="true" tabindex="-1"></a>    <span class="fu">paste</span>(</span>
+<span id="cb1-7"><a href="#cb1-7" aria-hidden="true" tabindex="-1"></a>    <span class="st">'&lt;script&gt;</span></span>
+<span id="cb1-8"><a href="#cb1-8" aria-hidden="true" tabindex="-1"></a><span class="st">      var data = '</span>,<span class="fu">toJSON</span>(df),<span class="st">';</span></span>
+<span id="cb1-9"><a href="#cb1-9" aria-hidden="true" tabindex="-1"></a><span class="st">    &lt;/script&gt;'</span></span>
+<span id="cb1-10"><a href="#cb1-10" aria-hidden="true" tabindex="-1"></a>    , <span class="at">sep=</span><span class="st">""</span>)</span>
+<span id="cb1-11"><a href="#cb1-11" aria-hidden="true" tabindex="-1"></a>  )</span>
+<span id="cb1-12"><a href="#cb1-12" aria-hidden="true" tabindex="-1"></a>}</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+<p>To illustrate how it works we will generate some random data into a dataframe.</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb2"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb2-1"><a href="#cb2-1" aria-hidden="true" tabindex="-1"></a><span class="co">#Generate some random x and y data to plot</span></span>
+<span id="cb2-2"><a href="#cb2-2" aria-hidden="true" tabindex="-1"></a>n <span class="ot">&lt;-</span> <span class="dv">300</span></span>
+<span id="cb2-3"><a href="#cb2-3" aria-hidden="true" tabindex="-1"></a>random_data <span class="ot">&lt;-</span> <span class="fu">data_frame</span>(<span class="at">x =</span> <span class="fu">runif</span>(n)<span class="sc">*</span><span class="dv">10</span>) <span class="sc">%&gt;%</span> </span>
+<span id="cb2-4"><a href="#cb2-4" aria-hidden="true" tabindex="-1"></a>  <span class="fu">mutate</span>(<span class="at">y =</span> <span class="fl">0.5</span><span class="sc">*</span>x<span class="sc">^</span><span class="dv">3</span> <span class="sc">-</span> <span class="fl">1.3</span><span class="sc">*</span>x<span class="sc">^</span><span class="dv">2</span> <span class="sc">+</span> <span class="fu">rnorm</span>(n, <span class="at">mean =</span> <span class="dv">0</span>, <span class="at">sd =</span> <span class="dv">80</span>),</span>
+<span id="cb2-5"><a href="#cb2-5" aria-hidden="true" tabindex="-1"></a>         <span class="at">group =</span> <span class="fu">paste</span>(<span class="st">"group"</span>, <span class="fu">sample</span>(<span class="fu">c</span>(<span class="dv">1</span>,<span class="dv">2</span>,<span class="dv">3</span>), n, <span class="at">replace =</span> T)))</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stderr">
+<pre><code>Warning: `data_frame()` was deprecated in tibble 1.1.0.
+Please use `tibble()` instead.
+This warning is displayed once every 8 hours.
+Call `lifecycle::last_lifecycle_warnings()` to see where this warning was generated.</code></pre>
+</div>
+</div>
+<p>Now we send a snippit of the dataframe into the function to see the output…</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb4"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb4-1"><a href="#cb4-1" aria-hidden="true" tabindex="-1"></a>random_data <span class="sc">%&gt;%</span> </span>
+<span id="cb4-2"><a href="#cb4-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">head</span>() <span class="sc">%&gt;%</span> </span>
+<span id="cb4-3"><a href="#cb4-3" aria-hidden="true" tabindex="-1"></a>  <span class="fu">send_df_to_js</span>()</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>&lt;script&gt;
+      var data = [{"x":9.8184,"y":324.1344,"group":"group 1"},{"x":9.5113,"y":180.5619,"group":"group 1"},{"x":7.3652,"y":187.6115,"group":"group 2"},{"x":7.7049,"y":148.4169,"group":"group 2"},{"x":7.4527,"y":146.2385,"group":"group 1"},{"x":5.9901,"y":95.3698,"group":"group 3"}];
+    &lt;/script&gt;</code></pre>
+</div>
+</div>
+<p>Beautiful, we have our data, in <code>json</code> format, wrapped in a script tag. Now we can send the whole dataframe through. This time I am using the <code>results = "asis"</code> option in the code chunk (<code>{r, results = "asis"}</code>), to write the results directly to the html document and not to the output like we did above.</p>
+<div class="sourceCode cell-code" id="cb6"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb6-1"><a href="#cb6-1" aria-hidden="true" tabindex="-1"></a><span class="co">#Initiate data transfer protocol one</span></span>
+<span id="cb6-2"><a href="#cb6-2" aria-hidden="true" tabindex="-1"></a><span class="fu">send_df_to_js</span>(random_data)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<script>
+      var data = [{"x":9.8184,"y":324.1344,"group":"group 1"},{"x":9.5113,"y":180.5619,"group":"group 1"},{"x":7.3652,"y":187.6115,"group":"group 2"},{"x":7.7049,"y":148.4169,"group":"group 2"},{"x":7.4527,"y":146.2385,"group":"group 1"},{"x":5.9901,"y":95.3698,"group":"group 3"},{"x":4.9907,"y":13.4173,"group":"group 1"},{"x":4.3925,"y":-38.7424,"group":"group 2"},{"x":1.0033,"y":-108.7543,"group":"group 1"},{"x":5.0572,"y":186.8577,"group":"group 2"},{"x":0.9097,"y":-41.3124,"group":"group 2"},{"x":4.4168,"y":-75.7782,"group":"group 1"},{"x":2.1382,"y":41.7854,"group":"group 3"},{"x":5.869,"y":239.2319,"group":"group 2"},{"x":0.9413,"y":-76.2624,"group":"group 1"},{"x":7.0786,"y":169.5864,"group":"group 1"},{"x":1.161,"y":-13.1952,"group":"group 3"},{"x":8.9865,"y":108.5712,"group":"group 1"},{"x":5.5721,"y":-94.1584,"group":"group 3"},{"x":6.7283,"y":-118.3258,"group":"group 3"},{"x":0.1284,"y":78.8717,"group":"group 2"},{"x":3.4548,"y":77.1171,"group":"group 2"},{"x":5.0505,"y":124.2222,"group":"group 1"},{"x":9.8622,"y":488.3879,"group":"group 1"},{"x":6.919,"y":115.5605,"group":"group 3"},{"x":3.6902,"y":-57.2554,"group":"group 2"},{"x":3.7704,"y":-69.9423,"group":"group 3"},{"x":2.2298,"y":10.3534,"group":"group 3"},{"x":4.1469,"y":71.6481,"group":"group 1"},{"x":9.2239,"y":385.5891,"group":"group 1"},{"x":0.1265,"y":148.0352,"group":"group 1"},{"x":2.4357,"y":-102.1435,"group":"group 3"},{"x":3.4334,"y":-81.2248,"group":"group 3"},{"x":4.8187,"y":77.0594,"group":"group 3"},{"x":0.9332,"y":-139.1098,"group":"group 2"},{"x":6.07,"y":-7.5544,"group":"group 2"},{"x":1.906,"y":-81.4748,"group":"group 1"},{"x":0.5778,"y":-22.2001,"group":"group 1"},{"x":9.8158,"y":349.5748,"group":"group 1"},{"x":7.7851,"y":229.384,"group":"group 2"},{"x":4.2133,"y":-104.4773,"group":"group 1"},{"x":7.4065,"y":36.5852,"group":"group 2"},{"x":8.9706,"y":251.016,"group":"group 1"},{"x":8.226,"y":137.6783,"group":"group 2"},{"x":5.4629,"y":-32.7935,"group":"group 1"},{"x":1.9471,"y":62.0808,"group":"group 3"},{"x":8.2105,"y":276.6942,"group":"group 2"},{"x":9.0449,"y":99.122,"group":"group 1"},{"x":4.5,"y":93.5626,"group":"group 3"},{"x":9.5776,"y":299.2281,"group":"group 1"},{"x":9.9362,"y":317.3838,"group":"group 3"},{"x":4.652,"y":158.2426,"group":"group 3"},{"x":1.1049,"y":135.3018,"group":"group 1"},{"x":0.2932,"y":49.7416,"group":"group 2"},{"x":6.7809,"y":-11.866,"group":"group 1"},{"x":2.0677,"y":71.8417,"group":"group 1"},{"x":3.2665,"y":-9.4061,"group":"group 3"},{"x":0.1175,"y":73.5704,"group":"group 1"},{"x":0.311,"y":18.2578,"group":"group 3"},{"x":5.8687,"y":10.3013,"group":"group 3"},{"x":0.7738,"y":-18.871,"group":"group 2"},{"x":0.4358,"y":14.0644,"group":"group 2"},{"x":8.0155,"y":154.3921,"group":"group 1"},{"x":2.6572,"y":-91.0614,"group":"group 1"},{"x":0.377,"y":99.9915,"group":"group 3"},{"x":1.3434,"y":57.5781,"group":"group 1"},{"x":6.2949,"y":80.3092,"group":"group 2"},{"x":6.7624,"y":101.3571,"group":"group 1"},{"x":9.7467,"y":365.7107,"group":"group 2"},{"x":8.9979,"y":186.3853,"group":"group 2"},{"x":4.7924,"y":95.6932,"group":"group 1"},{"x":0.9471,"y":7.0686,"group":"group 1"},{"x":6.5757,"y":5.3036,"group":"group 3"},{"x":4.2684,"y":122.2284,"group":"group 2"},{"x":4.447,"y":29.3362,"group":"group 1"},{"x":3.1418,"y":-7.4038,"group":"group 3"},{"x":7.5133,"y":99.2892,"group":"group 2"},{"x":5.0905,"y":53.6299,"group":"group 3"},{"x":9.5722,"y":290.7794,"group":"group 2"},{"x":7.4309,"y":66.5436,"group":"group 3"},{"x":9.4944,"y":293.2978,"group":"group 1"},{"x":7.0675,"y":78.7988,"group":"group 2"},{"x":2.2789,"y":-22.3552,"group":"group 3"},{"x":2.8072,"y":-89.2315,"group":"group 1"},{"x":6.7586,"y":79.0283,"group":"group 2"},{"x":7.433,"y":144.1841,"group":"group 1"},{"x":2.5015,"y":-47.1334,"group":"group 2"},{"x":2.6175,"y":44.6231,"group":"group 3"},{"x":0.1582,"y":74.7446,"group":"group 3"},{"x":7.2892,"y":47.0895,"group":"group 2"},{"x":7.8339,"y":257.9366,"group":"group 2"},{"x":2.5824,"y":-36.1784,"group":"group 1"},{"x":4.2947,"y":114.5674,"group":"group 2"},{"x":5.3947,"y":1.669,"group":"group 3"},{"x":4.3856,"y":-104.9666,"group":"group 3"},{"x":9.4296,"y":270.5953,"group":"group 3"},{"x":9.887,"y":283.1959,"group":"group 3"},{"x":2.0681,"y":-139.6917,"group":"group 1"},{"x":3.0265,"y":-35.7785,"group":"group 3"},{"x":3.5593,"y":-194.3736,"group":"group 2"},{"x":9.7278,"y":284.7898,"group":"group 1"},{"x":3.3429,"y":-39.5447,"group":"group 1"},{"x":2.8266,"y":3.471,"group":"group 3"},{"x":6.7744,"y":86.89,"group":"group 1"},{"x":8.3679,"y":286.8161,"group":"group 1"},{"x":1.2985,"y":33.6282,"group":"group 2"},{"x":0.8083,"y":-159.1399,"group":"group 2"},{"x":1.3276,"y":-18.6743,"group":"group 1"},{"x":0.3775,"y":45.6882,"group":"group 1"},{"x":5.2663,"y":91.311,"group":"group 1"},{"x":3.9788,"y":-23.8293,"group":"group 1"},{"x":8.9067,"y":73.328,"group":"group 3"},{"x":6.6981,"y":195.2814,"group":"group 3"},{"x":0.0995,"y":99.4283,"group":"group 2"},{"x":8.5344,"y":236.8355,"group":"group 1"},{"x":3.5911,"y":-33.0749,"group":"group 3"},{"x":0.773,"y":-37.3228,"group":"group 2"},{"x":5.747,"y":55.8316,"group":"group 2"},{"x":8.2263,"y":132.711,"group":"group 1"},{"x":1.2824,"y":-30.0794,"group":"group 1"},{"x":3.9903,"y":70.5535,"group":"group 1"},{"x":3.533,"y":-66.5583,"group":"group 2"},{"x":8.0696,"y":86.4426,"group":"group 3"},{"x":2.5756,"y":156.8946,"group":"group 3"},{"x":2.8934,"y":110.6744,"group":"group 1"},{"x":8.8077,"y":223.0501,"group":"group 2"},{"x":0.971,"y":40.1425,"group":"group 2"},{"x":4.4341,"y":-105.2417,"group":"group 2"},{"x":4.339,"y":-73.6117,"group":"group 3"},{"x":7.947,"y":204.2406,"group":"group 1"},{"x":1.1095,"y":-94.8256,"group":"group 2"},{"x":8.7058,"y":189.5873,"group":"group 3"},{"x":4.1567,"y":-178.5094,"group":"group 2"},{"x":7.169,"y":66.5565,"group":"group 3"},{"x":8.3924,"y":214.5404,"group":"group 2"},{"x":4.3095,"y":32.2055,"group":"group 3"},{"x":8.7815,"y":325.4392,"group":"group 2"},{"x":1.9753,"y":25.053,"group":"group 2"},{"x":5.9171,"y":-26.4878,"group":"group 2"},{"x":3.6122,"y":-20.3416,"group":"group 2"},{"x":3.3882,"y":-29.733,"group":"group 3"},{"x":2.6635,"y":-47.8429,"group":"group 3"},{"x":1.716,"y":47.2153,"group":"group 1"},{"x":8.045,"y":159.3005,"group":"group 2"},{"x":2.0343,"y":-45.6559,"group":"group 1"},{"x":8.4754,"y":315.7197,"group":"group 3"},{"x":0.401,"y":38.642,"group":"group 3"},{"x":4.1101,"y":111.6217,"group":"group 1"},{"x":4.0807,"y":-42.7419,"group":"group 1"},{"x":7.9444,"y":76.8011,"group":"group 2"},{"x":4.7986,"y":-32.693,"group":"group 3"},{"x":1.5726,"y":34.0071,"group":"group 3"},{"x":9.1091,"y":407.4686,"group":"group 1"},{"x":1.7144,"y":-109.165,"group":"group 1"},{"x":1.1497,"y":108.5137,"group":"group 1"},{"x":2.9397,"y":96.5143,"group":"group 1"},{"x":6.9183,"y":92.9782,"group":"group 1"},{"x":9.1047,"y":313.3256,"group":"group 3"},{"x":4.042,"y":-1.2232,"group":"group 1"},{"x":9.0348,"y":356.2863,"group":"group 3"},{"x":9.3728,"y":220.3339,"group":"group 2"},{"x":0.2862,"y":95.2646,"group":"group 3"},{"x":4.1751,"y":-62.9396,"group":"group 3"},{"x":6.2552,"y":92.3372,"group":"group 1"},{"x":1.0584,"y":60.4569,"group":"group 3"},{"x":7.3386,"y":184.5131,"group":"group 2"},{"x":0.7316,"y":-78.3548,"group":"group 3"},{"x":7.0854,"y":61.1543,"group":"group 1"},{"x":6.7573,"y":88.0193,"group":"group 2"},{"x":4.3756,"y":-163.4612,"group":"group 2"},{"x":8.2121,"y":183.7012,"group":"group 1"},{"x":0.7017,"y":62.8533,"group":"group 1"},{"x":8.221,"y":196.6139,"group":"group 1"},{"x":5.8165,"y":64.0599,"group":"group 3"},{"x":0.7052,"y":129.4143,"group":"group 1"},{"x":8.3576,"y":272.6215,"group":"group 3"},{"x":3.871,"y":5.8824,"group":"group 2"},{"x":4.8161,"y":-95.6896,"group":"group 1"},{"x":2.247,"y":97.8917,"group":"group 2"},{"x":2.2646,"y":-160.3691,"group":"group 1"},{"x":1.1643,"y":104.0472,"group":"group 1"},{"x":6.0469,"y":-96.923,"group":"group 2"},{"x":5.196,"y":22.4999,"group":"group 2"},{"x":7.3528,"y":110.4724,"group":"group 3"},{"x":3.8371,"y":-48.8089,"group":"group 1"},{"x":2.9426,"y":-18.9322,"group":"group 3"},{"x":3.9061,"y":112.1155,"group":"group 1"},{"x":4.839,"y":-7.0461,"group":"group 3"},{"x":5.644,"y":6.1619,"group":"group 3"},{"x":9.5223,"y":339.7722,"group":"group 3"},{"x":0.4277,"y":-63.6134,"group":"group 1"},{"x":5.7405,"y":9.0065,"group":"group 3"},{"x":2.2856,"y":7.4289,"group":"group 1"},{"x":3.8729,"y":73.5323,"group":"group 3"},{"x":7.9054,"y":71.6683,"group":"group 3"},{"x":3.2345,"y":21.3356,"group":"group 1"},{"x":1.0693,"y":23.5576,"group":"group 1"},{"x":2.6712,"y":-104.4172,"group":"group 2"},{"x":0.0619,"y":124.3152,"group":"group 3"},{"x":7.2596,"y":161.4462,"group":"group 3"},{"x":1.2761,"y":8.3723,"group":"group 3"},{"x":9.6984,"y":144.7906,"group":"group 3"},{"x":4.5851,"y":-17.8826,"group":"group 1"},{"x":5.357,"y":-106.4649,"group":"group 3"},{"x":6.3603,"y":-84.7227,"group":"group 3"},{"x":0.0603,"y":-186.715,"group":"group 3"},{"x":5.1524,"y":67.1571,"group":"group 1"},{"x":5.0258,"y":32.6344,"group":"group 1"},{"x":5.2151,"y":28.3673,"group":"group 2"},{"x":3.6954,"y":-63.0892,"group":"group 1"},{"x":8.4679,"y":161.2669,"group":"group 3"},{"x":4.668,"y":110.731,"group":"group 1"},{"x":1.308,"y":62.835,"group":"group 3"},{"x":9.9223,"y":209.9853,"group":"group 3"},{"x":8.2391,"y":319.686,"group":"group 2"},{"x":4.6674,"y":111.1114,"group":"group 1"},{"x":7.7171,"y":350.1489,"group":"group 1"},{"x":1.4699,"y":-58.8686,"group":"group 1"},{"x":0.8757,"y":-64.9729,"group":"group 1"},{"x":2.3362,"y":90.0914,"group":"group 2"},{"x":7.7468,"y":129.0644,"group":"group 1"},{"x":0.8593,"y":-1.1584,"group":"group 2"},{"x":6.3128,"y":127.0331,"group":"group 2"},{"x":8.7551,"y":110.662,"group":"group 3"},{"x":8.5386,"y":291.5807,"group":"group 1"},{"x":8.8874,"y":227.9839,"group":"group 2"},{"x":5.9299,"y":87.3229,"group":"group 2"},{"x":3.6794,"y":-12.7047,"group":"group 2"},{"x":3.6864,"y":46.2444,"group":"group 2"},{"x":8.3638,"y":214.892,"group":"group 1"},{"x":1.485,"y":-21.4065,"group":"group 3"},{"x":6.4292,"y":114.5749,"group":"group 1"},{"x":8.1414,"y":244.5605,"group":"group 1"},{"x":4.0741,"y":0.0215,"group":"group 2"},{"x":6.8025,"y":147.9477,"group":"group 1"},{"x":9.2681,"y":266.1586,"group":"group 3"},{"x":2.9108,"y":-166.9121,"group":"group 1"},{"x":4.7051,"y":-78.3819,"group":"group 3"},{"x":3.3348,"y":179.5979,"group":"group 1"},{"x":5.5039,"y":123.4468,"group":"group 2"},{"x":0.433,"y":107.5318,"group":"group 1"},{"x":3.2406,"y":153.2791,"group":"group 1"},{"x":4.2584,"y":-42.786,"group":"group 1"},{"x":3.6796,"y":8.6441,"group":"group 3"},{"x":1.0508,"y":45.68,"group":"group 1"},{"x":7.653,"y":181.8312,"group":"group 2"},{"x":3.392,"y":-56.4251,"group":"group 2"},{"x":8.0557,"y":116.0283,"group":"group 1"},{"x":3.2642,"y":-96.7596,"group":"group 1"},{"x":6.4132,"y":3.6423,"group":"group 3"},{"x":4.7733,"y":-112.2684,"group":"group 2"},{"x":7.3755,"y":94.1819,"group":"group 3"},{"x":4.3379,"y":-26.5598,"group":"group 2"},{"x":5.4146,"y":62.6255,"group":"group 2"},{"x":1.7281,"y":-48.7859,"group":"group 1"},{"x":5.3596,"y":-31.3881,"group":"group 2"},{"x":7.8126,"y":63.8332,"group":"group 2"},{"x":9.2583,"y":333.2495,"group":"group 3"},{"x":3.749,"y":-19.6157,"group":"group 1"},{"x":7.9727,"y":117.1572,"group":"group 3"},{"x":9.7873,"y":240.4677,"group":"group 1"},{"x":1.1947,"y":-104.7688,"group":"group 3"},{"x":1.1266,"y":-28.3164,"group":"group 3"},{"x":2.4425,"y":32.9222,"group":"group 2"},{"x":9.0724,"y":322.6317,"group":"group 2"},{"x":9.041,"y":295.6762,"group":"group 1"},{"x":4.1204,"y":-66.2473,"group":"group 1"},{"x":3.0763,"y":-61.2502,"group":"group 1"},{"x":4.1795,"y":72.6967,"group":"group 3"},{"x":3.7235,"y":84.6679,"group":"group 3"},{"x":8.6489,"y":217.0632,"group":"group 1"},{"x":3.0805,"y":-163.5478,"group":"group 2"},{"x":0.9458,"y":-26.399,"group":"group 1"},{"x":5.0483,"y":-4.4561,"group":"group 3"},{"x":5.2502,"y":42.7267,"group":"group 2"},{"x":6.7901,"y":65.5413,"group":"group 1"},{"x":3.3549,"y":84.0644,"group":"group 3"},{"x":0.2421,"y":64.7801,"group":"group 1"},{"x":5.7191,"y":-5.7806,"group":"group 3"},{"x":1.7716,"y":-81.0853,"group":"group 2"},{"x":3.7099,"y":64.0558,"group":"group 3"},{"x":8.7901,"y":266.4204,"group":"group 1"},{"x":9.2931,"y":181.9765,"group":"group 3"},{"x":3.4806,"y":88.3305,"group":"group 2"},{"x":7.6523,"y":121.5084,"group":"group 3"},{"x":5.8539,"y":95.3356,"group":"group 1"},{"x":5.1047,"y":-13.9507,"group":"group 1"},{"x":2.7902,"y":-10.2081,"group":"group 3"},{"x":0.9333,"y":-85.8285,"group":"group 1"},{"x":5.1917,"y":-149.6042,"group":"group 1"},{"x":8.3692,"y":255.6267,"group":"group 1"},{"x":9.6787,"y":336.4134,"group":"group 3"},{"x":1.7847,"y":-40.5647,"group":"group 3"},{"x":6.8966,"y":45.3026,"group":"group 2"},{"x":5.7206,"y":32.6493,"group":"group 3"},{"x":1.7171,"y":-24.8134,"group":"group 3"},{"x":9.4181,"y":311.5635,"group":"group 1"},{"x":6.243,"y":-27.1693,"group":"group 2"},{"x":2.9726,"y":59.3358,"group":"group 3"},{"x":9.014,"y":251.1736,"group":"group 3"}];
+    </script>
+<p>Now our data is inside our page’s javascript scope and ready to be played with!</p>
+</section>
+<section id="drawing-pretty-pictures" class="level2">
+<h2 class="anchored" data-anchor-id="drawing-pretty-pictures">Drawing pretty pictures</h2>
+<p>Let’s make a super simple d3 scatter plot to see this randomly generated data. All I have to do is include my desired javascript libraries, make a <code>div</code> element for my visualization to go into and then put my <code>{js}</code> block in. RMarkdown will slot the javascript into the page and we’re good to go.</p>
+<p>In this example I did…</p>
+<pre><code>&lt;script src="https://code.jquery.com/jquery-3.1.1.min.js"&gt;&lt;/script&gt;
+&lt;script src="https://d3js.org/d3.v4.min.js"&gt;&lt;/script&gt;
+
+&lt;div id = "viz"&gt;&lt;/div&gt; 
+
+` ` `{js}
+//code goes here
+` ` `</code></pre>
+</section>
+<section id="did-it-work" class="level2">
+<h2 class="anchored" data-anchor-id="did-it-work">Did it work?</h2>
+<script src="https://code.jquery.com/jquery-3.1.1.min.js"></script>
+<script src="https://d3js.org/d3.v4.min.js"></script>
+<div id="viz">
+
+</div>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb8"><pre class="sourceCode js code-with-copy"><code class="sourceCode javascript"><span id="cb8-1"><a href="#cb8-1" aria-hidden="true" tabindex="-1"></a><span class="kw">var</span> point_vals <span class="op">=</span> d3<span class="op">.</span><span class="fu">select</span>(<span class="st">"#viz"</span>)</span>
+<span id="cb8-2"><a href="#cb8-2" aria-hidden="true" tabindex="-1"></a>  <span class="op">.</span><span class="fu">append</span>(<span class="st">"p"</span>)</span>
+<span id="cb8-3"><a href="#cb8-3" aria-hidden="true" tabindex="-1"></a>  <span class="op">.</span><span class="fu">attr</span>(<span class="st">"align"</span><span class="op">,</span> <span class="st">"center"</span>)</span>
+<span id="cb8-4"><a href="#cb8-4" aria-hidden="true" tabindex="-1"></a>  <span class="op">.</span><span class="fu">text</span>(<span class="st">"Mouseover some data!"</span>)<span class="op">;</span></span>
+<span id="cb8-5"><a href="#cb8-5" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb8-6"><a href="#cb8-6" aria-hidden="true" tabindex="-1"></a><span class="co">//Get how wide our page is in pixels so we can draw our plot in it</span></span>
+<span id="cb8-7"><a href="#cb8-7" aria-hidden="true" tabindex="-1"></a><span class="kw">var</span> page_width <span class="op">=</span> <span class="fu">$</span>(<span class="st">"#did-it-work"</span>)<span class="op">.</span><span class="fu">width</span>()<span class="op">;</span></span>
+<span id="cb8-8"><a href="#cb8-8" aria-hidden="true" tabindex="-1"></a>  </span>
+<span id="cb8-9"><a href="#cb8-9" aria-hidden="true" tabindex="-1"></a><span class="co">// set the dimensions and margins of the graph</span></span>
+<span id="cb8-10"><a href="#cb8-10" aria-hidden="true" tabindex="-1"></a><span class="kw">var</span> margin <span class="op">=</span> <span class="dv">30</span><span class="op">,</span></span>
+<span id="cb8-11"><a href="#cb8-11" aria-hidden="true" tabindex="-1"></a>    width <span class="op">=</span> page_width <span class="op">-</span> <span class="dv">2</span><span class="op">*</span>margin<span class="op">,</span></span>
+<span id="cb8-12"><a href="#cb8-12" aria-hidden="true" tabindex="-1"></a>    height <span class="op">=</span> page_width<span class="op">*</span><span class="fl">0.8</span> <span class="op">-</span> <span class="dv">2</span><span class="op">*</span>margin<span class="op">;</span></span>
+<span id="cb8-13"><a href="#cb8-13" aria-hidden="true" tabindex="-1"></a>    </span>
+<span id="cb8-14"><a href="#cb8-14" aria-hidden="true" tabindex="-1"></a><span class="co">// Find max data values</span></span>
+<span id="cb8-15"><a href="#cb8-15" aria-hidden="true" tabindex="-1"></a><span class="kw">var</span> x_extent <span class="op">=</span> d3<span class="op">.</span><span class="fu">extent</span>(data<span class="op">,</span> d <span class="kw">=&gt;</span> d<span class="op">.</span><span class="at">x</span>)<span class="op">;</span></span>
+<span id="cb8-16"><a href="#cb8-16" aria-hidden="true" tabindex="-1"></a><span class="kw">var</span> y_extent <span class="op">=</span> d3<span class="op">.</span><span class="fu">extent</span>(data<span class="op">,</span> d <span class="kw">=&gt;</span> d<span class="op">.</span><span class="at">y</span>)<span class="op">;</span></span>
+<span id="cb8-17"><a href="#cb8-17" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb8-18"><a href="#cb8-18" aria-hidden="true" tabindex="-1"></a><span class="co">// Set the scales </span></span>
+<span id="cb8-19"><a href="#cb8-19" aria-hidden="true" tabindex="-1"></a><span class="kw">var</span> x <span class="op">=</span> d3<span class="op">.</span><span class="fu">scaleLinear</span>()</span>
+<span id="cb8-20"><a href="#cb8-20" aria-hidden="true" tabindex="-1"></a>  <span class="op">.</span><span class="fu">domain</span>(x_extent)</span>
+<span id="cb8-21"><a href="#cb8-21" aria-hidden="true" tabindex="-1"></a>  <span class="op">.</span><span class="fu">range</span>([<span class="dv">0</span><span class="op">,</span> width])<span class="op">;</span></span>
+<span id="cb8-22"><a href="#cb8-22" aria-hidden="true" tabindex="-1"></a>  </span>
+<span id="cb8-23"><a href="#cb8-23" aria-hidden="true" tabindex="-1"></a><span class="kw">var</span> y <span class="op">=</span> d3<span class="op">.</span><span class="fu">scaleLinear</span>()</span>
+<span id="cb8-24"><a href="#cb8-24" aria-hidden="true" tabindex="-1"></a>  <span class="op">.</span><span class="fu">domain</span>(y_extent)</span>
+<span id="cb8-25"><a href="#cb8-25" aria-hidden="true" tabindex="-1"></a>  <span class="op">.</span><span class="fu">range</span>([height<span class="op">,</span> <span class="dv">0</span>])<span class="op">;</span></span>
+<span id="cb8-26"><a href="#cb8-26" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb8-27"><a href="#cb8-27" aria-hidden="true" tabindex="-1"></a><span class="co">//Set up our SVG element</span></span>
+<span id="cb8-28"><a href="#cb8-28" aria-hidden="true" tabindex="-1"></a><span class="kw">var</span> svg <span class="op">=</span> d3<span class="op">.</span><span class="fu">select</span>(<span class="st">"#viz"</span>)<span class="op">.</span><span class="fu">append</span>(<span class="st">"svg"</span>)</span>
+<span id="cb8-29"><a href="#cb8-29" aria-hidden="true" tabindex="-1"></a>    <span class="op">.</span><span class="fu">attr</span>(<span class="st">"width"</span><span class="op">,</span> width <span class="op">+</span> <span class="dv">2</span><span class="op">*</span>margin)</span>
+<span id="cb8-30"><a href="#cb8-30" aria-hidden="true" tabindex="-1"></a>    <span class="op">.</span><span class="fu">attr</span>(<span class="st">"height"</span><span class="op">,</span> height <span class="op">+</span> <span class="dv">2</span><span class="op">*</span>margin)</span>
+<span id="cb8-31"><a href="#cb8-31" aria-hidden="true" tabindex="-1"></a>  <span class="op">.</span><span class="fu">append</span>(<span class="st">"g"</span>)</span>
+<span id="cb8-32"><a href="#cb8-32" aria-hidden="true" tabindex="-1"></a>    <span class="op">.</span><span class="fu">attr</span>(<span class="st">"transform"</span><span class="op">,</span></span>
+<span id="cb8-33"><a href="#cb8-33" aria-hidden="true" tabindex="-1"></a>          <span class="st">"translate("</span> <span class="op">+</span> margin <span class="op">+</span> <span class="st">","</span> <span class="op">+</span> margin <span class="op">+</span> <span class="st">")"</span>)<span class="op">;</span></span>
+<span id="cb8-34"><a href="#cb8-34" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb8-35"><a href="#cb8-35" aria-hidden="true" tabindex="-1"></a><span class="kw">var</span> bounce_select <span class="op">=</span> d3<span class="op">.</span><span class="fu">transition</span>()</span>
+<span id="cb8-36"><a href="#cb8-36" aria-hidden="true" tabindex="-1"></a>    <span class="op">.</span><span class="fu">duration</span>(<span class="dv">1000</span>)</span>
+<span id="cb8-37"><a href="#cb8-37" aria-hidden="true" tabindex="-1"></a>    <span class="op">.</span><span class="fu">ease</span>(d3<span class="op">.</span><span class="at">easeElastic</span><span class="op">.</span><span class="fu">period</span>(<span class="fl">0.4</span>))<span class="op">;</span></span>
+<span id="cb8-38"><a href="#cb8-38" aria-hidden="true" tabindex="-1"></a>    </span>
+<span id="cb8-39"><a href="#cb8-39" aria-hidden="true" tabindex="-1"></a><span class="co">// Add the scatterplot</span></span>
+<span id="cb8-40"><a href="#cb8-40" aria-hidden="true" tabindex="-1"></a>svg<span class="op">.</span><span class="fu">selectAll</span>(<span class="st">".dots"</span>)</span>
+<span id="cb8-41"><a href="#cb8-41" aria-hidden="true" tabindex="-1"></a>    <span class="op">.</span><span class="fu">data</span>(data)</span>
+<span id="cb8-42"><a href="#cb8-42" aria-hidden="true" tabindex="-1"></a>  <span class="op">.</span><span class="fu">enter</span>()<span class="op">.</span><span class="fu">append</span>(<span class="st">"circle"</span>)</span>
+<span id="cb8-43"><a href="#cb8-43" aria-hidden="true" tabindex="-1"></a>    <span class="op">.</span><span class="fu">attr</span>(<span class="st">"class"</span><span class="op">,</span> <span class="st">"dots"</span>)</span>
+<span id="cb8-44"><a href="#cb8-44" aria-hidden="true" tabindex="-1"></a>    <span class="op">.</span><span class="fu">attr</span>(<span class="st">"fill"</span><span class="op">,</span> d <span class="kw">=&gt;</span> d<span class="op">.</span><span class="at">group</span> <span class="op">===</span> <span class="st">"group 1"</span><span class="op">?</span> <span class="st">"steelblue"</span><span class="op">:</span><span class="st">"orangered"</span>)</span>
+<span id="cb8-45"><a href="#cb8-45" aria-hidden="true" tabindex="-1"></a>    <span class="op">.</span><span class="fu">attr</span>(<span class="st">"fill-opacity"</span><span class="op">,</span> <span class="fl">0.3</span>)</span>
+<span id="cb8-46"><a href="#cb8-46" aria-hidden="true" tabindex="-1"></a>    <span class="op">.</span><span class="fu">attr</span>(<span class="st">"r"</span><span class="op">,</span> <span class="dv">5</span>)</span>
+<span id="cb8-47"><a href="#cb8-47" aria-hidden="true" tabindex="-1"></a>    <span class="op">.</span><span class="fu">attr</span>(<span class="st">"cx"</span><span class="op">,</span> d <span class="kw">=&gt;</span> <span class="fu">x</span>(d<span class="op">.</span><span class="at">x</span>) )</span>
+<span id="cb8-48"><a href="#cb8-48" aria-hidden="true" tabindex="-1"></a>    <span class="op">.</span><span class="fu">attr</span>(<span class="st">"cy"</span><span class="op">,</span> d <span class="kw">=&gt;</span> <span class="fu">y</span>(d<span class="op">.</span><span class="at">y</span>) )</span>
+<span id="cb8-49"><a href="#cb8-49" aria-hidden="true" tabindex="-1"></a>    <span class="op">.</span><span class="fu">on</span>(<span class="st">"mouseover"</span><span class="op">,</span> <span class="kw">function</span>(d){</span>
+<span id="cb8-50"><a href="#cb8-50" aria-hidden="true" tabindex="-1"></a>       d3<span class="op">.</span><span class="fu">selectAll</span>(<span class="st">".dots"</span>)<span class="op">.</span><span class="fu">attr</span>(<span class="st">"r"</span><span class="op">,</span> <span class="dv">5</span>) <span class="co">//make sure all the dots are small</span></span>
+<span id="cb8-51"><a href="#cb8-51" aria-hidden="true" tabindex="-1"></a>       d3<span class="op">.</span><span class="fu">select</span>(<span class="kw">this</span>)</span>
+<span id="cb8-52"><a href="#cb8-52" aria-hidden="true" tabindex="-1"></a>        <span class="op">.</span><span class="fu">transition</span>(bounce_select)</span>
+<span id="cb8-53"><a href="#cb8-53" aria-hidden="true" tabindex="-1"></a>        <span class="op">.</span><span class="fu">attr</span>(<span class="st">"r"</span><span class="op">,</span> <span class="dv">10</span>)<span class="op">;</span></span>
+<span id="cb8-54"><a href="#cb8-54" aria-hidden="true" tabindex="-1"></a>      </span>
+<span id="cb8-55"><a href="#cb8-55" aria-hidden="true" tabindex="-1"></a>       point_vals<span class="op">.</span><span class="fu">text</span>(<span class="st">"X:"</span> <span class="op">+</span> d<span class="op">.</span><span class="at">x</span> <span class="op">+</span> <span class="st">" Y:"</span> <span class="op">+</span> d<span class="op">.</span><span class="at">y</span>) <span class="co">//change the title of the graph to the datapoint</span></span>
+<span id="cb8-56"><a href="#cb8-56" aria-hidden="true" tabindex="-1"></a>    })<span class="op">;</span></span>
+<span id="cb8-57"><a href="#cb8-57" aria-hidden="true" tabindex="-1"></a>    </span>
+<span id="cb8-58"><a href="#cb8-58" aria-hidden="true" tabindex="-1"></a><span class="co">// Draw the axes    </span></span>
+<span id="cb8-59"><a href="#cb8-59" aria-hidden="true" tabindex="-1"></a><span class="co">// Add the X Axis</span></span>
+<span id="cb8-60"><a href="#cb8-60" aria-hidden="true" tabindex="-1"></a>svg<span class="op">.</span><span class="fu">append</span>(<span class="st">"g"</span>)</span>
+<span id="cb8-61"><a href="#cb8-61" aria-hidden="true" tabindex="-1"></a>    <span class="op">.</span><span class="fu">attr</span>(<span class="st">"transform"</span><span class="op">,</span> <span class="st">"translate(0,"</span> <span class="op">+</span> height <span class="op">+</span> <span class="st">")"</span>)</span>
+<span id="cb8-62"><a href="#cb8-62" aria-hidden="true" tabindex="-1"></a>    <span class="op">.</span><span class="fu">call</span>(d3<span class="op">.</span><span class="fu">axisBottom</span>(x))<span class="op">;</span></span>
+<span id="cb8-63"><a href="#cb8-63" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb8-64"><a href="#cb8-64" aria-hidden="true" tabindex="-1"></a><span class="co">// Add the Y Axis</span></span>
+<span id="cb8-65"><a href="#cb8-65" aria-hidden="true" tabindex="-1"></a>svg<span class="op">.</span><span class="fu">append</span>(<span class="st">"g"</span>)</span>
+<span id="cb8-66"><a href="#cb8-66" aria-hidden="true" tabindex="-1"></a>    <span class="op">.</span><span class="fu">call</span>(d3<span class="op">.</span><span class="fu">axisLeft</span>(y))<span class="op">;</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<script type="text/javascript">
+var point_vals = d3.select("#viz")
+  .append("p")
+  .attr("align", "center")
+  .text("Mouseover some data!");
+
+//Get how wide our page is in pixels so we can draw our plot in it
+var page_width = $("#did-it-work").width();
+  
+// set the dimensions and margins of the graph
+var margin = 30,
+    width = page_width - 2*margin,
+    height = page_width*0.8 - 2*margin;
+    
+// Find max data values
+var x_extent = d3.extent(data, d => d.x);
+var y_extent = d3.extent(data, d => d.y);
+
+// Set the scales 
+var x = d3.scaleLinear()
+  .domain(x_extent)
+  .range([0, width]);
+  
+var y = d3.scaleLinear()
+  .domain(y_extent)
+  .range([height, 0]);
+
+//Set up our SVG element
+var svg = d3.select("#viz").append("svg")
+    .attr("width", width + 2*margin)
+    .attr("height", height + 2*margin)
+  .append("g")
+    .attr("transform",
+          "translate(" + margin + "," + margin + ")");
+
+var bounce_select = d3.transition()
+    .duration(1000)
+    .ease(d3.easeElastic.period(0.4));
+    
+// Add the scatterplot
+svg.selectAll(".dots")
+    .data(data)
+  .enter().append("circle")
+    .attr("class", "dots")
+    .attr("fill", d => d.group === "group 1"? "steelblue":"orangered")
+    .attr("fill-opacity", 0.3)
+    .attr("r", 5)
+    .attr("cx", d => x(d.x) )
+    .attr("cy", d => y(d.y) )
+    .on("mouseover", function(d){
+       d3.selectAll(".dots").attr("r", 5) //make sure all the dots are small
+       d3.select(this)
+        .transition(bounce_select)
+        .attr("r", 10);
+      
+       point_vals.text("X:" + d.x + " Y:" + d.y) //change the title of the graph to the datapoint
+    });
+    
+// Draw the axes    
+// Add the X Axis
+svg.append("g")
+    .attr("transform", "translate(0," + height + ")")
+    .call(d3.axisBottom(x));
+
+// Add the Y Axis
+svg.append("g")
+    .call(d3.axisLeft(y));
+</script>
+</div>
+</section>
+<section id="why-when" class="level2">
+<h2 class="anchored" data-anchor-id="why-when">Why/ When</h2>
+<p>This is a bad example of a visualization for this scenario as something like plotly could do this in much less effort. If you’re doing something more complicated/ bespoke then this is a great resource to have.</p>
+</section>
+<section id="addendum" class="level2">
+<h2 class="anchored" data-anchor-id="addendum">Addendum</h2>
+<p>If you’re interested, here’s the javascript code I included to make the above graph.</p>
+<pre><code>var point_vals = d3.select("#viz").append("p").text("Mouseover some data!");
+
+//Get how wide our page is in pixels so we can draw our plot in it
+var page_width = $("#did-it-work").width();
+  
+// set the dimensions and margins of the graph
+var margin = 20,
+    width = page_width - 2*margin,
+    height = page_width*0.8 - 2*margin;
+    
+// Find max data values
+var x_extent = d3.extent(data, d =&gt; d.x);
+var y_extent = d3.extent(data, d =&gt; d.y);
+
+// Set the scales 
+var x = d3.scaleLinear()
+  .domain(x_extent)
+  .range([0, width]);
+  
+var y = d3.scaleLinear()
+  .domain(y_extent)
+  .range([height, 0]);
+
+//Set up our SVG element
+var svg = d3.select("#viz").append("svg")
+    .attr("width", width + 2*margin)
+    .attr("height", height + 2*margin)
+  .append("g")
+    .attr("transform",
+          "translate(" + margin + "," + margin + ")");
+
+var bounce_select = d3.transition()
+    .duration(1000)
+    .ease(d3.easeElastic.period(0.4));
+    
+// Add the scatterplot
+svg.selectAll(".dots")
+    .data(data)
+  .enter().append("circle")
+    .attr("class", "dots")
+    .attr("fill", d =&gt; d.group === "group 1"? "steelblue":"orangered")
+    .attr("fill-opacity", 0.3)
+    .attr("r", 5)
+    .attr("cx", d =&gt; x(d.x) )
+    .attr("cy", d =&gt; y(d.y) )
+    .on("mouseover", function(d){
+       d3.selectAll(".dots").attr("r", 5) //make sure all the dots are small
+       d3.select(this)
+        .transition(bounce_select)
+        .attr("r", 10);
+      
+       point_vals.text("X:" + d.x + " Y:" + d.y) //change the title of the graph to the datapoint
+    });
+    
+// Draw the axes    
+// Add the X Axis
+svg.append("g")
+    .attr("transform", "translate(0," + height + ")")
+    .call(d3.axisBottom(x));
+
+// Add the Y Axis
+svg.append("g")
+    .call(d3.axisLeft(y));</code></pre>
+
+
+</section>
+
+</main> <!-- /main -->
+<script id="quarto-html-after-body" type="application/javascript">
+window.document.addEventListener("DOMContentLoaded", function (event) {
+  const toggleBodyColorMode = (bsSheetEl) => {
+    const mode = bsSheetEl.getAttribute("data-mode");
+    const bodyEl = window.document.querySelector("body");
+    if (mode === "dark") {
+      bodyEl.classList.add("quarto-dark");
+      bodyEl.classList.remove("quarto-light");
+    } else {
+      bodyEl.classList.add("quarto-light");
+      bodyEl.classList.remove("quarto-dark");
+    }
+  }
+  const toggleBodyColorPrimary = () => {
+    const bsSheetEl = window.document.querySelector("link#quarto-bootstrap");
+    if (bsSheetEl) {
+      toggleBodyColorMode(bsSheetEl);
+    }
+  }
+  toggleBodyColorPrimary();  
+  const icon = "";
+  const anchorJS = new window.AnchorJS();
+  anchorJS.options = {
+    placement: 'right',
+    icon: icon
+  };
+  anchorJS.add('.anchored');
+  const clipboard = new window.ClipboardJS('.code-copy-button', {
+    target: function(trigger) {
+      return trigger.previousElementSibling;
+    }
+  });
+  clipboard.on('success', function(e) {
+    // button target
+    const button = e.trigger;
+    // don't keep focus
+    button.blur();
+    // flash "checked"
+    button.classList.add('code-copy-button-checked');
+    var currentTitle = button.getAttribute("title");
+    button.setAttribute("title", "Copied!");
+    setTimeout(function() {
+      button.setAttribute("title", currentTitle);
+      button.classList.remove('code-copy-button-checked');
+    }, 1000);
+    // clear code selection
+    e.clearSelection();
+  });
+  function tippyHover(el, contentFn) {
+    const config = {
+      allowHTML: true,
+      content: contentFn,
+      maxWidth: 500,
+      delay: 100,
+      arrow: false,
+      appendTo: function(el) {
+          return el.parentElement;
+      },
+      interactive: true,
+      interactiveBorder: 10,
+      theme: 'quarto',
+      placement: 'bottom-start'
+    };
+    window.tippy(el, config); 
+  }
+  const noterefs = window.document.querySelectorAll('a[role="doc-noteref"]');
+  for (var i=0; i<noterefs.length; i++) {
+    const ref = noterefs[i];
+    tippyHover(ref, function() {
+      // use id or data attribute instead here
+      let href = ref.getAttribute('data-footnote-href') || ref.getAttribute('href');
+      try { href = new URL(href).hash; } catch {}
+      const id = href.replace(/^#\/?/, "");
+      const note = window.document.getElementById(id);
+      return note.innerHTML;
+    });
+  }
+  var bibliorefs = window.document.querySelectorAll('a[role="doc-biblioref"]');
+  for (var i=0; i<bibliorefs.length; i++) {
+    const ref = bibliorefs[i];
+    const cites = ref.parentNode.getAttribute('data-cites').split(' ');
+    tippyHover(ref, function() {
+      var popup = window.document.createElement('div');
+      cites.forEach(function(cite) {
+        var citeDiv = window.document.createElement('div');
+        citeDiv.classList.add('hanging-indent');
+        citeDiv.classList.add('csl-entry');
+        var biblioDiv = window.document.getElementById('ref-' + cite);
+        if (biblioDiv) {
+          citeDiv.innerHTML = biblioDiv.innerHTML;
+        }
+        popup.appendChild(citeDiv);
+      });
+      return popup.innerHTML;
+    });
+  }
+});
+</script>
+<script src="https://utteranc.es/client.js" repo="lfod/real-blog" issue-term="pathname" theme="github-light" crossorigin="anonymous" async="">
+</script>
+</div> <!-- /content -->
+
+
+
+</body></html>

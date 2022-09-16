@@ -1,0 +1,981 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml" lang="en" xml:lang="en"><head>
+
+<meta charset="utf-8">
+<meta name="generator" content="quarto-1.1.251">
+
+<meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
+
+<meta name="author" content="Nick Strayer">
+<meta name="dcterms.date" content="2019-06-04">
+
+<title>Using AWK and R to parse 25tb</title>
+<style>
+code{white-space: pre-wrap;}
+span.smallcaps{font-variant: small-caps;}
+div.columns{display: flex; gap: min(4vw, 1.5em);}
+div.column{flex: auto; overflow-x: auto;}
+div.hanging-indent{margin-left: 1.5em; text-indent: -1.5em;}
+ul.task-list{list-style: none;}
+ul.task-list li input[type="checkbox"] {
+  width: 0.8em;
+  margin: 0 0.8em 0.2em -1.6em;
+  vertical-align: middle;
+}
+pre > code.sourceCode { white-space: pre; position: relative; }
+pre > code.sourceCode > span { display: inline-block; line-height: 1.25; }
+pre > code.sourceCode > span:empty { height: 1.2em; }
+.sourceCode { overflow: visible; }
+code.sourceCode > span { color: inherit; text-decoration: inherit; }
+div.sourceCode { margin: 1em 0; }
+pre.sourceCode { margin: 0; }
+@media screen {
+div.sourceCode { overflow: auto; }
+}
+@media print {
+pre > code.sourceCode { white-space: pre-wrap; }
+pre > code.sourceCode > span { text-indent: -5em; padding-left: 5em; }
+}
+pre.numberSource code
+  { counter-reset: source-line 0; }
+pre.numberSource code > span
+  { position: relative; left: -4em; counter-increment: source-line; }
+pre.numberSource code > span > a:first-child::before
+  { content: counter(source-line);
+    position: relative; left: -1em; text-align: right; vertical-align: baseline;
+    border: none; display: inline-block;
+    -webkit-touch-callout: none; -webkit-user-select: none;
+    -khtml-user-select: none; -moz-user-select: none;
+    -ms-user-select: none; user-select: none;
+    padding: 0 4px; width: 4em;
+    color: #aaaaaa;
+  }
+pre.numberSource { margin-left: 3em; border-left: 1px solid #aaaaaa;  padding-left: 4px; }
+div.sourceCode
+  {   }
+@media screen {
+pre > code.sourceCode > span > a:first-child::before { text-decoration: underline; }
+}
+code span.al { color: #ff0000; font-weight: bold; } /* Alert */
+code span.an { color: #60a0b0; font-weight: bold; font-style: italic; } /* Annotation */
+code span.at { color: #7d9029; } /* Attribute */
+code span.bn { color: #40a070; } /* BaseN */
+code span.bu { color: #008000; } /* BuiltIn */
+code span.cf { color: #007020; font-weight: bold; } /* ControlFlow */
+code span.ch { color: #4070a0; } /* Char */
+code span.cn { color: #880000; } /* Constant */
+code span.co { color: #60a0b0; font-style: italic; } /* Comment */
+code span.cv { color: #60a0b0; font-weight: bold; font-style: italic; } /* CommentVar */
+code span.do { color: #ba2121; font-style: italic; } /* Documentation */
+code span.dt { color: #902000; } /* DataType */
+code span.dv { color: #40a070; } /* DecVal */
+code span.er { color: #ff0000; font-weight: bold; } /* Error */
+code span.ex { } /* Extension */
+code span.fl { color: #40a070; } /* Float */
+code span.fu { color: #06287e; } /* Function */
+code span.im { color: #008000; font-weight: bold; } /* Import */
+code span.in { color: #60a0b0; font-weight: bold; font-style: italic; } /* Information */
+code span.kw { color: #007020; font-weight: bold; } /* Keyword */
+code span.op { color: #666666; } /* Operator */
+code span.ot { color: #007020; } /* Other */
+code span.pp { color: #bc7a00; } /* Preprocessor */
+code span.sc { color: #4070a0; } /* SpecialChar */
+code span.ss { color: #bb6688; } /* SpecialString */
+code span.st { color: #4070a0; } /* String */
+code span.va { color: #19177c; } /* Variable */
+code span.vs { color: #4070a0; } /* VerbatimString */
+code span.wa { color: #60a0b0; font-weight: bold; font-style: italic; } /* Warning */
+</style>
+
+
+<script src="../../site_libs/quarto-nav/quarto-nav.js"></script>
+<script src="../../site_libs/quarto-nav/headroom.min.js"></script>
+<script src="../../site_libs/clipboard/clipboard.min.js"></script>
+<script src="../../site_libs/quarto-search/autocomplete.umd.js"></script>
+<script src="../../site_libs/quarto-search/fuse.min.js"></script>
+<script src="../../site_libs/quarto-search/quarto-search.js"></script>
+<meta name="quarto:offset" content="../../">
+<script src="../../site_libs/quarto-html/quarto.js"></script>
+<script src="../../site_libs/quarto-html/popper.min.js"></script>
+<script src="../../site_libs/quarto-html/tippy.umd.min.js"></script>
+<script src="../../site_libs/quarto-html/anchor.min.js"></script>
+<link href="../../site_libs/quarto-html/tippy.css" rel="stylesheet">
+<link href="../../site_libs/quarto-html/quarto-syntax-highlighting.css" rel="stylesheet" id="quarto-text-highlighting-styles">
+<script src="../../site_libs/bootstrap/bootstrap.min.js"></script>
+<link href="../../site_libs/bootstrap/bootstrap-icons.css" rel="stylesheet">
+<link href="../../site_libs/bootstrap/bootstrap.min.css" rel="stylesheet" id="quarto-bootstrap" data-mode="light">
+<script id="quarto-search-options" type="application/json">{
+  "location": "navbar",
+  "copy-button": false,
+  "collapse-after": 3,
+  "panel-placement": "end",
+  "type": "overlay",
+  "limit": 20,
+  "language": {
+    "search-no-results-text": "No results",
+    "search-matching-documents-text": "matching documents",
+    "search-copy-link-title": "Copy link to search",
+    "search-hide-matches-text": "Hide additional matches",
+    "search-more-match-text": "more match in this document",
+    "search-more-matches-text": "more matches in this document",
+    "search-clear-button-title": "Clear",
+    "search-detached-cancel-button-title": "Cancel",
+    "search-submit-button-title": "Submit"
+  }
+}</script>
+<script src="https://code.jquery.com/jquery-3.2.1.min.js" integrity="sha256-hwg4gsxgFZhOsEEamdOYGBf13FyQuiTwlAQgxVSNgt4=" crossorigin="anonymous"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/d3/4.9.1/d3.min.js"></script>
+
+<style>
+  #custom-header {
+    height: 30vh;
+    width: 100%;
+    position:relative;
+    z-index:1;
+    margin:0 auto;
+  }
+</style>
+
+
+</head><body class="nav-fixed fullcontent"><header id="custom-header">
+  <div id="header_viz"></div>
+</header>
+
+<script>
+  $( document ).ready(() => {
+
+    //javascript for intro loader
+
+    //Function to immitate R's seq
+    function seq(start, end, increment) {
+      var length = Math.round((end - start)/increment);
+      return Array(length).fill().map((_, idx) => start + idx*increment)
+    }
+
+
+    //define the pdf of the distribution.
+    var logistic = function(x, theta, i) {
+        var mu = 0.1;
+        sign = 1
+        var y = sign * (1 / (Math.sqrt(2 * Math.PI) * theta)) * (1 / x) *
+            Math.exp(-Math.pow((Math.log(x) - mu), 2) / (2 * Math.pow(theta, 2)))
+        return y;
+    }
+
+    var width   = $("#custom-header").width() ,
+        height  = $("#custom-header").outerHeight(),
+        padding = 0,
+        numOfLines = 20,
+        xs = seq(0.01, 5, .01),
+        colors = ['rgb(165,0,38)', 'rgb(215,48,39)', 'rgb(244,109,67)', 'rgb(253,174,97)', 'rgb(254,224,144)',
+            'rgb(224,243,248)', 'rgb(171,217,233)', 'rgb(116,173,209)', 'rgb(69,117,180)', 'rgb(49,54,149)'
+        ];
+  
+    console.log("trying to run this shit.")
+    //define the svg.
+    var svg = d3.select("#header_viz").append("svg")
+        .attr("width", width)
+        .attr("height", height + 2 * padding)
+        .append("g")
+
+
+    var animatelines = function(whichline) {
+        d3.selectAll(".line").style("opacity","0.5");
+
+        //Select All of the lines and process them one by one
+        d3.selectAll(".line").each(function(d,i){
+            // Get the length of each line in turn
+            var totalLength = d3.select("#line" + i).node().getTotalLength();
+
+            d3.selectAll("#line" + i).attr("stroke-dasharray", totalLength + " " + totalLength)
+              .attr("stroke-dashoffset", totalLength)
+              .transition()
+              .duration(5000)
+              .delay(100*i)
+              .attr("stroke-dashoffset", 0)
+              .style("stroke-width",2)
+        })
+
+        writeGreeting()
+    }
+
+
+
+    // The Scales:
+    var thetaMap = d3.scaleLinear() //name the values from 0 to 20 and make their values from .1-.7
+        .domain([0, numOfLines])
+        .range([0.8, 0.085])
+
+    var yPos = d3.scaleLinear() //scalling for creating horizontal lines
+        .domain([0, numOfLines])
+        .range([0, 4])
+
+    var x = d3.scaleLinear()
+        .domain([0, 5])
+        .range([0, width]);
+
+    var y = d3.scaleLinear()
+        .domain([0, 4.5])
+        .range([height, 0]);
+
+    // The line functions:
+    var logistic = d3.range(numOfLines).map(function(i) {
+        var odd = true
+        var toReturn = xs.map(function(num) {
+            return {
+                "x": num,
+                "y": logistic(num, thetaMap(i), i)
+            }
+        })
+        return toReturn;
+    })
+
+    //make a greeting message for after the line animation.
+    function writeGreeting(){
+
+        var text_scale = width < 500 ? 1 : 0.65;
+        console.log(text_scale);
+        var intro_text = "Live Free or Dichotomize";
+
+        var title = svg.append("text")
+            .attr("font-size", 30)
+            .attr("font-family", "optima")
+            .attr("text-anchor", "end")
+            .attr("fill-opacity", 0.65)
+            .attr("x", width < 500 ? x(4.8) : x(4.2))
+            .attr("y", width < 500 ? y(3.12) : y(2.1) )
+            .attr("opacity", 0)
+            .text(intro_text)
+            .attr("font-size", function(d) { return ( text_scale*width - 8) / this.getComputedTextLength() * 24 + "px"; })
+            .text("")
+            .attr("opacity", 1);
+
+        (function drawGreeting (i, start, greeting) {
+            setTimeout(function () {
+
+                //add next letter to the greeting in progress
+                start += greeting[i];
+
+                title.html(start) //append this to the html
+
+                if (start.length < greeting.length) { //if the in progress greeting is less than the full, keep going.
+                    drawGreeting(i+1,start,greeting);      //  increment i and call again.
+                };
+            }, 100)
+        })(0, "", intro_text);
+    }
+
+
+    // The d3 stuff
+    var line = d3.line()
+        // .interpolate("basis")
+        .x(function(d) { return x(d.x); })
+        .y(function(d) { return y(d.y); });
+
+
+    svg.selectAll(".line")
+        .data(logistic)
+        .enter().append("path")
+        .attr("class", "line")
+        .attr("id" , function(d, i){ return "line" + i;})
+        .attr("d", line)
+        .style("stroke-width", 2)
+        .style("stroke", function(d, i) { return colors[i % 10] })
+        .style("opacity", 0)
+        .style("fill", "none")
+        .on("mouseover", function(d){
+            d3.select(this).style("stroke", "black")
+        })
+        .on("mouseout", function(d,i){
+            d3.select(this).style("stroke", colors[i % 10])
+        })
+
+    // var introMessage = isMobile ? "tap" : "click"
+    // var introMessage = "click"
+    //
+    // var intro = svg.append("text")
+    //     .text(introMessage)
+    //     .attr("font-size", 35)
+    //     .attr("font-family", "optima")
+    //     .attr("text-anchor", "middle")
+    //     .attr("x", x(2.5))
+    //     .attr("y", y(2.01))
+
+    //kick it off on a click. (or tap)
+    animatelines(2)
+    // d3.select("svg").on("click", function() { animatelines(2) })
+
+})
+
+</script>
+
+
+
+
+
+
+<div id="quarto-search-results"></div>
+  <header id="quarto-header" class="headroom fixed-top">
+    <nav class="navbar navbar-expand-lg navbar-dark ">
+      <div class="navbar-container container-fluid">
+          <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarCollapse" aria-controls="navbarCollapse" aria-expanded="false" aria-label="Toggle navigation" onclick="if (window.quartoToggleHeadroom) { window.quartoToggleHeadroom(); }">
+  <span class="navbar-toggler-icon"></span>
+</button>
+          <div class="collapse navbar-collapse" id="navbarCollapse">
+            <ul class="navbar-nav navbar-nav-scroll me-auto">
+  <li class="nav-item">
+    <a class="nav-link" href="../../index.html">Home</a>
+  </li>  
+  <li class="nav-item">
+    <a class="nav-link" href="../../about.html">About</a>
+  </li>  
+</ul>
+              <div id="quarto-search" class="" title="Search"></div>
+          </div> <!-- /navcollapse -->
+      </div> <!-- /container-fluid -->
+    </nav>
+</header>
+<!-- content -->
+<header id="title-block-header" class="quarto-title-block default page-columns page-full">
+  <div class="quarto-title-banner page-columns page-full">
+    <div class="quarto-title column-body">
+      <h1 class="title">Using AWK and R to parse 25tb</h1>
+                                <div class="quarto-categories">
+                <div class="quarto-category">big data</div>
+                <div class="quarto-category">awk</div>
+                <div class="quarto-category">data cleaning</div>
+              </div>
+                  </div>
+  </div>
+    
+  
+  <div class="quarto-title-meta">
+
+      <div>
+      <div class="quarto-title-meta-heading">Author</div>
+      <div class="quarto-title-meta-contents">
+               <p>Nick Strayer </p>
+            </div>
+    </div>
+      
+      <div>
+      <div class="quarto-title-meta-heading">Published</div>
+      <div class="quarto-title-meta-contents">
+        <p class="date">June 4, 2019</p>
+      </div>
+    </div>
+      
+    </div>
+    
+  
+  </header><div id="quarto-content" class="quarto-container page-columns page-rows-contents page-layout-article page-navbar">
+<!-- sidebar -->
+<!-- margin-sidebar -->
+    
+<!-- main -->
+<main class="content quarto-banner-title-block" id="quarto-document-content">
+
+
+
+
+<style>
+.lesson_learned {
+  color: #238443;
+}
+
+.lesson_learned strong {
+  color: #005a32;
+}
+
+.photo_caption {
+  font-size: 0.8em;
+}
+</style>
+<p><strong>How to read this post:</strong> I sincerely apologize for how long and rambling the following text is. To speed up skimming of it for those who have better things to do with their time, I have started most sections with a <span class="lesson_learned">“Lesson learned”</span> blurb that boils down the takeaway from the following text into a sentence or two.</p>
+<p><strong>Just show me the solution!</strong> If you just want to see how I ended up solving the task jump to the section <a href="#getting-more-creative">Getting More Creative</a>, but I honestly think the failures are more interesting/valuable.</p>
+<section id="intro" class="level2">
+<h2 class="anchored" data-anchor-id="intro">Intro</h2>
+<p>Recently I was put in charge of setting up a workflow for dealing with a large amount of raw DNA sequencing (well technically a SNP chip) data for my lab. The goal was to be able to quickly get data for a given genetic location (called a SNP) for use for modeling etc. Using vanilla R and AWK I was able to cleanup and organize the data in a natural way, massively speeding up the querying. It certainly wasn’t easy and it took lots of iterations. This post is meant to help others avoid some of the same mistakes and show what did eventually work.</p>
+<p>First some background:</p>
+</section>
+<section id="the-data" class="level2">
+<h2 class="anchored" data-anchor-id="the-data">The Data</h2>
+<p>The data was delivered to us by our university’s genetics processing center as 25 TB of tsvs. Before handing it off to me, my advisor split and gzipped these files into five batches each composed of roughly 240 four gigabyte files. Each row contained a data for a single SNP for a single person. <label for="tufte-mn-" class="margin-toggle">⊕</label><input type="checkbox" id="tufte-mn-" class="margin-toggle"><span class="marginnote">There were ~2.5 million SNPS and ~60 thousand people</span> Along with the SNP value there were multiple numeric columns on things like intensity of the reading, frequency of different alleles etc. All told there were around 30 columns with frustratingly unique values.</p>
+<p><label for="tufte-mn-" class="margin-toggle">⊕</label><input type="checkbox" id="tufte-mn-" class="margin-toggle"><span class="marginnote"><img src="https://www.researchgate.net/profile/Debi_Mishra4/publication/320298591/figure/fig5/AS:547880880820228@1507636389471/DNA-chips-to-analyze-single-nucleotide-polymorphisms-SNPs-A-DNA-chip-is-repaired-by.png" alt="DNA chips explainer" width="200px/"> How a SNP Chip works. <a href="https://www.researchgate.net/figure/DNA-chips-to-analyze-single-nucleotide-polymorphisms-SNPs-A-DNA-chip-is-repaired-by_fig5_320298591">Via Research Gate</a></span></p>
+</section>
+<section id="the-goal" class="level2">
+<h2 class="anchored" data-anchor-id="the-goal">The Goal</h2>
+<p>As with any data management project the most important thing is to consider <em>how</em> the data will be used. In this case what <strong>we will mostly be doing is fitting models and workflows on a SNP by SNP basis.</strong> I.e. we only will need a single SNP’s data at a time. I needed to make it as easy, fast, and cheap as possible to extract all the records pertaining to one of the 2.5 million SNPs.</p>
+</section>
+<section id="how-not-to-do-this" class="level1">
+<h1>How <em>not</em> to do this</h1>
+<p>To appropriate a cliched quote:</p>
+<blockquote class="blockquote">
+<p>I didn’t fail a thousand times, I just discovered a thousand ways <em>not</em> to parse lots of data into an easily query-able format.</p>
+</blockquote>
+<section id="the-first-attempt" class="level2">
+<h2 class="anchored" data-anchor-id="the-first-attempt">The first attempt</h2>
+<p><span class="lesson_learned"><strong>Lesson Learned:</strong> There’s no cheap way to parse 25tb of data at once.</span></p>
+<p>Having taken a class at Vanderbilt titled ‘Advanced methods in Big Data’ I was sure I had this in the bag. <label for="tufte-mn-" class="margin-toggle">⊕</label><input type="checkbox" id="tufte-mn-" class="margin-toggle"><span class="marginnote">Capital B capital D Big Data, so you know it’s serious.</span>It would be maybe an hour or two of me setting up a Hive server to run over all our data and then calling it good. Since our data is stored on AWS S3 I used a service called <a href="https://aws.amazon.com/athena/">Athena</a> which allows you to run Hive SQL queries on your S3 data. Not only do you get to avoid setting/ spinning up a Hive cluster, you only pay for the data searched.</p>
+<p>After pointing Athena to my data and its format I ran a few tests with queries like</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb1"><pre class="sourceCode sql code-with-copy"><code class="sourceCode sql"><span id="cb1-1"><a href="#cb1-1" aria-hidden="true" tabindex="-1"></a><span class="kw">select</span> <span class="op">*</span> <span class="kw">from</span> intensityData <span class="kw">limit</span> <span class="dv">10</span>;</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+<p>and got back results fast and well formed. I was set.</p>
+<p>Until we tried to use the data in real life….</p>
+<p>I was asked to grab all the data for a SNP so we could test a model on it. I ran the query:</p>
+<div class="sourceCode" id="cb2"><pre class="sourceCode sql code-with-copy"><code class="sourceCode sql"><span id="cb2-1"><a href="#cb2-1" aria-hidden="true" tabindex="-1"></a><span class="kw">select</span> <span class="op">*</span> <span class="kw">from</span> intensityData </span>
+<span id="cb2-2"><a href="#cb2-2" aria-hidden="true" tabindex="-1"></a><span class="kw">where</span> snp <span class="op">=</span> <span class="st">'rs123456'</span>;</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<p>… and I waited. Eight minutes and 4+ terabytes of data queried later I had my results. Athena charges you by data searched at the reasonable rate of $5 per TB. So this single query cost $20 and eight minutes. <label for="tufte-mn-" class="margin-toggle">⊕</label><input type="checkbox" id="tufte-mn-" class="margin-toggle"><span class="marginnote">If we ever wanted to run a model over all the data we better be ready to wait roughly 38 years and pay $50 million.</span> Clearly this wasn’t going to work.</p>
+</section>
+<section id="this-should-be-a-walk-in-the-parquet" class="level2">
+<h2 class="anchored" data-anchor-id="this-should-be-a-walk-in-the-parquet">This should be a walk in the Parquet…</h2>
+<p><span class="lesson_learned"><strong>Lesson Learned:</strong> Be careful with your Parquet file sizes and organization.</span></p>
+<p>My first attempt to remedy the situation was to convert all of the TSV’s to <a href="https://Parquet.apache.org">Parquet files</a>. Parquet files are good for working with larger datasets because they store data in a ‘columnar’ fashion. Meaning each column is stored in its own section of memory/disk, unlike a text file with lines containing every column. This means to look for something you only have to read the necessary column. Also, they keep a record of the range of values by column for each file so if the value you’re looking for isn’t in the column range Spark doesn’t waste it’s time scanning through the file.</p>
+<p>I ran a simple <a href="https://aws.amazon.com/glue/">AWS Glue job</a> to convert our TSVs to Parquet and hooked up the new Parquet files to Athena. This took only around five hours. However, when I ran a query it took just about the same amount of time and a tiny bit less money. This is because Spark in its attempt to optimize the job just unzipped a single TSV chunk and placed it in its own Parquet chunk. Because each chunk was big enough to contain multiple people’s full records, this meant that every file had every SNP in them and thus Spark had to open all of them to extract what we wanted.</p>
+<p><label for="tufte-mn-" class="margin-toggle">⊕</label><input type="checkbox" id="tufte-mn-" class="margin-toggle"><span class="marginnote">Interestingly the default (and recomended) Parquet compression type: ‘snappy’ is not splitable. So each executor was still stuck with the task of uncompressing and loading an entire 3.5gig dataset.</span></p>
+<p><img src="../../media/using_awk_and_r_to_parse_25tb/large_parquet_chunks.png" class="img-fluid"></p>
+</section>
+<section id="sorting-out-the-issue" class="level2">
+<h2 class="anchored" data-anchor-id="sorting-out-the-issue">Sorting out the issue</h2>
+<p><span class="lesson_learned"><strong>Lesson Learned:</strong> Sorting is hard, especially when data is distributed.</span></p>
+<p>I thought that I had the problem figured out now. All I needed to do was to sort the data on the SNP column instead of the individual. This would allow a given chunk of data to only have a few SNPs in it and Parquet’s smart only-open-if-values-in-range feature could shine. Unfortunately, sorting billions of rows of data distributed across a cluster is not a trivial task.</p>
+<blockquote class="twitter-tweet blockquote" data-lang="en">
+<p lang="en" dir="ltr">
+Me taking algorithms class in college: "Ugh, no one cares about computational complexity of all these sorting algorithms" <br><br>Me trying to sort on a column in a 20TB <a href="https://twitter.com/hashtag/Spark?src=hash&amp;ref_src=twsrc%5Etfw">#Spark</a> table: "Why is this taking so long?" <a href="https://twitter.com/hashtag/DataScience?src=hash&amp;ref_src=twsrc%5Etfw">#DataScience</a> struggles.
+</p>
+— Nick Strayer (<span class="citation" data-cites="NicholasStrayer">@NicholasStrayer</span>) <a href="https://twitter.com/NicholasStrayer/status/1105127759318319105?ref_src=twsrc%5Etfw">March 11, 2019</a>
+</blockquote>
+<script async="" src="https://platform.twitter.com/widgets.js" charset="utf-8"></script>
+<p><label for="tufte-mn-" class="margin-toggle">⊕</label><input type="checkbox" id="tufte-mn-" class="margin-toggle"><span class="marginnote">AWS doesn’t exactly want to give refunds for the cause ‘I am an absent minded graduate student.’</span></p>
+<p>After attempting to run this on Amazon’s glue it ran for 2 days and then crashed.</p>
+</section>
+<section id="what-about-partitioning" class="level2">
+<h2 class="anchored" data-anchor-id="what-about-partitioning">What about partitioning?</h2>
+<p><span class="lesson_learned"><strong>Lesson Learned:</strong> Partitions in Spark need to be balanced.</span></p>
+<p>Another idea I had was to partition the data into chromosomes. There are 23 of these (plus a few extra to account for mitochondrial DNA or unmapped regions). This would provide a way of cutting down the data into much more manageable chunks. By adding just a single line to the Spark export function in the glue script: <code>partition_by = "chr"</code>, the data should be put into those buckets.</p>
+<p><label for="tufte-mn-" class="margin-toggle">⊕</label><input type="checkbox" id="tufte-mn-" class="margin-toggle"><span class="marginnote"><img src="https://cdn.prod-carehubs.net/n2/71b34990bba71dfd/uploads/2018/07/boldchromosomecellturquoise.png" alt="Chromosome graphic"> DNA is made up of multiple chunks called Chromosomes. Img via <a href="https://kintalk.org/genetics-101/">kintalk.org</a>.</span></p>
+<p>Unfortunately things didn’t work out well. This is because the chromosomes are different sizes and thus have different amounts of data within them. This meant that the tasks Spark sent out to its workers were unbalanced and ran slowly due to some of the nodes finishing early and sitting idle. The jobs <em>did</em> finish, however. But when querying for a single SNP the unbalance caused problems again. With SNPS in larger chromosomes (aka where we will actually want to get data) the cost was only improved ~10x. A lot but not enough.</p>
+</section>
+<section id="what-about-even-finer-partitioning" class="level2">
+<h2 class="anchored" data-anchor-id="what-about-even-finer-partitioning">What about even finer partitioning?</h2>
+<p><span class="lesson_learned"><strong>Lesson Learned:</strong> Never, ever, try and make 2.5 million partitions.</span></p>
+<p>I decided to get crazy with my partitioning and partitioned on each SNP. This guaranteed that each partition would be equal in size. <strong>THIS WAS A BAD IDEA.</strong> I used Glue and added the innocent line of <code>partition_by = 'snp'</code>. The job started and ran. A day later I checked and noticed nothing had been written to S3 yet so I killed the job. Turns out Glue <em>was</em> writing intermediate files to hidden S3 locations, and a lot of them, like 2 billion. This mistake ended up costing more than a thousand dollars and didn’t make my advisor happy.</p>
+</section>
+<section id="partitioning-sorting" class="level2">
+<h2 class="anchored" data-anchor-id="partitioning-sorting">Partitioning + Sorting</h2>
+<p><span class="lesson_learned"><strong>Lesson Learned:</strong> Sorting is still hard and so is tuning Spark.</span></p>
+<p>The last attempt in the partitioning era was to partition on chromosome and then sort each partition. In theory this would have made each query quicker because the desired SNP data would only reside in the ranges of a few of the Parquet chunks within a given region. Alas, it turns out sorting even the partitioned data was a lot of work. I ended up switching to EMR for a custom cluster, using 8 powerful instances (C5.4xl) and using Sparklyr to build a more flexible workflow…</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb3"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb3-1"><a href="#cb3-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Sparklyr snippet to partition by chr and sort w/in partition</span></span>
+<span id="cb3-2"><a href="#cb3-2" aria-hidden="true" tabindex="-1"></a><span class="co"># Join the raw data with the snp bins</span></span>
+<span id="cb3-3"><a href="#cb3-3" aria-hidden="true" tabindex="-1"></a>raw_data</span>
+<span id="cb3-4"><a href="#cb3-4" aria-hidden="true" tabindex="-1"></a>  <span class="fu">group_by</span>(chr) <span class="sc">%&gt;%</span></span>
+<span id="cb3-5"><a href="#cb3-5" aria-hidden="true" tabindex="-1"></a>  <span class="fu">arrange</span>(Position) <span class="sc">%&gt;%</span> </span>
+<span id="cb3-6"><a href="#cb3-6" aria-hidden="true" tabindex="-1"></a>  <span class="fu">Spark_write_Parquet</span>(</span>
+<span id="cb3-7"><a href="#cb3-7" aria-hidden="true" tabindex="-1"></a>    <span class="at">path =</span> DUMP_LOC,</span>
+<span id="cb3-8"><a href="#cb3-8" aria-hidden="true" tabindex="-1"></a>    <span class="at">mode =</span> <span class="st">'overwrite'</span>,</span>
+<span id="cb3-9"><a href="#cb3-9" aria-hidden="true" tabindex="-1"></a>    <span class="at">partition_by =</span> <span class="fu">c</span>(<span class="st">'chr'</span>)</span>
+<span id="cb3-10"><a href="#cb3-10" aria-hidden="true" tabindex="-1"></a>  )</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+<p>…but no mater what the job never finished. I tried all the tuning tricks: bumped up the memory allocated to each executor of the queries, used high ram node types, broadcasting variables, but it would always get around half way done then executors would slowly start failing till everything eventually ground to a halt.</p>
+<blockquote class="twitter-tweet blockquote" data-lang="en">
+<p lang="en" dir="ltr">
+Update: so it begins. <a href="https://t.co/agY4GU2ru5">pic.twitter.com/agY4GU2ru5</a>
+</p>
+— Nick Strayer (<span class="citation" data-cites="NicholasStrayer">@NicholasStrayer</span>) <a href="https://twitter.com/NicholasStrayer/status/1128703858610450434?ref_src=twsrc%5Etfw">May 15, 2019</a>
+</blockquote>
+<script async="" src="https://platform.twitter.com/widgets.js" charset="utf-8"></script>
+</section>
+</section>
+<section id="getting-more-creative" class="level1">
+<h1>Getting more creative</h1>
+<p><span class="lesson_learned"><strong>Lesson Learned:</strong> Sometimes bespoke data needs bespoke solutions.</span></p>
+<p>Every SNP has a position value. This is an integer corresponding to how many bases along its chromosome it lies. This is a nice and natural method of organizing our data. The first thought I had was building partitions by regions of each chromosome. Aka (positions 1 - 2000, 2001 - 4000, etc). The problem is SNPs are not evenly distributed along their chromosomes, so the bins would be wildly different in size.</p>
+<p><img src="../../media/using_awk_and_r_to_parse_25tb/uneven_snps.png" class="img-fluid"></p>
+<p>The solution I came up with was to bin by position <em>rank</em>. I ran a query on our already loaded data to get the list of the unique SNPs, their positions, and their chromosomes. I then sorted within each chromosome and bundled the SNPs into bins of a given size. E.g. 1000 SNPS. This gave me a mapping from SNP -&gt; bin-in-chromosome.</p>
+<p><label for="tufte-mn-" class="margin-toggle">⊕</label><input type="checkbox" id="tufte-mn-" class="margin-toggle"><span class="marginnote">I ended up using 75 SNPs per bin, I explain why later.</span></p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb4"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb4-1"><a href="#cb4-1" aria-hidden="true" tabindex="-1"></a>snp_to_bin <span class="ot">&lt;-</span> unique_snps <span class="sc">%&gt;%</span> </span>
+<span id="cb4-2"><a href="#cb4-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">group_by</span>(chr) <span class="sc">%&gt;%</span> </span>
+<span id="cb4-3"><a href="#cb4-3" aria-hidden="true" tabindex="-1"></a>  <span class="fu">arrange</span>(position) <span class="sc">%&gt;%</span> </span>
+<span id="cb4-4"><a href="#cb4-4" aria-hidden="true" tabindex="-1"></a>  <span class="fu">mutate</span>(</span>
+<span id="cb4-5"><a href="#cb4-5" aria-hidden="true" tabindex="-1"></a>    <span class="at">rank =</span> <span class="dv">1</span><span class="sc">:</span><span class="fu">n</span>()</span>
+<span id="cb4-6"><a href="#cb4-6" aria-hidden="true" tabindex="-1"></a>    <span class="at">bin =</span> <span class="fu">floor</span>(rank<span class="sc">/</span>snps_per_bin)</span>
+<span id="cb4-7"><a href="#cb4-7" aria-hidden="true" tabindex="-1"></a>  ) <span class="sc">%&gt;%</span> </span>
+<span id="cb4-8"><a href="#cb4-8" aria-hidden="true" tabindex="-1"></a>  <span class="fu">ungroup</span>()</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+<section id="first-attempt-with-spark" class="level2">
+<h2 class="anchored" data-anchor-id="first-attempt-with-spark">First attempt with Spark</h2>
+<p><span class="lesson_learned"><strong>Lesson Learned:</strong> Spark joining is fast, but partitioning is still expensive</span></p>
+<p>The goal was to read this small (2.5 million row) dataframe into Spark, join it with the raw data, and then partition on the newly added <code>bin</code> column.</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb5"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb5-1"><a href="#cb5-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Join the raw data with the snp bins</span></span>
+<span id="cb5-2"><a href="#cb5-2" aria-hidden="true" tabindex="-1"></a>data_w_bin <span class="ot">&lt;-</span> raw_data <span class="sc">%&gt;%</span></span>
+<span id="cb5-3"><a href="#cb5-3" aria-hidden="true" tabindex="-1"></a>  <span class="fu">left_join</span>(<span class="fu">sdf_broadcast</span>(snp_to_bin), <span class="at">by =</span><span class="st">'snp_name'</span>) <span class="sc">%&gt;%</span></span>
+<span id="cb5-4"><a href="#cb5-4" aria-hidden="true" tabindex="-1"></a>  <span class="fu">group_by</span>(chr_bin) <span class="sc">%&gt;%</span></span>
+<span id="cb5-5"><a href="#cb5-5" aria-hidden="true" tabindex="-1"></a>  <span class="fu">arrange</span>(Position) <span class="sc">%&gt;%</span> </span>
+<span id="cb5-6"><a href="#cb5-6" aria-hidden="true" tabindex="-1"></a>  <span class="fu">Spark_write_Parquet</span>(</span>
+<span id="cb5-7"><a href="#cb5-7" aria-hidden="true" tabindex="-1"></a>    <span class="at">path =</span> DUMP_LOC,</span>
+<span id="cb5-8"><a href="#cb5-8" aria-hidden="true" tabindex="-1"></a>    <span class="at">mode =</span> <span class="st">'overwrite'</span>,</span>
+<span id="cb5-9"><a href="#cb5-9" aria-hidden="true" tabindex="-1"></a>    <span class="at">partition_by =</span> <span class="fu">c</span>(<span class="st">'chr_bin'</span>)</span>
+<span id="cb5-10"><a href="#cb5-10" aria-hidden="true" tabindex="-1"></a>  )</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+<p><label for="tufte-mn-" class="margin-toggle">⊕</label><input type="checkbox" id="tufte-mn-" class="margin-toggle"><span class="marginnote">Notice the use of <code>sdf_broadcast()</code>, this lets Spark know it should send this dataframe to all nodes. It’s helpful when the data is small and needed for all tasks. Otherwise Spark tries to be clever and waits to distribute it till it needs it which can cause bottlenecks.</span></p>
+<p>Again, things didn’t work out. Like the sorting attempt, the jobs would run for a while, finish the joining task, and then as the partitioning started executors would start crashing.</p>
+</section>
+<section id="bringing-in-awk" class="level2">
+<h2 class="anchored" data-anchor-id="bringing-in-awk">Bringing in AWK</h2>
+<p><span class="lesson_learned"><strong>Lesson Learned:</strong> Don’t sleep on the basics. Someone probably solved your problem in the 80s.</span></p>
+<p>Up to this point all my Spark failures were due to the data being shuffled around the cluster because it was starting all mixed up. Perhaps I could help it out with some preprocessing. I decided to try and split the raw text data on the chromosome column, that way I would be able to provide Spark with somewhat ‘pre-partitioned’ data.</p>
+<p>I stack overflow searched how to split by column value and found <a href="https://unix.stackexchange.com/questions/114061/extract-data-from-a-file-and-place-in-different-files-based-on1-column-value">this wonderful answer.</a> Using AWK you can split a text file up by a column’s values by performing the writing in the script rather than sending results to <code>stdout</code>.</p>
+<p>I wrote up a bash script to test this. I downloaded one of the gzipped tsv, then unzipped it using <code>gzip</code>, piped that to <code>awk</code>.</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb6"><pre class="sourceCode bash code-with-copy"><code class="sourceCode bash"><span id="cb6-1"><a href="#cb6-1" aria-hidden="true" tabindex="-1"></a><span class="fu">gzip</span> <span class="at">-dc</span> path/to/chunk/file.gz <span class="kw">|</span></span>
+<span id="cb6-2"><a href="#cb6-2" aria-hidden="true" tabindex="-1"></a><span class="fu">awk</span> <span class="at">-F</span> <span class="st">'\t'</span> <span class="dt">\</span></span>
+<span id="cb6-3"><a href="#cb6-3" aria-hidden="true" tabindex="-1"></a><span class="st">'{print $1",..."$30"&gt;"chunked/"$chr"_chr"$15".csv"}'</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+<p>It worked!</p>
+</section>
+<section id="saturating-the-cores" class="level2">
+<h2 class="anchored" data-anchor-id="saturating-the-cores">Saturating the cores</h2>
+<p><span class="lesson_learned"><strong>Lesson Learned:</strong> <code>gnu parallel</code> is magic and everyone should use it.</span></p>
+<p>The splitting was a tad bit slow and when I ran <code>htop</code> to see the usage of the powerful (expensive) ec2 instance I was using a single core and ~200 MB of ram. If I wanted to get things done and not waste a lot of money I was going to need to figure out how to parallelize. Luckily I found the chapter on parallelizing workflows in <a href="https://www.datascienceatthecommandline.com">Data Science at the Command Line</a>, the utterly fantastic book by Jeroen Janssens. It introduced me to <code>gnu parallel</code> which is very flexible method for spinning up multiple threads in a unix pipeline.</p>
+<p><label for="tufte-mn-" class="margin-toggle">⊕</label><input type="checkbox" id="tufte-mn-" class="margin-toggle"><span class="marginnote"><a href="https://www.datascienceatthecommandline.com"><img src="https://www.datascienceatthecommandline.com/images/cover.png" alt="Data Science at the Command Line book cover."></a></span></p>
+<p>Once I ran the splitting using the new GNU parallel workflow it was great, but I was still getting some bottle-necking caused by downloading the S3 objects to disk being a little bit slow and not fully parallelized. I did a few things to fix this.</p>
+<p><label for="tufte-mn-" class="margin-toggle">⊕</label><input type="checkbox" id="tufte-mn-" class="margin-toggle"><span class="marginnote">It was <a href="https://twitter.com/hyperosonic/status/1143667117553856514?s=21">pointed out on twitter</a> by <a href="https://twitter.com/Hyperosonic">Hyperosonic</a> that I forgot to cite <code>gnu parallel</code> properly as requested by the package. You would think that the number of times I saw the message reminding me to cite that wouldn’t be possible! Tange, Ole. ‘Gnu parallel-the command-line power tool.’ The USENIX Magazine 36.1 (2011): 42-47.</span></p>
+<ol type="1">
+<li>Found out that you can implement the S3 download step right into the pipeline, completely skipping intermediate disk storage. This meant I could avoid writing the raw data to disk and also use smaller and thus cheaper storage on AWS.</li>
+<li>Increased the number of threads that the AWS CLI uses to some large number (the default is 10) with <code>aws configure set default.s3.max_concurrent_requests 50</code>.</li>
+<li>Switched to a network speed optimized ec2 instance. These are the ones with the <code>n</code> in the name. <label for="tufte-mn-" class="margin-toggle">⊕</label><input type="checkbox" id="tufte-mn-" class="margin-toggle"><span class="marginnote">I found that the loss in compute power caused from using the ‘n’ instances was more than made up for by the increased download speeds.</span> I used c5n.4xl’s for most of my stuff.</li>
+<li>Swapped <code>gzip</code> to <a href="https://linux.die.net/man/1/pigz"><code>pigz</code></a>, which is a parallel gzip tool that does some clever things to parallelize an inherently unparallelizable task of decompressing gziped files. (This helped the least.)</li>
+</ol>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb7"><pre class="sourceCode bash code-with-copy"><code class="sourceCode bash"><span id="cb7-1"><a href="#cb7-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Let S3 use as many threads as it wants</span></span>
+<span id="cb7-2"><a href="#cb7-2" aria-hidden="true" tabindex="-1"></a><span class="ex">aws</span> configure set default.s3.max_concurrent_requests 50</span>
+<span id="cb7-3"><a href="#cb7-3" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb7-4"><a href="#cb7-4" aria-hidden="true" tabindex="-1"></a><span class="cf">for</span> chunk_file <span class="kw">in</span> <span class="va">$(</span><span class="ex">aws</span> s3 ls <span class="va">$DATA_LOC</span> <span class="kw">|</span> <span class="fu">awk</span> <span class="st">'{print $4}'</span> <span class="kw">|</span> <span class="fu">grep</span> <span class="st">'chr'</span><span class="va">$DESIRED_CHR</span><span class="st">'.csv'</span><span class="va">)</span> <span class="kw">;</span> <span class="cf">do</span></span>
+<span id="cb7-5"><a href="#cb7-5" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb7-6"><a href="#cb7-6" aria-hidden="true" tabindex="-1"></a>        <span class="ex">aws</span> s3 cp s3://<span class="va">$batch_loc$chunk_file</span> <span class="at">-</span> <span class="kw">|</span></span>
+<span id="cb7-7"><a href="#cb7-7" aria-hidden="true" tabindex="-1"></a>        <span class="ex">pigz</span> <span class="at">-dc</span> <span class="kw">|</span></span>
+<span id="cb7-8"><a href="#cb7-8" aria-hidden="true" tabindex="-1"></a>        <span class="ex">parallel</span> <span class="at">--block</span> 100M <span class="at">--pipe</span>  <span class="dt">\</span></span>
+<span id="cb7-9"><a href="#cb7-9" aria-hidden="true" tabindex="-1"></a>        <span class="st">"awk -F '\t' '{print </span><span class="dt">\$</span><span class="st">1</span><span class="dt">\"</span><span class="st">,...</span><span class="dt">\"</span><span class="va">$3</span><span class="st">0</span><span class="dt">\"</span><span class="st">&gt;</span><span class="dt">\"</span><span class="st">chunked/{#}_chr</span><span class="dt">\"\$</span><span class="st">15</span><span class="dt">\"</span><span class="st">.csv</span><span class="dt">\"</span><span class="st">}'"</span></span>
+<span id="cb7-10"><a href="#cb7-10" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb7-11"><a href="#cb7-11" aria-hidden="true" tabindex="-1"></a>       <span class="co"># Combine all the parallel process chunks to single files</span></span>
+<span id="cb7-12"><a href="#cb7-12" aria-hidden="true" tabindex="-1"></a>        <span class="fu">ls</span> chunked/ <span class="kw">|</span></span>
+<span id="cb7-13"><a href="#cb7-13" aria-hidden="true" tabindex="-1"></a>        <span class="fu">cut</span> <span class="at">-d</span> <span class="st">'_'</span> <span class="at">-f</span> 2 <span class="kw">|</span></span>
+<span id="cb7-14"><a href="#cb7-14" aria-hidden="true" tabindex="-1"></a>        <span class="fu">sort</span> <span class="at">-u</span> <span class="kw">|</span></span>
+<span id="cb7-15"><a href="#cb7-15" aria-hidden="true" tabindex="-1"></a>        <span class="ex">parallel</span> <span class="st">'cat chunked/*_{} | sort -k5 -n -S 80% -t, | aws s3 cp - '</span><span class="va">$s3_dest</span><span class="st">'/batch_'</span><span class="va">$batch_num</span><span class="st">'_{}'</span></span>
+<span id="cb7-16"><a href="#cb7-16" aria-hidden="true" tabindex="-1"></a>        </span>
+<span id="cb7-17"><a href="#cb7-17" aria-hidden="true" tabindex="-1"></a>         <span class="co"># Clean up intermediate data</span></span>
+<span id="cb7-18"><a href="#cb7-18" aria-hidden="true" tabindex="-1"></a>       <span class="fu">rm</span> chunked/<span class="pp">*</span></span>
+<span id="cb7-19"><a href="#cb7-19" aria-hidden="true" tabindex="-1"></a><span class="cf">done</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+<p>These steps combined to make things <em>very</em> fast. By virtue of increasing the speed of download and avoiding writing to disk I was now able to process a whole 5 terabyte batch in just a few hours.</p>
+<blockquote class="twitter-tweet blockquote" data-lang="en">
+<p lang="en" dir="ltr">
+There's nothing sweeter than seeing all the cores you're paying for on AWS being used. Thanks to gnu-parallel I can unzip and split a 19gig csv just as fast as I can download it. I couldn't even get Spark to run this. <a href="https://twitter.com/hashtag/DataScience?src=hash&amp;ref_src=twsrc%5Etfw">#DataScience</a> <a href="https://twitter.com/hashtag/Linux?src=hash&amp;ref_src=twsrc%5Etfw">#Linux</a> <a href="https://t.co/Nqyba2zqEk">pic.twitter.com/Nqyba2zqEk</a>
+</p>
+— Nick Strayer (<span class="citation" data-cites="NicholasStrayer">@NicholasStrayer</span>) <a href="https://twitter.com/NicholasStrayer/status/1129416944233226240?ref_src=twsrc%5Etfw">May 17, 2019</a>
+</blockquote>
+<script async="" src="https://platform.twitter.com/widgets.js" charset="utf-8"></script>
+<p><label for="tufte-mn-" class="margin-toggle">⊕</label><input type="checkbox" id="tufte-mn-" class="margin-toggle"><span class="marginnote">This tweet should have said ‘tsv’. Alas.</span></p>
+</section>
+<section id="using-newly-parsed-data" class="level2">
+<h2 class="anchored" data-anchor-id="using-newly-parsed-data">Using newly parsed data</h2>
+<p><span class="lesson_learned"><strong>Lesson Learned:</strong> Spark likes uncompressed data and does not like combining partitions.</span></p>
+<p>Now that I had the data sitting in an unzipped (see splittable) and semi-organized format on S3 I could go back to Spark. Surprise – things didn’t workout again! It was very hard to accurately tell Spark how the data was partitioned and even when I did it seemed to like to split things into way too many partitions (like 95k), which then when I used <code>coalesce</code> to reduce down to a reasonable number of partitions, ended up ruining the partitioning I had used. <label for="tufte-mn-" class="margin-toggle">⊕</label><input type="checkbox" id="tufte-mn-" class="margin-toggle"><span class="marginnote">I am sure there is a way to fix this but I couldn’t find it over a couple days of looking.</span> I did end up getting things to finish on Spark, it took a while however and my split Parquet files were not super tiny (~200KB) But the data was where it needed to be.</p>
+<p><img src="../../using_awk_and_r_to_parse_25tb/uneven_small_partitions.png"> <span class="photo_caption"><em>Too small and uneven, wonderful!</em></span></p>
+</section>
+<section id="testing-out-local-spark-queries" class="level2">
+<h2 class="anchored" data-anchor-id="testing-out-local-spark-queries">Testing out local Spark queries</h2>
+<p><span class="lesson_learned"><strong>Lesson Learned:</strong> Spark is a lot of overhead for simple jobs.</span></p>
+<p>With the data loaded up into a reasonable format I could test out the speed. I setup an R script to spin up a local Spark server and then load a Spark dataframe from a given Parquet bins location. <label for="tufte-mn-" class="margin-toggle">⊕</label><input type="checkbox" id="tufte-mn-" class="margin-toggle"><span class="marginnote">I tried loading all the data but couldn’t get Sparklyr to recognize the partitioning for some reason.</span></p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb8"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb8-1"><a href="#cb8-1" aria-hidden="true" tabindex="-1"></a>sc <span class="ot">&lt;-</span> <span class="fu">Spark_connect</span>(<span class="at">master =</span> <span class="st">"local"</span>)</span>
+<span id="cb8-2"><a href="#cb8-2" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb8-3"><a href="#cb8-3" aria-hidden="true" tabindex="-1"></a>desired_snp <span class="ot">&lt;-</span> <span class="st">'rs34771739'</span></span>
+<span id="cb8-4"><a href="#cb8-4" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb8-5"><a href="#cb8-5" aria-hidden="true" tabindex="-1"></a><span class="co"># Start a timer</span></span>
+<span id="cb8-6"><a href="#cb8-6" aria-hidden="true" tabindex="-1"></a>start_time <span class="ot">&lt;-</span> <span class="fu">Sys.time</span>()</span>
+<span id="cb8-7"><a href="#cb8-7" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb8-8"><a href="#cb8-8" aria-hidden="true" tabindex="-1"></a><span class="co"># Load the desired bin into Spark</span></span>
+<span id="cb8-9"><a href="#cb8-9" aria-hidden="true" tabindex="-1"></a>intensity_data <span class="ot">&lt;-</span> sc <span class="sc">%&gt;%</span> </span>
+<span id="cb8-10"><a href="#cb8-10" aria-hidden="true" tabindex="-1"></a>  <span class="fu">Spark_read_Parquet</span>(</span>
+<span id="cb8-11"><a href="#cb8-11" aria-hidden="true" tabindex="-1"></a>    <span class="at">name =</span> <span class="st">'intensity_data'</span>, </span>
+<span id="cb8-12"><a href="#cb8-12" aria-hidden="true" tabindex="-1"></a>    <span class="at">path =</span> <span class="fu">get_snp_location</span>(desired_snp),</span>
+<span id="cb8-13"><a href="#cb8-13" aria-hidden="true" tabindex="-1"></a>    <span class="at">memory =</span> <span class="cn">FALSE</span> )</span>
+<span id="cb8-14"><a href="#cb8-14" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb8-15"><a href="#cb8-15" aria-hidden="true" tabindex="-1"></a><span class="co"># Subset bin to snp and then collect to local</span></span>
+<span id="cb8-16"><a href="#cb8-16" aria-hidden="true" tabindex="-1"></a>test_subset <span class="ot">&lt;-</span> intensity_data <span class="sc">%&gt;%</span> </span>
+<span id="cb8-17"><a href="#cb8-17" aria-hidden="true" tabindex="-1"></a>  <span class="fu">filter</span>(SNP_Name <span class="sc">==</span> desired_snp) <span class="sc">%&gt;%</span> </span>
+<span id="cb8-18"><a href="#cb8-18" aria-hidden="true" tabindex="-1"></a>  <span class="fu">collect</span>()</span>
+<span id="cb8-19"><a href="#cb8-19" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb8-20"><a href="#cb8-20" aria-hidden="true" tabindex="-1"></a><span class="fu">print</span>(<span class="fu">Sys.time</span>() <span class="sc">-</span> start_time)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+<p>This took 29.415 seconds. Much better than before, but still not a great sign for mass testing of anything. In addition, I couldn’t try and speed it up by enabling caching because when I tried to cache the bin’s Spark dataframe in memory Spark always crashed, even when I gave it 50+ gigs of memory for a dataset that was at this point smaller than 15.</p>
+</section>
+<section id="back-to-awk" class="level2">
+<h2 class="anchored" data-anchor-id="back-to-awk">Back to AWK</h2>
+<p><span class="lesson_learned"><strong>Lesson Learned:</strong> Associative arrays in AWK are super powerful.</span></p>
+<p>I knew I could do better. I remembered that I had read in this charming <a href="http://www.grymoire.com/Unix/Awk.html">AWK guide by Bruce Barnett</a> about a cool feature in AWK called <a href="http://www.grymoire.com/Unix/Awk.html#uh-22">“associative arrays’</a>. These are essentially a key-value stores in AWK that for some reason had been given a different name and thus I never thought too much about. <label for="tufte-mn-" class="margin-toggle">⊕</label><input type="checkbox" id="tufte-mn-" class="margin-toggle"><span class="marginnote">It was brought to my attention by <a href="https://ro-che.info">Roman Cheplyaka</a> that the term ‘Associative Array’ is much older than ‘key-value store’. In fact, key-value store <a href="https://books.google.com/ngrams/graph?content=key-value+store%2Cassociative+array&amp;year_start=1800&amp;year_end=2000&amp;corpus=15&amp;smoothing=3&amp;share=&amp;direct_url=t1%3B%2Cassociative%20array%3B%2Cc0#t1%3B%2Cassociative%20array%3B%2Cc0">doesn’t even show up on google ngrams</a> when you look for it, but associative array does! In addition, key-value stores are more often associated with database systems and thus a hashmap is really a more appropriate comparison here.</span> I realized that I could use these associative arrays to perform the union between my SNP -&gt; bin table and my raw data without using Spark.</p>
+<p>To do this I used the <code>BEGIN</code> block in my AWK script. This is a block of code that gets run before any lines of data are fed into the main body of the script.</p>
+<p><strong>join_data.awk</strong></p>
+<pre><code>BEGIN {
+  FS=",";
+  batch_num=substr(chunk,7,1);
+  chunk_id=substr(chunk,15,2);
+  while(getline &lt; "snp_to_bin.csv") {bin[$1] = $2}
+}
+{
+  print $0 &gt; "chunked/chr_"chr"_bin_"bin[$1]"_"batch_num"_"chunk_id".csv"
+}</code></pre>
+<p>The <code>while(getline...)</code> command loaded all the rows in from my bin csv and set the first column (the SNP name) as the key to the <code>bin</code> associative array and the second value (the bin) to the value. Then, in the <code>{</code> block <code>}</code> that gets run on every line of the main file, each line is sent to an output file that was had a unique name based upon its bin: <code>..._bin_"bin[$1]"_...</code>.</p>
+<p><label for="tufte-mn-" class="margin-toggle">⊕</label><input type="checkbox" id="tufte-mn-" class="margin-toggle"><span class="marginnote">The variables of <code>batch_num</code> and <code>chunk_id</code> corresponded to data given by the pipeline that allowed me to avoid race conditions in my writing by making sure that every thread run by <code>parallel</code> wrote to its own unique file. </span></p>
+<p>Because I had all the raw data split into chromosome folders from my previous AWK experiment I could now write another bash script to work through a chromosome at a time and send back the further partitioned data to S3.</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb10"><pre class="sourceCode bash code-with-copy"><code class="sourceCode bash"><span id="cb10-1"><a href="#cb10-1" aria-hidden="true" tabindex="-1"></a><span class="va">DESIRED_CHR</span><span class="op">=</span><span class="st">'13'</span></span>
+<span id="cb10-2"><a href="#cb10-2" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb10-3"><a href="#cb10-3" aria-hidden="true" tabindex="-1"></a><span class="co"># Download chromosome data from s3 and split into bins</span></span>
+<span id="cb10-4"><a href="#cb10-4" aria-hidden="true" tabindex="-1"></a><span class="ex">aws</span> s3 ls <span class="va">$DATA_LOC</span> <span class="kw">|</span></span>
+<span id="cb10-5"><a href="#cb10-5" aria-hidden="true" tabindex="-1"></a><span class="fu">awk</span> <span class="st">'{print $4}'</span> <span class="kw">|</span></span>
+<span id="cb10-6"><a href="#cb10-6" aria-hidden="true" tabindex="-1"></a><span class="fu">grep</span> <span class="st">'chr'</span><span class="va">$DESIRED_CHR</span><span class="st">'.csv'</span> <span class="kw">|</span></span>
+<span id="cb10-7"><a href="#cb10-7" aria-hidden="true" tabindex="-1"></a><span class="ex">parallel</span> <span class="st">"echo 'reading {}'; aws s3 cp "</span><span class="va">$DATA_LOC</span><span class="st">"{} - | awk -v chr=</span><span class="dt">\"</span><span class="st">"</span><span class="va">$DESIRED_CHR</span><span class="st">"</span><span class="dt">\"</span><span class="st"> -v chunk=</span><span class="dt">\"</span><span class="st">{}</span><span class="dt">\"</span><span class="st"> -f split_on_chr_bin.awk"</span></span>
+<span id="cb10-8"><a href="#cb10-8" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb10-9"><a href="#cb10-9" aria-hidden="true" tabindex="-1"></a><span class="co"># Combine all the parallel process chunks to single files and upload to rds using R</span></span>
+<span id="cb10-10"><a href="#cb10-10" aria-hidden="true" tabindex="-1"></a><span class="fu">ls</span> chunked/ <span class="kw">|</span></span>
+<span id="cb10-11"><a href="#cb10-11" aria-hidden="true" tabindex="-1"></a><span class="fu">cut</span> <span class="at">-d</span> <span class="st">'_'</span> <span class="at">-f</span> 4 <span class="kw">|</span></span>
+<span id="cb10-12"><a href="#cb10-12" aria-hidden="true" tabindex="-1"></a><span class="fu">sort</span> <span class="at">-u</span> <span class="kw">|</span></span>
+<span id="cb10-13"><a href="#cb10-13" aria-hidden="true" tabindex="-1"></a><span class="ex">parallel</span> <span class="st">"echo 'zipping bin {}'; cat chunked/*_bin_{}_*.csv | ./upload_as_rds.R '</span><span class="va">$S3_DEST</span><span class="st">'/chr_'</span><span class="va">$DESIRED_CHR</span><span class="st">'_bin_{}.rds"</span></span>
+<span id="cb10-14"><a href="#cb10-14" aria-hidden="true" tabindex="-1"></a><span class="fu">rm</span> chunked/<span class="pp">*</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+<p>This script has two <code>parallel</code> sections:</p>
+<p>The first one reads in every file containing data for the desired chromosome and divvies them up to multiple threads that spit their files into its representative bins. In order to prevent race conditions from the multiple threads writing to the same bin file, AWK is passed the name of the file which it uses to write to unique locations, e.g.&nbsp;<code>chr_10_bin_52_batch_2_aa.csv</code> This results in a <em>ton</em> of tiny files located on the disk (I used 1TB EBS volumes for this).</p>
+<p>The second <code>parallel</code> pipeline goes through and merges every bin’s separate files into single csv’s with <code>cat</code>, and sends them for export…</p>
+</section>
+<section id="piping-to-r" class="level2">
+<h2 class="anchored" data-anchor-id="piping-to-r">Piping to R?</h2>
+<p><span class="lesson_learned"><strong>Lesson Learned:</strong> You can access <code>stdin</code> and <code>stdout</code> from inside an R script and thus use it in a pipeline.</span></p>
+<p>You may have noticed this part of the bash script above: <code>...cat chunked/*_bin_{}_*.csv | ./upload_as_rds.R...</code>. This line pipes all the concatenated files for a bin into the following R script… <label for="tufte-mn-" class="margin-toggle">⊕</label><input type="checkbox" id="tufte-mn-" class="margin-toggle"><span class="marginnote">The <code>{}</code> in there is a special <code>parallel</code> technique that pastes whatever data it is sending to the given thread right into the command it’s sending. Other option are <code>{#}</code> which gives the unique thread ID and <code>{%}</code> which is the job slot number (repeates but never at the same time). For all of the option checkout <a href="https://www.gnu.org/software/parallel/parallel_tutorial.html#Replacement-strings">the docs.</a></span></p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb11"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb11-1"><a href="#cb11-1" aria-hidden="true" tabindex="-1"></a><span class="co">#!/usr/bin/env Rscript</span></span>
+<span id="cb11-2"><a href="#cb11-2" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(readr)</span>
+<span id="cb11-3"><a href="#cb11-3" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(aws.s3)</span>
+<span id="cb11-4"><a href="#cb11-4" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb11-5"><a href="#cb11-5" aria-hidden="true" tabindex="-1"></a><span class="co"># Read first command line argument</span></span>
+<span id="cb11-6"><a href="#cb11-6" aria-hidden="true" tabindex="-1"></a>data_destination <span class="ot">&lt;-</span> <span class="fu">commandArgs</span>(<span class="at">trailingOnly =</span> <span class="cn">TRUE</span>)[<span class="dv">1</span>]</span>
+<span id="cb11-7"><a href="#cb11-7" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb11-8"><a href="#cb11-8" aria-hidden="true" tabindex="-1"></a>data_cols <span class="ot">&lt;-</span> <span class="fu">list</span>(<span class="at">SNP_Name =</span> <span class="st">'c'</span>, ...)</span>
+<span id="cb11-9"><a href="#cb11-9" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb11-10"><a href="#cb11-10" aria-hidden="true" tabindex="-1"></a><span class="fu">s3saveRDS</span>(</span>
+<span id="cb11-11"><a href="#cb11-11" aria-hidden="true" tabindex="-1"></a>  <span class="fu">read_csv</span>(</span>
+<span id="cb11-12"><a href="#cb11-12" aria-hidden="true" tabindex="-1"></a>        <span class="fu">file</span>(<span class="st">"stdin"</span>), </span>
+<span id="cb11-13"><a href="#cb11-13" aria-hidden="true" tabindex="-1"></a>        <span class="at">col_names =</span> <span class="fu">names</span>(data_cols),</span>
+<span id="cb11-14"><a href="#cb11-14" aria-hidden="true" tabindex="-1"></a>        <span class="at">col_types =</span> data_cols </span>
+<span id="cb11-15"><a href="#cb11-15" aria-hidden="true" tabindex="-1"></a>    ),</span>
+<span id="cb11-16"><a href="#cb11-16" aria-hidden="true" tabindex="-1"></a>  <span class="at">object =</span> data_destination</span>
+<span id="cb11-17"><a href="#cb11-17" aria-hidden="true" tabindex="-1"></a>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+<p>By passing <code>readr::read_csv</code> the variable <code>file("stdin")</code> it loads the data piped to the R script into a dataframe, which then gets written as an <code>.rds</code> file directly to s3 using <code>aws.s3</code>.</p>
+<p><label for="tufte-mn-" class="margin-toggle">⊕</label><input type="checkbox" id="tufte-mn-" class="margin-toggle"><span class="marginnote">Rds is kind-of like a junior version of Parquet without the niceties of columnar storage.</span></p>
+<p>After this bash script had finished I have a bunch of <code>.rds</code> files sitting in S3 benefiting with the benefits of efficient compression and built-in types.</p>
+<p>Even with notoriously slow R in the workflow, this was super fast. <label for="tufte-mn-" class="margin-toggle">⊕</label><input type="checkbox" id="tufte-mn-" class="margin-toggle"><span class="marginnote">Unsurprisingly the parts of R for reading and writing data are rather optimized.</span> After testing on a single average size chromosome the job finished in about two hours using a C5n.4xl instance.</p>
+</section>
+<section id="limits-of-s3" class="level2">
+<h2 class="anchored" data-anchor-id="limits-of-s3">Limits of S3</h2>
+<p><span class="lesson_learned"><strong>Lesson Learned:</strong> S3 can handle a <em>lot</em> of files due to smart path implementation.</span></p>
+<p>I was worried about how S3 would handle having a ton of files dumped onto it. I could make the file names make sense, but how would S3 handle searching for one?</p>
+<p><label for="tufte-mn-" class="margin-toggle">⊕</label><input type="checkbox" id="tufte-mn-" class="margin-toggle"><span class="marginnote"><img src="../../using_awk_and_r_to_parse_25tb/s3_keys_explained.png"> Folders in S3 are just a cosmetic thing and S3 doesn’t actually care about the <code>/</code> character.<a href="https://aws.amazon.com/s3/faqs/">From the S3 FAQs page</a></span></p>
+<p>It turns out S3 treats the path to a given file as a simple key in what can be thought of as a hash table, or a document-based database. Think of a “bucket” as a table and every file is an entry.</p>
+<p>Because speed and efficiency are important to S3 making money for Amazon, it’s no surprise that this key-is-a-file-path system is super optimized. Still, I tried to strike a balance. I wanted to not need to do a ton of <code>get</code> requests and I wanted the queries to be fast. I found that making around 20k bin files worked best. <label for="tufte-mn-" class="margin-toggle">⊕</label><input type="checkbox" id="tufte-mn-" class="margin-toggle"><span class="marginnote">I am sure further optimizations could speed things up (such as making a special bucket just for the data and thus reducing the size of the lookup table.) But I ran out of time and money to do more experiments.</span></p>
+</section>
+<section id="what-about-cross-compatibility" class="level2">
+<h2 class="anchored" data-anchor-id="what-about-cross-compatibility">What about cross-compatibility?</h2>
+<p><span class="lesson_learned"><strong>Lesson Learned:</strong> Premature optimization of your storage method is the root of all time wasted.</span></p>
+<p>A very reasonable thing to ask at this point is “why would you use a proprietary file format for this?” The reason came down to speed of loading (using gzipped csvs took about 7 times longer to load) and compatibility with our workflows.<label for="tufte-mn-" class="margin-toggle">⊕</label><input type="checkbox" id="tufte-mn-" class="margin-toggle"><span class="marginnote">Once R can easily load Parquet (or Arrow) files without the overhead of Spark I may reconsider.</span> Everyone else in my lab exclusively uses R and if I end up needing to convert the data to another format I still have the original raw text data and can just run the pipeline again.</p>
+</section>
+<section id="divvying-out-the-work" class="level2">
+<h2 class="anchored" data-anchor-id="divvying-out-the-work">Divvying out the work</h2>
+<p><span class="lesson_learned"><strong>Lesson Learned:</strong> Don’t try to hand optimize jobs, let the computer do it.</span></p>
+<p>Now that I had the workflow for a single chromosome working, I needed to process every chromosome’s data. I wanted to spin up multiple ec2 instances to convert all my data but I also didn’t want to have super unbalanced job loads (just like how Spark suffered from the unbalanced partitions). <label for="tufte-mn-" class="margin-toggle">⊕</label><input type="checkbox" id="tufte-mn-" class="margin-toggle"><span class="marginnote">I also didn’t want to spin up a single instance for each chromosome, since there is a limit by default of 10 instances at a time for AWS accounts.</span></p>
+<p>My solution was to write a brute force job optimization script using R….</p>
+<p>First I queried S3 to figure out how large each chromosome was in terms of storage.</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb12"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb12-1"><a href="#cb12-1" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(aws.s3)</span>
+<span id="cb12-2"><a href="#cb12-2" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(tidyverse)</span>
+<span id="cb12-3"><a href="#cb12-3" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb12-4"><a href="#cb12-4" aria-hidden="true" tabindex="-1"></a>chr_sizes <span class="ot">&lt;-</span> <span class="fu">get_bucket_df</span>(</span>
+<span id="cb12-5"><a href="#cb12-5" aria-hidden="true" tabindex="-1"></a>  <span class="at">bucket =</span> <span class="st">'...'</span>, <span class="at">prefix =</span> <span class="st">'...'</span>, <span class="at">max =</span> <span class="cn">Inf</span></span>
+<span id="cb12-6"><a href="#cb12-6" aria-hidden="true" tabindex="-1"></a>) <span class="sc">%&gt;%</span> </span>
+<span id="cb12-7"><a href="#cb12-7" aria-hidden="true" tabindex="-1"></a>  <span class="fu">mutate</span>(<span class="at">Size =</span> <span class="fu">as.numeric</span>(Size)) <span class="sc">%&gt;%</span> </span>
+<span id="cb12-8"><a href="#cb12-8" aria-hidden="true" tabindex="-1"></a>  <span class="fu">filter</span>(Size <span class="sc">!=</span> <span class="dv">0</span>) <span class="sc">%&gt;%</span> </span>
+<span id="cb12-9"><a href="#cb12-9" aria-hidden="true" tabindex="-1"></a>  <span class="fu">mutate</span>(</span>
+<span id="cb12-10"><a href="#cb12-10" aria-hidden="true" tabindex="-1"></a>    <span class="co"># Extract chromosome from the file name </span></span>
+<span id="cb12-11"><a href="#cb12-11" aria-hidden="true" tabindex="-1"></a>    <span class="at">chr =</span> <span class="fu">str_extract</span>(Key, <span class="st">'chr.{1,4}</span><span class="sc">\\</span><span class="st">.csv'</span>) <span class="sc">%&gt;%</span></span>
+<span id="cb12-12"><a href="#cb12-12" aria-hidden="true" tabindex="-1"></a>             <span class="fu">str_remove_all</span>(<span class="st">'chr|</span><span class="sc">\\</span><span class="st">.csv'</span>)</span>
+<span id="cb12-13"><a href="#cb12-13" aria-hidden="true" tabindex="-1"></a>  ) <span class="sc">%&gt;%</span> </span>
+<span id="cb12-14"><a href="#cb12-14" aria-hidden="true" tabindex="-1"></a>  <span class="fu">group_by</span>(chr) <span class="sc">%&gt;%</span> </span>
+<span id="cb12-15"><a href="#cb12-15" aria-hidden="true" tabindex="-1"></a>  <span class="fu">summarise</span>(<span class="at">total_size =</span> <span class="fu">sum</span>(Size)<span class="sc">/</span><span class="fl">1e+9</span>) <span class="co"># Divide to get value in GB</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+<pre><code># A tibble: 27 x 2
+   chr   total_size
+   &lt;chr&gt;      &lt;dbl&gt;
+ 1 0           163.
+ 2 1           967.
+ 3 10          541.
+ 4 11          611.
+ 5 12          542.
+ 6 13          364.
+ 7 14          375.
+ 8 15          372.
+ 9 16          434.
+10 17          443.
+# … with 17 more rows</code></pre>
+<p>Then I wrote a function that would take this total size info, shuffle the order, and split into <code>num_jobs</code> groups and report how variable the sizes of each job’s data was.</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb14"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb14-1"><a href="#cb14-1" aria-hidden="true" tabindex="-1"></a>num_jobs <span class="ot">&lt;-</span> <span class="dv">7</span></span>
+<span id="cb14-2"><a href="#cb14-2" aria-hidden="true" tabindex="-1"></a><span class="co"># How big would each job be if perfectly split?</span></span>
+<span id="cb14-3"><a href="#cb14-3" aria-hidden="true" tabindex="-1"></a>job_size <span class="ot">&lt;-</span> <span class="fu">sum</span>(chr_sizes<span class="sc">$</span>total_size)<span class="sc">/</span><span class="dv">7</span></span>
+<span id="cb14-4"><a href="#cb14-4" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb14-5"><a href="#cb14-5" aria-hidden="true" tabindex="-1"></a>shuffle_job <span class="ot">&lt;-</span> <span class="cf">function</span>(i){</span>
+<span id="cb14-6"><a href="#cb14-6" aria-hidden="true" tabindex="-1"></a>  chr_sizes <span class="sc">%&gt;%</span></span>
+<span id="cb14-7"><a href="#cb14-7" aria-hidden="true" tabindex="-1"></a>    <span class="fu">sample_frac</span>() <span class="sc">%&gt;%</span> </span>
+<span id="cb14-8"><a href="#cb14-8" aria-hidden="true" tabindex="-1"></a>    <span class="fu">mutate</span>(</span>
+<span id="cb14-9"><a href="#cb14-9" aria-hidden="true" tabindex="-1"></a>      <span class="at">cum_size =</span> <span class="fu">cumsum</span>(total_size),</span>
+<span id="cb14-10"><a href="#cb14-10" aria-hidden="true" tabindex="-1"></a>      <span class="at">job_num =</span> <span class="fu">ceiling</span>(cum_size<span class="sc">/</span>job_size)</span>
+<span id="cb14-11"><a href="#cb14-11" aria-hidden="true" tabindex="-1"></a>    ) <span class="sc">%&gt;%</span> </span>
+<span id="cb14-12"><a href="#cb14-12" aria-hidden="true" tabindex="-1"></a>    <span class="fu">group_by</span>(job_num) <span class="sc">%&gt;%</span> </span>
+<span id="cb14-13"><a href="#cb14-13" aria-hidden="true" tabindex="-1"></a>    <span class="fu">summarise</span>(</span>
+<span id="cb14-14"><a href="#cb14-14" aria-hidden="true" tabindex="-1"></a>      <span class="at">job_chrs =</span> <span class="fu">paste</span>(chr, <span class="at">collapse =</span> <span class="st">','</span>),</span>
+<span id="cb14-15"><a href="#cb14-15" aria-hidden="true" tabindex="-1"></a>      <span class="at">total_job_size =</span> <span class="fu">sum</span>(total_size)</span>
+<span id="cb14-16"><a href="#cb14-16" aria-hidden="true" tabindex="-1"></a>    ) <span class="sc">%&gt;%</span> </span>
+<span id="cb14-17"><a href="#cb14-17" aria-hidden="true" tabindex="-1"></a>    <span class="fu">mutate</span>(<span class="at">sd =</span> <span class="fu">sd</span>(total_job_size)) <span class="sc">%&gt;%</span> </span>
+<span id="cb14-18"><a href="#cb14-18" aria-hidden="true" tabindex="-1"></a>    <span class="fu">nest</span>(<span class="sc">-</span>sd)</span>
+<span id="cb14-19"><a href="#cb14-19" aria-hidden="true" tabindex="-1"></a>}</span>
+<span id="cb14-20"><a href="#cb14-20" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb14-21"><a href="#cb14-21" aria-hidden="true" tabindex="-1"></a><span class="fu">shuffle_job</span>(<span class="dv">1</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+<pre><code># A tibble: 1 x 2
+     sd data            
+  &lt;dbl&gt; &lt;list&gt;          
+1  153. &lt;tibble [7 × 3]&gt;</code></pre>
+<p>Once this was setup I ran a thousand shuffles using purrr and picked the best one.</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb16"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb16-1"><a href="#cb16-1" aria-hidden="true" tabindex="-1"></a><span class="dv">1</span><span class="sc">:</span><span class="dv">1000</span> <span class="sc">%&gt;%</span> </span>
+<span id="cb16-2"><a href="#cb16-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">map_df</span>(shuffle_job) <span class="sc">%&gt;%</span> </span>
+<span id="cb16-3"><a href="#cb16-3" aria-hidden="true" tabindex="-1"></a>  <span class="fu">filter</span>(sd <span class="sc">==</span> <span class="fu">min</span>(sd)) <span class="sc">%&gt;%</span> </span>
+<span id="cb16-4"><a href="#cb16-4" aria-hidden="true" tabindex="-1"></a>  <span class="fu">pull</span>(data) <span class="sc">%&gt;%</span> </span>
+<span id="cb16-5"><a href="#cb16-5" aria-hidden="true" tabindex="-1"></a>  <span class="fu">pluck</span>(<span class="dv">1</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+<p>This gave me a set of jobs that were all very close in size. All I had do do then was wrap my previous bash script in a big for loop… <label for="tufte-mn-" class="margin-toggle">⊕</label><input type="checkbox" id="tufte-mn-" class="margin-toggle"><span class="marginnote">It took me ~10 mins to write this job optimization which was way less time than the inballance caused by my manual job creation would have added to the processing so I think I didn’t fall for premature optimization here.</span></p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb17"><pre class="sourceCode bash code-with-copy"><code class="sourceCode bash"><span id="cb17-1"><a href="#cb17-1" aria-hidden="true" tabindex="-1"></a><span class="cf">for</span> DESIRED_CHR <span class="kw">in</span> <span class="st">"16"</span> <span class="st">"9"</span> <span class="st">"7"</span> <span class="st">"21"</span> <span class="st">"MT"</span></span>
+<span id="cb17-2"><a href="#cb17-2" aria-hidden="true" tabindex="-1"></a><span class="cf">do</span></span>
+<span id="cb17-3"><a href="#cb17-3" aria-hidden="true" tabindex="-1"></a><span class="co"># Code for processing a single chromosome</span></span>
+<span id="cb17-4"><a href="#cb17-4" aria-hidden="true" tabindex="-1"></a><span class="cf">fi</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+<p>add a shutdown command at the end….</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb18"><pre class="sourceCode bash code-with-copy"><code class="sourceCode bash"><span id="cb18-1"><a href="#cb18-1" aria-hidden="true" tabindex="-1"></a><span class="fu">sudo</span> shutdown <span class="at">-h</span> now</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+<p>… and I was off the the races. I used the AWS CLI to spin up a bunch of instances, passing them their job’s bash script via the <code>user_data</code> option. They ran and then shutdown automatically so I didn’t pay for extra compute.</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb19"><pre class="sourceCode bash code-with-copy"><code class="sourceCode bash"><span id="cb19-1"><a href="#cb19-1" aria-hidden="true" tabindex="-1"></a><span class="ex">aws</span> ec2 run-instances ...<span class="dt">\</span></span>
+<span id="cb19-2"><a href="#cb19-2" aria-hidden="true" tabindex="-1"></a>--tag-specifications <span class="st">"ResourceType=instance,Tags=[{Key=Name,Value=&lt;&lt;job_name&gt;&gt;}]"</span> <span class="dt">\</span></span>
+<span id="cb19-3"><a href="#cb19-3" aria-hidden="true" tabindex="-1"></a>--user-data file://<span class="op">&lt;&lt;job_script_loc&gt;&gt;</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+</section>
+</section>
+<section id="packing-it-up" class="level1">
+<h1>Packing it up!</h1>
+<p><span class="lesson_learned"><strong>Lesson Learned:</strong> Keep API simple for your end users and flexible for you.</span></p>
+<p>Finally, the data was where and how I needed it. The last step was to simplify the process for using the data as much as possible for my lab members. I wanted to provide a simple API for querying. If in the future I did decide to switch from using <code>.rds</code> to Parquet files I wanted to be able to make that my issue and not my lab mate’s. The way I decided to to this was an internal R package.</p>
+<p>I built and documented a very simple package that contains just a few functions for accessing the data, centered around the function <code>get_snp</code>. Additionally, I built a <a href="https://pkgdown.r-lib.org">pkgdown site</a> so lab members could easily see examples/docs.</p>
+<p><img src="../../media/using_awk_and_r_to_parse_25tb/pkg_down.png" class="img-fluid"></p>
+<section id="intelligent-caching." class="level2">
+<h2 class="anchored" data-anchor-id="intelligent-caching.">Intelligent caching.</h2>
+<p><span class="lesson_learned"><strong>Lesson Learned:</strong> If your data is setup well, caching will be easy!</span></p>
+<p>Since one of the main workflows for these data was running the same model/ analysis across a bunch of SNPs at a time, I decided that I should use the binning to my advantage. When pulling the data down for a SNP, the entire bin’s data is kept and attached to the returned object. This means if a new query is run the old queries result’s can (potentially) be used to speed it up.</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb20"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb20-1"><a href="#cb20-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Part of get_snp()</span></span>
+<span id="cb20-2"><a href="#cb20-2" aria-hidden="true" tabindex="-1"></a>...</span>
+<span id="cb20-3"><a href="#cb20-3" aria-hidden="true" tabindex="-1"></a>  <span class="co"># Test if our current snp data has the desired snp.</span></span>
+<span id="cb20-4"><a href="#cb20-4" aria-hidden="true" tabindex="-1"></a>  already_have_snp <span class="ot">&lt;-</span> desired_snp <span class="sc">%in%</span> prev_snp_results<span class="sc">$</span>snps_in_bin</span>
+<span id="cb20-5"><a href="#cb20-5" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb20-6"><a href="#cb20-6" aria-hidden="true" tabindex="-1"></a>  <span class="cf">if</span>(<span class="sc">!</span>already_have_snp){</span>
+<span id="cb20-7"><a href="#cb20-7" aria-hidden="true" tabindex="-1"></a>    <span class="co"># Grab info on the bin of the desired snp</span></span>
+<span id="cb20-8"><a href="#cb20-8" aria-hidden="true" tabindex="-1"></a>    snp_results <span class="ot">&lt;-</span> <span class="fu">get_snp_bin</span>(desired_snp)</span>
+<span id="cb20-9"><a href="#cb20-9" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb20-10"><a href="#cb20-10" aria-hidden="true" tabindex="-1"></a>    <span class="co"># Download the snp's bin data</span></span>
+<span id="cb20-11"><a href="#cb20-11" aria-hidden="true" tabindex="-1"></a>    snp_results<span class="sc">$</span>bin_data <span class="ot">&lt;-</span> aws.s3<span class="sc">::</span><span class="fu">s3readRDS</span>(<span class="at">object =</span> snp_results<span class="sc">$</span>data_loc)</span>
+<span id="cb20-12"><a href="#cb20-12" aria-hidden="true" tabindex="-1"></a>  } <span class="cf">else</span> {</span>
+<span id="cb20-13"><a href="#cb20-13" aria-hidden="true" tabindex="-1"></a>    <span class="co"># The previous snp data contained the right bin so just use it</span></span>
+<span id="cb20-14"><a href="#cb20-14" aria-hidden="true" tabindex="-1"></a>    snp_results <span class="ot">&lt;-</span> prev_snp_results</span>
+<span id="cb20-15"><a href="#cb20-15" aria-hidden="true" tabindex="-1"></a>  }</span>
+<span id="cb20-16"><a href="#cb20-16" aria-hidden="true" tabindex="-1"></a>...</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+<p><label for="tufte-mn-" class="margin-toggle">⊕</label><input type="checkbox" id="tufte-mn-" class="margin-toggle"><span class="marginnote">While building the package I ran a lot of benchmarks to compare the speed between different methods. I recomend it because sometimes the results went against my intuition. For instance, <code>dplyr::filter</code> was much faster than using indexing based filtering for grabbing rows, but getting a single column from a filtered dataframe was much faster using indexing syntax.</span></p>
+<p>Notice that the <code>prev_snp_results</code> object contains the key <code>snps_in_bin</code>. This is an array of all unique SNPs in the bin, allowing fast checking for if we already have the data from a previous query. It also makes it easy for the user to loop through all the SNPs in a bin using code like:</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb21"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb21-1"><a href="#cb21-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Get bin-mates</span></span>
+<span id="cb21-2"><a href="#cb21-2" aria-hidden="true" tabindex="-1"></a>snps_in_bin <span class="ot">&lt;-</span> my_snp_results<span class="sc">$</span>snps_in_bin</span>
+<span id="cb21-3"><a href="#cb21-3" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb21-4"><a href="#cb21-4" aria-hidden="true" tabindex="-1"></a><span class="cf">for</span>(current_snp <span class="cf">in</span> snps_in_bin){</span>
+<span id="cb21-5"><a href="#cb21-5" aria-hidden="true" tabindex="-1"></a>  my_snp_results <span class="ot">&lt;-</span> <span class="fu">get_snp</span>(current_snp, my_snp_results)</span>
+<span id="cb21-6"><a href="#cb21-6" aria-hidden="true" tabindex="-1"></a>  <span class="co"># Do something with results </span></span>
+<span id="cb21-7"><a href="#cb21-7" aria-hidden="true" tabindex="-1"></a>}</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+</section>
+</section>
+<section id="end-results" class="level1">
+<h1>End results</h1>
+<p>We are now able to (and have started in earnest) run models and scenarios we were incapable of before. The best part is the other members of my lab don’t have to think about the complexities that went into it. They just have a function that works.</p>
+<p><label for="tufte-mn-" class="margin-toggle">⊕</label><input type="checkbox" id="tufte-mn-" class="margin-toggle"><span class="marginnote">Even though the package abstracts away the details, I tried to make the format of the data simple enough that if I were to dissapear tomorrow someone could figure it out.</span></p>
+<p>The speed is much improved. A typical use-case is to scan a functionally significant region of the genome (such as a gene). Before we couldn’t do this (because it cost too much) but now, because of the bin structure and caching, it takes on average less than a tenth of a second per SNP queried and the data usage is not even high enough to round up to a penny on our S3 costs.</p>
+<blockquote class="twitter-tweet blockquote" data-lang="en">
+<p lang="en" dir="ltr">
+Recently I got put in change of wrangling 25+ TB of raw genotyping data for my lab. When I started, using Spark took 8 min &amp; cost $20 to query a SNP. After using AWK + <a href="https://twitter.com/hashtag/rstats?src=hash&amp;ref_src=twsrc%5Etfw">#rstats</a> to process, it now takes less than a 10th of a second and costs $0.00001. My personal <a href="https://twitter.com/hashtag/BigData?src=hash&amp;ref_src=twsrc%5Etfw">#BigData</a> win. <a href="https://t.co/ANOXVGrmkk">pic.twitter.com/ANOXVGrmkk</a>
+</p>
+— Nick Strayer (<span class="citation" data-cites="NicholasStrayer">@NicholasStrayer</span>) <a href="https://twitter.com/NicholasStrayer/status/1134151057385369600?ref_src=twsrc%5Etfw">May 30, 2019</a>
+</blockquote>
+<script async="" src="https://platform.twitter.com/widgets.js" charset="utf-8"></script>
+<section id="take-away" class="level2">
+<h2 class="anchored" data-anchor-id="take-away">Take Away</h2>
+<p>This post post isn’t meant to be a how-to guide. The final solution is bespoke and almost assuredly not the optimal one. For risk of sounding unbearably cheesy this was about the journey. I want others to realize that these solutions don’t pop fully formed into peoples head’s but they are a product of trial and error.</p>
+<p>In addition, if you are in the position of hiring someone as a data scientist please consider the fact that getting good at these tools requires experience, and experience requires money. I am lucky that I have grant funding to pay for this but many who assuredly could do a better job than me will never get the chance because they don’t have the funds to even try.</p>
+<p>“Big Data” tools are generalists. If you have the time you will almost assuredly be able to write up a faster solution to your problem using smart data cleaning, storage, and retrieval techniques. Ultimately it comes down to a cost-benefit analysis.</p>
+<section id="all-lessons-learned" class="level3">
+<h3 class="anchored" data-anchor-id="all-lessons-learned">All lessons learned:</h3>
+<p>In case you wanted everything in a neat list format:</p>
+<ul>
+<li><span class="lesson_learned">There’s no cheap way to parse 25tb of data at once.</span></li>
+<li><span class="lesson_learned">Be careful with your Parquet file sizes and organization.</span></li>
+<li><span class="lesson_learned">Partitions in Spark need to be balanced.</span></li>
+<li><span class="lesson_learned">Never, ever, try and make 2.5 million partitions.</span></li>
+<li><span class="lesson_learned">Sorting is still hard and so is tuning Spark.</span></li>
+<li><span class="lesson_learned">Sometimes bespoke data needs bespoke solutions.</span></li>
+<li><span class="lesson_learned">Spark joining is fast, but partitioning is still expensive</span></li>
+<li><span class="lesson_learned">Don’t sleep on the basics. Someone probably solved your problem in the 80s.</span></li>
+<li><span class="lesson_learned"><code>gnu parallel</code> is magic and everyone should use it.</span></li>
+<li><span class="lesson_learned">Spark likes uncompressed data and does not like combining partitions.</span></li>
+<li><span class="lesson_learned">Spark is a lot of overhead for simple jobs.</span></li>
+<li><span class="lesson_learned">Associative arrays in AWK are super powerful.</span></li>
+<li><span class="lesson_learned">You can access <code>stdin</code> and <code>stdout</code> from inside an R script and thus use it in a pipeline.</span></li>
+<li><span class="lesson_learned">S3 can handle a <em>lot</em> of files due to smart path implementation.</span></li>
+<li><span class="lesson_learned">Premature optimization of your storage method is the root of all time wasted.</span></li>
+<li><span class="lesson_learned">Don’t try to hand optimize jobs, let the computer do it.</span></li>
+<li><span class="lesson_learned">Keep API simple for your end users and flexible for you.</span></li>
+<li><span class="lesson_learned">If your data is setup well, caching will be easy!</span></li>
+</ul>
+
+
+</section>
+</section>
+</section>
+
+</main> <!-- /main -->
+<script id="quarto-html-after-body" type="application/javascript">
+window.document.addEventListener("DOMContentLoaded", function (event) {
+  const toggleBodyColorMode = (bsSheetEl) => {
+    const mode = bsSheetEl.getAttribute("data-mode");
+    const bodyEl = window.document.querySelector("body");
+    if (mode === "dark") {
+      bodyEl.classList.add("quarto-dark");
+      bodyEl.classList.remove("quarto-light");
+    } else {
+      bodyEl.classList.add("quarto-light");
+      bodyEl.classList.remove("quarto-dark");
+    }
+  }
+  const toggleBodyColorPrimary = () => {
+    const bsSheetEl = window.document.querySelector("link#quarto-bootstrap");
+    if (bsSheetEl) {
+      toggleBodyColorMode(bsSheetEl);
+    }
+  }
+  toggleBodyColorPrimary();  
+  const icon = "";
+  const anchorJS = new window.AnchorJS();
+  anchorJS.options = {
+    placement: 'right',
+    icon: icon
+  };
+  anchorJS.add('.anchored');
+  const clipboard = new window.ClipboardJS('.code-copy-button', {
+    target: function(trigger) {
+      return trigger.previousElementSibling;
+    }
+  });
+  clipboard.on('success', function(e) {
+    // button target
+    const button = e.trigger;
+    // don't keep focus
+    button.blur();
+    // flash "checked"
+    button.classList.add('code-copy-button-checked');
+    var currentTitle = button.getAttribute("title");
+    button.setAttribute("title", "Copied!");
+    setTimeout(function() {
+      button.setAttribute("title", currentTitle);
+      button.classList.remove('code-copy-button-checked');
+    }, 1000);
+    // clear code selection
+    e.clearSelection();
+  });
+  function tippyHover(el, contentFn) {
+    const config = {
+      allowHTML: true,
+      content: contentFn,
+      maxWidth: 500,
+      delay: 100,
+      arrow: false,
+      appendTo: function(el) {
+          return el.parentElement;
+      },
+      interactive: true,
+      interactiveBorder: 10,
+      theme: 'quarto',
+      placement: 'bottom-start'
+    };
+    window.tippy(el, config); 
+  }
+  const noterefs = window.document.querySelectorAll('a[role="doc-noteref"]');
+  for (var i=0; i<noterefs.length; i++) {
+    const ref = noterefs[i];
+    tippyHover(ref, function() {
+      // use id or data attribute instead here
+      let href = ref.getAttribute('data-footnote-href') || ref.getAttribute('href');
+      try { href = new URL(href).hash; } catch {}
+      const id = href.replace(/^#\/?/, "");
+      const note = window.document.getElementById(id);
+      return note.innerHTML;
+    });
+  }
+  var bibliorefs = window.document.querySelectorAll('a[role="doc-biblioref"]');
+  for (var i=0; i<bibliorefs.length; i++) {
+    const ref = bibliorefs[i];
+    const cites = ref.parentNode.getAttribute('data-cites').split(' ');
+    tippyHover(ref, function() {
+      var popup = window.document.createElement('div');
+      cites.forEach(function(cite) {
+        var citeDiv = window.document.createElement('div');
+        citeDiv.classList.add('hanging-indent');
+        citeDiv.classList.add('csl-entry');
+        var biblioDiv = window.document.getElementById('ref-' + cite);
+        if (biblioDiv) {
+          citeDiv.innerHTML = biblioDiv.innerHTML;
+        }
+        popup.appendChild(citeDiv);
+      });
+      return popup.innerHTML;
+    });
+  }
+});
+</script>
+<script src="https://utteranc.es/client.js" repo="lfod/real-blog" issue-term="pathname" theme="github-light" crossorigin="anonymous" async="">
+</script>
+</div> <!-- /content -->
+
+
+
+</body></html>
