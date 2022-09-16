@@ -307,7 +307,7 @@ plot_dat2 <-  original %>%
   filter(id %in% c("1 1")) %>%
   mutate(std = sqrt(var))
 
-p1 <- ggplot(plot_dat1, aes(x = time, y = est)) +
+ggplot(plot_dat1, aes(x = time, y = est)) +
   geom_step(lwd = 1.2, color = "cornflower blue")  +
   geom_ribbon(aes(ymin = est - 1.96 * std, ymax = est + 
                     1.96 * std), alpha = 0.2, linetype = 0, fill = "cornflower blue") +
@@ -318,7 +318,7 @@ p1 <- ggplot(plot_dat1, aes(x = time, y = est)) +
        title = "Cumulative incidence of improvement\n among those with invasive oxygen support at baseline (Competing risks)") 
 
 
-p2 <- ggplot(plot_dat2, aes(x = time, y = est)) +
+ggplot(plot_dat2, aes(x = time, y = est)) +
   geom_step(lwd = 1.2, color = "cornflower blue") +
   geom_ribbon(aes(ymin = est - 1.96 * std, ymax = est + 
                     1.96 * std), alpha = 0.2, linetype = 0, fill = "cornflower blue") +
@@ -327,19 +327,9 @@ p2 <- ggplot(plot_dat2, aes(x = time, y = est)) +
   labs(x = "Days", 
        y = "Cumulative incidence",
        title = "Cumulative incidence of improvement\n among those with invasive oxygen support at baseline (Original)") 
-
-fig1 <- image_graph(width = 500, height = 300)
-p1
-dev.off()
-
-fig2 <- image_graph(width = 500, height = 300)
-p2
-dev.off()
 ```
 
-```{r, echo = FALSE}
-image_join(fig1, fig2) %>%
-  image_animate(fps = 1)
-```
+
+
 
 Basically, all this is to say that a competing risk analysis would have been more appropriate here. Hopefully this code-through has been helpful! 
