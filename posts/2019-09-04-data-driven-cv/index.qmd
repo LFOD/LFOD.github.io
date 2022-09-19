@@ -5,7 +5,7 @@ date: '2019-09-04'
 slug: building_a_data_driven_cv_with_R
 categories: ["career", "R", "RMarkdown", "CSS"]
 tags:  ["career", "R", "RMarkdown", "CSS"]
-excerpt: "Updating your CV or Resume can be a pain. It usually involves lots of copying and pasting along and then if you decide to tweak some style you may need to repeat the whole process. I decided to switch things up and design my CV so the format is just a wrapper around the underlying data. This post will help you do the same."
+description: "Updating your CV or Resume can be a pain. It usually involves lots of copying and pasting along and then if you decide to tweak some style you may need to repeat the whole process. I decided to switch things up and design my CV so the format is just a wrapper around the underlying data. This post will help you do the same."
 ---
   
 ```{r, include=FALSE}

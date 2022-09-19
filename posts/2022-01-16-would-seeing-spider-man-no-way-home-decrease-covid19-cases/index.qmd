@@ -6,7 +6,7 @@ slug: would-seeing-spider-man-no-way-home-decrease-covid19-cases
 categories: [covid-19, statistics, causal inference]
 tags: [covid-19, statistics, causal inference]
 meta: yes
-excerpt: "In SNL's cold open last night, President Joe Biden suggested that the COVID-19 surge we are seeing in the US is due to people seeing Spider-Man: No Way Home. If people would just stop seeing this film, he argues, cases will go back down! Interesting hypothesis, let's take a looksy at the data, shall we?"
+description: "In SNL's cold open last night, President Joe Biden suggested that the COVID-19 surge we are seeing in the US is due to people seeing Spider-Man: No Way Home. If people would just stop seeing this film, he argues, cases will go back down! Interesting hypothesis, let's take a looksy at the data, shall we?"
 ---
 
 

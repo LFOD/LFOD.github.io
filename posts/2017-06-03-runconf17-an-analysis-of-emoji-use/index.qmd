@@ -5,14 +5,21 @@ title: "runconf17, an analysis of emoji use"
 categories: ["rOpenSci","rstats","conferences", "emojis"]
 tags: ["rOpenSci","rstats","conferences", "emojis"]
 share: true
-excerpt: "I had such a delightful time at rOpenSci's unconference. Not only was it extremely productive (21 packages were produced!), but in between the crazy productivity was some epic community building."
+description: "I had such a delightful time at rOpenSci's unconference. Not only was it extremely productive (21 packages were produced!), but in between the crazy productivity was some epic community building."
 ---
 
 `r tufte::newthought("I had *such* a delightful time")` at rOpenSci's [unconference](http://unconf17.ropensci.org) last week. 
-`r tufte::margin_note(paste("21", emo::ji("package"), "were produced!"))`
+
+::: column-margin
+21 `r emo::ji("package")` were produced!
+:::
+
 Not only was it [extremely productive](https://ropenscilabs.github.io/runconf17-projects/), but in between the crazy productivity was some epic community building.
 
-[Stefanie](https://twitter.com/StefanieButland) kicked the conference off with ice breakers, where we explored topics ranging from #rcatladies & #rdogfellas `r tufte::margin_note("for the record, I'm an #rchickenlady, [IT'S HAPPENING](https://twitter.com/search?q=%23RChickenLadies&src=typd)")` to impostor syndrome. It was an excellent way to get conversations starting!
+::: column-margin
+for the record, I'm an #rchickenlady, [IT'S HAPPENING](https://twitter.com/search?q=%23RChickenLadies&src=typd)
+:::
+[Stefanie](https://twitter.com/StefanieButland) kicked the conference off with ice breakers, where we explored topics ranging from #rcatladies & #rdogfellas to impostor syndrome. It was an excellent way to get conversations starting!
 
 ## work
 `r tufte::newthought("[Karthik](https://twitter.com/_inundata) and I worked on")` two packages:
@@ -47,8 +54,11 @@ a few highlights:
 
 ## analysis 
 
+::: column-margin
+*Note: this is not particularly statistically rigorous, but it is VERY fun.*
+:::
+
 `r tufte::newthought("In an effort to stay on brand")`, I decided to do a small analysis of the tweets that came out of #runconf17. I designed a small study:
-`r tufte::margin_note("*Note: this is not particularly statistically rigorous, but it is VERY fun.*")`
 
 * pulled all tweets (excluding retweets) using the hashtag #runconf17 between May 24th and May 30th
 * also pulled all tweets (excluding retweets) using the hashtag #rstats during the same time period
@@ -58,7 +68,9 @@ a few highlights:
 </span>
 
 
-`r tufte::margin_note("I used the **rtweet** package to pull the tweets, **dplyr** and **fuzzyjoin** to wrangle the data a bit, and **rms** to analyze it.")`
+::: column-margin
+I used the **rtweet** package to pull the tweets, **dplyr** and **fuzzyjoin** to wrangle the data a bit, and **rms** to analyze it.
+:::
 
 ```{r, message = FALSE, warnings = FALSE}
 library("rtweet")
@@ -89,7 +101,10 @@ load("../../media/data/runconf.rda")
 load("../../media/data/rstats.rda")
 ```
 
-`r tufte::newthought("After pulling in the tweets")`, I categorized tweeters as either using the #runconf17 hashtag during the week or not. I then merged the tweets with an emoji dictionary `r tufte::margin_note("The emoji dictionary was discoved by the lovely [Maëlle](https://twitter.com/ma_salmon)!")`, and grouped by tweeter. If the tweeter used an emoji at any point during the week, they were categorized as an emoji-user, if not, they were sad (jk, there is room for all here!).
+::: column-margin
+The emoji dictionary was discovered by the lovely [Maëlle](https://twitter.com/ma_salmon)!
+:::
+`r tufte::newthought("After pulling in the tweets")`, I categorized tweeters as either using the #runconf17 hashtag during the week or not. I then merged the tweets with an emoji dictionary, and grouped by tweeter. If the tweeter used an emoji at any point during the week, they were categorized as an emoji-user, if not, they were sad (jk, there is room for all here!).
 
 ```{r}
 ## create variable for whether tweeted about runconf
@@ -120,7 +135,11 @@ used_emoji <- regex_left_join(data, dico, by = c(text = "Native")) %>%
 ```
 
 ## results
-`r tufte::newthought("We had 526 tweeters")` that just used the #rstats hashtag, and 107 that tweeted with the #runconf17 hashtag. `r tufte::margin_note(paste("THESE ARE MY PEOPLE", emo::ji("raised_hands")))` Among the #rstats tweeters, 5.9% used at least one emoji in their tweets, whereas among #runconf17 tweeters, 25.2% used emojis! 
+`r tufte::newthought("We had 526 tweeters")` that just used the #rstats hashtag, and 107 that tweeted with the #runconf17 hashtag. 
+::: column-margin
+THESE ARE MY PEOPLE `r emo::ji("raised_hands")`
+:::
+Among the #rstats tweeters, 5.9% used at least one emoji in their tweets, whereas among #runconf17 tweeters, 25.2% used emojis! 
 
 ```{r}
 used_emoji %>%
@@ -158,7 +177,9 @@ lrm(used_emoji~runconf, data = used_emoji) %>%
 
 `r tufte::newthought("Now let's checkout")` which emojis were most popular among #runconf17 tweeters. This time I'll allow for retweets `r emo::ji("dancing_women")`
 
-`r tufte::margin_note("For this I used ggplot2, magick, and  [webshot](https://github.com/wch/webshot).")`
+::: column-margin
+For this I used ggplot2, magick, and  [webshot](https://github.com/wch/webshot)
+:::
 ```{r, message = FALSE, warning = FALSE}
 library("ggplot2")
 library("webshot")
@@ -271,6 +292,9 @@ purrr::map(unique(rev(out_png)), image_read) %>%
 
 <img src = "https://github.com/LFOD/real-blog/raw/master/static/images/runconf_emojis.gif" width = "110%"> </img>
 
-`r tufte::margin_note(paste("Phew, the", emo::ji("chicken"), "just barely made the cut."))` The purple heart seems to be the most popular emoji, which makes sense given [25% of us were #RLadies](https://twitter.com/nistara_r/status/867974699044687872)! I think it's a credit to the awesome geographic diversity that we have two different globe emojis in our top 15!
+::: column-margin
+Phew, the `r emo::ji("chicken")`
+:::
+The purple heart seems to be the most popular emoji, which makes sense given [25% of us were #RLadies](https://twitter.com/nistara_r/status/867974699044687872)! I think it's a credit to the awesome geographic diversity that we have two different globe emojis in our top 15!
 
 All in all, it was an epic experience. Thank you so much to the conference organizers, attendees, and #runconf17 tweeters for such a delightful week!

@@ -5,7 +5,7 @@ date: '2017-09-28'
 slug: r-release-names
 categories: [rstats]
 tags: [rstats]
-excerpt: "I always love discussions about R release names and their origin. I have been working on this list for a while -- with the release of \"Short Summer\" today, I thought it'd be a good time to post!"
+description: "I always love discussions about R release names and their origin. I have been working on this list for a while -- with the release of \"Short Summer\" today, I thought it'd be a good time to post!"
 ---
 
 I always love [discussions](https://stackoverflow.com/questions/13478375/is-there-any-authoritative-documentation-on-r-release-nicknames) about R release names and their origin. I have been working on this list for a while -- with the release of "Short Summer" today, I thought it'd be a good time to post!

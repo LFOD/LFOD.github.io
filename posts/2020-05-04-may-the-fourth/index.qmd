@@ -5,7 +5,7 @@ date: '2020-05-04'
 slug: may-the-fourth-be-with-you-rstats-style
 categories: [rstats, star wars, ggplot2, gganimate]
 tags: [rstats, star wars, ggplot2, gganimate]
-excerpt: "Rafael Irizarry made a fabulous TIE fighter plot in R, Jake Thompson recreated it using ggplot2 and gganimate, I added some stars."
+description: "Rafael Irizarry made a fabulous TIE fighter plot in R, Jake Thompson recreated it using ggplot2 and gganimate, I added some stars."
 ---
 
 Happy Star Wars Day!

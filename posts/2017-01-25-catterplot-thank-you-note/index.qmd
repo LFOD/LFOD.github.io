@@ -7,12 +7,14 @@ categories:
 - rstats
 - emojis
 title: "CatterPlot thank you note"
-excerpt: "Lara Harmon has put in countless hours to build and uplift the ASA Student community. We are SO grateful."
+description: "Lara Harmon has put in countless hours to build and uplift the ASA Student community. We are SO grateful."
 ---
 
 [Lara Harmon](https://twitter.com/Amstat_Lara) has put in countless hours to build and uplift the ASA Student community. We are SO grateful. We know she loves cats, as evidenced by
 
-`r tufte::margin_note("![](https://pbs.twimg.com/media/C0sy6CKWQAE4l_L.jpg)")`
+::: column-margin
+![](https://pbs.twimg.com/media/C0sy6CKWQAE4l_L.jpg)
+:::
 
 <blockquote class="twitter-tweet" data-cards="hidden" data-lang="en"><p lang="en" dir="ltr">On the off-chance you have not felt judged by a cat today, my cat can help you out. <a href="https://t.co/sApgbyYztD">pic.twitter.com/sApgbyYztD</a></p>&mdash; Lara Harmon (@Amstat_Lara) <a href="https://twitter.com/Amstat_Lara/status/813800278059339776">December 27, 2016</a></blockquote> <script async src="https://platform.twitter.com/widgets.js" charset="utf-8"></script>
 
@@ -27,7 +29,9 @@ and
 
 so we decided to write her an appropriate thank you note, using [`CatterPlots`](https://github.com/Gibbsdavidl/CatterPlots).
 
-`r tufte::margin_note("If you haven't installed this purrrrfect package, you can install it from GitHub.")`
+::: column-margin
+If you haven't installed this purrrrfect package, you can install it from GitHub.
+:::
 
 ```{r, eval=FALSE}
 devtools::install_github("Gibbsdavidl/CatterPlots")

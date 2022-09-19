@@ -5,7 +5,7 @@ date: '2017-11-12'
 slug: thanksgiving-gantt-chart
 categories: [rstats, thankyou]
 tags: [rstats, thankyou]
-excerpt: 'Thanksgiving `r emo::ji("turkey")` is right around the corner `r emo::ji("tada")` -- this year we are hosting 17 people `r emo::ji("scream")`. If you too are hosting way more than your kitchen normally cooks for, perhaps this will be of interest!'
+description: 'Thanksgiving `r emo::ji("turkey")` is right around the corner `r emo::ji("tada")` -- this year we are hosting 17 people `r emo::ji("scream")`. If you too are hosting way more than your kitchen normally cooks for, perhaps this will be of interest!'
 ---
 
 Thanksgiving `r emo::ji("turkey")` is right around the corner `r emo::ji("tada")` -- this year we are hosting 17 people `r emo::ji("scream")`. 

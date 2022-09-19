@@ -5,7 +5,7 @@ date: '2020-04-08'
 slug: ihme-model-uncertainty-a-quick-explainer
 categories: [statistics, uncertainty, coronavirus, casual inference]
 tags: [statistics, uncertainty, coronavirus, casual inference, ihme]
-excerpt: "There has been a lot of talk about the IHME Covid-19 projection model. Ellie Murray & I have a chat about it on Episode 10 of Casual Inference; here is a quick description of what is going on here with a focus on the uncertainty."
+description: "There has been a lot of talk about the IHME Covid-19 projection model. Ellie Murray & I have a chat about it on Episode 10 of Casual Inference; here is a quick description of what is going on here with a focus on the uncertainty."
 ---
 
 There has been a lot of talk about the [IHME Covid-19 projection model](https://covid19.healthdata.org/united-states-of-america). [Ellie Murray](https://twitter/com/EpiEllie) & I have a chat about it on [Episode 10 of Casual Inference](https://casualinfer.libsyn.com/coronavirus-conversations-2); here is a quick description of what is going on here with a focus on the **uncertainty**.

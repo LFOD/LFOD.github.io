@@ -6,7 +6,7 @@ slug: graph-detective
 categories: [rstats, emoji, ggplot, data visualizations]
 tags: [rstats, emoji, ggplot, data visualizations]
 draft: true
-excerpt: "A quick how-to on adding emojis to your ggplots"
+description: "A quick how-to on adding emojis to your ggplots"
 ---
 
 

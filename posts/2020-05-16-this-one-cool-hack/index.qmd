@@ -7,7 +7,7 @@ categories: [rstats]
 tags: [rstats]
 math: no
 meta: yes
-excerpt: "Inspired by the amazing Not So Standard Deviations, as usual, here is a fun way to categorize data using a left join instead of case_when or if/else statements!!!"
+description: "Inspired by the amazing Not So Standard Deviations, as usual, here is a fun way to categorize data using a left join instead of case_when or if/else statements!!!"
 ---
 
 Hilary Parker & Roger Peng mention a cool tactic for categorizing data on their podcast, [Not So Standard Deviations](http://nssdeviations.com). (If I recall correctly, I think Hilary mentioned it first, then Roger used it in a subsequent episode, unfortunately I don't remember which episodes these were and a quick look-back proved futile. If I figure it out, I'll link it here!)

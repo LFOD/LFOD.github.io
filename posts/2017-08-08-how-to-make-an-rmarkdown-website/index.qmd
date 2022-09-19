@@ -5,7 +5,7 @@ date: '2017-08-08'
 slug: how-to-make-an-rmarkdown-website
 categories: [rstats, website, tutorial]
 tags: [rstats, website, tutorial]
-excerpt: "Interested in creating your personal website with R Markdown? We've updated our R Markdown website tutorial to depend on RStudio for simplicity, making website building easy as 🍰!"
+description: "Interested in creating your personal website with R Markdown? We've updated our R Markdown website tutorial to depend on RStudio for simplicity, making website building easy as 🍰!"
 
 ---
 

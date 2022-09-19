@@ -9,7 +9,7 @@ categories:
 tags: 
   - rstats
   - holiday cheer
-excerpt: "'Tis the season for white elephant / גמד וענק / Yankee swap / secret santa-ing! We thought it'd be particularly fun to do it #rstats style."
+description: "'Tis the season for white elephant / גמד וענק / Yankee swap / secret santa-ing! We thought it'd be particularly fun to do it #rstats style."
 ---
 
 

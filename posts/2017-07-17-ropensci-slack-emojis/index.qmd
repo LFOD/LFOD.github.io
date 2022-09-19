@@ -5,7 +5,7 @@ date: '2017-07-17'
 slug: ropensci-slack-emojis
 categories: ["rOpenSci", "rstats", "emojis"]
 tags: ["rOpenSci", "rstats", "emojis"]
-excerpt: HAPPY world emoji day! In honor of this momentous occasion, I have decided to analyze the emojis used on rOpenSci's Slack.
+description: HAPPY world emoji day! In honor of this momentous occasion, I have decided to analyze the emojis used on rOpenSci's Slack.
 ---
 
 HAPPY world emoji day! `r emo::ji("globe")` `r emo::ji("chicken")` `r emo::ji("calendar")`
@@ -16,7 +16,9 @@ In honor of this momentous occasion, I have decided to analyze the emojis used o
 library("dplyr")
 ```
 
-`r tufte::margin_note("If you'd like to follow along, go fetch yourself a [Slack token](https://api.slack.com/tokens).")`
+::: column-margin
+If you'd like to follow along, go fetch yourself a [Slack token](https://api.slack.com/tokens).
+:::
 
 ```r
 token <- "MY_SLACK_API_TOKEN" ## stick your token here
@@ -24,7 +26,9 @@ token <- "MY_SLACK_API_TOKEN" ## stick your token here
 
 We will first use Slack's [`reactions.list`](https://api.slack.com/methods/reactions.list) method.
 
-`r tufte::margin_note("Notice here I am pulling the items from the response and then from each item I am interested in the message reactions. This ignores the reactions on files and comments.")`
+::: column-margin
+Notice here I am pulling the items from the response and then from each item I am interested in the message reactions. This ignores the reactions on files and comments.
+:::
 
 ```r
 req_lst <- httr::POST(
@@ -94,7 +98,9 @@ top_emojis <- tbl %>%
 
 I have written another small function to make sure the custom emojis print properly when I render my output.
 
-`r tufte::margin_note(paste("Note, if you are doing this for your blog, rather than saving a temporary file as I have demonstrated here, you should save this as a relative file path in your blog", emo::ji('deciduous_tree'), "."))`
+::: column-margin
+Note, if you are doing this for your blog, rather than saving a temporary file as I have demonstrated here, you should save this as a relative file path in your blog `r emo::ji('deciduous_tree')`.
+:::
 
 ```{r, eval = FALSE}
 render_emoji <- function(x, y) {

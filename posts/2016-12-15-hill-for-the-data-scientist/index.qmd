@@ -1,7 +1,7 @@
 ---
 author: "Lucy D'Agostino McGowan"
 date: 2016-12-15T15:41:30-06:00
-excerpt: "This was inspired by Hilary Parker & Roger Peng's Not So Standard Deviations Episode 28. It was suggested that it would be useful to lay out Hill's criterion for data scientists, I agree!"
+description: "This was inspired by Hilary Parker & Roger Peng's Not So Standard Deviations Episode 28. It was suggested that it would be useful to lay out Hill's criterion for data scientists, I agree!"
 title: "Hill for the data scientist: an xkcd story"
 categories: ["data-science","epidemiology","xkcd", "NSSD"]
 ---
@@ -38,7 +38,9 @@ This inspired me to attempt to explain Hill's criteria using xkcd comics, both b
 * How big is the effect you are seeing?
 * Note: Hill suggests that huge effects *can* suggest causality, however this does not mean small effects *cannot* 
 
-`r tufte::margin_note("_Note_: I am using this idea for a talk and I found a strip (to the left) that I think better represents this concept. The original post had [this one](http://xkcd.com/1592/).")`
+::: column-margin
+_Note_: I am using this idea for a talk and I found a strip (to the left) that I think better represents this concept. The original post had [this one](http://xkcd.com/1592/).
+:::
 
 <a href="https://xkcd.com/539/" target="_blank">
   <img src=" https://imgs.xkcd.com/comics/boyfriend.png" alt="strength">

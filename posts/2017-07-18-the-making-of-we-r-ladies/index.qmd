@@ -5,7 +5,7 @@ date: '2017-07-18'
 slug: the-making-of-we-r-ladies
 categories: [rstats, rladies]
 tags: [rstats, rladies]
-excerpt: "Maëlle and I created a mosaic of R-Ladies for the JSM Data Art Show. Here is a quick tutorial if you are interested in trying something similar!"
+description: "Maëlle and I created a mosaic of R-Ladies for the JSM Data Art Show. Here is a quick tutorial if you are interested in trying something similar!"
 ---
 
 Last March [Maëlle](https://twitter.com/ma_salmon) wrote a blog post ["Faces of #rstats Twitter"](http://www.masalmon.eu/2017/03/19/facesofr/), a great tutorial on scraping twitter photos and compiling them in a collage. This inspired a similar adventure, but for #RLadies!
@@ -156,7 +156,9 @@ users <- search_users("#RLadies", n = 1000) %>%
 prof <- unique(rbind(tweets, users))
 ```
 
-`r tufte::margin_note("We removed a few accounts that we know are not actually (our version of) R-Ladies accounts.")`
+::: column-margin 
+We removed a few accounts that we know are not actually (our version of) R-Ladies accounts.
+:::
 
 ```r
 prof <- prof[!(prof$screen_name %in%
@@ -193,7 +195,9 @@ pics <- dir("tweet-data", full.names = TRUE)
 pics <- sample(pics, length(pics))
 ```
 
-`r tufte::margin_note("We removed a few of the chapter accounts to ensure an even number.")`
+::: column-margin
+We removed a few of the chapter accounts to ensure an even number.
+:::
 
 ```r
 ## we need a multiple of 4

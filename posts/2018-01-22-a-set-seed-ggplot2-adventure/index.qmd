@@ -5,7 +5,7 @@ date: '2018-01-22'
 slug: a-set-seed-ggplot2-adventure
 categories: [rstats, ggplot2]
 tags: [rstats, ggplot2]
-excerpt: "Recently I tweeted a small piece of advice re: when to set a seed in your script. Jenny pointed out that this may be blog post-worthy, so here we are!"
+description: "Recently I tweeted a small piece of advice re: when to set a seed in your script. Jenny pointed out that this may be blog post-worthy, so here we are!"
 ---
 
 Recently I tweeted a small piece of advice re: when to set a seed in your script: 

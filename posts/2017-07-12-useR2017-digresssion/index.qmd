@@ -6,7 +6,7 @@ categories:
   - "rstats"
   - "conferences"
   - "travel"
-excerpt: "We both recently attended useR!2017 in Brussels. It was a blast to say the least. Here we will cover our favorite things about things about the conference and the lessons we learned."
+description: "We both recently attended useR!2017 in Brussels. It was a blast to say the least. Here we will cover our favorite things about things about the conference and the lessons we learned."
 ---
 
 
@@ -87,7 +87,12 @@ Shiny is fantastic for getting people with no web programming experience up and 
 
 by [Andrie de Vries](https://twitter.com/revoandrie?lang=en): 
 
-The second you start working with other people on any project that involves sensitive information (api-keys etc) you realize the limitations of a public git-based workflow. You can't commit `all_my_sensitive_info.txt` to the repo (although that certainly hasn't stopped me) so you end up having to engage in an intricate and delicate dance of figuring out how to `.gitignore` the right files and also share their format between all your collaborators. `r tufte::margin_note("Again a live coding demo was performed showing just how easy it is to use. Apparently useRs are abnormally brave people.")` Essentially it's miserable and I don't recommend it. `secret` is another mind-blowingly easy to use R package for committing this info straight to your public repo while keeping is secure via encryption. You just need to gather public ssh keys from your collaborators. Then once the collaborator clones the repo they just need to run the code like normal and it works, no dangerous `.gitignore` dance to be performed, especially if you do something like change a secret. It can not be stressed helpful this will be in my future workflow. 
+The second you start working with other people on any project that involves sensitive information (api-keys etc) you realize the limitations of a public git-based workflow. You can't commit `all_my_sensitive_info.txt` to the repo (although that certainly hasn't stopped me) so you end up having to engage in an intricate and delicate dance of figuring out how to `.gitignore` the right files and also share their format between all your collaborators. 
+
+::: column-margin
+Again a live coding demo was performed showing just how easy it is to use. Apparently useRs are abnormally brave people.
+:::
+Essentially it's miserable and I don't recommend it. `secret` is another mind-blowingly easy to use R package for committing this info straight to your public repo while keeping is secure via encryption. You just need to gather public ssh keys from your collaborators. Then once the collaborator clones the repo they just need to run the code like normal and it works, no dangerous `.gitignore` dance to be performed, especially if you do something like change a secret. It can not be stressed helpful this will be in my future workflow. 
 
 
 

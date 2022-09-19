@@ -7,7 +7,7 @@ categories: [rstats, covid-19, data visualizations]
 tags: [rstats, covid-19, data visualizations]
 math: no
 meta: yes
-excerpt: "A plot has been floating around on Twitter from Georgia where the x-axis is all scampled. Let's look into it and see if we can fix it!"
+description: "A plot has been floating around on Twitter from Georgia where the x-axis is all scampled. Let's look into it and see if we can fix it!"
 ---
 
 A plot has been floating around on Twitter from Georgia where the x-axis is all scrambled. Let's look into it and see if we can fix it!

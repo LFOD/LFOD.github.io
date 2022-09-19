@@ -6,7 +6,7 @@ slug: denominators-matter
 categories: [covid-19, statistics]
 tags: [covid-19, statistics]
 meta: yes
-excerpt: "I've seen a lot today about how effective the vaccines are; mistakes aside, lots of folks seem to be mixing up which denominators matter - good thing statisticians *LOVE* denominators"
+description: "I've seen a lot today about how effective the vaccines are; mistakes aside, lots of folks seem to be mixing up which denominators matter - good thing statisticians *LOVE* denominators"
 ---
 
 

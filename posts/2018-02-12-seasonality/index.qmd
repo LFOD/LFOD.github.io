@@ -4,7 +4,7 @@ author: "Nick Strayer"
 date: '2018-02-12'
 categories: ["visualization", "maps", "climate"]
 tags: ["visualization", "maps", "climate"]
-excerpt: "How different is the warmest day from the coldest day all around the country? Using readings from 7,000+ NOAA weather stations across the country we can find out."
+description: "How different is the warmest day from the coldest day all around the country? Using readings from 7,000+ NOAA weather stations across the country we can find out."
 ---
 
 ```{r setup, include=FALSE}

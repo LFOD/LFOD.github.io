@@ -4,7 +4,7 @@ author: "Nick Strayer"
 date: '2017-12-27'
 categories: ["visualization", "wearables", "time series"]
 tags: ["visualization", "wearables", "time series"]
-excerpt: "Of all of the important things that happened in 2017, probably the most impactful on the world is that I managed to wear a fitbit the entire year. Here I download my entire years worth of heart rate and step data to see what my 2017 looked like, in terms of heart beats and steps."
+description: "Of all of the important things that happened in 2017, probably the most impactful on the world is that I managed to wear a fitbit the entire year. Here I download my entire years worth of heart rate and step data to see what my 2017 looked like, in terms of heart beats and steps."
 ---
 ```{r setup, include=FALSE}
 knitr::opts_chunk$set(

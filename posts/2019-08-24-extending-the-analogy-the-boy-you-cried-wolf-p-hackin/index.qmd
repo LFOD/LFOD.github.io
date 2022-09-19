@@ -7,7 +7,7 @@ categories: []
 tags: []
 math: no
 meta: yes
-excerpt: "During my postdoc with Jeff Leek, we worked on a few p-value, study design, and p-hacking \"explainers\". Two of these were incorporated into TED-Ed cartoons (The totally ironically named (NOT BY ME) This one weird trick will help you spot clickbait and the less ironic Can you spot the problem with these headlines?), but the analogy written about here was never used, so here it is!"
+description: "During my postdoc with Jeff Leek, we worked on a few p-value, study design, and p-hacking \"explainers\". Two of these were incorporated into TED-Ed cartoons (The totally ironically named (NOT BY ME) This one weird trick will help you spot clickbait and the less ironic Can you spot the problem with these headlines?), but the analogy written about here was never used, so here it is!"
 ---
 
 

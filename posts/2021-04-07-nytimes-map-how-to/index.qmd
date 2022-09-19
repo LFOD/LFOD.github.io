@@ -5,7 +5,7 @@ date: '2021-04-07'
 slug: nytimes-map-how-to
 categories: [rstats, nytimes, covid-19]
 tags: [rstats, nytimes, covid-19]
-excerpt: "A quick how-to for a neat New York Times visualization, inspired by an IsoStat listserv conversation."
+description: "A quick how-to for a neat New York Times visualization, inspired by an IsoStat listserv conversation."
 ---
 
 There was a recent email thread in the [IsoStat listserv](https://ww2.amstat.org/committees/isostat/isostat.html) about a cool visualization that recently came out in the New York Times showing COVID-19 cases over time. This sparked a discussion about whether this was possible to recreate in R with ggplot, so of course I gave it a try!

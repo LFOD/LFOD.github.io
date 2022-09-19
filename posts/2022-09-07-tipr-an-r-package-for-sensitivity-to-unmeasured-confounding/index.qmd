@@ -4,7 +4,7 @@ author: Lucy D'Agostino McGowan
 date: '2022-09-08'
 slug: tipr-an-r-package-for-sensitivity-to-unmeasured-confounding
 categories: ["rstats"]
-excerpt: "The tipr R package has new updates!"
+description: "The tipr R package has new updates!"
 ---
 
 The `tipr` R package has some new features! And a new and improved API! 

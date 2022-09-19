@@ -5,7 +5,7 @@ date: '2018-09-14'
 slug: one-year-to-dissertate
 categories: [phd, "one year dissertation"]
 tags: [phd, "one year dissertation"]
-excerpt: "I've compiled some resources that I used when completing my dissertation and I wanted to share them with YOU! Throughout this post, I link to a bunch of different templates that I used throughout my process. You can find them all in a GitHub repo. This how-to has gotten a biiiiiit long. This post contains the whole kit-and-kaboodle, but I will also be releasing these in a series of smaller posts over the next couple of weeks."
+description: "I've compiled some resources that I used when completing my dissertation and I wanted to share them with YOU! Throughout this post, I link to a bunch of different templates that I used throughout my process. You can find them all in a GitHub repo. This how-to has gotten a biiiiiit long. This post contains the whole kit-and-kaboodle, but I will also be releasing these in a series of smaller posts over the next couple of weeks."
 ---
 
 I've compiled some resources that I used when completing my dissertation and I wanted to share them with YOU! Throughout this post, I link to a bunch of different templates that I used throughout my process. You can find them all in [this GitHub repo](https://github.com/LucyMcGowan/dissertation-toolkit).

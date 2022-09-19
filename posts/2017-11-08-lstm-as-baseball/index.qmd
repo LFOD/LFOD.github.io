@@ -4,7 +4,7 @@ author: "Nick Strayer"
 date: '2017-11-08'
 categories: ["deep learning", "algorithms", "baseball"]
 tags: ["deep learning", "algorithms", "baseball"]
-excerpt: "One thing I always found confusing when learning what an LSTM does is understanding intuitively why it's doing what it does. Here I attempt to give an example of how a LSTM hidden layer can be thought of through baseball."
+description: "One thing I always found confusing when learning what an LSTM does is understanding intuitively why it's doing what it does. Here I attempt to give an example of how a LSTM hidden layer can be thought of through baseball."
 ---
   
 ```{r setup, include=FALSE}

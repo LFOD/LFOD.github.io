@@ -6,7 +6,7 @@ slug: vaccine-effectiveness-and-breakthrough-cases
 categories: [covid-19, statistics]
 tags: [covid-19, statistics]
 meta: yes
-excerpt: "I’m seeing lots of confusion around the *frequency* of breakthrough cases and the effectiveness of vaccines (in fact, a recent interview I did resulted in a confusing headline on this topic!) so let’s dive in!"
+description: "I’m seeing lots of confusion around the *frequency* of breakthrough cases and the effectiveness of vaccines (in fact, a recent interview I did resulted in a confusing headline on this topic!) so let’s dive in!"
 ---
 
 I’m seeing lots of confusion around the *frequency* of breakthrough cases and the effectiveness of vaccines (in fact, a recent interview I did resulted in a confusing headline on this topic!) so let’s dive in! 

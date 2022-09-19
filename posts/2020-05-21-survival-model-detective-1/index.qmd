@@ -4,7 +4,7 @@ author: "Lucy D'Agostino McGowan"
 date: '2020-05-21'
 slug: survival-model-detective-1
 categories: [rstats, covid-19, survival analysis, competing risks]
-excerpt: "A paper by Grein et al. was recently published in the New England Journal of Medicine examining a cohort of patients with COVID-19 who were treated with compassionate-use remdesivir. This paper had a very cool figure - here's how to recreate it in R!"
+description: "A paper by Grein et al. was recently published in the New England Journal of Medicine examining a cohort of patients with COVID-19 who were treated with compassionate-use remdesivir. This paper had a very cool figure - here's how to recreate it in R!"
 ---
 
 A [paper by Grein et al. was recently published in the New England Journal of Medicine](https://www.nejm.org/doi/full/10.1056/NEJMoa2007016) examining a cohort of patients with COVID-19 who were treated with compassionate-use remdesivir. There are two things that were interesting about this paper:

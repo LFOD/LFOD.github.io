@@ -5,7 +5,7 @@ date: '2017-09-25'
 slug: commentary-and-follow-up-to-p-0-005-suggestion
 categories: []
 tags: []
-excerpt: "A recent paper, Redefine Statistical Significance by 72 co-authors, has caused quite a stir in the statistical community. Our student-run journal club at Vanderbilt will be discussing this contribution at our meeting led by Nathan James this week, so I've attempted to create a list of significant responses/commentary that have come out since this paper was posted on PsyArXiv."
+description: "A recent paper, Redefine Statistical Significance by 72 co-authors, has caused quite a stir in the statistical community. Our student-run journal club at Vanderbilt will be discussing this contribution at our meeting led by Nathan James this week, so I've attempted to create a list of significant responses/commentary that have come out since this paper was posted on PsyArXiv."
 ---
 
 A recent paper, [Redefine Statistical Significance](https://www.nature.com/articles/s41562-017-0189-z) by 72 (`r emo::ji("scream")`) co-authors, has caused quite a stir in the statistical community. Our student-run journal club at Vanderbilt will be discussing this contribution at our meeting led by [Nathan James](https://twitter.com/nalhsyjones) this week, so I've attempted to create a list of significant responses/commentary that have come out since this paper was posted on PsyArXiv.

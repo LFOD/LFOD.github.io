@@ -7,7 +7,7 @@ execute:
   eval: false
 categories: ["shinysense", "shiny", "rmarkdown", "javascript", "rstats"]
 tags: ["shinysense", "shiny", "rmarkdown", "javascript", "rstats"]
-excerpt: "Recently I overhauled the drawr function of my package shinysense. Some bugs were fixed but potentially more interesting new features were added. Among these are support for time series and the ability to use the function outside of Shiny. This post covers what changed and how to use the new features."
+description: "Recently I overhauled the drawr function of my package shinysense. Some bugs were fixed but potentially more interesting new features were added. Among these are support for time series and the ability to use the function outside of Shiny. This post covers what changed and how to use the new features."
 ---
 
 

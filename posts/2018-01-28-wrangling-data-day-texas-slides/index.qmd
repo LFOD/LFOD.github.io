@@ -5,7 +5,7 @@ date: '2018-01-28'
 slug: wrangling-data-day-texas-slides
 categories: [rstats]
 tags: [rstats]
-excerpt: "Since twitter threads are excessively cumbersome to navigate, Maëlle asked me to relocate the list of #rstats Data Day Texas slides to a blog post, so here we are!"
+description: "Since twitter threads are excessively cumbersome to navigate, Maëlle asked me to relocate the list of #rstats Data Day Texas slides to a blog post, so here we are!"
 ---
 
 Since [twitter threads](https://twitter.com/LucyStats/status/957628106889711616) are [excessively cumbersome to navigate](http://livefreeordichotomize.com/2017/07/24/twitter-trees/), [Maëlle](https://twitter.com/ma_salmon) asked me to relocate the list of #rstats Data Day Texas slides to a blog post, so here we are! 

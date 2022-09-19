@@ -4,7 +4,7 @@ author: "Nick Strayer"
 date: '2017-08-14'
 categories: ["statistics", "visualization", "interactive"]
 tags: ["statistics", "visualization", "interactive"]
-excerpt: "I find series expansions fascinating. I also find any math envolving e to be fascinating. Here I explain some of the facets of the exponential power series and its connection to my favorite distribution, the Poisson."
+description: "I find series expansions fascinating. I also find any math envolving e to be fascinating. Here I explain some of the facets of the exponential power series and its connection to my favorite distribution, the Poisson."
 ---
   
   

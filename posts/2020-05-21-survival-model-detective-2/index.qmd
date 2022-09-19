@@ -7,7 +7,7 @@ categories: [rstats, covid-19, survival analysis, competing risks]
 tags: [rstats, covid-19, survival analysis, competing risks]
 math: no
 meta: yes
-excerpt: "A paper by Grein et al. was recently published in the New England Journal of Medicine examining a cohort of patients with COVID-19 who were treated with compassionate-use remdesivir. This paper had a flaw in it's main statistical analysis. Let's learn a bit about competing risks!"
+description: "A paper by Grein et al. was recently published in the New England Journal of Medicine examining a cohort of patients with COVID-19 who were treated with compassionate-use remdesivir. This paper had a flaw in it's main statistical analysis. Let's learn a bit about competing risks!"
 ---
 
 A [paper by Grein et al. was recently published in the New England Journal of Medicine](https://www.nejm.org/doi/full/10.1056/NEJMoa2007016) examining a cohort of patients with COVID-19 who were treated with compassionate-use remdesivir. There are two things that were interesting about this paper:

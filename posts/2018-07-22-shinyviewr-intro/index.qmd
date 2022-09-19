@@ -4,7 +4,7 @@ author: "Nick Strayer"
 date: '2018-07-22'
 categories: ["shiny", "images", "deeplearning"]
 tags: ["shiny", "images", "deeplearning"]
-excerpt: "A brief intro to, and tutorial for, the new function in the shinysense packages: shinyviewr. This function allows you to take photos using the camera on your computer or phone and directly send them into your shiny applications."
+description: "A brief intro to, and tutorial for, the new function in the shinysense packages: shinyviewr. This function allows you to take photos using the camera on your computer or phone and directly send them into your shiny applications."
 ---
 
 ```{r setup, include=FALSE}

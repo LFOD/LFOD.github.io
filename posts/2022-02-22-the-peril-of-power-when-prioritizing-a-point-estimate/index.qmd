@@ -4,7 +4,7 @@ author: Lucy D'Agostino McGowan
 date: '2022-02-21'
 slug: the-peril-of-power-when-prioritizing-a-point-estimate
 categories: ["COVID-19", "non-inferiority trials", "clinical trials", "power"]
-excerpt: "I recently noticed that the Pfizer immunobridging trials, presumably set up to demonstrate that their COVID-19 vaccines elicit the same antibody response in children as was seen in 16-25 year olds, for whom efficacy has previously been demonstrated, have a strange criteria for \"success\"."
+description: "I recently noticed that the Pfizer immunobridging trials, presumably set up to demonstrate that their COVID-19 vaccines elicit the same antibody response in children as was seen in 16-25 year olds, for whom efficacy has previously been demonstrated, have a strange criteria for \"success\"."
 ---
 
 I recently noticed that the Pfizer immunobridging trials, presumably set up to demonstrate that their COVID-19 vaccines elicit the same antibody response in children as was seen in 16-25 year olds, for whom efficacy has previously been demonstrated, have a strange criteria for "success". 
@@ -24,7 +24,7 @@ The second criteria was originally set by Pfizer to require that the *point esti
 
 What do I mean? If we believe that the distribution of antibody concentration in children is *exactly the same* as what we observed in 16-25 year olds, we would expect this second criteria to *fail* 50% of the time. Why? When doing any trial, we are observing a *sample*, not the whole population. We expect a certain amount of uncertainty in our estimates. Here is a small example. Below I have generated 10 samples of 250 people from a log normal distribution with a mean of 1142.5 (log mean of 7.04) and a log standard deviation of 0.8. I am comparing this to an observed sample of 253 individuals drawn from the *exact* same distribution (incidentally, there were 253 16-25 year olds that led to the "benchmark" of a geometric mean of 1142.5).
 
-<span class ="marginnote">
+::: column-margin
 Want to try it yourself? You can generate samples from a lognormal distribution in R like this `rlnorm(253, mean = 7.040974, sd = 0.8)`. You can then compare the geometric mean ratio across several samples generated from the same distribution.
 :::
 

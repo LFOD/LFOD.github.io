@@ -5,7 +5,7 @@ date: '2020-04-13'
 slug: prevalence-and-probability-of-covid
 categories: [statistics, uncertainty, coronavirus, casual inference, bayes theorem]
 tags: [statistics, uncertainty, coronavirus, casual inference, bayes]
-excerpt: "The prevalence of a disease plays an important role in your probability of having it given you test positive."
+description: "The prevalence of a disease plays an important role in your probability of having it given you test positive."
 ---
 
 The prevalence of a disease plays an important role in your probability of having it given you test positive.

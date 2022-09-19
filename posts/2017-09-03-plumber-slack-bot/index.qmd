@@ -4,7 +4,7 @@ author: "Nick Strayer"
 date: '2017-09-03'
 categories: ["catslaps", "gifs", "slack", "plumber", "apis"]
 tags:  ["cats", "dogs", "gifs", "slack", "plumber", "apis"]
-excerpt: "I've been excited about the R package Plumber ever since hearing about it for the first time as useR2017. So when I finally found an application that would allow me to use it, sending cat and dog photos over slack, I jumped at the opportunity."
+description: "I've been excited about the R package Plumber ever since hearing about it for the first time as useR2017. So when I finally found an application that would allow me to use it, sending cat and dog photos over slack, I jumped at the opportunity."
 ---
   
   

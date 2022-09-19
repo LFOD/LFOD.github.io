@@ -4,7 +4,7 @@ author: "Nick Strayer"
 date: '2018-04-09'
 categories: ["visualization", "networks"]
 tags: ["visualization", "networks"]
-excerpt: "Recently, I have found myself needing to visualize networks. There are plenty of lovely options in R for visualizing networks in 2d, but I have found that many of the networks I want to visualize work much better when done in 3d and here the options are much smaller. This has prompted me to build the package network3d. This post will be a brief intro to using it."
+description: "Recently, I have found myself needing to visualize networks. There are plenty of lovely options in R for visualizing networks in 2d, but I have found that many of the networks I want to visualize work much better when done in 3d and here the options are much smaller. This has prompted me to build the package network3d. This post will be a brief intro to using it."
 ---
 
 ```{r setup, include=FALSE}

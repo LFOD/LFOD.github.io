@@ -5,7 +5,7 @@ date: '2020-04-09'
 slug: bayes-theorem-and-covid-19-infection
 categories: [statistics, uncertainty, coronavirus, casual inference, bayes theorem]
 tags: [statistics, uncertainty, coronavirus, casual inference, bayes]
-excerpt: "I've seen a few papers describing the characteristics of people who tested positive for SARS-CoV-2 and this is sometimes being interpreted as describing people with certain characteristic's the probability of infection. Let's talk about why that's likely not true."
+description: "I've seen a few papers describing the characteristics of people who tested positive for SARS-CoV-2 and this is sometimes being interpreted as describing people with certain characteristic's the probability of infection. Let's talk about why that's likely not true."
 ---
 
 I've seen a few papers describing the characteristics of people who tested positive for SARS-CoV-2 and this is sometimes being interpreted as describing people with certain characteristic's the **probability of infection**. Let's talk about why that's likely not true.

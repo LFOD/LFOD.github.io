@@ -4,7 +4,7 @@ author: "Nick Strayer"
 date: '2017-07-13'
 categories: ["rstats"]
 tags: ["Blogdown", "rstats"]
-excerpt: "If you like the way our blog looks, you too can have your own blogdown driven site just like it! In this post I walk through how to set up an RMarkdown driven blog from scratch using blogdown and the tuftesque theme constructed for Live Free Or Dichotomize."
+description: "If you like the way our blog looks, you too can have your own blogdown driven site just like it! In this post I walk through how to set up an RMarkdown driven blog from scratch using blogdown and the tuftesque theme constructed for Live Free Or Dichotomize."
 ---
 
 
@@ -17,7 +17,7 @@ library(tufte)
 
 This post will serve as a quick tutorial getting you from nothing to a customized blogdown blog using the theme built for this blog:  [tuftesque](www.github.com/nstrayer/tuftesque). 
 
-The tuftesque theme gives your blog a ...tufte-esque... style that eschues some of the choices of the original and which I've added a few splashes of my personal style. The main title page is a single column and has an easily customizable banner where as the article view is the two panel view (for large screens) to allow for sidenotes. In addition you can add little author bios at the end which is especially useful if you have more than one author on your blog. 
+The tuftesque theme gives your blog a ...tufte-esque... style that eschews some of the choices of the original and which I've added a few splashes of my personal style. The main title page is a single column and has an easily customizable banner where as the article view is the two panel view (for large screens) to allow for sidenotes. In addition you can add little author bios at the end which is especially useful if you have more than one author on your blog. 
 
 
 It doesn't cover the more standard details such as writing new posts as I feel those have been covered much better than I could [here](https://bookdown.org/yihui/blogdown/). 
@@ -30,7 +30,9 @@ It doesn't cover the more standard details such as writing new posts as I feel t
 
 If you already have a blogdown site than you can skip to the next step. If you do not, open R inside a new fresh directory and run the following commands: 
 
-`r tufte::margin_note("__R Console__")`
+::: column-margin
+__R Console__
+:::
 ```{r, eval = F}
 #downloads the blogdown package
 devtools::install_github("rstudio/blogdown")
@@ -58,7 +60,9 @@ Boom, now you have your very own blog! Wouldn't it be nice if everything in life
 
 Now that you have your blogdown blog up and running switch back to your R console (you may have to press escape to kill the running blogdown server) and run the following command to download the tuftesque theme from github. 
 
-`r tufte::margin_note("__R Console__")`
+::: column-margin
+__R Console__
+:::
 
 ```{r, eval = F}
 blogdown::install_theme('nstrayer/tuftesque')

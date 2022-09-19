@@ -12,7 +12,7 @@ tags:
   - javascript
 math: no
 meta: yes
-excerpt: "Grided is an app that lets you define CSS-Grid layouts in a simple GUI allowing you to see how your app will look while you define it."
+description: "Grided is an app that lets you define CSS-Grid layouts in a simple GUI allowing you to see how your app will look while you define it."
 ---
 
 ## Summary

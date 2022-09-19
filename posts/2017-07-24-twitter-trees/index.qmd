@@ -5,7 +5,7 @@ date: '2017-07-24'
 slug: twitter-trees
 categories: [rstats, twitter]
 tags: [rstats, twitter]
-excerpt: "A little over a week ago, Hilary Parker tweeted out a poll about sending calendar invites that generated quite the repartee. It was quite popular -- so much so that I couldn't possible keep up with all of the replies! I personally am quite dependent on my calender, but I was intrigured to see what others had to say. This inspired me to try out some swanky R packages for visualizing trees."
+description: "A little over a week ago, Hilary Parker tweeted out a poll about sending calendar invites that generated quite the repartee. It was quite popular -- so much so that I couldn't possible keep up with all of the replies! I personally am quite dependent on my calender, but I was intrigured to see what others had to say. This inspired me to try out some swanky R packages for visualizing trees."
 ---
 
 A little over a week ago, [Hilary Parker](https://twitter.com/hspter) tweeted out a poll about sending calendar invites that generated quite the repartee.
