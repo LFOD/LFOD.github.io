@@ -17,6 +17,7 @@ website:
   google-analytics: "UA-92165973-1"
   open-graph: true
   twitter-card:
+    title: "Live Free or Dichotomize"
     creator: "@LucyStats"
     image: "media/lfod-card.png"
 
