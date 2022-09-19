@@ -18,6 +18,7 @@ website:
   open-graph: true
   twitter-card:
     creator: "@LucyStats"
+    image: "media/lfod-card.png"
 
 format:
   html:
