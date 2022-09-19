@@ -12,7 +12,7 @@ website:
       - about.qmd
   comments: 
     utterances:
-      repo: lfod/real-blog
+      repo: lfod/lfod.github.io
   google-analytics: "UA-92165973-1"
 
 format:
