@@ -15,6 +15,9 @@ website:
     utterances:
       repo: lfod/lfod.github.io
   google-analytics: "UA-92165973-1"
+  open-graph: true
+  twitter-card:
+    creator: "@LucyStats"
 
 format:
   html:
