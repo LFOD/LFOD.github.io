@@ -5,6 +5,7 @@ execute:
   freeze: auto
   
 website:
+  site-url: "https://www.livefreeordichtomize.com"
   navbar:
     left:
       - text: "Home"
