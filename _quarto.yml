@@ -19,7 +19,7 @@ website:
   twitter-card:
     title: "Live Free or Dichotomize"
     creator: "@LucyStats"
-    image: "media/lfod-card.png"
+    image: media/lfod-card.png
     card-style: summary_large_image
 
 format:
