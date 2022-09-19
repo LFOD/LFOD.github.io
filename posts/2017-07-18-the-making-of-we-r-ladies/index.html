@@ -8,6 +8,7 @@
 
 <meta name="author" content="Lucy D’Agostino McGowan and Maëlle Salmon">
 <meta name="dcterms.date" content="2017-07-18">
+<meta name="description" content="Maëlle and I created a mosaic of R-Ladies for the JSM Data Art Show. Here is a quick tutorial if you are interested in trying something similar!">
 
 <title>The making of “We R-Ladies”</title>
 <style>
@@ -340,7 +341,12 @@ code span.wa { color: #60a0b0; font-weight: bold; font-style: italic; } /* Warni
   <div class="quarto-title-banner page-columns page-full">
     <div class="quarto-title column-body">
       <h1 class="title">The making of “We R-Ladies”</h1>
-                                <div class="quarto-categories">
+                  <div>
+        <div class="description">
+          Maëlle and I created a mosaic of R-Ladies for the JSM Data Art Show. Here is a quick tutorial if you are interested in trying something similar!
+        </div>
+      </div>
+                          <div class="quarto-categories">
                 <div class="quarto-category">rstats</div>
                 <div class="quarto-category">rladies</div>
               </div>
@@ -478,7 +484,7 @@ code span.wa { color: #60a0b0; font-weight: bold; font-style: italic; } /* Warni
 <span id="cb9-9"><a href="#cb9-9" aria-hidden="true" tabindex="-1"></a>  )</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <p>We used 9106 unique tiles to create the image using K-nearest neighbors to select the optimal match.</p>
 </section>
-<section id="pull-in-the-twitter-data" class="level2">
+<section id="pull-in-the-twitter-data" class="level2 page-columns page-full">
 <h2 class="anchored" data-anchor-id="pull-in-the-twitter-data">Pull in the Twitter data</h2>
 <div class="sourceCode" id="cb10"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb10-1"><a href="#cb10-1" aria-hidden="true" tabindex="-1"></a>dat <span class="ot">&lt;-</span> <span class="fu">search_tweets</span>(<span class="at">q =</span> <span class="st">'#RLadies'</span>, <span class="at">n =</span> <span class="dv">1000</span>, <span class="at">include_rts =</span> <span class="cn">FALSE</span>)</span>
 <span id="cb10-2"><a href="#cb10-2" aria-hidden="true" tabindex="-1"></a>tweets <span class="ot">&lt;-</span> <span class="fu">users_data</span>(dat) <span class="sc">%&gt;%</span></span>
@@ -487,8 +493,10 @@ code span.wa { color: #60a0b0; font-weight: bold; font-style: italic; } /* Warni
 <span id="cb10-5"><a href="#cb10-5" aria-hidden="true" tabindex="-1"></a>  <span class="fu">select</span>(screen_name, profile_image_url)</span>
 <span id="cb10-6"><a href="#cb10-6" aria-hidden="true" tabindex="-1"></a></span>
 <span id="cb10-7"><a href="#cb10-7" aria-hidden="true" tabindex="-1"></a>prof <span class="ot">&lt;-</span> <span class="fu">unique</span>(<span class="fu">rbind</span>(tweets, users))</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
-<p><label for="tufte-mn-" class="margin-toggle">⊕</label><input type="checkbox" id="tufte-mn-" class="margin-toggle"><span class="marginnote">We removed a few accounts that we know are not actually (our version of) R-Ladies accounts.</span></p>
-<div class="sourceCode" id="cb11"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb11-1"><a href="#cb11-1" aria-hidden="true" tabindex="-1"></a>prof <span class="ot">&lt;-</span> prof[<span class="sc">!</span>(prof<span class="sc">$</span>screen_name <span class="sc">%in%</span></span>
+
+<div class="no-row-height column-margin column-container"><div class="">
+<p>We removed a few accounts that we know are not actually (our version of) R-Ladies accounts.</p>
+</div></div><div class="sourceCode" id="cb11"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb11-1"><a href="#cb11-1" aria-hidden="true" tabindex="-1"></a>prof <span class="ot">&lt;-</span> prof[<span class="sc">!</span>(prof<span class="sc">$</span>screen_name <span class="sc">%in%</span></span>
 <span id="cb11-2"><a href="#cb11-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">c</span>(<span class="st">"Junior_RLadies"</span>,</span>
 <span id="cb11-3"><a href="#cb11-3" aria-hidden="true" tabindex="-1"></a>  <span class="st">"RLadies_LF"</span>,</span>
 <span id="cb11-4"><a href="#cb11-4" aria-hidden="true" tabindex="-1"></a>  <span class="st">"WomenRLadies"</span>,</span>
@@ -513,8 +521,10 @@ code span.wa { color: #60a0b0; font-weight: bold; font-style: italic; } /* Warni
 <div class="sourceCode" id="cb13"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb13-1"><a href="#cb13-1" aria-hidden="true" tabindex="-1"></a><span class="fu">set.seed</span>(<span class="dv">525</span>)</span>
 <span id="cb13-2"><a href="#cb13-2" aria-hidden="true" tabindex="-1"></a>pics <span class="ot">&lt;-</span> <span class="fu">dir</span>(<span class="st">"tweet-data"</span>, <span class="at">full.names =</span> <span class="cn">TRUE</span>)</span>
 <span id="cb13-3"><a href="#cb13-3" aria-hidden="true" tabindex="-1"></a>pics <span class="ot">&lt;-</span> <span class="fu">sample</span>(pics, <span class="fu">length</span>(pics))</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
-<p><label for="tufte-mn-" class="margin-toggle">⊕</label><input type="checkbox" id="tufte-mn-" class="margin-toggle"><span class="marginnote">We removed a few of the chapter accounts to ensure an even number.</span></p>
-<div class="sourceCode" id="cb14"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb14-1"><a href="#cb14-1" aria-hidden="true" tabindex="-1"></a><span class="do">## we need a multiple of 4</span></span>
+
+<div class="no-row-height column-margin column-container"><div class="">
+<p>We removed a few of the chapter accounts to ensure an even number.</p>
+</div></div><div class="sourceCode" id="cb14"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb14-1"><a href="#cb14-1" aria-hidden="true" tabindex="-1"></a><span class="do">## we need a multiple of 4</span></span>
 <span id="cb14-2"><a href="#cb14-2" aria-hidden="true" tabindex="-1"></a>rladies_chapters <span class="ot">&lt;-</span> <span class="fu">which</span>(<span class="fu">grepl</span>(<span class="st">"RLadies"</span>, pics)) </span>
 <span id="cb14-3"><a href="#cb14-3" aria-hidden="true" tabindex="-1"></a>pics <span class="ot">&lt;-</span> pics[<span class="sc">-</span>rladies_chapters[<span class="dv">1</span><span class="sc">:</span><span class="dv">2</span>]]</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </section>

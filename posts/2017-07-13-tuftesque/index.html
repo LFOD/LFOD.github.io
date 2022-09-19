@@ -8,6 +8,7 @@
 
 <meta name="author" content="Nick Strayer">
 <meta name="dcterms.date" content="2017-07-13">
+<meta name="description" content="If you like the way our blog looks, you too can have your own blogdown driven site just like it! In this post I walk through how to set up an RMarkdown driven blog from scratch using blogdown and the tuftesque theme constructed for Live Free Or Dichotomize.">
 
 <title>Introducing the tuftesque blogdown theme</title>
 <style>
@@ -137,7 +138,7 @@ code span.wa { color: #60a0b0; font-weight: bold; font-style: italic; } /* Warni
 </style>
 
 
-</head><body class="nav-fixed fullcontent"><header id="custom-header">
+</head><body class="nav-fixed"><header id="custom-header">
   <div id="header_viz"></div>
 </header>
 
@@ -340,7 +341,12 @@ code span.wa { color: #60a0b0; font-weight: bold; font-style: italic; } /* Warni
   <div class="quarto-title-banner page-columns page-full">
     <div class="quarto-title column-body">
       <h1 class="title">Introducing the tuftesque blogdown theme</h1>
-                                <div class="quarto-categories">
+                  <div>
+        <div class="description">
+          If you like the way our blog looks, you too can have your own blogdown driven site just like it! In this post I walk through how to set up an RMarkdown driven blog from scratch using blogdown and the tuftesque theme constructed for Live Free Or Dichotomize.
+        </div>
+      </div>
+                          <div class="quarto-categories">
                 <div class="quarto-category">rstats</div>
               </div>
                   </div>
@@ -369,23 +375,27 @@ code span.wa { color: #60a0b0; font-weight: bold; font-style: italic; } /* Warni
   </header><div id="quarto-content" class="quarto-container page-columns page-rows-contents page-layout-article page-navbar">
 <!-- sidebar -->
 <!-- margin-sidebar -->
-    
+    <div id="quarto-margin-sidebar" class="sidebar margin-sidebar">
+        
+    </div>
 <!-- main -->
-<main class="content quarto-banner-title-block" id="quarto-document-content">
+<main class="content quarto-banner-title-block page-columns page-full" id="quarto-document-content">
 
 
 
 
 <p>This post will serve as a quick tutorial getting you from nothing to a customized blogdown blog using the theme built for this blog: <a href="www.github.com/nstrayer/tuftesque">tuftesque</a>.</p>
-<p>The tuftesque theme gives your blog a …tufte-esque… style that eschues some of the choices of the original and which I’ve added a few splashes of my personal style. The main title page is a single column and has an easily customizable banner where as the article view is the two panel view (for large screens) to allow for sidenotes. In addition you can add little author bios at the end which is especially useful if you have more than one author on your blog.</p>
+<p>The tuftesque theme gives your blog a …tufte-esque… style that eschews some of the choices of the original and which I’ve added a few splashes of my personal style. The main title page is a single column and has an easily customizable banner where as the article view is the two panel view (for large screens) to allow for sidenotes. In addition you can add little author bios at the end which is especially useful if you have more than one author on your blog.</p>
 <p>It doesn’t cover the more standard details such as writing new posts as I feel those have been covered much better than I could <a href="https://bookdown.org/yihui/blogdown/">here</a>.</p>
-<section id="the-basics" class="level1">
+<section id="the-basics" class="level1 page-columns page-full">
 <h1>The Basics</h1>
-<section id="getting-blogdown" class="level2">
+<section id="getting-blogdown" class="level2 page-columns page-full">
 <h2 class="anchored" data-anchor-id="getting-blogdown">Getting Blogdown</h2>
 <p>If you already have a blogdown site than you can skip to the next step. If you do not, open R inside a new fresh directory and run the following commands:</p>
-<p><label for="tufte-mn-" class="margin-toggle">⊕</label><input type="checkbox" id="tufte-mn-" class="margin-toggle"><span class="marginnote"><strong>R Console</strong></span></p>
-<div class="cell">
+
+<div class="no-row-height column-margin column-container"><div class="">
+<p><strong>R Console</strong></p>
+</div></div><div class="cell">
 <div class="sourceCode cell-code" id="cb1"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb1-1"><a href="#cb1-1" aria-hidden="true" tabindex="-1"></a><span class="co">#downloads the blogdown package</span></span>
 <span id="cb1-2"><a href="#cb1-2" aria-hidden="true" tabindex="-1"></a>devtools<span class="sc">::</span><span class="fu">install_github</span>(<span class="st">"rstudio/blogdown"</span>)</span>
 <span id="cb1-3"><a href="#cb1-3" aria-hidden="true" tabindex="-1"></a></span>
@@ -405,11 +415,13 @@ This is what your site should look like at this point.
 </div>
 </div>
 </div></section>
-<section id="adding-tuftesque" class="level2">
+<section id="adding-tuftesque" class="level2 page-columns page-full">
 <h2 class="anchored" data-anchor-id="adding-tuftesque">Adding tuftesque</h2>
 <p>Now that you have your blogdown blog up and running switch back to your R console (you may have to press escape to kill the running blogdown server) and run the following command to download the tuftesque theme from github.</p>
-<p><label for="tufte-mn-" class="margin-toggle">⊕</label><input type="checkbox" id="tufte-mn-" class="margin-toggle"><span class="marginnote"><strong>R Console</strong></span></p>
-<div class="cell">
+
+<div class="no-row-height column-margin column-container"><div class="">
+<p><strong>R Console</strong></p>
+</div></div><div class="cell">
 <div class="sourceCode cell-code" id="cb2"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb2-1"><a href="#cb2-1" aria-hidden="true" tabindex="-1"></a>blogdown<span class="sc">::</span><span class="fu">install_theme</span>(<span class="st">'nstrayer/tuftesque'</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </div>
 <p>Assuming this successfully worked (if it didn’t file an issue <a href="www.github.com/nstrayer/tuftesque">here</a>) now run the command <code>blogdown::serve_site()</code> to restart the blogdown server and you should have your fancy new blog working!</p>

@@ -8,6 +8,7 @@
 
 <meta name="author" content="Lucy D’Agostino McGowan">
 <meta name="dcterms.date" content="2022-02-21">
+<meta name="description" content="I recently noticed that the Pfizer immunobridging trials, presumably set up to demonstrate that their COVID-19 vaccines elicit the same antibody response in children as was seen in 16-25 year olds, for whom efficacy has previously been demonstrated, have a strange criteria for “success”.">
 
 <title>The Peril of Power when Prioritizing a Point Estimate</title>
 <style>
@@ -278,7 +279,12 @@ ul.task-list li input[type="checkbox"] {
   <div class="quarto-title-banner page-columns page-full">
     <div class="quarto-title column-body">
       <h1 class="title">The Peril of Power when Prioritizing a Point Estimate</h1>
-                                <div class="quarto-categories">
+                  <div>
+        <div class="description">
+          I recently noticed that the Pfizer immunobridging trials, presumably set up to demonstrate that their COVID-19 vaccines elicit the same antibody response in children as was seen in 16-25 year olds, for whom efficacy has previously been demonstrated, have a strange criteria for “success”.
+        </div>
+      </div>
+                          <div class="quarto-categories">
                 <div class="quarto-category">COVID-19</div>
                 <div class="quarto-category">non-inferiority trials</div>
                 <div class="quarto-category">clinical trials</div>
@@ -331,8 +337,10 @@ ul.task-list li input[type="checkbox"] {
 </ol>
 <p>The second criteria was originally set by Pfizer to require that the <em>point estimate</em> of the GMT ratio must be <span class="math inline">\(\ge 0.8\)</span>, however after their data lock the FDA requested this to be changed to the higher threshold. While at first glance, this may seem to make sense, after all we often want to make sure that we hold our pediatric trials to a high standard of efficacy, it turns out this change has statistical implications that change the target in ways that are non-standard for non-inferiority trials.</p>
 <p>What do I mean? If we believe that the distribution of antibody concentration in children is <em>exactly the same</em> as what we observed in 16-25 year olds, we would expect this second criteria to <em>fail</em> 50% of the time. Why? When doing any trial, we are observing a <em>sample</em>, not the whole population. We expect a certain amount of uncertainty in our estimates. Here is a small example. Below I have generated 10 samples of 250 people from a log normal distribution with a mean of 1142.5 (log mean of 7.04) and a log standard deviation of 0.8. I am comparing this to an observed sample of 253 individuals drawn from the <em>exact</em> same distribution (incidentally, there were 253 16-25 year olds that led to the “benchmark” of a geometric mean of 1142.5).</p>
-<p><span class="marginnote"> Want to try it yourself? You can generate samples from a lognormal distribution in R like this <code>rlnorm(253, mean = 7.040974, sd = 0.8)</code>. You can then compare the geometric mean ratio across several samples generated from the same distribution. :::</span></p>
-<div class="cell">
+
+<div class="no-row-height column-margin column-container"><div class="">
+<p>Want to try it yourself? You can generate samples from a lognormal distribution in R like this <code>rlnorm(253, mean = 7.040974, sd = 0.8)</code>. You can then compare the geometric mean ratio across several samples generated from the same distribution.</p>
+</div></div><div class="cell">
 <div class="cell-output-display">
 <p><img src="index_files/figure-html/unnamed-chunk-2-1.png" class="img-fluid" width="672"></p>
 </div>

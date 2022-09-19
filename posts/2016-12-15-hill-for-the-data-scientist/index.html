@@ -8,6 +8,7 @@
 
 <meta name="author" content="Lucy D’Agostino McGowan">
 <meta name="dcterms.date" content="2016-12-15">
+<meta name="description" content="This was inspired by Hilary Parker &amp; Roger Peng’s Not So Standard Deviations Episode 28. It was suggested that it would be useful to lay out Hill’s criterion for data scientists, I agree!">
 
 <title>Hill for the data scientist: an xkcd story</title>
 <style>
@@ -74,7 +75,7 @@ ul.task-list li input[type="checkbox"] {
 </style>
 
 
-</head><body class="nav-fixed fullcontent"><header id="custom-header">
+</head><body class="nav-fixed"><header id="custom-header">
   <div id="header_viz"></div>
 </header>
 
@@ -277,7 +278,12 @@ ul.task-list li input[type="checkbox"] {
   <div class="quarto-title-banner page-columns page-full">
     <div class="quarto-title column-body">
       <h1 class="title">Hill for the data scientist: an xkcd story</h1>
-                                <div class="quarto-categories">
+                  <div>
+        <div class="description">
+          This was inspired by Hilary Parker &amp; Roger Peng’s Not So Standard Deviations Episode 28. It was suggested that it would be useful to lay out Hill’s criterion for data scientists, I agree!
+        </div>
+      </div>
+                          <div class="quarto-categories">
                 <div class="quarto-category">data-science</div>
                 <div class="quarto-category">epidemiology</div>
                 <div class="quarto-category">xkcd</div>
@@ -309,9 +315,11 @@ ul.task-list li input[type="checkbox"] {
   </header><div id="quarto-content" class="quarto-container page-columns page-rows-contents page-layout-article page-navbar">
 <!-- sidebar -->
 <!-- margin-sidebar -->
-    
+    <div id="quarto-margin-sidebar" class="sidebar margin-sidebar">
+        
+    </div>
 <!-- main -->
-<main class="content quarto-banner-title-block" id="quarto-document-content">
+<main class="content quarto-banner-title-block page-columns page-full" id="quarto-document-content">
 
 
 
@@ -325,14 +333,16 @@ ul.task-list li input[type="checkbox"] {
 <p><br></p>
 <p>This inspired me to attempt to explain Hill’s criteria using xkcd comics, both because it seemed fun, and also to motivate causal inference instructures to have some variety in which xkcd comic they include in lectures (bear with me, some of these are a stretch 🙈💁🏻).</p>
 <p><br></p>
-<section id="strength" class="level3">
+<section id="strength" class="level3 page-columns page-full">
 <h3 class="anchored" data-anchor-id="strength">Strength</h3>
 <ul>
 <li>How big is the effect you are seeing?</li>
 <li>Note: Hill suggests that huge effects <em>can</em> suggest causality, however this does not mean small effects <em>cannot</em></li>
 </ul>
-<p><label for="tufte-mn-" class="margin-toggle">⊕</label><input type="checkbox" id="tufte-mn-" class="margin-toggle"><span class="marginnote"><em>Note</em>: I am using this idea for a talk and I found a strip (to the left) that I think better represents this concept. The original post had <a href="http://xkcd.com/1592/">this one</a>.</span></p>
-<p><a href="https://xkcd.com/539/" target="_blank"> <img src=" https://imgs.xkcd.com/comics/boyfriend.png" alt="strength"> </a></p>
+
+<div class="no-row-height column-margin column-container"><div class="">
+<p><em>Note</em>: I am using this idea for a talk and I found a strip (to the left) that I think better represents this concept. The original post had <a href="http://xkcd.com/1592/">this one</a>.</p>
+</div></div><p><a href="https://xkcd.com/539/" target="_blank"> <img src=" https://imgs.xkcd.com/comics/boyfriend.png" alt="strength"> </a></p>
 <p><br></p>
 </section>
 <section id="consistency" class="level3">

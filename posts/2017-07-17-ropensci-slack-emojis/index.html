@@ -8,6 +8,7 @@
 
 <meta name="author" content="Lucy D’Agostino McGowan">
 <meta name="dcterms.date" content="2017-07-17">
+<meta name="description" content="HAPPY world emoji day! In honor of this momentous occasion, I have decided to analyze the emojis used on rOpenSci’s Slack.">
 
 <title>Happy World Emoji Day: an analysis of rOpenSci’s Slack emojis</title>
 <style>
@@ -340,7 +341,12 @@ code span.wa { color: #60a0b0; font-weight: bold; font-style: italic; } /* Warni
   <div class="quarto-title-banner page-columns page-full">
     <div class="quarto-title column-body">
       <h1 class="title">Happy World Emoji Day: an analysis of rOpenSci’s Slack emojis</h1>
-                                <div class="quarto-categories">
+                  <div>
+        <div class="description">
+          HAPPY world emoji day! In honor of this momentous occasion, I have decided to analyze the emojis used on rOpenSci’s Slack.
+        </div>
+      </div>
+                          <div class="quarto-categories">
                 <div class="quarto-category">rOpenSci</div>
                 <div class="quarto-category">rstats</div>
                 <div class="quarto-category">emojis</div>
@@ -385,11 +391,15 @@ code span.wa { color: #60a0b0; font-weight: bold; font-style: italic; } /* Warni
 <div class="cell">
 <div class="sourceCode cell-code" id="cb1"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb1-1"><a href="#cb1-1" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(<span class="st">"dplyr"</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </div>
-<p><label for="tufte-mn-" class="margin-toggle">⊕</label><input type="checkbox" id="tufte-mn-" class="margin-toggle"><span class="marginnote">If you’d like to follow along, go fetch yourself a <a href="https://api.slack.com/tokens">Slack token</a>.</span></p>
-<div class="sourceCode" id="cb2"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb2-1"><a href="#cb2-1" aria-hidden="true" tabindex="-1"></a>token <span class="ot">&lt;-</span> <span class="st">"MY_SLACK_API_TOKEN"</span> <span class="do">## stick your token here</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+
+<div class="no-row-height column-margin column-container"><div class="">
+<p>If you’d like to follow along, go fetch yourself a <a href="https://api.slack.com/tokens">Slack token</a>.</p>
+</div></div><div class="sourceCode" id="cb2"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb2-1"><a href="#cb2-1" aria-hidden="true" tabindex="-1"></a>token <span class="ot">&lt;-</span> <span class="st">"MY_SLACK_API_TOKEN"</span> <span class="do">## stick your token here</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <p>We will first use Slack’s <a href="https://api.slack.com/methods/reactions.list"><code>reactions.list</code></a> method.</p>
-<p><label for="tufte-mn-" class="margin-toggle">⊕</label><input type="checkbox" id="tufte-mn-" class="margin-toggle"><span class="marginnote">Notice here I am pulling the items from the response and then from each item I am interested in the message reactions. This ignores the reactions on files and comments.</span></p>
-<div class="sourceCode" id="cb3"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb3-1"><a href="#cb3-1" aria-hidden="true" tabindex="-1"></a>req_lst <span class="ot">&lt;-</span> httr<span class="sc">::</span><span class="fu">POST</span>(</span>
+
+<div class="no-row-height column-margin column-container"><div class="">
+<p>Notice here I am pulling the items from the response and then from each item I am interested in the message reactions. This ignores the reactions on files and comments.</p>
+</div></div><div class="sourceCode" id="cb3"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb3-1"><a href="#cb3-1" aria-hidden="true" tabindex="-1"></a>req_lst <span class="ot">&lt;-</span> httr<span class="sc">::</span><span class="fu">POST</span>(</span>
 <span id="cb3-2"><a href="#cb3-2" aria-hidden="true" tabindex="-1"></a>  <span class="st">"https://slack.com/api/reactions.list"</span>,</span>
 <span id="cb3-3"><a href="#cb3-3" aria-hidden="true" tabindex="-1"></a>  <span class="at">body =</span> <span class="fu">list</span>(</span>
 <span id="cb3-4"><a href="#cb3-4" aria-hidden="true" tabindex="-1"></a>   <span class="at">token =</span> token,</span>
@@ -439,8 +449,10 @@ code span.wa { color: #60a0b0; font-weight: bold; font-style: italic; } /* Warni
 <span id="cb7-7"><a href="#cb7-7" aria-hidden="true" tabindex="-1"></a>  <span class="fu">mutate</span>(<span class="at">emoji =</span> purrr<span class="sc">::</span><span class="fu">map2</span>(value, name, read_emoji))</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </div>
 <p>I have written another small function to make sure the custom emojis print properly when I render my output.</p>
-<p><label for="tufte-mn-" class="margin-toggle">⊕</label><input type="checkbox" id="tufte-mn-" class="margin-toggle"><span class="marginnote">Note, if you are doing this for your blog, rather than saving a temporary file as I have demonstrated here, you should save this as a relative file path in your blog 🌳 .</span></p>
-<div class="cell">
+
+<div class="no-row-height column-margin column-container"><div class="">
+<p>Note, if you are doing this for your blog, rather than saving a temporary file as I have demonstrated here, you should save this as a relative file path in your blog 🌳.</p>
+</div></div><div class="cell">
 <div class="sourceCode cell-code" id="cb8"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb8-1"><a href="#cb8-1" aria-hidden="true" tabindex="-1"></a>render_emoji <span class="ot">&lt;-</span> <span class="cf">function</span>(x, y) {</span>
 <span id="cb8-2"><a href="#cb8-2" aria-hidden="true" tabindex="-1"></a>  <span class="cf">if</span> (<span class="fu">inherits</span>(x, <span class="st">"magick-image"</span>)) {</span>
 <span id="cb8-3"><a href="#cb8-3" aria-hidden="true" tabindex="-1"></a>    tmp <span class="ot">&lt;-</span> <span class="fu">tempfile</span>(<span class="at">fileext =</span> <span class="st">".gif"</span>)</span>

@@ -8,6 +8,7 @@
 
 <meta name="author" content="Nick Strayer &amp; Lucy D’Agostino McGowan">
 <meta name="dcterms.date" content="2017-07-12">
+<meta name="description" content="We both recently attended useR!2017 in Brussels. It was a blast to say the least. Here we will cover our favorite things about things about the conference and the lessons we learned.">
 
 <title>useR!2017 digressions</title>
 <style>
@@ -277,7 +278,12 @@ ul.task-list li input[type="checkbox"] {
   <div class="quarto-title-banner page-columns page-full">
     <div class="quarto-title column-body">
       <h1 class="title">useR!2017 digressions</h1>
-                                <div class="quarto-categories">
+                  <div>
+        <div class="description">
+          We both recently attended useR!2017 in Brussels. It was a blast to say the least. Here we will cover our favorite things about things about the conference and the lessons we learned.
+        </div>
+      </div>
+                          <div class="quarto-categories">
                 <div class="quarto-category">rstats</div>
                 <div class="quarto-category">conferences</div>
                 <div class="quarto-category">travel</div>
@@ -360,10 +366,14 @@ This big network diagram had champagne at the bottom, so that was cool.
 <p>by <a href="https://twitter.com/marekrog">Marek Rogala</a>:</p>
 <p>Shiny is fantastic for getting people with no web programming experience up and running with web-apps in minutes, but because of that often some of the more advanced features of web-apps such as reactive database connections can be nearly impossible to add (even for people like me with more web experience). The <a href="https://appsilon.github.io/shiny.collections/"><code>shiny.collections</code></a> package addresses this by making it amazingly easy to spin up an app with an auto-updating database back-end. Believe me when I say this is not easy to do in a traditional web programming setup. This is fantastically exciting because the tool is easy enough to use for beginners but legitimately very helpful for all skill ranges. The number of applications I have dreamed up to use with this is vast. In addition, in a testament to his bravery and also the crazy ease of using the package, Marek did a live coding demo while on stage in front of more than 100 people! Having just spoken on that stage prior I can say he is much braver than I.</p>
 </section>
-<section id="can-you-keep-a-secret" class="level3">
+<section id="can-you-keep-a-secret" class="level3 page-columns page-full">
 <h3 class="anchored" data-anchor-id="can-you-keep-a-secret"><a href="https://github.com/gaborcsardi/secret">Can you keep a secret?</a></h3>
 <p>by <a href="https://twitter.com/revoandrie?lang=en">Andrie de Vries</a>:</p>
-<p>The second you start working with other people on any project that involves sensitive information (api-keys etc) you realize the limitations of a public git-based workflow. You can’t commit <code>all_my_sensitive_info.txt</code> to the repo (although that certainly hasn’t stopped me) so you end up having to engage in an intricate and delicate dance of figuring out how to <code>.gitignore</code> the right files and also share their format between all your collaborators. <label for="tufte-mn-" class="margin-toggle">⊕</label><input type="checkbox" id="tufte-mn-" class="margin-toggle"><span class="marginnote">Again a live coding demo was performed showing just how easy it is to use. Apparently useRs are abnormally brave people.</span> Essentially it’s miserable and I don’t recommend it. <code>secret</code> is another mind-blowingly easy to use R package for committing this info straight to your public repo while keeping is secure via encryption. You just need to gather public ssh keys from your collaborators. Then once the collaborator clones the repo they just need to run the code like normal and it works, no dangerous <code>.gitignore</code> dance to be performed, especially if you do something like change a secret. It can not be stressed helpful this will be in my future workflow.</p>
+<p>The second you start working with other people on any project that involves sensitive information (api-keys etc) you realize the limitations of a public git-based workflow. You can’t commit <code>all_my_sensitive_info.txt</code> to the repo (although that certainly hasn’t stopped me) so you end up having to engage in an intricate and delicate dance of figuring out how to <code>.gitignore</code> the right files and also share their format between all your collaborators.</p>
+
+<div class="no-row-height column-margin column-container"><div class="">
+<p>Again a live coding demo was performed showing just how easy it is to use. Apparently useRs are abnormally brave people.</p>
+</div></div><p>Essentially it’s miserable and I don’t recommend it. <code>secret</code> is another mind-blowingly easy to use R package for committing this info straight to your public repo while keeping is secure via encryption. You just need to gather public ssh keys from your collaborators. Then once the collaborator clones the repo they just need to run the code like normal and it works, no dangerous <code>.gitignore</code> dance to be performed, especially if you do something like change a secret. It can not be stressed helpful this will be in my future workflow.</p>
 </section>
 <section id="bsplus-using-twitter-bootstrap-to-extend-your-shiny-app" class="level3">
 <h3 class="anchored" data-anchor-id="bsplus-using-twitter-bootstrap-to-extend-your-shiny-app"><a href="http://ijlyttle.github.io/bsplus/">bsplus: Using Twitter Bootstrap to extend your Shiny app</a></h3>

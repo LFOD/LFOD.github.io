@@ -8,6 +8,7 @@
 
 <meta name="author" content="Lucy D’Agostino McGowan">
 <meta name="dcterms.date" content="2017-02-18">
+<meta name="description" content="This is a tale of the dire (type 1 error) consequences that occur when you test for linearity 😱">
 
 <title>The dire consequences of tests for linearity</title>
 <style>
@@ -137,7 +138,7 @@ code span.wa { color: #60a0b0; font-weight: bold; font-style: italic; } /* Warni
 </style>
 
 
-</head><body class="nav-fixed fullcontent"><header id="custom-header">
+</head><body class="nav-fixed"><header id="custom-header">
   <div id="header_viz"></div>
 </header>
 
@@ -341,7 +342,12 @@ code span.wa { color: #60a0b0; font-weight: bold; font-style: italic; } /* Warni
   <div class="quarto-title-banner page-columns page-full">
     <div class="quarto-title column-body">
       <h1 class="title">The dire consequences of tests for linearity</h1>
-                                <div class="quarto-categories">
+                  <div>
+        <div class="description">
+          This is a tale of the dire (type 1 error) consequences that occur when you test for linearity 😱
+        </div>
+      </div>
+                          <div class="quarto-categories">
                 <div class="quarto-category">rstats</div>
                 <div class="quarto-category">rms</div>
                 <div class="quarto-category">type 1 error</div>
@@ -373,9 +379,11 @@ code span.wa { color: #60a0b0; font-weight: bold; font-style: italic; } /* Warni
   </header><div id="quarto-content" class="quarto-container page-columns page-rows-contents page-layout-article page-navbar">
 <!-- sidebar -->
 <!-- margin-sidebar -->
-    
+    <div id="quarto-margin-sidebar" class="sidebar margin-sidebar">
+        
+    </div>
 <!-- main -->
-<main class="content quarto-banner-title-block" id="quarto-document-content">
+<main class="content quarto-banner-title-block page-columns page-full" id="quarto-document-content">
 
 
 
@@ -409,8 +417,10 @@ code span.wa { color: #60a0b0; font-weight: bold; font-style: italic; } /* Warni
 <li>calculate the <strong>type 1 error</strong>, how many times we detected a spurious significant association between <span class="math inline">\(x\)</span> and <span class="math inline">\(y\)</span>.</li>
 </ul>
 <p>Here’s my simulation code (run it yourself!):</p>
-<p><label for="tufte-mn-" class="margin-toggle">⊕</label><input type="checkbox" id="tufte-mn-" class="margin-toggle"><span class="marginnote">Thank you Pua Yong Hao for pointing out a typo in the original version of this function – it has been updated!</span></p>
-<div class="cell">
+
+<div class="no-row-height column-margin column-container"><div class="">
+<p>hank you Pua Yong Hao for pointing out a typo in the original version of this function – it has been updated!</p>
+</div></div><div class="cell">
 <div class="sourceCode cell-code" id="cb1"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb1-1"><a href="#cb1-1" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(<span class="st">'rms'</span>)</span>
 <span id="cb1-2"><a href="#cb1-2" aria-hidden="true" tabindex="-1"></a></span>
 <span id="cb1-3"><a href="#cb1-3" aria-hidden="true" tabindex="-1"></a>sim <span class="ot">&lt;-</span> <span class="cf">function</span>(<span class="at">wrong =</span> <span class="cn">TRUE</span>){</span>
