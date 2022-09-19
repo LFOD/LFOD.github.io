@@ -13,6 +13,8 @@ website:
   comments: 
     utterances:
       repo: lfod/real-blog
+  google-analytics: "UA-92165973-1"
+
 format:
   html:
     include-in-header: www/banner.html
