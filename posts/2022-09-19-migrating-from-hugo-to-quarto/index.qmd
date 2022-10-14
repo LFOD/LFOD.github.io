@@ -2,6 +2,7 @@
 title: "Migrating from Hugo to Quarto"
 author: Lucy D'Agostino McGowan
 date: '2022-09-19'
+image: featured.png
 categories: ["rstats", "quarto", "blog"]
 description: "We have migrated our blog from Hugo to Quarto! Here are a few quick tips that made the transition a bit smoother."
 ---
