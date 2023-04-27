@@ -5,6 +5,7 @@ date: '2022-09-19'
 image: featured.png
 categories: ["rstats", "quarto", "blog"]
 description: "We have migrated our blog from Hugo to Quarto! Here are a few quick tips that made the transition a bit smoother."
+alias: "https://livefreeordichotomize.com/2020/04/13/prevalence-and-probability-of-covid/"
 ---
 
 We have migrated our blog from Hugo to Quarto! Here are a few quick tips that made the transition a bit smoother.
