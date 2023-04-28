@@ -68,7 +68,7 @@ listing:
 
 This will create a searchable table listing of all of the previous posts, allowing readers to quickly find the link they are looking for.
 
-**UPDATE** You can add the old links under an `alias` parameter in each posts' YAML.
+**UPDATE** You can add the old links under an `aliases` parameter in each posts' YAML.
 
 
 ## 4. Comments and Google analytics
