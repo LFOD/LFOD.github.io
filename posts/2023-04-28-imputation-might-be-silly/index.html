@@ -8,7 +8,7 @@
 
 <meta name="author" content="Lucy D’Agostino McGowan">
 <meta name="dcterms.date" content="2023-04-28">
-<meta name="description" content="I have been thinking about scenarios under which it makes sense to use imputation for prediction models and am struggling to come up with a case. Yikes! Even for inference, as long as you do some doubly robust approach, I’m not sure I see the value (other than for precision, but then is no longer a question of bias and thus is for a different day!)">
+<meta name="description" content="I have been thinking about scenarios under which it makes sense to use imputation for prediction models and am struggling to come up with a case. Yikes! Even for inference, as long as you do some doubly robust approach, I’m not sure I see the value (other than for precision, but then is no longer a question of bias and thus is a question for a different day!)">
 
 <title>When is complete case analysis unbiased?</title>
 <style>
@@ -124,9 +124,12 @@ ga('send', {
 
 
 <meta property="og:title" content="When is complete case analysis unbiased?">
-<meta property="og:description" content="I have been thinking about scenarios under which it makes sense to use imputation for prediction models and am struggling to come up with a case. Yikes! Even for inference, as long as you do some doubly robust approach, I’m not sure I see the value (other than for precision, but then is no longer a question of bias and thus is for a different day!)">
+<meta property="og:description" content="I have been thinking about scenarios under which it makes sense to use imputation for prediction models and am struggling to come up with a case. Yikes! Even for inference, as long as you do some doubly robust approach, I’m not sure I see the value (other than for precision, but then is no longer a question of bias and thus is a question for a different day!)">
+<meta property="og:image" content="https://www.livefreeordichtomize.com/posts/2023-04-28-imputation-might-be-silly/index_files/figure-html/unnamed-chunk-7-1.png">
+<meta property="og:image:height" content="960">
+<meta property="og:image:width" content="1344">
 <meta name="twitter:title" content="Live Free or Dichotomize">
-<meta name="twitter:description" content="I have been thinking about scenarios under which it makes sense to use imputation for prediction models and am struggling to come up with a case. Yikes! Even for inference, as long as you do some doubly robust approach, I’m not sure I see the value (other than for precision, but then is no longer a question of bias and thus is for a different day!)">
+<meta name="twitter:description" content="I have been thinking about scenarios under which it makes sense to use imputation for prediction models and am struggling to come up with a case. Yikes! Even for inference, as long as you do some doubly robust approach, I’m not sure I see the value (other than for precision, but then is no longer a question of bias and thus is a question for a different day!)">
 <meta name="twitter:image" content="https://www.livefreeordichtomize.com/posts/2023-04-28-imputation-might-be-silly/media/lfod-card.png">
 <meta name="twitter:creator" content="@LucyStats">
 <meta name="twitter:card" content="summary_large_image">
@@ -341,7 +344,7 @@ ga('send', {
       <h1 class="title">When is complete case analysis unbiased?</h1>
                   <div>
         <div class="description">
-          I have been thinking about scenarios under which it makes sense to use imputation for prediction models and am struggling to come up with a case. Yikes! Even for inference, as long as you do some doubly robust approach, I’m not sure I see the value (other than for precision, but then is no longer a question of bias and thus is for a different day!)
+          I have been thinking about scenarios under which it makes sense to use imputation for prediction models and am struggling to come up with a case. Yikes! Even for inference, as long as you do some doubly robust approach, I’m not sure I see the value (other than for precision, but then is no longer a question of bias and thus is a question for a different day!)
         </div>
       </div>
                           <div class="quarto-categories">
@@ -391,124 +394,196 @@ ga('send', {
 <li>Your outcome doesn’t have any missing data (this is more extreme than the actual assumption needed, but if there is no missing outcome data then you should definitely be ok, see below for the nuance)</li>
 </ol>
 <p>When I was thinking through this, I found it helped to work up a few short simulations, so here we go.</p>
-<section id="scenario-1-i-have-a-set-of-predictors-one-with-missing-data" class="level2">
-<h2 class="anchored" data-anchor-id="scenario-1-i-have-a-set-of-predictors-one-with-missing-data">Scenario 1: I have a set of predictors, one with missing data</h2>
-<p>First let’s generate our “true” values for our two predictors. Here the true model is below, which shows that:</p>
-<p><span class="math inline">\(\hat{y} = p_1 + p_2\)</span></p>
-<p>implying the true <span class="math inline">\(\hat\beta\)</span> coefficients for both predictors should be 1.</p>
+<section id="scenario-1-i-have-a-predictor-that-is-missing-not-at-random" class="level2">
+<h2 class="anchored" data-anchor-id="scenario-1-i-have-a-predictor-that-is-missing-not-at-random">Scenario 1: I have a predictor that is missing not at random</h2>
+<p>First let’s generate our “true” values. Here the true model is below, which shows that:</p>
+<p><span class="math inline">\(y = x + \varepsilon\)</span></p>
+<p>In other words, <span class="math inline">\(\beta_0: 0\)</span> and <span class="math inline">\(\beta_1: 1\)</span></p>
 <div class="cell">
 <div class="sourceCode cell-code" id="cb1"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb1-1"><a href="#cb1-1" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(tidyverse)</span>
-<span id="cb1-2"><a href="#cb1-2" aria-hidden="true" tabindex="-1"></a>n <span class="ot">&lt;-</span> <span class="dv">10000</span></span>
-<span id="cb1-3"><a href="#cb1-3" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb1-4"><a href="#cb1-4" aria-hidden="true" tabindex="-1"></a><span class="fu">set.seed</span>(<span class="dv">1</span>)</span>
-<span id="cb1-5"><a href="#cb1-5" aria-hidden="true" tabindex="-1"></a>data <span class="ot">&lt;-</span> <span class="fu">tibble</span>(</span>
-<span id="cb1-6"><a href="#cb1-6" aria-hidden="true" tabindex="-1"></a>  <span class="at">p1 =</span> <span class="fu">rnorm</span>(n),</span>
-<span id="cb1-7"><a href="#cb1-7" aria-hidden="true" tabindex="-1"></a>  <span class="at">p2 =</span> <span class="fu">rnorm</span>(n),</span>
-<span id="cb1-8"><a href="#cb1-8" aria-hidden="true" tabindex="-1"></a>  <span class="at">y =</span> p1 <span class="sc">+</span> p2 <span class="sc">+</span> <span class="fu">rnorm</span>(n)</span>
-<span id="cb1-9"><a href="#cb1-9" aria-hidden="true" tabindex="-1"></a>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<span id="cb1-2"><a href="#cb1-2" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb1-3"><a href="#cb1-3" aria-hidden="true" tabindex="-1"></a>n <span class="ot">&lt;-</span> <span class="dv">1000000</span></span>
+<span id="cb1-4"><a href="#cb1-4" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb1-5"><a href="#cb1-5" aria-hidden="true" tabindex="-1"></a><span class="fu">set.seed</span>(<span class="dv">1</span>)</span>
+<span id="cb1-6"><a href="#cb1-6" aria-hidden="true" tabindex="-1"></a>data <span class="ot">&lt;-</span> <span class="fu">tibble</span>(</span>
+<span id="cb1-7"><a href="#cb1-7" aria-hidden="true" tabindex="-1"></a>  <span class="at">x =</span> <span class="fu">rnorm</span>(n),</span>
+<span id="cb1-8"><a href="#cb1-8" aria-hidden="true" tabindex="-1"></a>  <span class="at">c =</span> <span class="fu">rnorm</span>(n),</span>
+<span id="cb1-9"><a href="#cb1-9" aria-hidden="true" tabindex="-1"></a>  <span class="at">y =</span> x <span class="sc">+</span> <span class="fu">rnorm</span>(n)</span>
+<span id="cb1-10"><a href="#cb1-10" aria-hidden="true" tabindex="-1"></a>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </div>
-<p>Let’s say we have some data that is not missing at random. The probability that <code>p1</code> is missing is dependent both on it’s own value (MNAR!) and the value of <code>p2</code>.</p>
+<p>Let’s force <code>x</code> to be missing under three scenarios:</p>
+<ul>
+<li>Missing completely at random</li>
+<li>Missing conditionally at random (based on <code>c</code>)</li>
+<li>Missing not at random</li>
+</ul>
 <div class="cell">
 <div class="sourceCode cell-code" id="cb2"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb2-1"><a href="#cb2-1" aria-hidden="true" tabindex="-1"></a>data <span class="ot">&lt;-</span> data <span class="sc">|&gt;</span></span>
-<span id="cb2-2"><a href="#cb2-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">mutate</span>(<span class="at">p1_obs =</span>  <span class="fu">ifelse</span>(</span>
-<span id="cb2-3"><a href="#cb2-3" aria-hidden="true" tabindex="-1"></a>    <span class="fu">rbinom</span>(n, <span class="dv">1</span>, <span class="dv">1</span> <span class="sc">/</span> (<span class="dv">1</span> <span class="sc">+</span> <span class="fu">exp</span>(<span class="sc">-</span>(p1 <span class="sc">+</span> p2)))),</span>
-<span id="cb2-4"><a href="#cb2-4" aria-hidden="true" tabindex="-1"></a>    <span class="cn">NA</span>,</span>
-<span id="cb2-5"><a href="#cb2-5" aria-hidden="true" tabindex="-1"></a>    p1</span>
-<span id="cb2-6"><a href="#cb2-6" aria-hidden="true" tabindex="-1"></a>  )</span>
-<span id="cb2-7"><a href="#cb2-7" aria-hidden="true" tabindex="-1"></a>  )</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<span id="cb2-2"><a href="#cb2-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">mutate</span>(</span>
+<span id="cb2-3"><a href="#cb2-3" aria-hidden="true" tabindex="-1"></a>    <span class="at">x_obs_mcar =</span> <span class="fu">ifelse</span>(</span>
+<span id="cb2-4"><a href="#cb2-4" aria-hidden="true" tabindex="-1"></a>      <span class="fu">rbinom</span>(n, <span class="dv">1</span>, <span class="fl">0.5</span>), </span>
+<span id="cb2-5"><a href="#cb2-5" aria-hidden="true" tabindex="-1"></a>      <span class="cn">NA</span>, </span>
+<span id="cb2-6"><a href="#cb2-6" aria-hidden="true" tabindex="-1"></a>      x</span>
+<span id="cb2-7"><a href="#cb2-7" aria-hidden="true" tabindex="-1"></a>    ),</span>
+<span id="cb2-8"><a href="#cb2-8" aria-hidden="true" tabindex="-1"></a>    <span class="at">x_obs_mar =</span> <span class="fu">ifelse</span>(</span>
+<span id="cb2-9"><a href="#cb2-9" aria-hidden="true" tabindex="-1"></a>      <span class="fu">rbinom</span>(n, <span class="dv">1</span>, <span class="dv">1</span> <span class="sc">/</span> (<span class="dv">1</span> <span class="sc">+</span> <span class="fu">exp</span>(<span class="sc">-</span>c))),</span>
+<span id="cb2-10"><a href="#cb2-10" aria-hidden="true" tabindex="-1"></a>      <span class="cn">NA</span>,</span>
+<span id="cb2-11"><a href="#cb2-11" aria-hidden="true" tabindex="-1"></a>      x</span>
+<span id="cb2-12"><a href="#cb2-12" aria-hidden="true" tabindex="-1"></a>    ),</span>
+<span id="cb2-13"><a href="#cb2-13" aria-hidden="true" tabindex="-1"></a>    <span class="at">x_obs_mnar =</span> <span class="fu">ifelse</span>(</span>
+<span id="cb2-14"><a href="#cb2-14" aria-hidden="true" tabindex="-1"></a>      <span class="fu">rbinom</span>(n, <span class="dv">1</span>, <span class="dv">1</span> <span class="sc">/</span> (<span class="dv">1</span> <span class="sc">+</span> <span class="fu">exp</span>(<span class="sc">-</span>x))),</span>
+<span id="cb2-15"><a href="#cb2-15" aria-hidden="true" tabindex="-1"></a>      <span class="cn">NA</span>,</span>
+<span id="cb2-16"><a href="#cb2-16" aria-hidden="true" tabindex="-1"></a>      x</span>
+<span id="cb2-17"><a href="#cb2-17" aria-hidden="true" tabindex="-1"></a>    )</span>
+<span id="cb2-18"><a href="#cb2-18" aria-hidden="true" tabindex="-1"></a>  )</span>
+<span id="cb2-19"><a href="#cb2-19" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb2-20"><a href="#cb2-20" aria-hidden="true" tabindex="-1"></a>data <span class="sc">|&gt;</span></span>
+<span id="cb2-21"><a href="#cb2-21" aria-hidden="true" tabindex="-1"></a>  <span class="fu">summarise</span>(<span class="at">mcar_miss =</span> <span class="fu">mean</span>(<span class="fu">is.na</span>(x_obs_mcar)),</span>
+<span id="cb2-22"><a href="#cb2-22" aria-hidden="true" tabindex="-1"></a>        <span class="at">mar_miss =</span> <span class="fu">mean</span>(<span class="fu">is.na</span>(x_obs_mar)),</span>
+<span id="cb2-23"><a href="#cb2-23" aria-hidden="true" tabindex="-1"></a>        <span class="at">mnar_miss =</span> <span class="fu">mean</span>(<span class="fu">is.na</span>(x_obs_mnar)))</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code># A tibble: 1 × 3
+  mcar_miss mar_miss mnar_miss
+      &lt;dbl&gt;    &lt;dbl&gt;     &lt;dbl&gt;
+1     0.501    0.500     0.501</code></pre>
 </div>
-<p>This results in missing ~ 50% of the values for <code>p1</code>:</p>
+</div>
+<p>In all three cases ~50% of the data are missing.</p>
+<p>Let’s see how these impact the ability to predict <code>y</code> (and the estimation of <span class="math inline">\(\hat\beta\)</span>)</p>
 <div class="cell">
-<div class="sourceCode cell-code" id="cb3"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb3-1"><a href="#cb3-1" aria-hidden="true" tabindex="-1"></a>data <span class="sc">|&gt;</span></span>
-<span id="cb3-2"><a href="#cb3-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">count</span>(<span class="at">miss_p1 =</span> <span class="fu">is.na</span>(p1_obs))</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode cell-code" id="cb4"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb4-1"><a href="#cb4-1" aria-hidden="true" tabindex="-1"></a><span class="fu">lm</span>(y <span class="sc">~</span> x_obs_mcar, <span class="at">data =</span> data)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>
+Call:
+lm(formula = y ~ x_obs_mcar, data = data)
+
+Coefficients:
+(Intercept)   x_obs_mcar  
+   -0.00104      0.99964  </code></pre>
+</div>
+</div>
+<p>Ok, the missing completely at random <code>x</code> is estimated correctly when we do a complete cases analysis (that is when we list-wise delete every row that has missing data). This checks out!</p>
+<p>Let’s check out the missing conditionally at random <code>x</code>. Note that this is missing at random after conditioning on <code>c</code> (although we aren’t actually doing anything with <code>c</code> at this point, so it might as well be missing not at random…)</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb6"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb6-1"><a href="#cb6-1" aria-hidden="true" tabindex="-1"></a><span class="fu">lm</span>(y <span class="sc">~</span> x_obs_mar, <span class="at">data =</span> data)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>
+Call:
+lm(formula = y ~ x_obs_mar, data = data)
+
+Coefficients:
+(Intercept)    x_obs_mar  
+  -0.000482     0.999835  </code></pre>
+</div>
+</div>
+<p>Whoa! Prediction is still correct and the coefficients themselves are still unbiased even if we do complete case analysis.</p>
+<p>Ok, what about missing not at random?</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb8"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb8-1"><a href="#cb8-1" aria-hidden="true" tabindex="-1"></a><span class="fu">lm</span>(y <span class="sc">~</span> x_obs_mnar, <span class="at">data =</span> data)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>
+Call:
+lm(formula = y ~ x_obs_mnar, data = data)
+
+Coefficients:
+(Intercept)   x_obs_mnar  
+  -7.23e-05     9.99e-01  </code></pre>
+</div>
+</div>
+<p>Still ok! No bias in the coefficients and the predicted values are unbiased even though the predictor was missing <strong>not</strong> at random (and we did a complete cases analysis).</p>
+<p>Why is this the case? Travis Gerke pointed out <a href="https://researchonline.lshtm.ac.uk/id/eprint/1198/1/research_online_1198.pdf">this excellent paper</a> that has a beautiful plot that demonstrates why this happens. I am going to simulate some smaller data than what I have above to demonstrate the point. Here, the missingess is deterministic (and definitely not random!) – if <code>x</code> is greater than 0, it is missing, otherwise it isn’t. Again, this renders ~50% of our data missing.</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb10"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb10-1"><a href="#cb10-1" aria-hidden="true" tabindex="-1"></a>data <span class="ot">&lt;-</span> <span class="fu">tibble</span>(</span>
+<span id="cb10-2"><a href="#cb10-2" aria-hidden="true" tabindex="-1"></a>  <span class="at">x =</span> <span class="fu">seq</span>(<span class="sc">-</span><span class="dv">3</span>, <span class="dv">3</span>, <span class="at">by =</span> <span class="fl">0.1</span>),</span>
+<span id="cb10-3"><a href="#cb10-3" aria-hidden="true" tabindex="-1"></a>  <span class="at">y =</span> x <span class="sc">+</span> <span class="fu">rnorm</span>(<span class="dv">61</span>),</span>
+<span id="cb10-4"><a href="#cb10-4" aria-hidden="true" tabindex="-1"></a>  <span class="at">x_miss =</span> <span class="fu">ifelse</span>(x <span class="sc">&gt;</span> <span class="dv">0</span>, <span class="st">"yes"</span>, <span class="st">"no"</span>)</span>
+<span id="cb10-5"><a href="#cb10-5" aria-hidden="true" tabindex="-1"></a>)</span>
+<span id="cb10-6"><a href="#cb10-6" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb10-7"><a href="#cb10-7" aria-hidden="true" tabindex="-1"></a><span class="fu">ggplot</span>(data, <span class="fu">aes</span>(<span class="at">x =</span> x, <span class="at">y =</span> y, <span class="at">color =</span> x_miss)) <span class="sc">+</span></span>
+<span id="cb10-8"><a href="#cb10-8" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_point</span>() <span class="sc">+</span> </span>
+<span id="cb10-9"><a href="#cb10-9" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_line</span>(<span class="fu">aes</span>(<span class="at">x =</span> x, <span class="at">y =</span> <span class="fu">predict</span>(<span class="fu">lm</span>(y <span class="sc">~</span> x, <span class="at">data =</span> data)))) <span class="sc">+</span></span>
+<span id="cb10-10"><a href="#cb10-10" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_vline</span>(<span class="at">xintercept =</span> <span class="dv">0</span>, <span class="at">lty =</span> <span class="dv">2</span>) <span class="sc">+</span> </span>
+<span id="cb10-11"><a href="#cb10-11" aria-hidden="true" tabindex="-1"></a>  <span class="fu">scale_color_manual</span>(<span class="at">values =</span> <span class="fu">c</span>(<span class="st">"cornflowerblue"</span>, <span class="st">"orange"</span>)) <span class="sc">+</span></span>
+<span id="cb10-12"><a href="#cb10-12" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_label</span>(<span class="fu">aes</span>(<span class="at">x =</span> <span class="sc">-</span><span class="dv">2</span>, <span class="at">y =</span> <span class="dv">3</span>), <span class="at">label =</span> <span class="st">"observed data"</span>, <span class="at">color =</span> <span class="st">"cornflowerblue"</span>) <span class="sc">+</span> </span>
+<span id="cb10-13"><a href="#cb10-13" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_label</span>(<span class="fu">aes</span>(<span class="at">x =</span> <span class="dv">2</span>, <span class="at">y =</span> <span class="sc">-</span><span class="dv">3</span>), <span class="at">label =</span> <span class="st">"missing data"</span>) <span class="sc">+</span> </span>
+<span id="cb10-14"><a href="#cb10-14" aria-hidden="true" tabindex="-1"></a>  <span class="fu">theme_minimal</span>() <span class="sc">+</span></span>
+<span id="cb10-15"><a href="#cb10-15" aria-hidden="true" tabindex="-1"></a>  <span class="fu">theme</span>(<span class="at">legend.position =</span> <span class="st">"none"</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output-display">
+<p><img src="index_files/figure-html/unnamed-chunk-7-1.png" class="img-fluid" width="672"></p>
+</div>
+</div>
+<p>Maybe this result is a somewhat obvious result because despite the fact that the missingness was not at random, it had nothing to do with the outcome, <code>y</code>, let’s see what would happen if <code>c</code> was related to <code>y</code>.</p>
+</section>
+<section id="scenario-2-i-have-missing-data-that-is-missing-due-to-some-factor-and-other-things-so-still-not-mar" class="level2">
+<h2 class="anchored" data-anchor-id="scenario-2-i-have-missing-data-that-is-missing-due-to-some-factor-and-other-things-so-still-not-mar">Scenario 2: I have missing data that is missing due to some factor (and other things, so still not MAR)</h2>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb11"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb11-1"><a href="#cb11-1" aria-hidden="true" tabindex="-1"></a><span class="fu">set.seed</span>(<span class="dv">1</span>)</span>
+<span id="cb11-2"><a href="#cb11-2" aria-hidden="true" tabindex="-1"></a>data <span class="ot">&lt;-</span> <span class="fu">tibble</span>(</span>
+<span id="cb11-3"><a href="#cb11-3" aria-hidden="true" tabindex="-1"></a>  <span class="at">x =</span> <span class="fu">rnorm</span>(n),</span>
+<span id="cb11-4"><a href="#cb11-4" aria-hidden="true" tabindex="-1"></a>  <span class="at">c =</span> <span class="fu">rnorm</span>(n),</span>
+<span id="cb11-5"><a href="#cb11-5" aria-hidden="true" tabindex="-1"></a>  <span class="at">y =</span> x <span class="sc">+</span> c <span class="sc">+</span> <span class="fu">rnorm</span>(n)</span>
+<span id="cb11-6"><a href="#cb11-6" aria-hidden="true" tabindex="-1"></a>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+<p>Let’s say we have some data that is not missing at random. The probability that <code>x</code> is missing is dependent both on it’s own value (MNAR!) and the value of <code>c</code>.</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb12"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb12-1"><a href="#cb12-1" aria-hidden="true" tabindex="-1"></a>data <span class="ot">&lt;-</span> data <span class="sc">|&gt;</span></span>
+<span id="cb12-2"><a href="#cb12-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">mutate</span>(<span class="at">x_obs =</span>  <span class="fu">ifelse</span>(</span>
+<span id="cb12-3"><a href="#cb12-3" aria-hidden="true" tabindex="-1"></a>    <span class="fu">rbinom</span>(n, <span class="dv">1</span>, <span class="dv">1</span> <span class="sc">/</span> (<span class="dv">1</span> <span class="sc">+</span> <span class="fu">exp</span>(<span class="sc">-</span>(x <span class="sc">+</span> c)))),</span>
+<span id="cb12-4"><a href="#cb12-4" aria-hidden="true" tabindex="-1"></a>    <span class="cn">NA</span>,</span>
+<span id="cb12-5"><a href="#cb12-5" aria-hidden="true" tabindex="-1"></a>    x</span>
+<span id="cb12-6"><a href="#cb12-6" aria-hidden="true" tabindex="-1"></a>  )</span>
+<span id="cb12-7"><a href="#cb12-7" aria-hidden="true" tabindex="-1"></a>  )</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+<p>This results in missing ~ 50% of the values for <code>x</code>:</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb13"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb13-1"><a href="#cb13-1" aria-hidden="true" tabindex="-1"></a>data <span class="sc">|&gt;</span></span>
+<span id="cb13-2"><a href="#cb13-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">count</span>(<span class="at">miss_x =</span> <span class="fu">is.na</span>(x_obs))</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output cell-output-stdout">
 <pre><code># A tibble: 2 × 2
-  miss_p1     n
+  miss_x      n
   &lt;lgl&gt;   &lt;int&gt;
-1 FALSE    5096
-2 TRUE     4904</code></pre>
+1 FALSE  499277
+2 TRUE   500723</code></pre>
 </div>
 </div>
 <p>So what happens if we try to predict <code>y</code>? Let’s try it first with the full data as a benchmark:</p>
 <div class="cell">
-<div class="sourceCode cell-code" id="cb5"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb5-1"><a href="#cb5-1" aria-hidden="true" tabindex="-1"></a>right_mod <span class="ot">&lt;-</span> <span class="fu">lm</span>(y <span class="sc">~</span> p1 <span class="sc">+</span> p2, <span class="at">data =</span> data)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode cell-code" id="cb15"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb15-1"><a href="#cb15-1" aria-hidden="true" tabindex="-1"></a>right_mod <span class="ot">&lt;-</span> <span class="fu">lm</span>(y <span class="sc">~</span> x <span class="sc">+</span> c, <span class="at">data =</span> data)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </div>
 <div class="cell">
-<div class="sourceCode cell-code" id="cb6"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb6-1"><a href="#cb6-1" aria-hidden="true" tabindex="-1"></a>right_mod</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode cell-code" id="cb16"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb16-1"><a href="#cb16-1" aria-hidden="true" tabindex="-1"></a>right_mod</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output cell-output-stdout">
 <pre><code>
 Call:
-lm(formula = y ~ p1 + p2, data = data)
+lm(formula = y ~ x + c, data = data)
 
 Coefficients:
-(Intercept)           p1           p2  
-   0.007554     0.999265     1.000934  </code></pre>
+(Intercept)            x            c  
+  -0.000162     1.000106     0.999592  </code></pre>
 </div>
 </div>
 <p>Beautiful. we get the correct <span class="math inline">\(\hat\beta\)</span> estimates (and thus the correct predictions for <code>y</code>).</p>
 <p>Now let’s take a look at the complete case analysis:</p>
 <div class="cell">
-<div class="sourceCode cell-code" id="cb8"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb8-1"><a href="#cb8-1" aria-hidden="true" tabindex="-1"></a>data_cc <span class="ot">&lt;-</span> <span class="fu">na.omit</span>(data)</span>
-<span id="cb8-2"><a href="#cb8-2" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb8-3"><a href="#cb8-3" aria-hidden="true" tabindex="-1"></a>cc_mod <span class="ot">&lt;-</span> <span class="fu">lm</span>(y <span class="sc">~</span> p1 <span class="sc">+</span> p2, <span class="at">data =</span> data_cc)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode cell-code" id="cb18"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb18-1"><a href="#cb18-1" aria-hidden="true" tabindex="-1"></a>data_cc <span class="ot">&lt;-</span> <span class="fu">na.omit</span>(data)</span>
+<span id="cb18-2"><a href="#cb18-2" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb18-3"><a href="#cb18-3" aria-hidden="true" tabindex="-1"></a>cc_mod <span class="ot">&lt;-</span> <span class="fu">lm</span>(y <span class="sc">~</span> x <span class="sc">+</span> c, <span class="at">data =</span> data_cc)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </div>
 <div class="cell">
-<div class="sourceCode cell-code" id="cb9"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb9-1"><a href="#cb9-1" aria-hidden="true" tabindex="-1"></a>cc_mod</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode cell-code" id="cb19"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb19-1"><a href="#cb19-1" aria-hidden="true" tabindex="-1"></a>cc_mod</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output cell-output-stdout">
 <pre><code>
 Call:
-lm(formula = y ~ p1 + p2, data = data_cc)
+lm(formula = y ~ x + c, data = data_cc)
 
 Coefficients:
-(Intercept)           p1           p2  
-    0.01125      1.00717      1.00153  </code></pre>
+(Intercept)            x            c  
+    0.00128      1.00032      1.00156  </code></pre>
 </div>
 </div>
-<p>Would you look at that. Correct coefficients! How could we break that? If we misspecified the model, for example if we didn’t adjust for <code>p2</code>:</p>
+<p>Would you look at that. Correct coefficients! How could we break that? If we misspecified the model, for example if we didn’t adjust for <code>c</code>:</p>
 <div class="cell">
-<div class="sourceCode cell-code" id="cb11"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb11-1"><a href="#cb11-1" aria-hidden="true" tabindex="-1"></a><span class="fu">lm</span>(y <span class="sc">~</span> p1, <span class="at">data =</span> data_cc)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
-<div class="cell-output cell-output-stdout">
-<pre><code>
-Call:
-lm(formula = y ~ p1, data = data_cc)
-
-Coefficients:
-(Intercept)           p1  
-    -0.3906       0.8754  </code></pre>
-</div>
-</div>
-<p>But is this a terribly interesting case? If we didn’t have <code>p2</code>, then we couldn’t impute based on it anyways, so we would be in trouble imputation or not!</p>
-</section>
-<section id="scenario-2-what-about-inference" class="level2">
-<h2 class="anchored" data-anchor-id="scenario-2-what-about-inference">Scenario 2: What about inference?</h2>
-<p>This is the same as above, but I found it helpful to frame as an inference question. What if I have some treatment, <code>x</code> that is randomly assigned, but is missing based on some factor <code>c</code> that is related to my outcome of interest, <code>y</code>.</p>
-<div class="cell">
-<div class="sourceCode cell-code" id="cb13"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb13-1"><a href="#cb13-1" aria-hidden="true" tabindex="-1"></a><span class="fu">set.seed</span>(<span class="dv">1</span>)</span>
-<span id="cb13-2"><a href="#cb13-2" aria-hidden="true" tabindex="-1"></a>data <span class="ot">&lt;-</span> <span class="fu">tibble</span>(</span>
-<span id="cb13-3"><a href="#cb13-3" aria-hidden="true" tabindex="-1"></a>  <span class="at">x =</span> <span class="fu">rbinom</span>(n, <span class="dv">1</span>, <span class="fl">0.5</span>), <span class="co"># randomly assigned exposure</span></span>
-<span id="cb13-4"><a href="#cb13-4" aria-hidden="true" tabindex="-1"></a>  <span class="at">c =</span> <span class="fu">rnorm</span>(n), <span class="co"># problem variable</span></span>
-<span id="cb13-5"><a href="#cb13-5" aria-hidden="true" tabindex="-1"></a>  <span class="at">y =</span> x <span class="sc">+</span> c <span class="sc">+</span> <span class="fu">rnorm</span>(n), <span class="co"># true treatment effect is 1</span></span>
-<span id="cb13-6"><a href="#cb13-6" aria-hidden="true" tabindex="-1"></a>  <span class="at">x_obs =</span> <span class="fu">ifelse</span>(<span class="fu">rbinom</span>(n, <span class="dv">1</span>, <span class="dv">1</span> <span class="sc">/</span> (<span class="dv">1</span> <span class="sc">+</span> <span class="fu">exp</span>(<span class="sc">-</span>(x <span class="sc">+</span> c)))),</span>
-<span id="cb13-7"><a href="#cb13-7" aria-hidden="true" tabindex="-1"></a>                 <span class="cn">NA</span>, x) <span class="co"># missing based on x and c</span></span>
-<span id="cb13-8"><a href="#cb13-8" aria-hidden="true" tabindex="-1"></a>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
-</div>
-<p>First of all, in the absense of any missing data we don’t actually need to adjust for c in order to get an unbiased estimate for <code>x</code> because <code>c</code> is not a confounder (yay!).</p>
-<div class="cell">
-<div class="sourceCode cell-code" id="cb14"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb14-1"><a href="#cb14-1" aria-hidden="true" tabindex="-1"></a><span class="fu">lm</span>(y <span class="sc">~</span> x, <span class="at">data =</span> data)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
-<div class="cell-output cell-output-stdout">
-<pre><code>
-Call:
-lm(formula = y ~ x, data = data)
-
-Coefficients:
-(Intercept)            x  
-  -0.001263     1.010504  </code></pre>
-</div>
-</div>
-<p>BUT! With missing data, we <em>do</em> have a problem:</p>
-<div class="cell">
-<div class="sourceCode cell-code" id="cb16"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb16-1"><a href="#cb16-1" aria-hidden="true" tabindex="-1"></a>data_cc <span class="ot">&lt;-</span> <span class="fu">na.omit</span>(data)</span>
-<span id="cb16-2"><a href="#cb16-2" aria-hidden="true" tabindex="-1"></a><span class="fu">lm</span>(y <span class="sc">~</span> x, <span class="at">data =</span> data_cc)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode cell-code" id="cb21"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb21-1"><a href="#cb21-1" aria-hidden="true" tabindex="-1"></a><span class="fu">lm</span>(y <span class="sc">~</span> x, <span class="at">data =</span> data_cc)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output cell-output-stdout">
 <pre><code>
 Call:
@@ -516,12 +591,54 @@ lm(formula = y ~ x, data = data_cc)
 
 Coefficients:
 (Intercept)            x  
-     -0.415        0.899  </code></pre>
+     -0.419        0.849  </code></pre>
+</div>
+</div>
+<p>But is this a terribly interesting case? If we didn’t have <code>c</code>, then we couldn’t impute based on it anyways, so we would be in trouble imputation or not!</p>
+</section>
+<section id="scenario-3-what-about-inference" class="level2">
+<h2 class="anchored" data-anchor-id="scenario-3-what-about-inference">Scenario 3: What about inference?</h2>
+<p>This is the same as above, but I found it helpful to frame as an inference question. What if I have some treatment, <code>x</code> that is randomly assigned, but is missing based on some factor <code>c</code> that is related to my outcome of interest, <code>y</code>.</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb23"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb23-1"><a href="#cb23-1" aria-hidden="true" tabindex="-1"></a><span class="fu">set.seed</span>(<span class="dv">1</span>)</span>
+<span id="cb23-2"><a href="#cb23-2" aria-hidden="true" tabindex="-1"></a>data <span class="ot">&lt;-</span> <span class="fu">tibble</span>(</span>
+<span id="cb23-3"><a href="#cb23-3" aria-hidden="true" tabindex="-1"></a>  <span class="at">x =</span> <span class="fu">rbinom</span>(n, <span class="dv">1</span>, <span class="fl">0.5</span>), <span class="co"># randomly assigned exposure</span></span>
+<span id="cb23-4"><a href="#cb23-4" aria-hidden="true" tabindex="-1"></a>  <span class="at">c =</span> <span class="fu">rnorm</span>(n), <span class="co"># problem variable</span></span>
+<span id="cb23-5"><a href="#cb23-5" aria-hidden="true" tabindex="-1"></a>  <span class="at">y =</span> x <span class="sc">+</span> c <span class="sc">+</span> <span class="fu">rnorm</span>(n), <span class="co"># true treatment effect is 1</span></span>
+<span id="cb23-6"><a href="#cb23-6" aria-hidden="true" tabindex="-1"></a>  <span class="at">x_obs =</span> <span class="fu">ifelse</span>(<span class="fu">rbinom</span>(n, <span class="dv">1</span>, <span class="dv">1</span> <span class="sc">/</span> (<span class="dv">1</span> <span class="sc">+</span> <span class="fu">exp</span>(<span class="sc">-</span>(x <span class="sc">+</span> c)))),</span>
+<span id="cb23-7"><a href="#cb23-7" aria-hidden="true" tabindex="-1"></a>                 <span class="cn">NA</span>, x) <span class="co"># missing based on x and c</span></span>
+<span id="cb23-8"><a href="#cb23-8" aria-hidden="true" tabindex="-1"></a>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+<p>First of all, in the absense of any missing data we don’t actually need to adjust for c in order to get an unbiased estimate for <code>x</code> because <code>c</code> is not a confounder (yay!).</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb24"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb24-1"><a href="#cb24-1" aria-hidden="true" tabindex="-1"></a><span class="fu">lm</span>(y <span class="sc">~</span> x, <span class="at">data =</span> data)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>
+Call:
+lm(formula = y ~ x, data = data)
+
+Coefficients:
+(Intercept)            x  
+   0.000368     0.998409  </code></pre>
+</div>
+</div>
+<p>BUT! With missing data, we <em>do</em> have a problem:</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb26"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb26-1"><a href="#cb26-1" aria-hidden="true" tabindex="-1"></a>data_cc <span class="ot">&lt;-</span> <span class="fu">na.omit</span>(data)</span>
+<span id="cb26-2"><a href="#cb26-2" aria-hidden="true" tabindex="-1"></a><span class="fu">lm</span>(y <span class="sc">~</span> x, <span class="at">data =</span> data_cc)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>
+Call:
+lm(formula = y ~ x, data = data_cc)
+
+Coefficients:
+(Intercept)            x  
+     -0.413        0.825  </code></pre>
 </div>
 </div>
 <p>Oops! Now we are seeing an effect of 0.9 when the true effect of the exposure is 1 (because we did a bad thing and just deleted all the missing rows). In the past, this is where I would say <em>and therefore you should do imputation!</em> BUT instead, just adjust for <code>c</code>, that is correctly specify your outcome model and all will be well:</p>
 <div class="cell">
-<div class="sourceCode cell-code" id="cb18"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb18-1"><a href="#cb18-1" aria-hidden="true" tabindex="-1"></a><span class="fu">lm</span>(y <span class="sc">~</span> x <span class="sc">+</span> c, <span class="at">data =</span> data_cc)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode cell-code" id="cb28"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb28-1"><a href="#cb28-1" aria-hidden="true" tabindex="-1"></a><span class="fu">lm</span>(y <span class="sc">~</span> x <span class="sc">+</span> c, <span class="at">data =</span> data_cc)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output cell-output-stdout">
 <pre><code>
 Call:
@@ -529,25 +646,25 @@ lm(formula = y ~ x + c, data = data_cc)
 
 Coefficients:
 (Intercept)            x            c  
- -0.0001951    1.0319999    1.0004308  </code></pre>
+   -0.00149      1.00241      1.00161  </code></pre>
 </div>
 </div>
 <section id="what-if-there-is-treatment-heterogeneity" class="level3">
 <h3 class="anchored" data-anchor-id="what-if-there-is-treatment-heterogeneity">What if there is treatment heterogeneity?</h3>
 <div class="cell">
-<div class="sourceCode cell-code" id="cb20"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb20-1"><a href="#cb20-1" aria-hidden="true" tabindex="-1"></a><span class="fu">set.seed</span>(<span class="dv">1</span>)</span>
-<span id="cb20-2"><a href="#cb20-2" aria-hidden="true" tabindex="-1"></a>data <span class="ot">&lt;-</span> <span class="fu">tibble</span>(</span>
-<span id="cb20-3"><a href="#cb20-3" aria-hidden="true" tabindex="-1"></a>  <span class="at">x =</span> <span class="fu">rbinom</span>(n, <span class="dv">1</span>, <span class="fl">0.5</span>), <span class="co"># randomly assigned exposure</span></span>
-<span id="cb20-4"><a href="#cb20-4" aria-hidden="true" tabindex="-1"></a>  <span class="at">c =</span> <span class="fu">rnorm</span>(n), <span class="co"># problem variable</span></span>
-<span id="cb20-5"><a href="#cb20-5" aria-hidden="true" tabindex="-1"></a>  <span class="at">y =</span> x <span class="sc">+</span> c <span class="sc">+</span> x <span class="sc">*</span> c <span class="sc">+</span> <span class="fu">rnorm</span>(n), <span class="co"># true treatment effect varies by c</span></span>
-<span id="cb20-6"><a href="#cb20-6" aria-hidden="true" tabindex="-1"></a>  <span class="at">x_obs =</span> <span class="fu">ifelse</span>(<span class="fu">rbinom</span>(n, <span class="dv">1</span>, <span class="dv">1</span> <span class="sc">/</span> (<span class="dv">1</span> <span class="sc">+</span> <span class="fu">exp</span>(<span class="sc">-</span>(x <span class="sc">+</span> c)))),</span>
-<span id="cb20-7"><a href="#cb20-7" aria-hidden="true" tabindex="-1"></a>                 <span class="cn">NA</span>, x) <span class="co"># missing based on x and c</span></span>
-<span id="cb20-8"><a href="#cb20-8" aria-hidden="true" tabindex="-1"></a>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode cell-code" id="cb30"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb30-1"><a href="#cb30-1" aria-hidden="true" tabindex="-1"></a><span class="fu">set.seed</span>(<span class="dv">1</span>)</span>
+<span id="cb30-2"><a href="#cb30-2" aria-hidden="true" tabindex="-1"></a>data <span class="ot">&lt;-</span> <span class="fu">tibble</span>(</span>
+<span id="cb30-3"><a href="#cb30-3" aria-hidden="true" tabindex="-1"></a>  <span class="at">x =</span> <span class="fu">rbinom</span>(n, <span class="dv">1</span>, <span class="fl">0.5</span>), <span class="co"># randomly assigned exposure</span></span>
+<span id="cb30-4"><a href="#cb30-4" aria-hidden="true" tabindex="-1"></a>  <span class="at">c =</span> <span class="fu">rnorm</span>(n), <span class="co"># problem variable</span></span>
+<span id="cb30-5"><a href="#cb30-5" aria-hidden="true" tabindex="-1"></a>  <span class="at">y =</span> x <span class="sc">+</span> c <span class="sc">+</span> x <span class="sc">*</span> c <span class="sc">+</span> <span class="fu">rnorm</span>(n), <span class="co"># true treatment effect varies by c</span></span>
+<span id="cb30-6"><a href="#cb30-6" aria-hidden="true" tabindex="-1"></a>  <span class="at">x_obs =</span> <span class="fu">ifelse</span>(<span class="fu">rbinom</span>(n, <span class="dv">1</span>, <span class="dv">1</span> <span class="sc">/</span> (<span class="dv">1</span> <span class="sc">+</span> <span class="fu">exp</span>(<span class="sc">-</span>(x <span class="sc">+</span> c)))),</span>
+<span id="cb30-7"><a href="#cb30-7" aria-hidden="true" tabindex="-1"></a>                 <span class="cn">NA</span>, x) <span class="co"># missing based on x and c</span></span>
+<span id="cb30-8"><a href="#cb30-8" aria-hidden="true" tabindex="-1"></a>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </div>
 <p>Complete case analysis is fine as long as the model for the outcome is correctly specified:</p>
 <div class="cell">
-<div class="sourceCode cell-code" id="cb21"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb21-1"><a href="#cb21-1" aria-hidden="true" tabindex="-1"></a>data_cc <span class="ot">&lt;-</span> <span class="fu">na.omit</span>(data)</span>
-<span id="cb21-2"><a href="#cb21-2" aria-hidden="true" tabindex="-1"></a><span class="fu">lm</span>(y <span class="sc">~</span> x <span class="sc">+</span> c <span class="sc">+</span> x<span class="sc">*</span>c, <span class="at">data =</span> data_cc)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode cell-code" id="cb31"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb31-1"><a href="#cb31-1" aria-hidden="true" tabindex="-1"></a>data_cc <span class="ot">&lt;-</span> <span class="fu">na.omit</span>(data)</span>
+<span id="cb31-2"><a href="#cb31-2" aria-hidden="true" tabindex="-1"></a><span class="fu">lm</span>(y <span class="sc">~</span> x <span class="sc">+</span> c <span class="sc">+</span> x<span class="sc">*</span>c, <span class="at">data =</span> data_cc)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output cell-output-stdout">
 <pre><code>
 Call:
@@ -555,7 +672,7 @@ lm(formula = y ~ x + c + x * c, data = data_cc)
 
 Coefficients:
 (Intercept)            x            c          x:c  
-   0.005978     1.012792     1.015319     0.961305  </code></pre>
+   -0.00122      1.00149      1.00228      0.99824  </code></pre>
 </div>
 </div>
 </section>
@@ -563,20 +680,20 @@ Coefficients:
 <h3 class="anchored" data-anchor-id="does-the-outcome-model-have-to-be-perfectly-specified">Does the outcome model have to be perfectly specified?</h3>
 <p>Here I have an additional factor <code>c2</code> that just influences <code>y</code>:</p>
 <div class="cell">
-<div class="sourceCode cell-code" id="cb23"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb23-1"><a href="#cb23-1" aria-hidden="true" tabindex="-1"></a><span class="fu">set.seed</span>(<span class="dv">1</span>)</span>
-<span id="cb23-2"><a href="#cb23-2" aria-hidden="true" tabindex="-1"></a>data <span class="ot">&lt;-</span> <span class="fu">tibble</span>(</span>
-<span id="cb23-3"><a href="#cb23-3" aria-hidden="true" tabindex="-1"></a>  <span class="at">x =</span> <span class="fu">rbinom</span>(n, <span class="dv">1</span>, <span class="fl">0.5</span>), <span class="co"># randomly assigned exposure</span></span>
-<span id="cb23-4"><a href="#cb23-4" aria-hidden="true" tabindex="-1"></a>  <span class="at">c =</span> <span class="fu">rnorm</span>(n), <span class="co"># problem variable</span></span>
-<span id="cb23-5"><a href="#cb23-5" aria-hidden="true" tabindex="-1"></a>  <span class="at">c2 =</span> <span class="fu">rnorm</span>(n), <span class="co"># some other thing that only influences y</span></span>
-<span id="cb23-6"><a href="#cb23-6" aria-hidden="true" tabindex="-1"></a>  <span class="at">y =</span> x <span class="sc">+</span> c <span class="sc">+</span> c2 <span class="sc">+</span> <span class="fu">rnorm</span>(n), <span class="co"># true treatment effect varies by c</span></span>
-<span id="cb23-7"><a href="#cb23-7" aria-hidden="true" tabindex="-1"></a>  <span class="at">x_obs =</span> <span class="fu">ifelse</span>(<span class="fu">rbinom</span>(n, <span class="dv">1</span>, <span class="dv">1</span> <span class="sc">/</span> (<span class="dv">1</span> <span class="sc">+</span> <span class="fu">exp</span>(<span class="sc">-</span>(x <span class="sc">+</span> c)))),</span>
-<span id="cb23-8"><a href="#cb23-8" aria-hidden="true" tabindex="-1"></a>                 <span class="cn">NA</span>, x) <span class="co"># missing based on x and c</span></span>
-<span id="cb23-9"><a href="#cb23-9" aria-hidden="true" tabindex="-1"></a>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode cell-code" id="cb33"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb33-1"><a href="#cb33-1" aria-hidden="true" tabindex="-1"></a><span class="fu">set.seed</span>(<span class="dv">1</span>)</span>
+<span id="cb33-2"><a href="#cb33-2" aria-hidden="true" tabindex="-1"></a>data <span class="ot">&lt;-</span> <span class="fu">tibble</span>(</span>
+<span id="cb33-3"><a href="#cb33-3" aria-hidden="true" tabindex="-1"></a>  <span class="at">x =</span> <span class="fu">rbinom</span>(n, <span class="dv">1</span>, <span class="fl">0.5</span>), <span class="co"># randomly assigned exposure</span></span>
+<span id="cb33-4"><a href="#cb33-4" aria-hidden="true" tabindex="-1"></a>  <span class="at">c =</span> <span class="fu">rnorm</span>(n), <span class="co"># problem variable</span></span>
+<span id="cb33-5"><a href="#cb33-5" aria-hidden="true" tabindex="-1"></a>  <span class="at">c2 =</span> <span class="fu">rnorm</span>(n), <span class="co"># some other thing that only influences y</span></span>
+<span id="cb33-6"><a href="#cb33-6" aria-hidden="true" tabindex="-1"></a>  <span class="at">y =</span> x <span class="sc">+</span> c <span class="sc">+</span> c2 <span class="sc">+</span> <span class="fu">rnorm</span>(n), <span class="co"># true treatment effect varies by c</span></span>
+<span id="cb33-7"><a href="#cb33-7" aria-hidden="true" tabindex="-1"></a>  <span class="at">x_obs =</span> <span class="fu">ifelse</span>(<span class="fu">rbinom</span>(n, <span class="dv">1</span>, <span class="dv">1</span> <span class="sc">/</span> (<span class="dv">1</span> <span class="sc">+</span> <span class="fu">exp</span>(<span class="sc">-</span>(x <span class="sc">+</span> c)))),</span>
+<span id="cb33-8"><a href="#cb33-8" aria-hidden="true" tabindex="-1"></a>                 <span class="cn">NA</span>, x) <span class="co"># missing based on x and c</span></span>
+<span id="cb33-9"><a href="#cb33-9" aria-hidden="true" tabindex="-1"></a>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </div>
 <p>Complete case analysis is fine as long as the model for the outcome has the things that influence both the exposure and outcome (confounders) and the things that influence the missing data mechanism and outcome (in this case just <code>c</code>) if all we care about is the effect of <code>x</code> on <code>y</code>:</p>
 <div class="cell">
-<div class="sourceCode cell-code" id="cb24"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb24-1"><a href="#cb24-1" aria-hidden="true" tabindex="-1"></a>data_cc <span class="ot">&lt;-</span> <span class="fu">na.omit</span>(data)</span>
-<span id="cb24-2"><a href="#cb24-2" aria-hidden="true" tabindex="-1"></a><span class="fu">lm</span>(y <span class="sc">~</span> x <span class="sc">+</span> c, <span class="at">data =</span> data_cc)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode cell-code" id="cb34"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb34-1"><a href="#cb34-1" aria-hidden="true" tabindex="-1"></a>data_cc <span class="ot">&lt;-</span> <span class="fu">na.omit</span>(data)</span>
+<span id="cb34-2"><a href="#cb34-2" aria-hidden="true" tabindex="-1"></a><span class="fu">lm</span>(y <span class="sc">~</span> x <span class="sc">+</span> c, <span class="at">data =</span> data_cc)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output cell-output-stdout">
 <pre><code>
 Call:
@@ -584,75 +701,105 @@ lm(formula = y ~ x + c, data = data_cc)
 
 Coefficients:
 (Intercept)            x            c  
-   0.008923     0.997555     0.975012  </code></pre>
+  -0.000207     1.000115     0.999957  </code></pre>
 </div>
 </div>
 </section>
 </section>
-<section id="scenario-3-what-if-the-outcome-has-some-missing-data" class="level2">
-<h2 class="anchored" data-anchor-id="scenario-3-what-if-the-outcome-has-some-missing-data">Scenario 3: What if the outcome has some missing data?</h2>
+<section id="scenario-4-what-if-the-outcome-has-some-missing-data" class="level2">
+<h2 class="anchored" data-anchor-id="scenario-4-what-if-the-outcome-has-some-missing-data">Scenario 4: What if the outcome has some missing data?</h2>
 <p>Ok this is where things are a bit trickier (and it is not uncommon to find yourself here, for example loss to follow-up!)</p>
 <div class="cell">
-<div class="sourceCode cell-code" id="cb26"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb26-1"><a href="#cb26-1" aria-hidden="true" tabindex="-1"></a>data <span class="ot">&lt;-</span> <span class="fu">tibble</span>(</span>
-<span id="cb26-2"><a href="#cb26-2" aria-hidden="true" tabindex="-1"></a>  <span class="at">p1 =</span> <span class="fu">rnorm</span>(n),</span>
-<span id="cb26-3"><a href="#cb26-3" aria-hidden="true" tabindex="-1"></a>  <span class="at">p2 =</span> <span class="fu">rnorm</span>(n),</span>
-<span id="cb26-4"><a href="#cb26-4" aria-hidden="true" tabindex="-1"></a>  <span class="at">y =</span> p1 <span class="sc">+</span> p2 <span class="sc">+</span> <span class="fu">rnorm</span>(n),</span>
-<span id="cb26-5"><a href="#cb26-5" aria-hidden="true" tabindex="-1"></a>  <span class="at">p1_obs =</span> <span class="fu">ifelse</span>(</span>
-<span id="cb26-6"><a href="#cb26-6" aria-hidden="true" tabindex="-1"></a>    <span class="fu">rbinom</span>(n, <span class="dv">1</span>, <span class="dv">1</span> <span class="sc">/</span> (<span class="dv">1</span> <span class="sc">+</span> <span class="fu">exp</span>(<span class="sc">-</span>(p1 <span class="sc">+</span> p2)))), <span class="co"># p1 is missing not at random (based on value of p1 and p2)</span></span>
-<span id="cb26-7"><a href="#cb26-7" aria-hidden="true" tabindex="-1"></a>    <span class="cn">NA</span>,</span>
-<span id="cb26-8"><a href="#cb26-8" aria-hidden="true" tabindex="-1"></a>    p1</span>
-<span id="cb26-9"><a href="#cb26-9" aria-hidden="true" tabindex="-1"></a>  ),</span>
-<span id="cb26-10"><a href="#cb26-10" aria-hidden="true" tabindex="-1"></a>  <span class="at">y_obs =</span> <span class="fu">ifelse</span>(</span>
-<span id="cb26-11"><a href="#cb26-11" aria-hidden="true" tabindex="-1"></a>    <span class="fu">rbinom</span>(n, <span class="dv">1</span>, <span class="dv">1</span> <span class="sc">/</span> (<span class="dv">1</span> <span class="sc">+</span> <span class="fu">exp</span>(<span class="sc">-</span>(p1 <span class="sc">+</span> p2)))), <span class="co"># y is missing (conditionally) at random</span></span>
-<span id="cb26-12"><a href="#cb26-12" aria-hidden="true" tabindex="-1"></a>    <span class="cn">NA</span>, </span>
-<span id="cb26-13"><a href="#cb26-13" aria-hidden="true" tabindex="-1"></a>    y</span>
-<span id="cb26-14"><a href="#cb26-14" aria-hidden="true" tabindex="-1"></a>  )</span>
-<span id="cb26-15"><a href="#cb26-15" aria-hidden="true" tabindex="-1"></a>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode cell-code" id="cb36"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb36-1"><a href="#cb36-1" aria-hidden="true" tabindex="-1"></a>data <span class="ot">&lt;-</span> <span class="fu">tibble</span>(</span>
+<span id="cb36-2"><a href="#cb36-2" aria-hidden="true" tabindex="-1"></a>  <span class="at">x =</span> <span class="fu">rnorm</span>(n),</span>
+<span id="cb36-3"><a href="#cb36-3" aria-hidden="true" tabindex="-1"></a>  <span class="at">c =</span> <span class="fu">rnorm</span>(n),</span>
+<span id="cb36-4"><a href="#cb36-4" aria-hidden="true" tabindex="-1"></a>  <span class="at">y =</span> x <span class="sc">+</span> c <span class="sc">+</span> <span class="fu">rnorm</span>(n),</span>
+<span id="cb36-5"><a href="#cb36-5" aria-hidden="true" tabindex="-1"></a>  <span class="at">x_obs =</span> <span class="fu">ifelse</span>(</span>
+<span id="cb36-6"><a href="#cb36-6" aria-hidden="true" tabindex="-1"></a>    <span class="fu">rbinom</span>(n, <span class="dv">1</span>, <span class="dv">1</span> <span class="sc">/</span> (<span class="dv">1</span> <span class="sc">+</span> <span class="fu">exp</span>(<span class="sc">-</span>(x <span class="sc">+</span> c)))), <span class="co"># x is missing not at random (based on value of x and c)</span></span>
+<span id="cb36-7"><a href="#cb36-7" aria-hidden="true" tabindex="-1"></a>    <span class="cn">NA</span>,</span>
+<span id="cb36-8"><a href="#cb36-8" aria-hidden="true" tabindex="-1"></a>    x</span>
+<span id="cb36-9"><a href="#cb36-9" aria-hidden="true" tabindex="-1"></a>  ),</span>
+<span id="cb36-10"><a href="#cb36-10" aria-hidden="true" tabindex="-1"></a>  <span class="at">y_obs =</span> <span class="fu">ifelse</span>(</span>
+<span id="cb36-11"><a href="#cb36-11" aria-hidden="true" tabindex="-1"></a>    <span class="fu">rbinom</span>(n, <span class="dv">1</span>, <span class="dv">1</span> <span class="sc">/</span> (<span class="dv">1</span> <span class="sc">+</span> <span class="fu">exp</span>(<span class="sc">-</span>(x <span class="sc">+</span> c)))), <span class="co"># y is missing (conditionally) at random</span></span>
+<span id="cb36-12"><a href="#cb36-12" aria-hidden="true" tabindex="-1"></a>    <span class="cn">NA</span>, </span>
+<span id="cb36-13"><a href="#cb36-13" aria-hidden="true" tabindex="-1"></a>    y</span>
+<span id="cb36-14"><a href="#cb36-14" aria-hidden="true" tabindex="-1"></a>  )</span>
+<span id="cb36-15"><a href="#cb36-15" aria-hidden="true" tabindex="-1"></a>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </div>
 <p>Based on both of these missingness patterns, we are down to ~66% of our data having at least one missing value. AND YET we get unbiased results when we do complete case analysis:</p>
 <div class="cell">
-<div class="sourceCode cell-code" id="cb27"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb27-1"><a href="#cb27-1" aria-hidden="true" tabindex="-1"></a>data_cc <span class="ot">&lt;-</span> <span class="fu">na.omit</span>(data)</span>
-<span id="cb27-2"><a href="#cb27-2" aria-hidden="true" tabindex="-1"></a><span class="fu">lm</span>(y <span class="sc">~</span> p1 <span class="sc">+</span> p2, data_cc)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode cell-code" id="cb37"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb37-1"><a href="#cb37-1" aria-hidden="true" tabindex="-1"></a>data_cc <span class="ot">&lt;-</span> <span class="fu">na.omit</span>(data)</span>
+<span id="cb37-2"><a href="#cb37-2" aria-hidden="true" tabindex="-1"></a><span class="fu">lm</span>(y <span class="sc">~</span> x <span class="sc">+</span> c, data_cc)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output cell-output-stdout">
 <pre><code>
 Call:
-lm(formula = y ~ p1 + p2, data = data_cc)
+lm(formula = y ~ x + c, data = data_cc)
 
 Coefficients:
-(Intercept)           p1           p2  
-    0.01719      1.03793      1.00267  </code></pre>
+(Intercept)            x            c  
+    0.00441      1.00213      1.00114  </code></pre>
 </div>
 </div>
 <p>SO when is it a problem? If you are missing <code>y</code> and <code>y</code> is missing <strong>not at random</strong> then you are in trouble (<em>but, I will note that you would also be in trouble in this case if you wanted to do imputation, so I’m not sure this is really a case for anything other than yet another example of a case where statistics cannot save you from everything!</em>). Let’s look at that:</p>
 <div class="cell">
-<div class="sourceCode cell-code" id="cb29"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb29-1"><a href="#cb29-1" aria-hidden="true" tabindex="-1"></a>data <span class="ot">&lt;-</span> <span class="fu">tibble</span>(</span>
-<span id="cb29-2"><a href="#cb29-2" aria-hidden="true" tabindex="-1"></a>  <span class="at">p1 =</span> <span class="fu">rnorm</span>(n),</span>
-<span id="cb29-3"><a href="#cb29-3" aria-hidden="true" tabindex="-1"></a>  <span class="at">p2 =</span> <span class="fu">rnorm</span>(n),</span>
-<span id="cb29-4"><a href="#cb29-4" aria-hidden="true" tabindex="-1"></a>  <span class="at">y =</span> p1 <span class="sc">+</span> p2 <span class="sc">+</span> <span class="fu">rnorm</span>(n),</span>
-<span id="cb29-5"><a href="#cb29-5" aria-hidden="true" tabindex="-1"></a>  <span class="at">p1_obs =</span> <span class="fu">ifelse</span>(</span>
-<span id="cb29-6"><a href="#cb29-6" aria-hidden="true" tabindex="-1"></a>    <span class="fu">rbinom</span>(n, <span class="dv">1</span>, <span class="dv">1</span> <span class="sc">/</span> (<span class="dv">1</span> <span class="sc">+</span> <span class="fu">exp</span>(<span class="sc">-</span>(p1 <span class="sc">+</span> p2)))), <span class="co"># p1 is missing not at random (based on value of p1 and p2)</span></span>
-<span id="cb29-7"><a href="#cb29-7" aria-hidden="true" tabindex="-1"></a>    <span class="cn">NA</span>,</span>
-<span id="cb29-8"><a href="#cb29-8" aria-hidden="true" tabindex="-1"></a>    p1</span>
-<span id="cb29-9"><a href="#cb29-9" aria-hidden="true" tabindex="-1"></a>  ),</span>
-<span id="cb29-10"><a href="#cb29-10" aria-hidden="true" tabindex="-1"></a>  <span class="at">y_obs =</span> <span class="fu">ifelse</span>(</span>
-<span id="cb29-11"><a href="#cb29-11" aria-hidden="true" tabindex="-1"></a>    <span class="fu">rbinom</span>(n, <span class="dv">1</span>, <span class="dv">1</span> <span class="sc">/</span> (<span class="dv">1</span> <span class="sc">+</span> <span class="fu">exp</span>(<span class="sc">-</span>(p1 <span class="sc">+</span> p2 <span class="sc">+</span> y)))), <span class="co"># y is missing not at random</span></span>
-<span id="cb29-12"><a href="#cb29-12" aria-hidden="true" tabindex="-1"></a>    <span class="cn">NA</span>, </span>
-<span id="cb29-13"><a href="#cb29-13" aria-hidden="true" tabindex="-1"></a>    y</span>
-<span id="cb29-14"><a href="#cb29-14" aria-hidden="true" tabindex="-1"></a>  )</span>
-<span id="cb29-15"><a href="#cb29-15" aria-hidden="true" tabindex="-1"></a>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode cell-code" id="cb39"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb39-1"><a href="#cb39-1" aria-hidden="true" tabindex="-1"></a>data <span class="ot">&lt;-</span> <span class="fu">tibble</span>(</span>
+<span id="cb39-2"><a href="#cb39-2" aria-hidden="true" tabindex="-1"></a>  <span class="at">x =</span> <span class="fu">rnorm</span>(n),</span>
+<span id="cb39-3"><a href="#cb39-3" aria-hidden="true" tabindex="-1"></a>  <span class="at">c =</span> <span class="fu">rnorm</span>(n),</span>
+<span id="cb39-4"><a href="#cb39-4" aria-hidden="true" tabindex="-1"></a>  <span class="at">y =</span> x <span class="sc">+</span> c <span class="sc">+</span> <span class="fu">rnorm</span>(n),</span>
+<span id="cb39-5"><a href="#cb39-5" aria-hidden="true" tabindex="-1"></a>  <span class="at">x_obs =</span> <span class="fu">ifelse</span>(</span>
+<span id="cb39-6"><a href="#cb39-6" aria-hidden="true" tabindex="-1"></a>    <span class="fu">rbinom</span>(n, <span class="dv">1</span>, <span class="dv">1</span> <span class="sc">/</span> (<span class="dv">1</span> <span class="sc">+</span> <span class="fu">exp</span>(<span class="sc">-</span>(x <span class="sc">+</span> c)))), <span class="co"># x is missing not at random (based on value of x and c)</span></span>
+<span id="cb39-7"><a href="#cb39-7" aria-hidden="true" tabindex="-1"></a>    <span class="cn">NA</span>,</span>
+<span id="cb39-8"><a href="#cb39-8" aria-hidden="true" tabindex="-1"></a>    x</span>
+<span id="cb39-9"><a href="#cb39-9" aria-hidden="true" tabindex="-1"></a>  ),</span>
+<span id="cb39-10"><a href="#cb39-10" aria-hidden="true" tabindex="-1"></a>  <span class="at">y_obs =</span> <span class="fu">ifelse</span>(</span>
+<span id="cb39-11"><a href="#cb39-11" aria-hidden="true" tabindex="-1"></a>    <span class="fu">rbinom</span>(n, <span class="dv">1</span>, <span class="dv">1</span> <span class="sc">/</span> (<span class="dv">1</span> <span class="sc">+</span> <span class="fu">exp</span>(<span class="sc">-</span>(x <span class="sc">+</span> c <span class="sc">+</span> y)))), <span class="co"># y is missing not at random</span></span>
+<span id="cb39-12"><a href="#cb39-12" aria-hidden="true" tabindex="-1"></a>    <span class="cn">NA</span>, </span>
+<span id="cb39-13"><a href="#cb39-13" aria-hidden="true" tabindex="-1"></a>    y</span>
+<span id="cb39-14"><a href="#cb39-14" aria-hidden="true" tabindex="-1"></a>  )</span>
+<span id="cb39-15"><a href="#cb39-15" aria-hidden="true" tabindex="-1"></a>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </div>
 <p>Womp womp, here we have a problem, when we do complete case analysis, even with the correctly specified model, we get the wrong answer:</p>
 <div class="cell">
-<div class="sourceCode cell-code" id="cb30"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb30-1"><a href="#cb30-1" aria-hidden="true" tabindex="-1"></a>data_cc <span class="ot">&lt;-</span> <span class="fu">na.omit</span>(data)</span>
-<span id="cb30-2"><a href="#cb30-2" aria-hidden="true" tabindex="-1"></a><span class="fu">lm</span>(y <span class="sc">~</span> p1 <span class="sc">+</span> p2, data_cc)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode cell-code" id="cb40"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb40-1"><a href="#cb40-1" aria-hidden="true" tabindex="-1"></a>data_cc <span class="ot">&lt;-</span> <span class="fu">na.omit</span>(data)</span>
+<span id="cb40-2"><a href="#cb40-2" aria-hidden="true" tabindex="-1"></a><span class="fu">lm</span>(y <span class="sc">~</span> x <span class="sc">+</span> c, data_cc)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output cell-output-stdout">
 <pre><code>
 Call:
-lm(formula = y ~ p1 + p2, data = data_cc)
+lm(formula = y ~ x + c, data = data_cc)
 
 Coefficients:
-(Intercept)           p1           p2  
-    -0.3368       0.8770       0.8747  </code></pre>
+(Intercept)            x            c  
+     -0.352        0.849        0.848  </code></pre>
+</div>
+</div>
+<p>Let’s make another of those cool graphs like they did in that awesome paper explaining missing data in terms of causal inference. Now I am going to make <code>y</code> missing not at random, as opposed to <code>x</code> like above.</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb42"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb42-1"><a href="#cb42-1" aria-hidden="true" tabindex="-1"></a>data <span class="ot">&lt;-</span> <span class="fu">tibble</span>(</span>
+<span id="cb42-2"><a href="#cb42-2" aria-hidden="true" tabindex="-1"></a>  <span class="at">x =</span> <span class="fu">seq</span>(<span class="sc">-</span><span class="dv">3</span>, <span class="dv">3</span>, <span class="at">by =</span> <span class="fl">0.1</span>),</span>
+<span id="cb42-3"><a href="#cb42-3" aria-hidden="true" tabindex="-1"></a>  <span class="at">y =</span> x <span class="sc">+</span> <span class="fu">rnorm</span>(<span class="dv">61</span>),</span>
+<span id="cb42-4"><a href="#cb42-4" aria-hidden="true" tabindex="-1"></a>  <span class="at">y_miss =</span> <span class="fu">ifelse</span>(y <span class="sc">&gt;</span> <span class="dv">0</span>, <span class="st">"yes"</span>, <span class="st">"no"</span>)</span>
+<span id="cb42-5"><a href="#cb42-5" aria-hidden="true" tabindex="-1"></a>)</span>
+<span id="cb42-6"><a href="#cb42-6" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb42-7"><a href="#cb42-7" aria-hidden="true" tabindex="-1"></a>data_cc <span class="ot">&lt;-</span> data[data<span class="sc">$</span>y_miss <span class="sc">==</span> <span class="st">"no"</span>, ]</span>
+<span id="cb42-8"><a href="#cb42-8" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb42-9"><a href="#cb42-9" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(geomtextpath)</span>
+<span id="cb42-10"><a href="#cb42-10" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb42-11"><a href="#cb42-11" aria-hidden="true" tabindex="-1"></a><span class="fu">ggplot</span>(data, <span class="fu">aes</span>(<span class="at">x =</span> x, <span class="at">y =</span> y, <span class="at">color =</span> y_miss)) <span class="sc">+</span></span>
+<span id="cb42-12"><a href="#cb42-12" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_point</span>() <span class="sc">+</span> </span>
+<span id="cb42-13"><a href="#cb42-13" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_textline</span>(<span class="at">color =</span> <span class="st">"black"</span>, </span>
+<span id="cb42-14"><a href="#cb42-14" aria-hidden="true" tabindex="-1"></a>                <span class="fu">aes</span>(<span class="at">x =</span> x, <span class="at">y =</span> <span class="fu">predict</span>(<span class="fu">lm</span>(y <span class="sc">~</span> x, <span class="at">data =</span> data))), </span>
+<span id="cb42-15"><a href="#cb42-15" aria-hidden="true" tabindex="-1"></a>                <span class="at">label =</span> <span class="st">"truth"</span>, <span class="at">hjust =</span> <span class="fl">0.75</span>) <span class="sc">+</span></span>
+<span id="cb42-16"><a href="#cb42-16" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_textline</span>(<span class="at">data =</span> data_cc, </span>
+<span id="cb42-17"><a href="#cb42-17" aria-hidden="true" tabindex="-1"></a>                <span class="fu">aes</span>(<span class="at">x =</span> x, <span class="at">y =</span> <span class="fu">predict</span>(<span class="fu">lm</span>(y <span class="sc">~</span> x, <span class="at">data =</span> data_cc))), </span>
+<span id="cb42-18"><a href="#cb42-18" aria-hidden="true" tabindex="-1"></a>                <span class="at">label =</span> <span class="st">"wrong"</span>) <span class="sc">+</span> </span>
+<span id="cb42-19"><a href="#cb42-19" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_hline</span>(<span class="at">yintercept =</span> <span class="dv">0</span>, <span class="at">lty =</span> <span class="dv">2</span>) <span class="sc">+</span> </span>
+<span id="cb42-20"><a href="#cb42-20" aria-hidden="true" tabindex="-1"></a>  <span class="fu">scale_color_manual</span>(<span class="at">values =</span> <span class="fu">c</span>(<span class="st">"cornflowerblue"</span>, <span class="st">"orange"</span>)) <span class="sc">+</span></span>
+<span id="cb42-21"><a href="#cb42-21" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_label</span>(<span class="fu">aes</span>(<span class="at">x =</span> <span class="sc">-</span><span class="dv">2</span>, <span class="at">y =</span> <span class="dv">3</span>), <span class="at">label =</span> <span class="st">"missing data"</span>) <span class="sc">+</span> </span>
+<span id="cb42-22"><a href="#cb42-22" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_label</span>(<span class="fu">aes</span>(<span class="at">x =</span> <span class="dv">2</span>, <span class="at">y =</span> <span class="sc">-</span><span class="dv">3</span>), <span class="at">label =</span> <span class="st">"observed data"</span>, <span class="at">color =</span> <span class="st">"cornflowerblue"</span>) <span class="sc">+</span> </span>
+<span id="cb42-23"><a href="#cb42-23" aria-hidden="true" tabindex="-1"></a>  <span class="fu">theme_minimal</span>() <span class="sc">+</span></span>
+<span id="cb42-24"><a href="#cb42-24" aria-hidden="true" tabindex="-1"></a>  <span class="fu">theme</span>(<span class="at">legend.position =</span> <span class="st">"none"</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output-display">
+<p><img src="index_files/figure-html/unnamed-chunk-28-1.png" class="img-fluid" width="672"></p>
 </div>
 </div>
 </section>
