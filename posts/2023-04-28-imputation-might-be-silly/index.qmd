@@ -1,0 +1,227 @@
+---
+title: "When is complete case analysis unbiased?"
+author: Lucy D'Agostino McGowan
+date: '2023-04-28'
+categories: ["rstats", "simulations", "missing data"]
+description: "I have been thinking about scenarios under which it makes sense to use imputation for prediction models and am struggling to come up with a case. Yikes! Even for inference, as long as you do some doubly robust approach, I'm not sure I see the value (other than for precision, but then is no longer a question of bias and thus is for a different day!)"
+---
+
+
+Here is the scenario: You are trying to predict some outcome, $y$, and some of your predictors have missing data. Will doing a complete case analysis give you unbiased results? What additional information do you need before deciding? 
+
+For some reason, when I tried to answer this question, my first instinct was to try to decide whether the data were *missing at random*, but it turns out, this might not  be the right first question! Why? Complete case analysis will give us unbiased estimates **even if the data are not missing at random**. Excuse me? Yes. When is this the case? When:
+
+(1) The missingness is not dependent on the outcome (this one seems like it *should* hold if we are using proper predictors, since in order to predict y they should precede y, making the value of y unable to determine their missingness, (I think!)). 
+(2) You have correctly specified your model
+(3) Your outcome doesn't have any missing data (this is more extreme than the actual assumption needed, but if there is no missing outcome data then you should definitely be ok, see below for the nuance)
+
+When I was thinking through this, I found it helped to work up a few short simulations, so here we go.
+
+## Scenario 1: I have a set of predictors, one with missing data 
+
+First let's generate our "true" values for our two predictors. Here the true model is below, which shows that:
+
+$\hat{y} = p_1 + p_2$
+
+implying the true $\hat\beta$ coefficients for both predictors should be 1.
+
+```{r}
+#| message: false
+#| warning: false
+library(tidyverse)
+n <- 10000
+
+set.seed(1)
+data <- tibble(
+  p1 = rnorm(n),
+  p2 = rnorm(n),
+  y = p1 + p2 + rnorm(n)
+)
+```
+
+Let's say we have some data that is not missing at random. The probability that `p1` is missing is dependent both on it's own value (MNAR!) and the value of `p2`. 
+
+```{r}
+data <- data |>
+  mutate(p1_obs =  ifelse(
+    rbinom(n, 1, 1 / (1 + exp(-(p1 + p2)))),
+    NA,
+    p1
+  )
+  )
+```
+  
+This results in missing ~ 50% of the values for `p1`:
+
+```{r}
+data |>
+  count(miss_p1 = is.na(p1_obs))
+```
+So what happens if we try to predict `y`? Let's try it first with the full data as a benchmark:
+
+```{r}
+right_mod <- lm(y ~ p1 + p2, data = data)
+```
+
+```{r}
+right_mod
+```
+Beautiful. we get the correct $\hat\beta$ estimates (and thus the correct predictions for `y`).
+
+Now let's take a look at the complete case analysis:
+
+```{r}
+data_cc <- na.omit(data)
+
+cc_mod <- lm(y ~ p1 + p2, data = data_cc)
+```
+
+```{r}
+cc_mod
+```
+
+Would you look at that. Correct coefficients! How could we break that? If we misspecified the model, for example if we didn't adjust for `p2`:
+
+```{r}
+lm(y ~ p1, data = data_cc)
+```
+But is this a terribly interesting case? If we didn't have `p2`, then we couldn't impute based on it anyways, so we would be in trouble imputation or not!
+
+## Scenario 2: What about inference?
+
+This is the same as above, but I found it helpful to frame as an inference question. What if I have some treatment, `x` that is randomly assigned, but is missing based on some factor `c` that is related to my outcome of interest, `y`.
+
+```{r}
+set.seed(1)
+data <- tibble(
+  x = rbinom(n, 1, 0.5), # randomly assigned exposure
+  c = rnorm(n), # problem variable
+  y = x + c + rnorm(n), # true treatment effect is 1
+  x_obs = ifelse(rbinom(n, 1, 1 / (1 + exp(-(x + c)))),
+                 NA, x) # missing based on x and c
+)
+```
+
+First of all, in the absense of any missing data we don't actually need to adjust for c in order to get an unbiased estimate for `x` because `c` is not a confounder (yay!).
+```{r}
+lm(y ~ x, data = data)
+```
+
+BUT! With missing data, we *do* have a problem:
+
+```{r}
+data_cc <- na.omit(data)
+lm(y ~ x, data = data_cc)
+
+```
+
+Oops! Now we are seeing an effect of 0.9 when the true effect of the exposure is 1 (because we did a bad thing and just deleted all the missing rows). In the past, this is where I would say *and therefore you should do imputation!* BUT instead, just adjust for `c`, that is correctly specify your outcome model and all will be well:
+
+```{r}
+lm(y ~ x + c, data = data_cc)
+```
+
+### What if there is treatment heterogeneity?
+
+
+```{r}
+set.seed(1)
+data <- tibble(
+  x = rbinom(n, 1, 0.5), # randomly assigned exposure
+  c = rnorm(n), # problem variable
+  y = x + c + x * c + rnorm(n), # true treatment effect varies by c
+  x_obs = ifelse(rbinom(n, 1, 1 / (1 + exp(-(x + c)))),
+                 NA, x) # missing based on x and c
+)
+```
+
+Complete case analysis is fine as long as the model for the outcome is correctly specified:
+
+```{r}
+data_cc <- na.omit(data)
+lm(y ~ x + c + x*c, data = data_cc)
+```
+### Does the outcome model have to be perfectly specified?
+
+Here I have an additional factor `c2` that just influences `y`:
+
+```{r}
+set.seed(1)
+data <- tibble(
+  x = rbinom(n, 1, 0.5), # randomly assigned exposure
+  c = rnorm(n), # problem variable
+  c2 = rnorm(n), # some other thing that only influences y
+  y = x + c + c2 + rnorm(n), # true treatment effect varies by c
+  x_obs = ifelse(rbinom(n, 1, 1 / (1 + exp(-(x + c)))),
+                 NA, x) # missing based on x and c
+)
+```
+
+Complete case analysis is fine as long as the model for the outcome has the things that influence both the exposure and outcome (confounders) and the things that influence the missing data mechanism and outcome (in this case just `c`) if all we care about is the effect of `x` on `y`:
+
+```{r}
+data_cc <- na.omit(data)
+lm(y ~ x + c, data = data_cc)
+```
+
+## Scenario 3: What if the outcome has some missing data?
+
+Ok this is where things are a bit trickier (and it is not uncommon to find yourself here, for example loss to follow-up!)
+
+```{r}
+data <- tibble(
+  p1 = rnorm(n),
+  p2 = rnorm(n),
+  y = p1 + p2 + rnorm(n),
+  p1_obs = ifelse(
+    rbinom(n, 1, 1 / (1 + exp(-(p1 + p2)))), # p1 is missing not at random (based on value of p1 and p2)
+    NA,
+    p1
+  ),
+  y_obs = ifelse(
+    rbinom(n, 1, 1 / (1 + exp(-(p1 + p2)))), # y is missing (conditionally) at random
+    NA, 
+    y
+  )
+)
+```
+
+Based on both of these missingness patterns, we are down to ~66% of our data having at least one missing value. AND YET we get unbiased results when we do complete case analysis:
+
+```{r}
+data_cc <- na.omit(data)
+lm(y ~ p1 + p2, data_cc)
+```
+
+SO when is it a problem? If you are missing `y` and `y` is missing **not at random** then you are in trouble (*but, I will note that you would also be in trouble in this case if you wanted to do imputation, so I'm not sure this is really a case for anything other than yet another example of a case where statistics cannot save you from everything!*). Let's look at that:
+
+```{r}
+data <- tibble(
+  p1 = rnorm(n),
+  p2 = rnorm(n),
+  y = p1 + p2 + rnorm(n),
+  p1_obs = ifelse(
+    rbinom(n, 1, 1 / (1 + exp(-(p1 + p2)))), # p1 is missing not at random (based on value of p1 and p2)
+    NA,
+    p1
+  ),
+  y_obs = ifelse(
+    rbinom(n, 1, 1 / (1 + exp(-(p1 + p2 + y)))), # y is missing not at random
+    NA, 
+    y
+  )
+)
+```
+
+Womp womp, here we have a problem, when we do complete case analysis, even with the correctly specified model, we get the wrong answer:
+
+```{r}
+data_cc <- na.omit(data)
+lm(y ~ p1 + p2, data_cc)
+```
+
+
+## Standard errors
+
+This post is about **bias** but I would be remiss not to mention the sacrifice in precision that complete case analyses make. It is true that complete case analysis is "throwing away" data, so the standard errors of these estimates will be larger than they would be had we observed the full data set. BUT these standard errors are out of the box "correct" (which is not true if you do something like single imputation, for example!)
+

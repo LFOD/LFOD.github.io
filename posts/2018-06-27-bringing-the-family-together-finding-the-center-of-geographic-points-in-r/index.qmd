@@ -51,9 +51,17 @@ geocode_family <- function(city) {
 }
 ```
 
-```{r}
+```{r, eval = FALSE}
 df <- df %>%
   bind_cols(map_df(.$city, geocode_family))
+```
+
+```{r, eval = FALSE, echo = FALSE}
+save(df, file = "../../media/data/geocode.rda")
+```
+
+```{r, echo = FALSE}
+load("../../media/data/geocode.rda")
 ```
 
 

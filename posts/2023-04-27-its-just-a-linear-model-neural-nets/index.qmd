@@ -1,7 +1,7 @@
 ---
 title: "It's just a linear model: neural networks edition"
 author: Lucy D'Agostino McGowan
-date: '2023-04-29'
+date: '2023-04-27'
 categories: ["statistical communication", "data science pedoagogy", "neural-networks"]
 description: "I created a little Shiny application to demonstrate that Neural Networks are just souped up linear models: https://lucy.shinyapps.io/neural-net-linear/"
 ---
