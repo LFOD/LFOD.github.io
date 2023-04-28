@@ -3,9 +3,13 @@ title: "When is complete case analysis unbiased?"
 author: Lucy D'Agostino McGowan
 date: '2023-04-28'
 categories: ["rstats", "simulations", "missing data"]
-description: "I have been thinking about scenarios under which it makes sense to use imputation for prediction models and am struggling to come up with a case. Yikes! Even for inference, as long as you do some doubly robust approach, I'm not sure I see the value (other than for precision, but then is no longer a question of bias and thus is for a different day!)"
+description: "I have been thinking about scenarios under which it makes sense to use imputation for prediction models and am struggling to come up with a case. Yikes! Even for inference, as long as you do some doubly robust approach, I'm not sure I see the value (other than for precision, but then is no longer a question of bias and thus is a question for a different day!)"
 ---
 
+```{r}
+#| echo: false
+options(digits = 2)
+```
 
 Here is the scenario: You are trying to predict some outcome, $y$, and some of your predictors have missing data. Will doing a complete case analysis give you unbiased results? What additional information do you need before deciding? 
 
@@ -17,50 +21,143 @@ For some reason, when I tried to answer this question, my first instinct was to 
 
 When I was thinking through this, I found it helped to work up a few short simulations, so here we go.
 
-## Scenario 1: I have a set of predictors, one with missing data 
+## Scenario 1: I have a predictor that is missing not at random
 
-First let's generate our "true" values for our two predictors. Here the true model is below, which shows that:
+First let's generate our "true" values. Here the true model is below, which shows that:
 
-$\hat{y} = p_1 + p_2$
+$y =  x + \varepsilon$
 
-implying the true $\hat\beta$ coefficients for both predictors should be 1.
+In other words, $\beta_0: 0$ and $\beta_1: 1$
 
 ```{r}
 #| message: false
 #| warning: false
 library(tidyverse)
-n <- 10000
+
+n <- 1000000
 
 set.seed(1)
 data <- tibble(
-  p1 = rnorm(n),
-  p2 = rnorm(n),
-  y = p1 + p2 + rnorm(n)
+  x = rnorm(n),
+  c = rnorm(n),
+  y = x + rnorm(n)
 )
 ```
 
-Let's say we have some data that is not missing at random. The probability that `p1` is missing is dependent both on it's own value (MNAR!) and the value of `p2`. 
+Let's force `x` to be missing under three scenarios:
+
+* Missing completely at random
+* Missing conditionally at random (based on `c`)
+* Missing not at random
 
 ```{r}
 data <- data |>
-  mutate(p1_obs =  ifelse(
-    rbinom(n, 1, 1 / (1 + exp(-(p1 + p2)))),
+  mutate(
+    x_obs_mcar = ifelse(
+      rbinom(n, 1, 0.5), 
+      NA, 
+      x
+    ),
+    x_obs_mar = ifelse(
+      rbinom(n, 1, 1 / (1 + exp(-c))),
+      NA,
+      x
+    ),
+    x_obs_mnar = ifelse(
+      rbinom(n, 1, 1 / (1 + exp(-x))),
+      NA,
+      x
+    )
+  )
+
+data |>
+  summarise(mcar_miss = mean(is.na(x_obs_mcar)),
+        mar_miss = mean(is.na(x_obs_mar)),
+        mnar_miss = mean(is.na(x_obs_mnar)))
+
+```
+
+In all three cases ~50% of the data are missing.
+
+Let's see how these impact the ability to predict `y` (and the estimation of $\hat\beta$)
+
+```{r}
+lm(y ~ x_obs_mcar, data = data)
+```
+Ok, the missing completely at random `x` is estimated correctly when we do a complete cases analysis (that is when we list-wise delete every row that has missing data). This checks out!
+
+Let's check out the missing conditionally at random `x`. Note that this is missing at random after conditioning on `c` (although we aren't actually doing anything with `c` at this point, so it might as well be missing not at random...)
+
+```{r}
+lm(y ~ x_obs_mar, data = data)
+```
+Whoa! Prediction is still correct and the coefficients themselves are still unbiased even if we do complete case analysis.
+
+Ok, what about missing not at random?
+
+```{r}
+lm(y ~ x_obs_mnar, data = data)
+```
+Still ok! No bias in the coefficients and the predicted values are unbiased even though the predictor was missing **not** at random (and we did a complete cases analysis).
+
+Why is this the case? Travis Gerke pointed out [this excellent paper](https://researchonline.lshtm.ac.uk/id/eprint/1198/1/research_online_1198.pdf) that has a beautiful plot that demonstrates why this happens. I am going to simulate some smaller data than what I have above to demonstrate the point. Here, the missingess is deterministic (and definitely not random!) -- if `x` is greater than 0, it is missing, otherwise it isn't. Again, this renders ~50% of our data missing.
+
+```{r}
+data <- tibble(
+  x = seq(-3, 3, by = 0.1),
+  y = x + rnorm(61),
+  x_miss = ifelse(x > 0, "yes", "no")
+)
+
+ggplot(data, aes(x = x, y = y, color = x_miss)) +
+  geom_point() + 
+  geom_line(aes(x = x, y = predict(lm(y ~ x, data = data)))) +
+  geom_vline(xintercept = 0, lty = 2) + 
+  scale_color_manual(values = c("cornflowerblue", "orange")) +
+  geom_label(aes(x = -2, y = 3), label = "observed data", color = "cornflowerblue") + 
+  geom_label(aes(x = 2, y = -3), label = "missing data") + 
+  theme_minimal() +
+  theme(legend.position = "none")
+```
+
+
+Maybe this result is a somewhat obvious result because despite the fact that the missingness was not at random, it had nothing to do with the outcome, `y`, let's see what would happen if `c` was related to `y`.
+
+
+## Scenario 2: I have missing data that is missing due to some factor (and other things, so still not MAR)
+
+
+```{r}
+set.seed(1)
+data <- tibble(
+  x = rnorm(n),
+  c = rnorm(n),
+  y = x + c + rnorm(n)
+)
+```
+
+Let's say we have some data that is not missing at random. The probability that `x` is missing is dependent both on it's own value (MNAR!) and the value of `c`. 
+
+```{r}
+data <- data |>
+  mutate(x_obs =  ifelse(
+    rbinom(n, 1, 1 / (1 + exp(-(x + c)))),
     NA,
-    p1
+    x
   )
   )
 ```
   
-This results in missing ~ 50% of the values for `p1`:
+This results in missing ~ 50% of the values for `x`:
 
 ```{r}
 data |>
-  count(miss_p1 = is.na(p1_obs))
+  count(miss_x = is.na(x_obs))
 ```
 So what happens if we try to predict `y`? Let's try it first with the full data as a benchmark:
 
 ```{r}
-right_mod <- lm(y ~ p1 + p2, data = data)
+right_mod <- lm(y ~ x + c, data = data)
 ```
 
 ```{r}
@@ -73,21 +170,21 @@ Now let's take a look at the complete case analysis:
 ```{r}
 data_cc <- na.omit(data)
 
-cc_mod <- lm(y ~ p1 + p2, data = data_cc)
+cc_mod <- lm(y ~ x + c, data = data_cc)
 ```
 
 ```{r}
 cc_mod
 ```
 
-Would you look at that. Correct coefficients! How could we break that? If we misspecified the model, for example if we didn't adjust for `p2`:
+Would you look at that. Correct coefficients! How could we break that? If we misspecified the model, for example if we didn't adjust for `c`:
 
 ```{r}
-lm(y ~ p1, data = data_cc)
+lm(y ~ x, data = data_cc)
 ```
-But is this a terribly interesting case? If we didn't have `p2`, then we couldn't impute based on it anyways, so we would be in trouble imputation or not!
+But is this a terribly interesting case? If we didn't have `c`, then we couldn't impute based on it anyways, so we would be in trouble imputation or not!
 
-## Scenario 2: What about inference?
+## Scenario 3: What about inference?
 
 This is the same as above, but I found it helpful to frame as an inference question. What if I have some treatment, `x` that is randomly assigned, but is missing based on some factor `c` that is related to my outcome of interest, `y`.
 
@@ -164,22 +261,22 @@ data_cc <- na.omit(data)
 lm(y ~ x + c, data = data_cc)
 ```
 
-## Scenario 3: What if the outcome has some missing data?
+## Scenario 4: What if the outcome has some missing data?
 
 Ok this is where things are a bit trickier (and it is not uncommon to find yourself here, for example loss to follow-up!)
 
 ```{r}
 data <- tibble(
-  p1 = rnorm(n),
-  p2 = rnorm(n),
-  y = p1 + p2 + rnorm(n),
-  p1_obs = ifelse(
-    rbinom(n, 1, 1 / (1 + exp(-(p1 + p2)))), # p1 is missing not at random (based on value of p1 and p2)
+  x = rnorm(n),
+  c = rnorm(n),
+  y = x + c + rnorm(n),
+  x_obs = ifelse(
+    rbinom(n, 1, 1 / (1 + exp(-(x + c)))), # x is missing not at random (based on value of x and c)
     NA,
-    p1
+    x
   ),
   y_obs = ifelse(
-    rbinom(n, 1, 1 / (1 + exp(-(p1 + p2)))), # y is missing (conditionally) at random
+    rbinom(n, 1, 1 / (1 + exp(-(x + c)))), # y is missing (conditionally) at random
     NA, 
     y
   )
@@ -190,23 +287,23 @@ Based on both of these missingness patterns, we are down to ~66% of our data hav
 
 ```{r}
 data_cc <- na.omit(data)
-lm(y ~ p1 + p2, data_cc)
+lm(y ~ x + c, data_cc)
 ```
 
 SO when is it a problem? If you are missing `y` and `y` is missing **not at random** then you are in trouble (*but, I will note that you would also be in trouble in this case if you wanted to do imputation, so I'm not sure this is really a case for anything other than yet another example of a case where statistics cannot save you from everything!*). Let's look at that:
 
 ```{r}
 data <- tibble(
-  p1 = rnorm(n),
-  p2 = rnorm(n),
-  y = p1 + p2 + rnorm(n),
-  p1_obs = ifelse(
-    rbinom(n, 1, 1 / (1 + exp(-(p1 + p2)))), # p1 is missing not at random (based on value of p1 and p2)
+  x = rnorm(n),
+  c = rnorm(n),
+  y = x + c + rnorm(n),
+  x_obs = ifelse(
+    rbinom(n, 1, 1 / (1 + exp(-(x + c)))), # x is missing not at random (based on value of x and c)
     NA,
-    p1
+    x
   ),
   y_obs = ifelse(
-    rbinom(n, 1, 1 / (1 + exp(-(p1 + p2 + y)))), # y is missing not at random
+    rbinom(n, 1, 1 / (1 + exp(-(x + c + y)))), # y is missing not at random
     NA, 
     y
   )
@@ -217,9 +314,36 @@ Womp womp, here we have a problem, when we do complete case analysis, even with 
 
 ```{r}
 data_cc <- na.omit(data)
-lm(y ~ p1 + p2, data_cc)
+lm(y ~ x + c, data_cc)
 ```
+Let's make another of those cool graphs like they did in that awesome paper explaining missing data in terms of causal inference. Now I am going to make `y` missing not at random, as opposed to `x` like above.
 
+```{r}
+data <- tibble(
+  x = seq(-3, 3, by = 0.1),
+  y = x + rnorm(61),
+  y_miss = ifelse(y > 0, "yes", "no")
+)
+
+data_cc <- data[data$y_miss == "no", ]
+
+library(geomtextpath)
+
+ggplot(data, aes(x = x, y = y, color = y_miss)) +
+  geom_point() + 
+  geom_textline(color = "black", 
+                aes(x = x, y = predict(lm(y ~ x, data = data))), 
+                label = "truth", hjust = 0.75) +
+  geom_textline(data = data_cc, 
+                aes(x = x, y = predict(lm(y ~ x, data = data_cc))), 
+                label = "wrong") + 
+  geom_hline(yintercept = 0, lty = 2) + 
+  scale_color_manual(values = c("cornflowerblue", "orange")) +
+  geom_label(aes(x = -2, y = 3), label = "missing data") + 
+  geom_label(aes(x = 2, y = -3), label = "observed data", color = "cornflowerblue") + 
+  theme_minimal() +
+  theme(legend.position = "none")
+```
 
 ## Standard errors
 
