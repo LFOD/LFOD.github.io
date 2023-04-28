@@ -2,7 +2,7 @@
 <html xmlns="http://www.w3.org/1999/xhtml" lang="en" xml:lang="en"><head>
 
 <meta charset="utf-8">
-<meta name="generator" content="quarto-1.1.251">
+<meta name="generator" content="quarto-1.3.340">
 
 <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
 
@@ -20,7 +20,7 @@ div.hanging-indent{margin-left: 1.5em; text-indent: -1.5em;}
 ul.task-list{list-style: none;}
 ul.task-list li input[type="checkbox"] {
   width: 0.8em;
-  margin: 0 0.8em 0.2em -1.6em;
+  margin: 0 0.8em 0.2em -1em; /* quarto-specific, see https://github.com/quarto-dev/quarto-cli/issues/4556 */ 
   vertical-align: middle;
 }
 </style>
@@ -91,13 +91,12 @@ ga('send', {
 
 <meta property="og:title" content="Bayes Theorem and the Probability of Having COVID-19">
 <meta property="og:description" content="I’ve seen a few papers describing the characteristics of people who tested positive for SARS-CoV-2 and this is sometimes being interpreted as describing people with certain characteristic’s the probability of infection. Let’s talk about why that’s likely not true.">
+<meta property="og:image" content="https://pbs.twimg.com/media/EVLdlokU4AQauYQ?format=jpg&amp;name=medium.png">
 <meta name="twitter:title" content="Live Free or Dichotomize">
 <meta name="twitter:description" content="I’ve seen a few papers describing the characteristics of people who tested positive for SARS-CoV-2 and this is sometimes being interpreted as describing people with certain characteristic’s the probability of infection. Let’s talk about why that’s likely not true.">
-<meta name="twitter:image" content="https://www.livefreeordichtomize.com/media/lfod-card.png">
+<meta name="twitter:image" content="https://www.livefreeordichtomize.com/posts/2020-04-09-bayes-theorem-and-probabilty-of-covid-19-infection/media/lfod-card.png">
 <meta name="twitter:creator" content="@LucyStats">
 <meta name="twitter:card" content="summary_large_image">
-<meta name="twitter:image-height" content="640">
-<meta name="twitter:image-width" content="1280">
 </head><body class="nav-fixed fullcontent"><header id="custom-header">
   <div id="header_viz"></div>
 </header>
@@ -279,19 +278,23 @@ ga('send', {
   <header id="quarto-header" class="headroom fixed-top">
     <nav class="navbar navbar-expand-lg navbar-dark ">
       <div class="navbar-container container-fluid">
+            <div id="quarto-search" class="" title="Search"></div>
           <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarCollapse" aria-controls="navbarCollapse" aria-expanded="false" aria-label="Toggle navigation" onclick="if (window.quartoToggleHeadroom) { window.quartoToggleHeadroom(); }">
   <span class="navbar-toggler-icon"></span>
 </button>
           <div class="collapse navbar-collapse" id="navbarCollapse">
             <ul class="navbar-nav navbar-nav-scroll me-auto">
   <li class="nav-item">
-    <a class="nav-link" href="../../index.html">Home</a>
+    <a class="nav-link" href="../../index.html" rel="" target="">
+ <span class="menu-text">Home</span></a>
   </li>  
   <li class="nav-item">
-    <a class="nav-link" href="../../about.html">About</a>
+    <a class="nav-link" href="../../about.html" rel="" target="">
+ <span class="menu-text">About</span></a>
   </li>  
 </ul>
-              <div id="quarto-search" class="" title="Search"></div>
+            <div class="quarto-navbar-tools ms-auto">
+</div>
           </div> <!-- /navcollapse -->
       </div> <!-- /container-fluid -->
     </nav>
@@ -332,6 +335,7 @@ ga('send', {
         <p class="date">April 9, 2020</p>
       </div>
     </div>
+    
       
     </div>
     
@@ -347,98 +351,98 @@ ga('send', {
 
 
 <p>I’ve seen a few papers describing the characteristics of people who tested positive for SARS-CoV-2 and this is sometimes being interpreted as describing people with certain characteristic’s the <strong>probability of infection</strong>. Let’s talk about why that’s likely not true.</p>
-<p>👉 Usually when thinking about estimating the prevalence of a disease, we use the <strong>sensitivity</strong> and <strong>specificity</strong> of the test to help us<br>
-👉 The calculations assume that everyone is equally likely to get tested, and with SARS-CoV-2 that is likely not the case</p>
-<p>Let’s do some 💭 thought experiments. For these, my goal is to estimate the probability of being infected with 🦠 SARS-CoV-2 given you have 🧩 Disease X</p>
-<p>For example,🧩 Disease X could be:</p>
-<p>♥️ heart disease<br>
-😡 hypertension<br>
-➕ it could also be any subgroup (for example age, etc)</p>
-<p>In these 💭 thought experiments, we don’t actually have perfect information about who is infected with 🦠 SARS-CoV-2, we just know among those who are 🧪 <strong>tested</strong> who has been infected with 🦠 SARS-CoV-2. This is really the crux of the matter.</p>
-<p>For these 💭 thought experiments, assume that the current tests are <em>perfect</em> (that is there are 0 false positives and 0 false negatives)</p>
-<p>☝️ Note that this is likely not the case, with the current testing framework false positives (+) are unlikely but false negatives (-) may be occurring.</p>
-<p>We want the probability of being infected with SARS-CoV-2 given you have Disease X: P(🦠|🧩)</p>
-<p>To get this, we need P(🧩|🦠) because based on Bayes’ Theorem we know:</p>
-<p>P(🦠|🧩) = P(🧩|🦠)P(🦠) / P(🧩)</p>
-<p>BUT, instead of P(🧩|🦠), we actually have P(🧩|🦠, 🧪) - the probability of having disease X given you have SARS-CoV-2 AND you were tested. So the crux of these thought experiments will be trying to get an accurate estimate of P(🧩|🦠) so that we can get back to P(🦠|🧩).</p>
+<p><code>r emo::ji("point_right")</code> Usually when thinking about estimating the prevalence of a disease, we use the <strong>sensitivity</strong> and <strong>specificity</strong> of the test to help us<br>
+<code>r emo::ji("point_right")</code> The calculations assume that everyone is equally likely to get tested, and with SARS-CoV-2 that is likely not the case</p>
+<p>Let’s do some <code>r emo::ji("thought_balloon")</code> thought experiments. For these, my goal is to estimate the probability of being infected with <code>r emo::ji("microbe")</code> SARS-CoV-2 given you have <code>r emo::ji("jigsaw")</code> Disease X</p>
+<p>For example,<code>r emo::ji("jigsaw")</code> Disease X could be:</p>
+<p><code>r emo::ji("heart_suit")</code> heart disease<br>
+<code>r emo::ji("rage")</code> hypertension<br>
+<code>r emo::ji("heavy_plus_sign")</code> it could also be any subgroup (for example age, etc)</p>
+<p>In these <code>r emo::ji("thought_balloon")</code> thought experiments, we don’t actually have perfect information about who is infected with <code>r emo::ji("microbe")</code> SARS-CoV-2, we just know among those who are <code>r emo::ji("test_tube")</code> <strong>tested</strong> who has been infected with <code>r emo::ji("microbe")</code> SARS-CoV-2. This is really the crux of the matter.</p>
+<p>For these <code>r emo::ji("thought_balloon")</code> thought experiments, assume that the current tests are <em>perfect</em> (that is there are 0 false positives and 0 false negatives)</p>
+<p><code>r emo::ji("point_up")</code> Note that this is likely not the case, with the current testing framework false positives (+) are unlikely but false negatives (-) may be occurring.</p>
+<p>We want the probability of being infected with SARS-CoV-2 given you have Disease X: P(<code>r emo::ji("microbe")</code>|<code>r emo::ji("jigsaw")</code>)</p>
+<p>To get this, we need P(<code>r emo::ji("jigsaw")</code>|<code>r emo::ji("microbe")</code>) because based on Bayes’ Theorem we know:</p>
+<p>P(<code>r emo::ji("microbe")</code>|<code>r emo::ji("jigsaw")</code>) = P(<code>r emo::ji("jigsaw")</code>|<code>r emo::ji("microbe")</code>)P(<code>r emo::ji("microbe")</code>) / P(<code>r emo::ji("jigsaw")</code>)</p>
+<p>BUT, instead of P(<code>r emo::ji("jigsaw")</code>|<code>r emo::ji("microbe")</code>), we actually have P(<code>r emo::ji("jigsaw")</code>|<code>r emo::ji("microbe")</code>, <code>r emo::ji("test_tube")</code>) - the probability of having disease X given you have SARS-CoV-2 AND you were tested. So the crux of these thought experiments will be trying to get an accurate estimate of P(<code>r emo::ji("jigsaw")</code>|<code>r emo::ji("microbe")</code>) so that we can get back to P(<code>r emo::ji("microbe")</code>|<code>r emo::ji("jigsaw")</code>).</p>
 <section id="thought-experiment-1-best-case-scenario" class="level2">
 <h2 class="anchored" data-anchor-id="thought-experiment-1-best-case-scenario">Thought experiment 1️⃣: Best case scenario</h2>
-<p><label for="tufte-mn-" class="margin-toggle">⊕</label><input type="checkbox" id="tufte-mn-" class="margin-toggle"><span class="marginnote">Note: all of these numbers are made up!</span> 🧩 20% of the population has disease X<br>
-🦠 50% are infected with SARS-CoV-2 ❌ There is no relationship between disease X and SARS-CoV-2<br>
-🧪 People with disease X are just as likely to get tested than people without disease X</p>
+<p><code>r tufte::margin_note("Note: all of these numbers are made up!")</code> <code>r emo::ji("jigsaw")</code> 20% of the population has disease X<br>
+<code>r emo::ji("microbe")</code> 50% are infected with SARS-CoV-2 <code>r emo::ji("x")</code> There is no relationship between disease X and SARS-CoV-2<br>
+<code>r emo::ji("test_tube")</code> People with disease X are just as likely to get tested than people without disease X</p>
 <p><img src="https://pbs.twimg.com/media/EVLdlokU4AQauYQ?format=jpg&amp;name=medium.png" class="img-fluid"></p>
 <p>Why is thought experiment 1️⃣ a best case scenario?</p>
 <p>It looks like:</p>
-<p>🧪 50% have SARS-CoV-2 infection among those tested<br>
-🧪 Of those who tested positive, the prevalence of disease X is 20%<br>
-P(🦠|🧩) = 50%</p>
-<p>✅ Reality (no relationship between disease X and SARS-CoV-2) matches what we see</p>
+<p><code>r emo::ji("test_tube")</code> 50% have SARS-CoV-2 infection among those tested<br>
+<code>r emo::ji("test_tube")</code> Of those who tested positive, the prevalence of disease X is 20%<br>
+P(<code>r emo::ji("microbe")</code>|<code>r emo::ji("jigsaw")</code>) = 50%</p>
+<p><code>r emo::ji("white_heavy_check_mark")</code> Reality (no relationship between disease X and SARS-CoV-2) matches what we see</p>
 </section>
 <section id="thought-experiment-2-oversampling-scenario" class="level2">
 <h2 class="anchored" data-anchor-id="thought-experiment-2-oversampling-scenario">Thought experiment 2️⃣: Oversampling scenario</h2>
-<p>🧩 20% of the population has disease X Microbe 50% have SARS-CoV-2 infection<br>
-❌ There is no relationship between disease X and SARS-CoV-2<br>
-🧪 People with disease X are <strong>2x</strong> more likely to get tested than people without disease X</p>
+<p><code>r emo::ji("jigsaw")</code> 20% of the population has disease X Microbe 50% have SARS-CoV-2 infection<br>
+<code>r emo::ji("cross_mark")</code> There is no relationship between disease X and SARS-CoV-2<br>
+<code>r emo::ji("test_tube")</code> People with disease X are <strong>2x</strong> more likely to get tested than people without disease X</p>
 <p><img src="https://pbs.twimg.com/media/EVLSv4XUUAAmrVf?format=jpg&amp;name=medium.png" class="img-fluid"></p>
 <p>Why is thought experiment 2️⃣ bad?</p>
 <p>It looks like:</p>
-<p>🧪 50% have SARS-CoV-2 infection among those tested<br>
-🧪 Of those who tested positive for SARS-CoV-2, the prevalence of disease X is 33% 😱</p>
-<p>❌ If we plug in what we see (P(🧩|🦠, 🧪) for P(🧩|🦠)), it looks like P(🦠|🧩) is 82.5%, when in reality it is 50%.</p>
+<p><code>r emo::ji("test_tube")</code> 50% have SARS-CoV-2 infection among those tested<br>
+<code>r emo::ji("test_tube")</code> Of those who tested positive for SARS-CoV-2, the prevalence of disease X is 33% <code>r emo::ji("face_screaming_in_fear")</code></p>
+<p><code>r emo::ji("cross_mark")</code> If we plug in what we see (P(<code>r emo::ji("jigsaw")</code>|<code>r emo::ji("microbe")</code>, <code>r emo::ji("test_tube")</code>) for P(<code>r emo::ji("jigsaw")</code>|<code>r emo::ji("microbe")</code>)), it looks like P(<code>r emo::ji("microbe")</code>|<code>r emo::ji("jigsaw")</code>) is 82.5%, when in reality it is 50%.</p>
 </section>
 <section id="thought-experiment-3-undersampling-scenario" class="level2">
 <h2 class="anchored" data-anchor-id="thought-experiment-3-undersampling-scenario">Thought experiment 3️⃣: Undersampling scenario</h2>
-<p>🧩 20% of the population has disease X<br>
-🦠 50% have SARS-CoV-2 infection<br>
-❌ There is no relationship between disease X and SARS-CoV-2<br>
-🧪 People with disease X are <strong>1/2</strong> as likely to get tested than people without disease X</p>
+<p><code>r emo::ji("jigsaw")</code> 20% of the population has disease X<br>
+<code>r emo::ji("microbe")</code> 50% have SARS-CoV-2 infection<br>
+<code>r emo::ji("cross_mark")</code> There is no relationship between disease X and SARS-CoV-2<br>
+<code>r emo::ji("test_tube")</code> People with disease X are <strong>1/2</strong> as likely to get tested than people without disease X</p>
 <p><img src="https://pbs.twimg.com/media/EVLTevlUUAEvE14?format=jpg&amp;name=medium.png" class="img-fluid"></p>
 <p>Why is thought experiment 3️⃣ bad?</p>
-<p>It looks like: 🧪 50% have SARS-CoV-2 infection among those tested<br>
-🧪 Of those who tested positive for SARS-CoV-2, the prevalence of disease X is 11%</p>
-<p>❌ If we plug in what we see (P(🧩|🦠, 🧪) for P(🧩|🦠)), it looks like P(🦠|🧩) is 27.5%, when in reality it is 50%.</p>
+<p>It looks like: <code>r emo::ji("test_tube")</code> 50% have SARS-CoV-2 infection among those tested<br>
+<code>r emo::ji("test_tube")</code> Of those who tested positive for SARS-CoV-2, the prevalence of disease X is 11%</p>
+<p><code>r emo::ji("cross_mark")</code> If we plug in what we see (P(<code>r emo::ji("jigsaw")</code>|<code>r emo::ji("microbe")</code>, <code>r emo::ji("test_tube")</code>) for P(<code>r emo::ji("jigsaw")</code>|<code>r emo::ji("microbe")</code>)), it looks like P(<code>r emo::ji("microbe")</code>|<code>r emo::ji("jigsaw")</code>) is 27.5%, when in reality it is 50%.</p>
 </section>
 <section id="thought-experiment-4-two-problems-scenario" class="level2">
 <h2 class="anchored" data-anchor-id="thought-experiment-4-two-problems-scenario">Thought experiment 4️⃣: two problems scenario</h2>
-<p>🧩 20% of the population has disease X<br>
-🦠 56% have SARS-CoV-2 infection<br>
-✅ people with disease X are 1.6 times more likely to have SARS-CoV-2 infection, P(🦠|🧩) = 80%<br>
-🧪 People with disease X are <strong>5</strong> as likely to get tested than people without disease X</p>
+<p><code>r emo::ji("jigsaw")</code> 20% of the population has disease X<br>
+<code>r emo::ji("microbe")</code> 56% have SARS-CoV-2 infection<br>
+<code>r emo::ji("white_check_mark")</code> people with disease X are 1.6 times more likely to have SARS-CoV-2 infection, P(<code>r emo::ji("microbe")</code>|<code>r emo::ji("jigsaw")</code>) = 80%<br>
+<code>r emo::ji("test_tube")</code> People with disease X are <strong>5</strong> as likely to get tested than people without disease X</p>
 <p><img src="https://pbs.twimg.com/media/EVLUjEyUMAELWG8?format=jpg&amp;name=medium.png" class="img-fluid"></p>
 <p>Why is thought experiment 4️⃣ bad?</p>
 <p>It looks like:</p>
-<p>🦠🧪 66% have SARS-CoV-2 infection among those tested<br>
-🧩🧪 Of those who tested positive for SARS-CoV-2, the prevalence of disease X is 66%</p>
-<p>❌ We’re getting both the prevalence of SARS-CoV-2 <strong>and</strong> it’s association with Disease X wrong</p>
+<p><code>r emo::ji("microbe")``r emo::ji("test_tube")</code> 66% have SARS-CoV-2 infection among those tested<br>
+<code>r emo::ji("jigsaw")``r emo::ji("test_tube")</code> Of those who tested positive for SARS-CoV-2, the prevalence of disease X is 66%</p>
+<p><code>r emo::ji("cross_mark")</code> We’re getting both the prevalence of SARS-CoV-2 <strong>and</strong> it’s association with Disease X wrong</p>
 </section>
 <section id="how-can-we-fix-this" class="level2">
 <h2 class="anchored" data-anchor-id="how-can-we-fix-this">How can we fix this?</h2>
 <p>OKAY, scenarios finished, so hopefully this highlights why we can’t take the prevalence of characteristics in the <strong>tested positive</strong> population as the prevalence of characteristics in the overall population with a SARS-CoV-2 infection. Now, here are tips for how we can correct the numbers.</p>
 <p>Scenario 2️⃣: Oversampling by 2x</p>
-<p>👉 take those with disease X that tested positive for SARS-CoV-2 and downweight them by a factor of 2.</p>
-<p>✅ the adjusted prevalence of Disease X among those that tested positive for SARS-CoV-2 (0.5 / 2.5) = 0.2 (20%)</p>
-<p>P(🦠|🧩) = 50%</p>
+<p><code>r emo::ji("point_right")</code> take those with disease X that tested positive for SARS-CoV-2 and downweight them by a factor of 2.</p>
+<p><code>r emo::ji("white_heavy_check_mark")</code> the adjusted prevalence of Disease X among those that tested positive for SARS-CoV-2 (0.5 / 2.5) = 0.2 (20%)</p>
+<p>P(<code>r emo::ji("microbe")</code>|<code>r emo::ji("jigsaw")</code>) = 50%</p>
 <p><img src="https://pbs.twimg.com/media/EVLXjDhUMAE1K7_?format=jpg&amp;name=medium.png" class="img-fluid"></p>
 <p>Scenario 3️⃣: Undersampling by 1/2</p>
-<p>👉 take those with disease X that tested positive for SARS-CoV-2 and upweight them by a factor of 2.</p>
-<p>✅ the adjusted prevalence of Disease X among those that tested positive for SARS-CoV-2 (2/ 10) = 0.2 (20%)</p>
-<p>P(🦠|🧩) = 50%</p>
+<p><code>r emo::ji("point_right")</code> take those with disease X that tested positive for SARS-CoV-2 and upweight them by a factor of 2.</p>
+<p><code>r emo::ji("white_heavy_check_mark")</code> the adjusted prevalence of Disease X among those that tested positive for SARS-CoV-2 (2/ 10) = 0.2 (20%)</p>
+<p>P(<code>r emo::ji("microbe")</code>|<code>r emo::ji("jigsaw")</code>) = 50%</p>
 <p><img src="https://pbs.twimg.com/media/EVLXmSkUMAAHZ3g?format=jpg&amp;name=medium.png" class="img-fluid"></p>
 <p>Scenario 4️⃣: Two problems</p>
 <p>For the prevalence of SARS-CoV-2 infections, correct by weighing by the probability of being tested in each subgroup. Here:</p>
-<p>🧩 = disease X<br>
-❌🧩 = No disease X</p>
-<p>P(🦠) = P(🦠 | 🧩) P(🧩) + P(🦠 | ❌🧩) P(❌🧩)</p>
-<p>✅P(🦠) = ⅘ * 0.2 + ½ * 0.8 = 56%</p>
+<p><code>r emo::ji("jigsaw")</code> = disease X<br>
+<code>r emo::ji("x")``r emo::ji("jigsaw")</code> = No disease X</p>
+<p>P(<code>r emo::ji("microbe")</code>) = P(<code>r emo::ji("microbe")</code> | <code>r emo::ji("jigsaw")</code>) P(<code>r emo::ji("jigsaw")</code>) + P(<code>r emo::ji("microbe")</code> | <code>r emo::ji("x")``r emo::ji("jigsaw")</code>) P(<code>r emo::ji("x")``r emo::ji("jigsaw")</code>)</p>
+<p><code>r emo::ji("white_check_mark")</code>P(<code>r emo::ji("microbe")</code>) = ⅘ * 0.2 + ½ * 0.8 = 56%</p>
 <p>Said another way, for calculating the overall prevalence of SARS-CoV-2, this is like downweighting the oversampled Disease X people (divide by 5).</p>
-<p>✅ P(🦠) = (⅘ + 2) / (⅘ + 2 + ⅕ + 2) = 0.56</p>
+<p><code>r emo::ji("white_check_mark")</code> P(<code>r emo::ji("microbe")</code>) = (⅘ + 2) / (⅘ + 2 + ⅕ + 2) = 0.56</p>
 <p>For calculating the prevalence of disease X among those with SARS-CoV-2 infections:</p>
-<p>✅ P(🧩 | 🦠) = P(🦠 | 🧩) P(🧩) / P(🦠) = ⅘ * 0.2 / 0.56 = 0.285</p>
+<p><code>r emo::ji("white_check_mark")</code> P(<code>r emo::ji("jigsaw")</code> | <code>r emo::ji("microbe")</code>) = P(<code>r emo::ji("microbe")</code> | <code>r emo::ji("jigsaw")</code>) P(<code>r emo::ji("jigsaw")</code>) / P(<code>r emo::ji("microbe")</code>) = ⅘ * 0.2 / 0.56 = 0.285</p>
 <p>Again, downweight the oversampled Disease X population (divide by 5).</p>
-<p>✅ P(🧩 | 🦠) = ⅘ / (⅘ + 2) = 0.285</p>
-<p>P(🦠 | 🧩) = 80%</p>
+<p><code>r emo::ji("white_check_mark")</code> P(<code>r emo::ji("jigsaw")</code> | <code>r emo::ji("microbe")</code>) = ⅘ / (⅘ + 2) = 0.285</p>
+<p>P(<code>r emo::ji("microbe")</code> | <code>r emo::ji("jigsaw")</code>) = 80%</p>
 <p><img src="https://pbs.twimg.com/media/EVLXqXAUEAApzdi?format=jpg&amp;name=medium.png" class="img-fluid"></p>
-<p>Hopefully this is somewhat helpful when reading about characteristics of those who are currently testing positive for SARS-CoV-2. As always, please let me know if there is something I’ve missed! 🙏</p>
+<p>Hopefully this is somewhat helpful when reading about characteristics of those who are currently testing positive for SARS-CoV-2. As always, please let me know if there is something I’ve missed! <code>r emo::ji("folded_hands")</code></p>
 
 
 </section>
@@ -471,9 +475,23 @@ window.document.addEventListener("DOMContentLoaded", function (event) {
     icon: icon
   };
   anchorJS.add('.anchored');
+  const isCodeAnnotation = (el) => {
+    for (const clz of el.classList) {
+      if (clz.startsWith('code-annotation-')) {                     
+        return true;
+      }
+    }
+    return false;
+  }
   const clipboard = new window.ClipboardJS('.code-copy-button', {
-    target: function(trigger) {
-      return trigger.previousElementSibling;
+    text: function(trigger) {
+      const codeEl = trigger.previousElementSibling.cloneNode(true);
+      for (const childEl of codeEl.children) {
+        if (isCodeAnnotation(childEl)) {
+          childEl.remove();
+        }
+      }
+      return codeEl.innerText;
     }
   });
   clipboard.on('success', function(e) {
@@ -485,7 +503,24 @@ window.document.addEventListener("DOMContentLoaded", function (event) {
     button.classList.add('code-copy-button-checked');
     var currentTitle = button.getAttribute("title");
     button.setAttribute("title", "Copied!");
+    let tooltip;
+    if (window.bootstrap) {
+      button.setAttribute("data-bs-toggle", "tooltip");
+      button.setAttribute("data-bs-placement", "left");
+      button.setAttribute("data-bs-title", "Copied!");
+      tooltip = new bootstrap.Tooltip(button, 
+        { trigger: "manual", 
+          customClass: "code-copy-button-tooltip",
+          offset: [0, -8]});
+      tooltip.show();    
+    }
     setTimeout(function() {
+      if (tooltip) {
+        tooltip.hide();
+        button.removeAttribute("data-bs-title");
+        button.removeAttribute("data-bs-toggle");
+        button.removeAttribute("data-bs-placement");
+      }
       button.setAttribute("title", currentTitle);
       button.classList.remove('code-copy-button-checked');
     }, 1000);
@@ -521,24 +556,128 @@ window.document.addEventListener("DOMContentLoaded", function (event) {
       return note.innerHTML;
     });
   }
+      let selectedAnnoteEl;
+      const selectorForAnnotation = ( cell, annotation) => {
+        let cellAttr = 'data-code-cell="' + cell + '"';
+        let lineAttr = 'data-code-annotation="' +  annotation + '"';
+        const selector = 'span[' + cellAttr + '][' + lineAttr + ']';
+        return selector;
+      }
+      const selectCodeLines = (annoteEl) => {
+        const doc = window.document;
+        const targetCell = annoteEl.getAttribute("data-target-cell");
+        const targetAnnotation = annoteEl.getAttribute("data-target-annotation");
+        const annoteSpan = window.document.querySelector(selectorForAnnotation(targetCell, targetAnnotation));
+        const lines = annoteSpan.getAttribute("data-code-lines").split(",");
+        const lineIds = lines.map((line) => {
+          return targetCell + "-" + line;
+        })
+        let top = null;
+        let height = null;
+        let parent = null;
+        if (lineIds.length > 0) {
+            //compute the position of the single el (top and bottom and make a div)
+            const el = window.document.getElementById(lineIds[0]);
+            top = el.offsetTop;
+            height = el.offsetHeight;
+            parent = el.parentElement.parentElement;
+          if (lineIds.length > 1) {
+            const lastEl = window.document.getElementById(lineIds[lineIds.length - 1]);
+            const bottom = lastEl.offsetTop + lastEl.offsetHeight;
+            height = bottom - top;
+          }
+          if (top !== null && height !== null && parent !== null) {
+            // cook up a div (if necessary) and position it 
+            let div = window.document.getElementById("code-annotation-line-highlight");
+            if (div === null) {
+              div = window.document.createElement("div");
+              div.setAttribute("id", "code-annotation-line-highlight");
+              div.style.position = 'absolute';
+              parent.appendChild(div);
+            }
+            div.style.top = top - 2 + "px";
+            div.style.height = height + 4 + "px";
+            let gutterDiv = window.document.getElementById("code-annotation-line-highlight-gutter");
+            if (gutterDiv === null) {
+              gutterDiv = window.document.createElement("div");
+              gutterDiv.setAttribute("id", "code-annotation-line-highlight-gutter");
+              gutterDiv.style.position = 'absolute';
+              const codeCell = window.document.getElementById(targetCell);
+              const gutter = codeCell.querySelector('.code-annotation-gutter');
+              gutter.appendChild(gutterDiv);
+            }
+            gutterDiv.style.top = top - 2 + "px";
+            gutterDiv.style.height = height + 4 + "px";
+          }
+          selectedAnnoteEl = annoteEl;
+        }
+      };
+      const unselectCodeLines = () => {
+        const elementsIds = ["code-annotation-line-highlight", "code-annotation-line-highlight-gutter"];
+        elementsIds.forEach((elId) => {
+          const div = window.document.getElementById(elId);
+          if (div) {
+            div.remove();
+          }
+        });
+        selectedAnnoteEl = undefined;
+      };
+      // Attach click handler to the DT
+      const annoteDls = window.document.querySelectorAll('dt[data-target-cell]');
+      for (const annoteDlNode of annoteDls) {
+        annoteDlNode.addEventListener('click', (event) => {
+          const clickedEl = event.target;
+          if (clickedEl !== selectedAnnoteEl) {
+            unselectCodeLines();
+            const activeEl = window.document.querySelector('dt[data-target-cell].code-annotation-active');
+            if (activeEl) {
+              activeEl.classList.remove('code-annotation-active');
+            }
+            selectCodeLines(clickedEl);
+            clickedEl.classList.add('code-annotation-active');
+          } else {
+            // Unselect the line
+            unselectCodeLines();
+            clickedEl.classList.remove('code-annotation-active');
+          }
+        });
+      }
+  const findCites = (el) => {
+    const parentEl = el.parentElement;
+    if (parentEl) {
+      const cites = parentEl.dataset.cites;
+      if (cites) {
+        return {
+          el,
+          cites: cites.split(' ')
+        };
+      } else {
+        return findCites(el.parentElement)
+      }
+    } else {
+      return undefined;
+    }
+  };
   var bibliorefs = window.document.querySelectorAll('a[role="doc-biblioref"]');
   for (var i=0; i<bibliorefs.length; i++) {
     const ref = bibliorefs[i];
-    const cites = ref.parentNode.getAttribute('data-cites').split(' ');
-    tippyHover(ref, function() {
-      var popup = window.document.createElement('div');
-      cites.forEach(function(cite) {
-        var citeDiv = window.document.createElement('div');
-        citeDiv.classList.add('hanging-indent');
-        citeDiv.classList.add('csl-entry');
-        var biblioDiv = window.document.getElementById('ref-' + cite);
-        if (biblioDiv) {
-          citeDiv.innerHTML = biblioDiv.innerHTML;
-        }
-        popup.appendChild(citeDiv);
+    const citeInfo = findCites(ref);
+    if (citeInfo) {
+      tippyHover(citeInfo.el, function() {
+        var popup = window.document.createElement('div');
+        citeInfo.cites.forEach(function(cite) {
+          var citeDiv = window.document.createElement('div');
+          citeDiv.classList.add('hanging-indent');
+          citeDiv.classList.add('csl-entry');
+          var biblioDiv = window.document.getElementById('ref-' + cite);
+          if (biblioDiv) {
+            citeDiv.innerHTML = biblioDiv.innerHTML;
+          }
+          popup.appendChild(citeDiv);
+        });
+        return popup.innerHTML;
       });
-      return popup.innerHTML;
-    });
+    }
   }
 });
 </script>

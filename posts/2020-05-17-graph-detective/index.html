@@ -2,7 +2,7 @@
 <html xmlns="http://www.w3.org/1999/xhtml" lang="en" xml:lang="en"><head>
 
 <meta charset="utf-8">
-<meta name="generator" content="quarto-1.1.251">
+<meta name="generator" content="quarto-1.3.340">
 
 <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
 
@@ -20,9 +20,10 @@ div.hanging-indent{margin-left: 1.5em; text-indent: -1.5em;}
 ul.task-list{list-style: none;}
 ul.task-list li input[type="checkbox"] {
   width: 0.8em;
-  margin: 0 0.8em 0.2em -1.6em;
+  margin: 0 0.8em 0.2em -1em; /* quarto-specific, see https://github.com/quarto-dev/quarto-cli/issues/4556 */ 
   vertical-align: middle;
 }
+/* CSS for syntax highlighting */
 pre > code.sourceCode { white-space: pre; position: relative; }
 pre > code.sourceCode > span { display: inline-block; line-height: 1.25; }
 pre > code.sourceCode > span:empty { height: 1.2em; }
@@ -49,43 +50,13 @@ pre.numberSource code > span > a:first-child::before
     -khtml-user-select: none; -moz-user-select: none;
     -ms-user-select: none; user-select: none;
     padding: 0 4px; width: 4em;
-    color: #aaaaaa;
   }
-pre.numberSource { margin-left: 3em; border-left: 1px solid #aaaaaa;  padding-left: 4px; }
+pre.numberSource { margin-left: 3em;  padding-left: 4px; }
 div.sourceCode
   {   }
 @media screen {
 pre > code.sourceCode > span > a:first-child::before { text-decoration: underline; }
 }
-code span.al { color: #ff0000; font-weight: bold; } /* Alert */
-code span.an { color: #60a0b0; font-weight: bold; font-style: italic; } /* Annotation */
-code span.at { color: #7d9029; } /* Attribute */
-code span.bn { color: #40a070; } /* BaseN */
-code span.bu { color: #008000; } /* BuiltIn */
-code span.cf { color: #007020; font-weight: bold; } /* ControlFlow */
-code span.ch { color: #4070a0; } /* Char */
-code span.cn { color: #880000; } /* Constant */
-code span.co { color: #60a0b0; font-style: italic; } /* Comment */
-code span.cv { color: #60a0b0; font-weight: bold; font-style: italic; } /* CommentVar */
-code span.do { color: #ba2121; font-style: italic; } /* Documentation */
-code span.dt { color: #902000; } /* DataType */
-code span.dv { color: #40a070; } /* DecVal */
-code span.er { color: #ff0000; font-weight: bold; } /* Error */
-code span.ex { } /* Extension */
-code span.fl { color: #40a070; } /* Float */
-code span.fu { color: #06287e; } /* Function */
-code span.im { color: #008000; font-weight: bold; } /* Import */
-code span.in { color: #60a0b0; font-weight: bold; font-style: italic; } /* Information */
-code span.kw { color: #007020; font-weight: bold; } /* Keyword */
-code span.op { color: #666666; } /* Operator */
-code span.ot { color: #007020; } /* Other */
-code span.pp { color: #bc7a00; } /* Preprocessor */
-code span.sc { color: #4070a0; } /* SpecialChar */
-code span.ss { color: #bb6688; } /* SpecialString */
-code span.st { color: #4070a0; } /* String */
-code span.va { color: #19177c; } /* Variable */
-code span.vs { color: #4070a0; } /* VerbatimString */
-code span.wa { color: #60a0b0; font-weight: bold; font-style: italic; } /* Warning */
 </style>
 
 
@@ -154,13 +125,14 @@ ga('send', {
 
 <meta property="og:title" content="Graph detective">
 <meta property="og:description" content="A plot has been floating around on Twitter from Georgia where the x-axis is all scampled. Let’s look into it and see if we can fix it!">
+<meta property="og:image" content="https://www.livefreeordichtomize.com/posts/2020-05-17-graph-detective/index_files/figure-html/unnamed-chunk-3-1.png">
+<meta property="og:image:height" content="960">
+<meta property="og:image:width" content="1728">
 <meta name="twitter:title" content="Live Free or Dichotomize">
 <meta name="twitter:description" content="A plot has been floating around on Twitter from Georgia where the x-axis is all scampled. Let’s look into it and see if we can fix it!">
-<meta name="twitter:image" content="https://www.livefreeordichtomize.com/media/lfod-card.png">
+<meta name="twitter:image" content="https://www.livefreeordichtomize.com/posts/2020-05-17-graph-detective/media/lfod-card.png">
 <meta name="twitter:creator" content="@LucyStats">
 <meta name="twitter:card" content="summary_large_image">
-<meta name="twitter:image-height" content="640">
-<meta name="twitter:image-width" content="1280">
 </head><body class="nav-fixed"><header id="custom-header">
   <div id="header_viz"></div>
 </header>
@@ -332,15 +304,16 @@ ga('send', {
 })
 
 </script>
-<script src="../../site_libs/htmlwidgets-1.5.4/htmlwidgets.js"></script>
-<script src="../../site_libs/plotly-binding-4.10.0/plotly.js"></script>
+<script src="../../site_libs/htmlwidgets-1.6.2/htmlwidgets.js"></script>
+<script src="../../site_libs/plotly-binding-4.10.1/plotly.js"></script>
 <script src="../../site_libs/typedarray-0.1/typedarray.min.js"></script>
 <script src="../../site_libs/jquery-3.5.1/jquery.min.js"></script>
 <link href="../../site_libs/crosstalk-1.2.0/css/crosstalk.min.css" rel="stylesheet">
 <script src="../../site_libs/crosstalk-1.2.0/js/crosstalk.min.js"></script>
-<link href="../../site_libs/plotly-htmlwidgets-css-2.5.1/plotly-htmlwidgets.css" rel="stylesheet">
-<script src="../../site_libs/plotly-main-2.5.1/plotly-latest.min.js"></script>
+<link href="../../site_libs/plotly-htmlwidgets-css-2.11.1/plotly-htmlwidgets.css" rel="stylesheet">
+<script src="../../site_libs/plotly-main-2.11.1/plotly-latest.min.js"></script>
 
+  <script src="https://polyfill.io/v3/polyfill.min.js?features=es6"></script>
   no
 
 
@@ -351,19 +324,23 @@ ga('send', {
   <header id="quarto-header" class="headroom fixed-top">
     <nav class="navbar navbar-expand-lg navbar-dark ">
       <div class="navbar-container container-fluid">
+            <div id="quarto-search" class="" title="Search"></div>
           <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarCollapse" aria-controls="navbarCollapse" aria-expanded="false" aria-label="Toggle navigation" onclick="if (window.quartoToggleHeadroom) { window.quartoToggleHeadroom(); }">
   <span class="navbar-toggler-icon"></span>
 </button>
           <div class="collapse navbar-collapse" id="navbarCollapse">
             <ul class="navbar-nav navbar-nav-scroll me-auto">
   <li class="nav-item">
-    <a class="nav-link" href="../../index.html">Home</a>
+    <a class="nav-link" href="../../index.html" rel="" target="">
+ <span class="menu-text">Home</span></a>
   </li>  
   <li class="nav-item">
-    <a class="nav-link" href="../../about.html">About</a>
+    <a class="nav-link" href="../../about.html" rel="" target="">
+ <span class="menu-text">About</span></a>
   </li>  
 </ul>
-              <div id="quarto-search" class="" title="Search"></div>
+            <div class="quarto-navbar-tools ms-auto">
+</div>
           </div> <!-- /navcollapse -->
       </div> <!-- /container-fluid -->
     </nav>
@@ -402,6 +379,7 @@ ga('send', {
         <p class="date">May 17, 2020</p>
       </div>
     </div>
+    
       
     </div>
     
@@ -426,9 +404,6 @@ From GA DPH, wtf?<br><br>"On the official Georgia COVID stats web page is this g
 — Dale Howard (<span class="citation" data-cites="fdhjr71">@fdhjr71</span>) <a href="https://twitter.com/fdhjr71/status/1261466653876879363?ref_src=twsrc%5Etfw">May 16, 2020</a>
 </blockquote>
 <script async="" src="https://platform.twitter.com/widgets.js" charset="utf-8"></script>
-<div class="cell">
-
-</div>
 <div class="cell">
 <div class="sourceCode cell-code" id="cb1"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb1-1"><a href="#cb1-1" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(tidyverse)</span>
 <span id="cb1-2"><a href="#cb1-2" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(ggridges)</span>
@@ -487,7 +462,7 @@ From GA DPH, wtf?<br><br>"On the official Georgia COVID stats web page is this g
 <span id="cb2-33"><a href="#cb2-33" aria-hidden="true" tabindex="-1"></a>        <span class="at">legend.title =</span> <span class="fu">element_text</span>(<span class="at">color =</span> <span class="st">"white"</span>),</span>
 <span id="cb2-34"><a href="#cb2-34" aria-hidden="true" tabindex="-1"></a>        <span class="at">title =</span> <span class="fu">element_text</span>(<span class="at">color =</span> <span class="st">"white"</span>))</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output-display">
-<p><img src="index_files/figure-html/unnamed-chunk-6-1.png" class="img-fluid" width="864"></p>
+<p><img src="index_files/figure-html/unnamed-chunk-3-1.png" class="img-fluid" width="864"></p>
 </div>
 </div>
 <p>Hmm, this is a remake of their plot, but with NY Times data. The dates are in the same order as theirs, but it doesn’t give the same misleading message because they seemed to have sorted their x-axis to make it look like the cases were descending. We can remake that misleading plot using NY Times data too, though!</p>
@@ -530,7 +505,7 @@ From GA DPH, wtf?<br><br>"On the official Georgia COVID stats web page is this g
 <span id="cb3-33"><a href="#cb3-33" aria-hidden="true" tabindex="-1"></a>        <span class="at">legend.title =</span> <span class="fu">element_text</span>(<span class="at">color =</span> <span class="st">"white"</span>),</span>
 <span id="cb3-34"><a href="#cb3-34" aria-hidden="true" tabindex="-1"></a>        <span class="at">title =</span> <span class="fu">element_text</span>(<span class="at">color =</span> <span class="st">"white"</span>))</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output-display">
-<p><img src="index_files/figure-html/unnamed-chunk-8-1.png" class="img-fluid" width="864"></p>
+<p><img src="index_files/figure-html/unnamed-chunk-4-1.png" class="img-fluid" width="864"></p>
 </div>
 </div>
 <p>Nice, that’s good and misleading.</p>
@@ -575,7 +550,7 @@ From GA DPH, wtf?<br><br>"On the official Georgia COVID stats web page is this g
 <span id="cb4-31"><a href="#cb4-31" aria-hidden="true" tabindex="-1"></a>        <span class="at">legend.title =</span> <span class="fu">element_text</span>(<span class="at">color =</span> <span class="st">"white"</span>),</span>
 <span id="cb4-32"><a href="#cb4-32" aria-hidden="true" tabindex="-1"></a>        <span class="at">title =</span> <span class="fu">element_text</span>(<span class="at">color =</span> <span class="st">"white"</span>))</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output-display">
-<p><img src="index_files/figure-html/unnamed-chunk-10-1.png" class="img-fluid" width="864"></p>
+<p><img src="index_files/figure-html/unnamed-chunk-5-1.png" class="img-fluid" width="864"></p>
 </div>
 </div>
 <p>Hmm, ok that is better, in that at least the x-axis is sensible. It’s still pretty hard to glean anything from this graph. Let’s try a few different visualizations.</p>
@@ -609,7 +584,7 @@ From GA DPH, wtf?<br><br>"On the official Georgia COVID stats web page is this g
 <span id="cb5-24"><a href="#cb5-24" aria-hidden="true" tabindex="-1"></a>        <span class="at">legend.title =</span> <span class="fu">element_text</span>(<span class="at">color =</span> <span class="st">"white"</span>),</span>
 <span id="cb5-25"><a href="#cb5-25" aria-hidden="true" tabindex="-1"></a>        <span class="at">title =</span> <span class="fu">element_text</span>(<span class="at">color =</span> <span class="st">"white"</span>)) </span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output-display">
-<p><img src="index_files/figure-html/unnamed-chunk-12-1.png" class="img-fluid" width="864"></p>
+<p><img src="index_files/figure-html/unnamed-chunk-6-1.png" class="img-fluid" width="864"></p>
 </div>
 </div>
 <p>Blah too busy.</p>
@@ -644,7 +619,7 @@ From GA DPH, wtf?<br><br>"On the official Georgia COVID stats web page is this g
 <span id="cb6-25"><a href="#cb6-25" aria-hidden="true" tabindex="-1"></a>        <span class="at">title =</span> <span class="fu">element_text</span>(<span class="at">color =</span> <span class="st">"white"</span>)) <span class="sc">+</span></span>
 <span id="cb6-26"><a href="#cb6-26" aria-hidden="true" tabindex="-1"></a>  <span class="fu">facet_grid</span>(county<span class="sc">~</span>.)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output-display">
-<p><img src="index_files/figure-html/unnamed-chunk-14-1.png" class="img-fluid" width="864"></p>
+<p><img src="index_files/figure-html/unnamed-chunk-7-1.png" class="img-fluid" width="864"></p>
 </div>
 </div>
 <p>This is okay, I still find it kind of hard to compare though.</p>
@@ -678,7 +653,7 @@ From GA DPH, wtf?<br><br>"On the official Georgia COVID stats web page is this g
 <span id="cb7-24"><a href="#cb7-24" aria-hidden="true" tabindex="-1"></a>        <span class="at">legend.title =</span> <span class="fu">element_text</span>(<span class="at">color =</span> <span class="st">"white"</span>),</span>
 <span id="cb7-25"><a href="#cb7-25" aria-hidden="true" tabindex="-1"></a>        <span class="at">title =</span> <span class="fu">element_text</span>(<span class="at">color =</span> <span class="st">"white"</span>)) </span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output-display">
-<p><img src="index_files/figure-html/unnamed-chunk-16-1.png" class="img-fluid" width="864"></p>
+<p><img src="index_files/figure-html/unnamed-chunk-8-1.png" class="img-fluid" width="864"></p>
 </div>
 </div>
 <p>Ridgeline plots are nice, but I’m still not sure I get a lot out of this vis. Hmm.</p>
@@ -713,7 +688,7 @@ From GA DPH, wtf?<br><br>"On the official Georgia COVID stats web page is this g
 <span id="cb8-25"><a href="#cb8-25" aria-hidden="true" tabindex="-1"></a>        <span class="at">legend.title =</span> <span class="fu">element_text</span>(<span class="at">color =</span> <span class="st">"white"</span>),</span>
 <span id="cb8-26"><a href="#cb8-26" aria-hidden="true" tabindex="-1"></a>        <span class="at">title =</span> <span class="fu">element_text</span>(<span class="at">color =</span> <span class="st">"white"</span>))</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output-display">
-<p><img src="index_files/figure-html/unnamed-chunk-18-1.png" class="img-fluid" width="864"></p>
+<p><img src="index_files/figure-html/unnamed-chunk-9-1.png" class="img-fluid" width="864"></p>
 </div>
 </div>
 <p>Meh.</p>
@@ -761,7 +736,7 @@ Would something like a bump chart be better? You could encode severity in size m
 <span id="cb9-30"><a href="#cb9-30" aria-hidden="true" tabindex="-1"></a>        <span class="at">legend.title =</span> <span class="fu">element_text</span>(<span class="at">color =</span> <span class="st">"white"</span>),</span>
 <span id="cb9-31"><a href="#cb9-31" aria-hidden="true" tabindex="-1"></a>        <span class="at">title =</span> <span class="fu">element_text</span>(<span class="at">color =</span> <span class="st">"white"</span>))</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output-display">
-<p><img src="index_files/figure-html/unnamed-chunk-20-1.png" class="img-fluid" width="864"></p>
+<p><img src="index_files/figure-html/unnamed-chunk-10-1.png" class="img-fluid" width="864"></p>
 </div>
 </div>
 <p>I don’t hate it…but it is still kind of busy. I think part of the problem is it is quite hard to compare 5 things over two axis simultaneously without a clear signal. Maybe if we could reduce it to comparisons between 2 things at a time?</p>
@@ -800,8 +775,8 @@ Would something like a bump chart be better? You could encode severity in size m
 <span id="cb11-26"><a href="#cb11-26" aria-hidden="true" tabindex="-1"></a></span>
 <span id="cb11-27"><a href="#cb11-27" aria-hidden="true" tabindex="-1"></a><span class="fu">ggplotly</span>(p)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output-display">
-<div id="htmlwidget-ad5d9f397e04663be056" style="width:100%;height:361px;" class="plotly html-widget"></div>
-<script type="application/json" data-for="htmlwidget-ad5d9f397e04663be056">{"x":{"data":[{"orientation":"v","width":[0.900000000001455,0.900000000001455,0.900000000001455,0.900000000001455,0.900000000001455,0.900000000001455,0.900000000001455,0.900000000001455,0.900000000001455,0.900000000001455,0.900000000001455,0.900000000001455,0.900000000001455,0.900000000001455],"base":[0,0,0,0,0,0,0,0,0,0,0,0,0,0],"x":[18378,18379,18380,18381,18382,18383,18384,18385,18386,18387,18388,18389,18390,18391],"y":[33,55,56,42,40,58,70,19,71,48,111,26,48,56],"text":["date: 2020-04-26<br />case:  33<br />county: Cobb","date: 2020-04-27<br />case:  55<br />county: Cobb","date: 2020-04-28<br />case:  56<br />county: Cobb","date: 2020-04-29<br />case:  42<br />county: Cobb","date: 2020-04-30<br />case:  40<br />county: Cobb","date: 2020-05-01<br />case:  58<br />county: Cobb","date: 2020-05-02<br />case:  70<br />county: Cobb","date: 2020-05-03<br />case:  19<br />county: Cobb","date: 2020-05-04<br />case:  71<br />county: Cobb","date: 2020-05-05<br />case:  48<br />county: Cobb","date: 2020-05-06<br />case: 111<br />county: Cobb","date: 2020-05-07<br />case:  26<br />county: Cobb","date: 2020-05-08<br />case:  48<br />county: Cobb","date: 2020-05-09<br />case:  56<br />county: Cobb"],"type":"bar","textposition":"none","marker":{"autocolorscale":false,"color":"rgba(88,84,168,0.75)","line":{"width":1.88976377952756,"color":"transparent"}},"name":"Cobb","legendgroup":"Cobb","showlegend":true,"xaxis":"x","yaxis":"y","hoverinfo":"text","frame":null},{"orientation":"v","width":[0.900000000001455,0.900000000001455,0.900000000001455,0.900000000001455,0.900000000001455,0.900000000001455,0.900000000001455,0.900000000001455,0.900000000001455,0.900000000001455,0.900000000001455,0.900000000001455,0.900000000001455,0.900000000001455],"base":[0,0,0,0,0,0,0,0,0,0,0,0,0,0],"x":[18378,18379,18380,18381,18382,18383,18384,18385,18386,18387,18388,18389,18390,18391],"y":[12,55,52,73,47,46,75,36,71,29,73,39,49,44],"text":["date: 2020-04-26<br />case:  12<br />county: DeKalb","date: 2020-04-27<br />case:  55<br />county: DeKalb","date: 2020-04-28<br />case:  52<br />county: DeKalb","date: 2020-04-29<br />case:  73<br />county: DeKalb","date: 2020-04-30<br />case:  47<br />county: DeKalb","date: 2020-05-01<br />case:  46<br />county: DeKalb","date: 2020-05-02<br />case:  75<br />county: DeKalb","date: 2020-05-03<br />case:  36<br />county: DeKalb","date: 2020-05-04<br />case:  71<br />county: DeKalb","date: 2020-05-05<br />case:  29<br />county: DeKalb","date: 2020-05-06<br />case:  73<br />county: DeKalb","date: 2020-05-07<br />case:  39<br />county: DeKalb","date: 2020-05-08<br />case:  49<br />county: DeKalb","date: 2020-05-09<br />case:  44<br />county: DeKalb"],"type":"bar","textposition":"none","marker":{"autocolorscale":false,"color":"rgba(70,134,142,0.75)","line":{"width":1.88976377952756,"color":"transparent"}},"name":"DeKalb","legendgroup":"DeKalb","showlegend":true,"xaxis":"x","yaxis":"y","hoverinfo":"text","frame":null},{"orientation":"v","width":[0.900000000001455,0.900000000001455,0.900000000001455,0.900000000001455,0.900000000001455,0.900000000001455,0.900000000001455,0.900000000001455,0.900000000001455,0.900000000001455,0.900000000001455,0.900000000001455,0.900000000001455,0.900000000001455],"base":[0,0,0,0,0,0,0,0,0,0,0,0,0,0],"x":[18378,18379,18380,18381,18382,18383,18384,18385,18386,18387,18388,18389,18390,18391],"y":[2,135,73,32,36,59,48,53,76,108,85,10,57,68],"text":["date: 2020-04-26<br />case:   2<br />county: Fulton","date: 2020-04-27<br />case: 135<br />county: Fulton","date: 2020-04-28<br />case:  73<br />county: Fulton","date: 2020-04-29<br />case:  32<br />county: Fulton","date: 2020-04-30<br />case:  36<br />county: Fulton","date: 2020-05-01<br />case:  59<br />county: Fulton","date: 2020-05-02<br />case:  48<br />county: Fulton","date: 2020-05-03<br />case:  53<br />county: Fulton","date: 2020-05-04<br />case:  76<br />county: Fulton","date: 2020-05-05<br />case: 108<br />county: Fulton","date: 2020-05-06<br />case:  85<br />county: Fulton","date: 2020-05-07<br />case:  10<br />county: Fulton","date: 2020-05-08<br />case:  57<br />county: Fulton","date: 2020-05-09<br />case:  68<br />county: Fulton"],"type":"bar","textposition":"none","marker":{"autocolorscale":false,"color":"rgba(149,134,72,0.75)","line":{"width":1.88976377952756,"color":"transparent"}},"name":"Fulton","legendgroup":"Fulton","showlegend":true,"xaxis":"x","yaxis":"y","hoverinfo":"text","frame":null},{"orientation":"v","width":[0.900000000001455,0.900000000001455,0.900000000001455,0.900000000001455,0.900000000001455,0.900000000001455,0.900000000001455,0.900000000001455,0.900000000001455,0.900000000001455,0.900000000001455,0.900000000001455,0.900000000001455,0.900000000001455],"base":[0,0,0,0,0,0,0,0,0,0,0,0,0,0],"x":[18378,18379,18380,18381,18382,18383,18384,18385,18386,18387,18388,18389,18390,18391],"y":[44,41,75,124,49,55,86,46,77,45,120,32,68,81],"text":["date: 2020-04-26<br />case:  44<br />county: Gwinnett","date: 2020-04-27<br />case:  41<br />county: Gwinnett","date: 2020-04-28<br />case:  75<br />county: Gwinnett","date: 2020-04-29<br />case: 124<br />county: Gwinnett","date: 2020-04-30<br />case:  49<br />county: Gwinnett","date: 2020-05-01<br />case:  55<br />county: Gwinnett","date: 2020-05-02<br />case:  86<br />county: Gwinnett","date: 2020-05-03<br />case:  46<br />county: Gwinnett","date: 2020-05-04<br />case:  77<br />county: Gwinnett","date: 2020-05-05<br />case:  45<br />county: Gwinnett","date: 2020-05-06<br />case: 120<br />county: Gwinnett","date: 2020-05-07<br />case:  32<br />county: Gwinnett","date: 2020-05-08<br />case:  68<br />county: Gwinnett","date: 2020-05-09<br />case:  81<br />county: Gwinnett"],"type":"bar","textposition":"none","marker":{"autocolorscale":false,"color":"rgba(143,93,55,0.75)","line":{"width":1.88976377952756,"color":"transparent"}},"name":"Gwinnett","legendgroup":"Gwinnett","showlegend":true,"xaxis":"x","yaxis":"y","hoverinfo":"text","frame":null},{"orientation":"v","width":[0.900000000001455,0.900000000001455,0.900000000001455,0.900000000001455,0.900000000001455,0.900000000001455,0.900000000001455,0.900000000001455,0.900000000001455,0.900000000001455,0.900000000001455,0.900000000001455,0.900000000001455,0.900000000001455],"base":[0,0,0,0,0,0,0,0,0,0,0,0,0,0],"x":[18378,18379,18380,18381,18382,18383,18384,18385,18386,18387,18388,18389,18390,18391],"y":[1,65,87,76,85,136,212,6,76,70,68,42,41,5],"text":["date: 2020-04-26<br />case:   1<br />county: Hall","date: 2020-04-27<br />case:  65<br />county: Hall","date: 2020-04-28<br />case:  87<br />county: Hall","date: 2020-04-29<br />case:  76<br />county: Hall","date: 2020-04-30<br />case:  85<br />county: Hall","date: 2020-05-01<br />case: 136<br />county: Hall","date: 2020-05-02<br />case: 212<br />county: Hall","date: 2020-05-03<br />case:   6<br />county: Hall","date: 2020-05-04<br />case:  76<br />county: Hall","date: 2020-05-05<br />case:  70<br />county: Hall","date: 2020-05-06<br />case:  68<br />county: Hall","date: 2020-05-07<br />case:  42<br />county: Hall","date: 2020-05-08<br />case:  41<br />county: Hall","date: 2020-05-09<br />case:   5<br />county: Hall"],"type":"bar","textposition":"none","marker":{"autocolorscale":false,"color":"rgba(93,152,219,0.75)","line":{"width":1.88976377952756,"color":"transparent"}},"name":"Hall","legendgroup":"Hall","showlegend":true,"xaxis":"x","yaxis":"y","hoverinfo":"text","frame":null}],"layout":{"margin":{"t":46.6849315068493,"r":7.30593607305936,"b":43.1050228310502,"l":43.1050228310502},"plot_bgcolor":"rgba(24,47,78,1)","paper_bgcolor":"rgba(24,47,78,1)","font":{"color":"rgba(0,0,0,1)","family":"","size":14.6118721461187},"title":{"text":"Top 5 Counties with the Greatest Number of Confirmed COVID-19 Cases","font":{"color":"rgba(255,255,255,1)","family":"","size":17.5342465753425},"x":0,"xref":"paper"},"xaxis":{"domain":[0,1],"automargin":true,"type":"linear","autorange":false,"range":[18376.855,18392.145],"tickmode":"array","ticktext":["28Apr2020","03May2020","08May2020"],"tickvals":[18380,18385,18390],"categoryorder":"array","categoryarray":["28Apr2020","03May2020","08May2020"],"nticks":null,"ticks":"outside","tickcolor":"rgba(51,51,51,1)","ticklen":3.65296803652968,"tickwidth":0.66417600664176,"showticklabels":true,"tickfont":{"color":"rgba(255,255,255,1)","family":"","size":11.689497716895},"tickangle":-0,"showline":true,"linecolor":"rgba(255,255,255,1)","linewidth":0.66417600664176,"showgrid":false,"gridcolor":null,"gridwidth":0,"zeroline":false,"anchor":"y","title":{"text":"date","font":{"color":"rgba(255,255,255,1)","family":"","size":14.6118721461187}},"hoverformat":".2f"},"yaxis":{"domain":[0,1],"automargin":true,"type":"linear","autorange":false,"range":[-10.6,222.6],"tickmode":"array","ticktext":["0","50","100","150","200"],"tickvals":[0,50,100,150,200],"categoryorder":"array","categoryarray":["0","50","100","150","200"],"nticks":null,"ticks":"outside","tickcolor":"rgba(51,51,51,1)","ticklen":3.65296803652968,"tickwidth":0.66417600664176,"showticklabels":true,"tickfont":{"color":"rgba(255,255,255,1)","family":"","size":11.689497716895},"tickangle":-0,"showline":true,"linecolor":"rgba(255,255,255,1)","linewidth":0.66417600664176,"showgrid":false,"gridcolor":null,"gridwidth":0,"zeroline":false,"anchor":"x","title":{"text":"case","font":{"color":"rgba(255,255,255,1)","family":"","size":14.6118721461187}},"hoverformat":".2f"},"shapes":[{"type":"rect","fillcolor":null,"line":{"color":null,"width":0,"linetype":[]},"yref":"paper","xref":"paper","x0":0,"x1":1,"y0":0,"y1":1}],"showlegend":true,"legend":{"bgcolor":"rgba(24,47,78,1)","bordercolor":"transparent","borderwidth":1.88976377952756,"font":{"color":"rgba(255,255,255,1)","family":"","size":11.689497716895},"title":{"text":"County","font":{"color":"rgba(255,255,255,1)","family":"","size":14.6118721461187}}},"hovermode":"closest","barmode":"relative"},"config":{"doubleClick":"reset","modeBarButtonsToAdd":["hoverclosest","hovercompare"],"showSendToCloud":false},"source":"A","attrs":{"30a678128e35":{"x":{},"y":{},"fill":{},"type":"bar"}},"cur_data":"30a678128e35","visdat":{"30a678128e35":["function (y) ","x"]},"highlight":{"on":"plotly_click","persistent":false,"dynamic":false,"selectize":false,"opacityDim":0.2,"selected":{"opacity":1},"debounce":0},"shinyEvents":["plotly_hover","plotly_click","plotly_selected","plotly_relayout","plotly_brushed","plotly_brushing","plotly_clickannotation","plotly_doubleclick","plotly_deselect","plotly_afterplot","plotly_sunburstclick"],"base_url":"https://plot.ly"},"evals":[],"jsHooks":[]}</script>
+<div class="plotly html-widget html-fill-item-overflow-hidden html-fill-item" id="htmlwidget-743603f978ede6d22f3b" style="width:100%;height:361px;"></div>
+<script type="application/json" data-for="htmlwidget-743603f978ede6d22f3b">{"x":{"data":[{"orientation":"v","width":[0.900000000001455,0.900000000001455,0.900000000001455,0.900000000001455,0.900000000001455,0.900000000001455,0.900000000001455,0.900000000001455,0.900000000001455,0.900000000001455,0.900000000001455,0.900000000001455,0.900000000001455,0.900000000001455],"base":[0,0,0,0,0,0,0,0,0,0,0,0,0,0],"x":[18378,18379,18380,18381,18382,18383,18384,18385,18386,18387,18388,18389,18390,18391],"y":[33,55,56,42,40,58,70,19,71,48,111,26,48,56],"text":["date: 2020-04-26<br />case:  33<br />county: Cobb","date: 2020-04-27<br />case:  55<br />county: Cobb","date: 2020-04-28<br />case:  56<br />county: Cobb","date: 2020-04-29<br />case:  42<br />county: Cobb","date: 2020-04-30<br />case:  40<br />county: Cobb","date: 2020-05-01<br />case:  58<br />county: Cobb","date: 2020-05-02<br />case:  70<br />county: Cobb","date: 2020-05-03<br />case:  19<br />county: Cobb","date: 2020-05-04<br />case:  71<br />county: Cobb","date: 2020-05-05<br />case:  48<br />county: Cobb","date: 2020-05-06<br />case: 111<br />county: Cobb","date: 2020-05-07<br />case:  26<br />county: Cobb","date: 2020-05-08<br />case:  48<br />county: Cobb","date: 2020-05-09<br />case:  56<br />county: Cobb"],"type":"bar","textposition":"none","marker":{"autocolorscale":false,"color":"rgba(88,84,168,0.75)","line":{"width":1.88976377952756,"color":"transparent"}},"name":"Cobb","legendgroup":"Cobb","showlegend":true,"xaxis":"x","yaxis":"y","hoverinfo":"text","frame":null},{"orientation":"v","width":[0.900000000001455,0.900000000001455,0.900000000001455,0.900000000001455,0.900000000001455,0.900000000001455,0.900000000001455,0.900000000001455,0.900000000001455,0.900000000001455,0.900000000001455,0.900000000001455,0.900000000001455,0.900000000001455],"base":[0,0,0,0,0,0,0,0,0,0,0,0,0,0],"x":[18378,18379,18380,18381,18382,18383,18384,18385,18386,18387,18388,18389,18390,18391],"y":[12,55,52,73,47,46,75,36,71,29,73,39,49,44],"text":["date: 2020-04-26<br />case:  12<br />county: DeKalb","date: 2020-04-27<br />case:  55<br />county: DeKalb","date: 2020-04-28<br />case:  52<br />county: DeKalb","date: 2020-04-29<br />case:  73<br />county: DeKalb","date: 2020-04-30<br />case:  47<br />county: DeKalb","date: 2020-05-01<br />case:  46<br />county: DeKalb","date: 2020-05-02<br />case:  75<br />county: DeKalb","date: 2020-05-03<br />case:  36<br />county: DeKalb","date: 2020-05-04<br />case:  71<br />county: DeKalb","date: 2020-05-05<br />case:  29<br />county: DeKalb","date: 2020-05-06<br />case:  73<br />county: DeKalb","date: 2020-05-07<br />case:  39<br />county: DeKalb","date: 2020-05-08<br />case:  49<br />county: DeKalb","date: 2020-05-09<br />case:  44<br />county: DeKalb"],"type":"bar","textposition":"none","marker":{"autocolorscale":false,"color":"rgba(70,134,142,0.75)","line":{"width":1.88976377952756,"color":"transparent"}},"name":"DeKalb","legendgroup":"DeKalb","showlegend":true,"xaxis":"x","yaxis":"y","hoverinfo":"text","frame":null},{"orientation":"v","width":[0.900000000001455,0.900000000001455,0.900000000001455,0.900000000001455,0.900000000001455,0.900000000001455,0.900000000001455,0.900000000001455,0.900000000001455,0.900000000001455,0.900000000001455,0.900000000001455,0.900000000001455,0.900000000001455],"base":[0,0,0,0,0,0,0,0,0,0,0,0,0,0],"x":[18378,18379,18380,18381,18382,18383,18384,18385,18386,18387,18388,18389,18390,18391],"y":[2,135,73,32,36,59,48,53,76,108,85,10,57,68],"text":["date: 2020-04-26<br />case:   2<br />county: Fulton","date: 2020-04-27<br />case: 135<br />county: Fulton","date: 2020-04-28<br />case:  73<br />county: Fulton","date: 2020-04-29<br />case:  32<br />county: Fulton","date: 2020-04-30<br />case:  36<br />county: Fulton","date: 2020-05-01<br />case:  59<br />county: Fulton","date: 2020-05-02<br />case:  48<br />county: Fulton","date: 2020-05-03<br />case:  53<br />county: Fulton","date: 2020-05-04<br />case:  76<br />county: Fulton","date: 2020-05-05<br />case: 108<br />county: Fulton","date: 2020-05-06<br />case:  85<br />county: Fulton","date: 2020-05-07<br />case:  10<br />county: Fulton","date: 2020-05-08<br />case:  57<br />county: Fulton","date: 2020-05-09<br />case:  68<br />county: Fulton"],"type":"bar","textposition":"none","marker":{"autocolorscale":false,"color":"rgba(149,134,72,0.75)","line":{"width":1.88976377952756,"color":"transparent"}},"name":"Fulton","legendgroup":"Fulton","showlegend":true,"xaxis":"x","yaxis":"y","hoverinfo":"text","frame":null},{"orientation":"v","width":[0.900000000001455,0.900000000001455,0.900000000001455,0.900000000001455,0.900000000001455,0.900000000001455,0.900000000001455,0.900000000001455,0.900000000001455,0.900000000001455,0.900000000001455,0.900000000001455,0.900000000001455,0.900000000001455],"base":[0,0,0,0,0,0,0,0,0,0,0,0,0,0],"x":[18378,18379,18380,18381,18382,18383,18384,18385,18386,18387,18388,18389,18390,18391],"y":[44,41,75,124,49,55,86,46,77,45,120,32,68,81],"text":["date: 2020-04-26<br />case:  44<br />county: Gwinnett","date: 2020-04-27<br />case:  41<br />county: Gwinnett","date: 2020-04-28<br />case:  75<br />county: Gwinnett","date: 2020-04-29<br />case: 124<br />county: Gwinnett","date: 2020-04-30<br />case:  49<br />county: Gwinnett","date: 2020-05-01<br />case:  55<br />county: Gwinnett","date: 2020-05-02<br />case:  86<br />county: Gwinnett","date: 2020-05-03<br />case:  46<br />county: Gwinnett","date: 2020-05-04<br />case:  77<br />county: Gwinnett","date: 2020-05-05<br />case:  45<br />county: Gwinnett","date: 2020-05-06<br />case: 120<br />county: Gwinnett","date: 2020-05-07<br />case:  32<br />county: Gwinnett","date: 2020-05-08<br />case:  68<br />county: Gwinnett","date: 2020-05-09<br />case:  81<br />county: Gwinnett"],"type":"bar","textposition":"none","marker":{"autocolorscale":false,"color":"rgba(143,93,55,0.75)","line":{"width":1.88976377952756,"color":"transparent"}},"name":"Gwinnett","legendgroup":"Gwinnett","showlegend":true,"xaxis":"x","yaxis":"y","hoverinfo":"text","frame":null},{"orientation":"v","width":[0.900000000001455,0.900000000001455,0.900000000001455,0.900000000001455,0.900000000001455,0.900000000001455,0.900000000001455,0.900000000001455,0.900000000001455,0.900000000001455,0.900000000001455,0.900000000001455,0.900000000001455,0.900000000001455],"base":[0,0,0,0,0,0,0,0,0,0,0,0,0,0],"x":[18378,18379,18380,18381,18382,18383,18384,18385,18386,18387,18388,18389,18390,18391],"y":[1,65,87,76,85,136,212,6,76,70,68,42,41,5],"text":["date: 2020-04-26<br />case:   1<br />county: Hall","date: 2020-04-27<br />case:  65<br />county: Hall","date: 2020-04-28<br />case:  87<br />county: Hall","date: 2020-04-29<br />case:  76<br />county: Hall","date: 2020-04-30<br />case:  85<br />county: Hall","date: 2020-05-01<br />case: 136<br />county: Hall","date: 2020-05-02<br />case: 212<br />county: Hall","date: 2020-05-03<br />case:   6<br />county: Hall","date: 2020-05-04<br />case:  76<br />county: Hall","date: 2020-05-05<br />case:  70<br />county: Hall","date: 2020-05-06<br />case:  68<br />county: Hall","date: 2020-05-07<br />case:  42<br />county: Hall","date: 2020-05-08<br />case:  41<br />county: Hall","date: 2020-05-09<br />case:   5<br />county: Hall"],"type":"bar","textposition":"none","marker":{"autocolorscale":false,"color":"rgba(93,152,219,0.75)","line":{"width":1.88976377952756,"color":"transparent"}},"name":"Hall","legendgroup":"Hall","showlegend":true,"xaxis":"x","yaxis":"y","hoverinfo":"text","frame":null}],"layout":{"margin":{"t":46.6849315068493,"r":7.30593607305936,"b":43.1050228310502,"l":43.1050228310502},"plot_bgcolor":"rgba(24,47,78,1)","paper_bgcolor":"rgba(24,47,78,1)","font":{"color":"rgba(0,0,0,1)","family":"","size":14.6118721461187},"title":{"text":"Top 5 Counties with the Greatest Number of Confirmed COVID-19 Cases","font":{"color":"rgba(255,255,255,1)","family":"","size":17.5342465753425},"x":0,"xref":"paper"},"xaxis":{"domain":[0,1],"automargin":true,"type":"linear","autorange":false,"range":[18376.855,18392.145],"tickmode":"array","ticktext":["28Apr2020","03May2020","08May2020"],"tickvals":[18380,18385,18390],"categoryorder":"array","categoryarray":["28Apr2020","03May2020","08May2020"],"nticks":null,"ticks":"outside","tickcolor":"rgba(51,51,51,1)","ticklen":3.65296803652968,"tickwidth":0.66417600664176,"showticklabels":true,"tickfont":{"color":"rgba(255,255,255,1)","family":"","size":11.689497716895},"tickangle":-0,"showline":true,"linecolor":"rgba(255,255,255,1)","linewidth":0.66417600664176,"showgrid":false,"gridcolor":null,"gridwidth":0,"zeroline":false,"anchor":"y","title":{"text":"date","font":{"color":"rgba(255,255,255,1)","family":"","size":14.6118721461187}},"hoverformat":".2f"},"yaxis":{"domain":[0,1],"automargin":true,"type":"linear","autorange":false,"range":[-10.6,222.6],"tickmode":"array","ticktext":["0","50","100","150","200"],"tickvals":[0,50,100,150,200],"categoryorder":"array","categoryarray":["0","50","100","150","200"],"nticks":null,"ticks":"outside","tickcolor":"rgba(51,51,51,1)","ticklen":3.65296803652968,"tickwidth":0.66417600664176,"showticklabels":true,"tickfont":{"color":"rgba(255,255,255,1)","family":"","size":11.689497716895},"tickangle":-0,"showline":true,"linecolor":"rgba(255,255,255,1)","linewidth":0.66417600664176,"showgrid":false,"gridcolor":null,"gridwidth":0,"zeroline":false,"anchor":"x","title":{"text":"case","font":{"color":"rgba(255,255,255,1)","family":"","size":14.6118721461187}},"hoverformat":".2f"},"shapes":[{"type":"rect","fillcolor":null,"line":{"color":null,"width":0,"linetype":[]},"yref":"paper","xref":"paper","x0":0,"x1":1,"y0":0,"y1":1}],"showlegend":true,"legend":{"bgcolor":"rgba(24,47,78,1)","bordercolor":"transparent","borderwidth":1.88976377952756,"font":{"color":"rgba(255,255,255,1)","family":"","size":11.689497716895},"title":{"text":"County","font":{"color":"rgba(255,255,255,1)","family":"","size":14.6118721461187}}},"hovermode":"closest","barmode":"relative"},"config":{"doubleClick":"reset","modeBarButtonsToAdd":["hoverclosest","hovercompare"],"showSendToCloud":false},"source":"A","attrs":{"1331e584712f8":{"x":{},"y":{},"fill":{},"type":"bar"}},"cur_data":"1331e584712f8","visdat":{"1331e584712f8":["function (y) ","x"]},"highlight":{"on":"plotly_click","persistent":false,"dynamic":false,"selectize":false,"opacityDim":0.2,"selected":{"opacity":1},"debounce":0},"shinyEvents":["plotly_hover","plotly_click","plotly_selected","plotly_relayout","plotly_brushed","plotly_brushing","plotly_clickannotation","plotly_doubleclick","plotly_deselect","plotly_afterplot","plotly_sunburstclick"],"base_url":"https://plot.ly"},"evals":[],"jsHooks":[]}</script>
 </div>
 </div>
 <p>You can click on the legend to hide counties, allowing you to compare just 2 at a time. This seems marginally better.</p>
@@ -855,12 +830,10 @@ Maybe this is a job for a bar chart race! <a href="https://t.co/BnTvHxKZ6f">http
 <span id="cb12-34"><a href="#cb12-34" aria-hidden="true" tabindex="-1"></a>    <span class="at">subtitle =</span> <span class="st">"Date: {as.Date(frame_time)}"</span>,</span>
 <span id="cb12-35"><a href="#cb12-35" aria-hidden="true" tabindex="-1"></a>    <span class="at">caption =</span> <span class="st">"Data: NY Times</span><span class="sc">\n</span><span class="st">Graph: @LucyStats"</span>) <span class="ot">-&gt;</span> p</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </div>
-<div class="cell" data-hash="index_cache/html/unnamed-chunk-28_84275724413b38b603ac39155ee2c001">
+<div class="cell">
 <div class="sourceCode cell-code" id="cb13"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb13-1"><a href="#cb13-1" aria-hidden="true" tabindex="-1"></a>p</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
-<div class="cell-output-display">
-<p><img src="index_files/figure-html/unnamed-chunk-28-1.gif" class="img-fluid"></p>
 </div>
-</div>
+<p><img src="../../media/data/gganimation-greatest-covid-cases.gif" class="img-fluid"></p>
 
 
 </section>
@@ -893,9 +866,23 @@ window.document.addEventListener("DOMContentLoaded", function (event) {
     icon: icon
   };
   anchorJS.add('.anchored');
+  const isCodeAnnotation = (el) => {
+    for (const clz of el.classList) {
+      if (clz.startsWith('code-annotation-')) {                     
+        return true;
+      }
+    }
+    return false;
+  }
   const clipboard = new window.ClipboardJS('.code-copy-button', {
-    target: function(trigger) {
-      return trigger.previousElementSibling;
+    text: function(trigger) {
+      const codeEl = trigger.previousElementSibling.cloneNode(true);
+      for (const childEl of codeEl.children) {
+        if (isCodeAnnotation(childEl)) {
+          childEl.remove();
+        }
+      }
+      return codeEl.innerText;
     }
   });
   clipboard.on('success', function(e) {
@@ -907,7 +894,24 @@ window.document.addEventListener("DOMContentLoaded", function (event) {
     button.classList.add('code-copy-button-checked');
     var currentTitle = button.getAttribute("title");
     button.setAttribute("title", "Copied!");
+    let tooltip;
+    if (window.bootstrap) {
+      button.setAttribute("data-bs-toggle", "tooltip");
+      button.setAttribute("data-bs-placement", "left");
+      button.setAttribute("data-bs-title", "Copied!");
+      tooltip = new bootstrap.Tooltip(button, 
+        { trigger: "manual", 
+          customClass: "code-copy-button-tooltip",
+          offset: [0, -8]});
+      tooltip.show();    
+    }
     setTimeout(function() {
+      if (tooltip) {
+        tooltip.hide();
+        button.removeAttribute("data-bs-title");
+        button.removeAttribute("data-bs-toggle");
+        button.removeAttribute("data-bs-placement");
+      }
       button.setAttribute("title", currentTitle);
       button.classList.remove('code-copy-button-checked');
     }, 1000);
@@ -943,24 +947,128 @@ window.document.addEventListener("DOMContentLoaded", function (event) {
       return note.innerHTML;
     });
   }
+      let selectedAnnoteEl;
+      const selectorForAnnotation = ( cell, annotation) => {
+        let cellAttr = 'data-code-cell="' + cell + '"';
+        let lineAttr = 'data-code-annotation="' +  annotation + '"';
+        const selector = 'span[' + cellAttr + '][' + lineAttr + ']';
+        return selector;
+      }
+      const selectCodeLines = (annoteEl) => {
+        const doc = window.document;
+        const targetCell = annoteEl.getAttribute("data-target-cell");
+        const targetAnnotation = annoteEl.getAttribute("data-target-annotation");
+        const annoteSpan = window.document.querySelector(selectorForAnnotation(targetCell, targetAnnotation));
+        const lines = annoteSpan.getAttribute("data-code-lines").split(",");
+        const lineIds = lines.map((line) => {
+          return targetCell + "-" + line;
+        })
+        let top = null;
+        let height = null;
+        let parent = null;
+        if (lineIds.length > 0) {
+            //compute the position of the single el (top and bottom and make a div)
+            const el = window.document.getElementById(lineIds[0]);
+            top = el.offsetTop;
+            height = el.offsetHeight;
+            parent = el.parentElement.parentElement;
+          if (lineIds.length > 1) {
+            const lastEl = window.document.getElementById(lineIds[lineIds.length - 1]);
+            const bottom = lastEl.offsetTop + lastEl.offsetHeight;
+            height = bottom - top;
+          }
+          if (top !== null && height !== null && parent !== null) {
+            // cook up a div (if necessary) and position it 
+            let div = window.document.getElementById("code-annotation-line-highlight");
+            if (div === null) {
+              div = window.document.createElement("div");
+              div.setAttribute("id", "code-annotation-line-highlight");
+              div.style.position = 'absolute';
+              parent.appendChild(div);
+            }
+            div.style.top = top - 2 + "px";
+            div.style.height = height + 4 + "px";
+            let gutterDiv = window.document.getElementById("code-annotation-line-highlight-gutter");
+            if (gutterDiv === null) {
+              gutterDiv = window.document.createElement("div");
+              gutterDiv.setAttribute("id", "code-annotation-line-highlight-gutter");
+              gutterDiv.style.position = 'absolute';
+              const codeCell = window.document.getElementById(targetCell);
+              const gutter = codeCell.querySelector('.code-annotation-gutter');
+              gutter.appendChild(gutterDiv);
+            }
+            gutterDiv.style.top = top - 2 + "px";
+            gutterDiv.style.height = height + 4 + "px";
+          }
+          selectedAnnoteEl = annoteEl;
+        }
+      };
+      const unselectCodeLines = () => {
+        const elementsIds = ["code-annotation-line-highlight", "code-annotation-line-highlight-gutter"];
+        elementsIds.forEach((elId) => {
+          const div = window.document.getElementById(elId);
+          if (div) {
+            div.remove();
+          }
+        });
+        selectedAnnoteEl = undefined;
+      };
+      // Attach click handler to the DT
+      const annoteDls = window.document.querySelectorAll('dt[data-target-cell]');
+      for (const annoteDlNode of annoteDls) {
+        annoteDlNode.addEventListener('click', (event) => {
+          const clickedEl = event.target;
+          if (clickedEl !== selectedAnnoteEl) {
+            unselectCodeLines();
+            const activeEl = window.document.querySelector('dt[data-target-cell].code-annotation-active');
+            if (activeEl) {
+              activeEl.classList.remove('code-annotation-active');
+            }
+            selectCodeLines(clickedEl);
+            clickedEl.classList.add('code-annotation-active');
+          } else {
+            // Unselect the line
+            unselectCodeLines();
+            clickedEl.classList.remove('code-annotation-active');
+          }
+        });
+      }
+  const findCites = (el) => {
+    const parentEl = el.parentElement;
+    if (parentEl) {
+      const cites = parentEl.dataset.cites;
+      if (cites) {
+        return {
+          el,
+          cites: cites.split(' ')
+        };
+      } else {
+        return findCites(el.parentElement)
+      }
+    } else {
+      return undefined;
+    }
+  };
   var bibliorefs = window.document.querySelectorAll('a[role="doc-biblioref"]');
   for (var i=0; i<bibliorefs.length; i++) {
     const ref = bibliorefs[i];
-    const cites = ref.parentNode.getAttribute('data-cites').split(' ');
-    tippyHover(ref, function() {
-      var popup = window.document.createElement('div');
-      cites.forEach(function(cite) {
-        var citeDiv = window.document.createElement('div');
-        citeDiv.classList.add('hanging-indent');
-        citeDiv.classList.add('csl-entry');
-        var biblioDiv = window.document.getElementById('ref-' + cite);
-        if (biblioDiv) {
-          citeDiv.innerHTML = biblioDiv.innerHTML;
-        }
-        popup.appendChild(citeDiv);
+    const citeInfo = findCites(ref);
+    if (citeInfo) {
+      tippyHover(citeInfo.el, function() {
+        var popup = window.document.createElement('div');
+        citeInfo.cites.forEach(function(cite) {
+          var citeDiv = window.document.createElement('div');
+          citeDiv.classList.add('hanging-indent');
+          citeDiv.classList.add('csl-entry');
+          var biblioDiv = window.document.getElementById('ref-' + cite);
+          if (biblioDiv) {
+            citeDiv.innerHTML = biblioDiv.innerHTML;
+          }
+          popup.appendChild(citeDiv);
+        });
+        return popup.innerHTML;
       });
-      return popup.innerHTML;
-    });
+    }
   }
 });
 </script>

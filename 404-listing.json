@@ -20,8 +20,8 @@
     "/posts/2017-07-18-the-making-of-we-r-ladies/index.html",
     "/posts/2017-07-24-twitter-trees/index.html",
     "/posts/2017-08-08-how-to-make-an-rmarkdown-website/index.html",
-    "/posts/2017-08-30-exponential-power-series/index.html",
     "/posts/2017-08-14-pvalues_can_be_inappropriate/index.html",
+    "/posts/2017-08-30-exponential-power-series/index.html",
     "/posts/2017-09-03-plumber-slack-bot/index.html",
     "/posts/2017-09-25-commentary-and-follow-up-to-p-0-005-suggestion/index.html",
     "/posts/2017-09-24-simulated-annealing/index.html",
@@ -65,6 +65,10 @@
     "/posts/2022-02-20-exploring-impacts-of-noninferiority-thresholds/index.html",
     "/posts/2022-02-22-the-peril-of-power-when-prioritizing-a-point-estimate/index.html",
     "/posts/2022-09-07-tipr-an-r-package-for-sensitivity-to-unmeasured-confounding/index.html",
-    "/posts/2022-09-19-migrating-from-hugo-to-quarto/index.html"
+    "/posts/2022-09-19-migrating-from-hugo-to-quarto/index.html",
+    "/posts/2022-12-14-transparency-in-public-health/index.html",
+    "/posts/2023-04-24-causal-quartets/index.html",
+    "/posts/2023-04-27-its-just-a-linear-model-neural-nets/index.html",
+    "/posts/2023-04-28-imputation-might-be-silly/index.html"
   ]
 }

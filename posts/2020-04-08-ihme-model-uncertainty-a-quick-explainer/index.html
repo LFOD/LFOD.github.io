@@ -2,7 +2,7 @@
 <html xmlns="http://www.w3.org/1999/xhtml" lang="en" xml:lang="en"><head>
 
 <meta charset="utf-8">
-<meta name="generator" content="quarto-1.1.251">
+<meta name="generator" content="quarto-1.3.340">
 
 <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
 
@@ -20,7 +20,7 @@ div.hanging-indent{margin-left: 1.5em; text-indent: -1.5em;}
 ul.task-list{list-style: none;}
 ul.task-list li input[type="checkbox"] {
   width: 0.8em;
-  margin: 0 0.8em 0.2em -1.6em;
+  margin: 0 0.8em 0.2em -1em; /* quarto-specific, see https://github.com/quarto-dev/quarto-cli/issues/4556 */ 
   vertical-align: middle;
 }
 </style>
@@ -91,13 +91,12 @@ ga('send', {
 
 <meta property="og:title" content="IHME Model Uncertainty: A quick explainer">
 <meta property="og:description" content="There has been a lot of talk about the IHME Covid-19 projection model. Ellie Murray &amp; I have a chat about it on Episode 10 of Casual Inference; here is a quick description of what is going on here with a focus on the uncertainty.">
+<meta property="og:image" content="https://pbs.twimg.com/media/EVHHUCqVAAAVbtw?format=jpg&amp;name=medium.png">
 <meta name="twitter:title" content="Live Free or Dichotomize">
 <meta name="twitter:description" content="There has been a lot of talk about the IHME Covid-19 projection model. Ellie Murray &amp; I have a chat about it on Episode 10 of Casual Inference; here is a quick description of what is going on here with a focus on the uncertainty.">
-<meta name="twitter:image" content="https://www.livefreeordichtomize.com/media/lfod-card.png">
+<meta name="twitter:image" content="https://www.livefreeordichtomize.com/posts/2020-04-08-ihme-model-uncertainty-a-quick-explainer/media/lfod-card.png">
 <meta name="twitter:creator" content="@LucyStats">
 <meta name="twitter:card" content="summary_large_image">
-<meta name="twitter:image-height" content="640">
-<meta name="twitter:image-width" content="1280">
 </head><body class="nav-fixed fullcontent"><header id="custom-header">
   <div id="header_viz"></div>
 </header>
@@ -279,19 +278,23 @@ ga('send', {
   <header id="quarto-header" class="headroom fixed-top">
     <nav class="navbar navbar-expand-lg navbar-dark ">
       <div class="navbar-container container-fluid">
+            <div id="quarto-search" class="" title="Search"></div>
           <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarCollapse" aria-controls="navbarCollapse" aria-expanded="false" aria-label="Toggle navigation" onclick="if (window.quartoToggleHeadroom) { window.quartoToggleHeadroom(); }">
   <span class="navbar-toggler-icon"></span>
 </button>
           <div class="collapse navbar-collapse" id="navbarCollapse">
             <ul class="navbar-nav navbar-nav-scroll me-auto">
   <li class="nav-item">
-    <a class="nav-link" href="../../index.html">Home</a>
+    <a class="nav-link" href="../../index.html" rel="" target="">
+ <span class="menu-text">Home</span></a>
   </li>  
   <li class="nav-item">
-    <a class="nav-link" href="../../about.html">About</a>
+    <a class="nav-link" href="../../about.html" rel="" target="">
+ <span class="menu-text">About</span></a>
   </li>  
 </ul>
-              <div id="quarto-search" class="" title="Search"></div>
+            <div class="quarto-navbar-tools ms-auto">
+</div>
           </div> <!-- /navcollapse -->
       </div> <!-- /container-fluid -->
     </nav>
@@ -331,6 +334,7 @@ ga('send', {
         <p class="date">April 8, 2020</p>
       </div>
     </div>
+    
       
     </div>
     
@@ -347,24 +351,24 @@ ga('send', {
 
 <p>There has been a lot of talk about the <a href="https://covid19.healthdata.org/united-states-of-america">IHME Covid-19 projection model</a>. <a href="https://twitter/com/EpiEllie">Ellie Murray</a> &amp; I have a chat about it on <a href="https://casualinfer.libsyn.com/coronavirus-conversations-2">Episode 10 of Casual Inference</a>; here is a quick description of what is going on here with a focus on the <strong>uncertainty</strong>.</p>
 <p>When I look at models, I usually start with two things:</p>
-<p>📈 What method is being used?<br>
-📥 What data is it based on?</p>
+<p><code>r emo::ji("chart_with_upwards_trend")</code> What method is being used?<br>
+<code>r emo::ji("inbox_tray")</code> What data is it based on?</p>
 <p>Let’s start with the methods!</p>
 <section id="methods" class="level3">
 <h3 class="anchored" data-anchor-id="methods">Methods</h3>
-<p><label for="tufte-mn-" class="margin-toggle">⊕</label><input type="checkbox" id="tufte-mn-" class="margin-toggle"><span class="marginnote">in particular it is using <a href="https://ihmeuw-msca.github.io/CurveFit/methods/">a non-linear mixed effects model</a></span></p>
-<p>📈 The IHME model is estimating the log of the cumulative death rate for a given state at a given time<br>
-🌊 Using curve fitting<br>
-📏 parametrized with info about the state’s social distancing</p>
-<p>Since the IHME model is trying to estimate a <strong>curve</strong> there are ✌️ two important pieces:</p>
+<p><code>r tufte::margin_note("in particular it is using [a non-linear mixed effects model](https://ihmeuw-msca.github.io/CurveFit/methods/)")</code></p>
+<p><code>r emo::ji("chart_with_upwards_trend")</code> The IHME model is estimating the log of the cumulative death rate for a given state at a given time<br>
+<code>r emo::ji("water_wave")</code> Using curve fitting<br>
+<code>r emo::ji("straight_ruler")</code> parametrized with info about the state’s social distancing</p>
+<p>Since the IHME model is trying to estimate a <strong>curve</strong> there are <code>r emo::ji("victory_hand")</code> two important pieces:</p>
 <p>1️⃣ When will deaths “peak”<br>
 2️⃣ How many deaths will there be at the “peak”</p>
 <p>To estimate when these occur, the IHME model has two sources of info:</p>
 <p>⏱ the current death rate over time for the state<br>
-📏 the social distancing measures being implemented</p>
-<p>This information is combined with some 🌏global info as well</p>
-<p>👶 In the short run, the model is impacted more by the state’s data<br>
-👴 In the long run, they use info from locations that have seemingly already reached a peak: Wuhan, 5 in Italy, 2 in Spain</p>
+<code>r emo::ji("straight_ruler")</code> the social distancing measures being implemented</p>
+<p>This information is combined with some <code>r emo::ji("earth_asia")</code>global info as well</p>
+<p><code>r emo::ji("baby")</code> In the short run, the model is impacted more by the state’s data<br>
+<code>r emo::ji("older_man")</code> In the long run, they use info from locations that have seemingly already reached a peak: Wuhan, 5 in Italy, 2 in Spain</p>
 </section>
 <section id="uncertainty" class="level3">
 <h3 class="anchored" data-anchor-id="uncertainty">Uncertainty</h3>
@@ -376,7 +380,7 @@ ga('send', {
 </li>
 <li>Even if the model is correctly specified, there is uncertainty in the parameter estimation (this is a mixed effects model, so there is uncertainty associated with fixed and the random effects)<br>
 </li>
-<li>There may be systematic uncertainty in the reported state-by-state death data. Why? Fewer deaths may be reported on weekends, if systems are overrun, COVID-19 related deaths may go unreported, etc <label for="tufte-mn-" class="margin-toggle">⊕</label><input type="checkbox" id="tufte-mn-" class="margin-toggle"><span class="marginnote"><a href="https://www.npr.org/sections/coronavirus-live-updates/2020/04/08/829506542/after-deaths-at-home-in-nyc-officials-plan-to-count-many-as-covid-19">NPR reports that NYC is seeing a spike of deaths at home</a> that are not originally included in COVID-19 count</span><br>
+<li>There may be systematic uncertainty in the reported state-by-state death data. Why? Fewer deaths may be reported on weekends, if systems are overrun, COVID-19 related deaths may go unreported, etc <code>r tufte::margin_note("[NPR reports that NYC is seeing a spike of deaths at home](https://www.npr.org/sections/coronavirus-live-updates/2020/04/08/829506542/after-deaths-at-home-in-nyc-officials-plan-to-count-many-as-covid-19) that are not originally included in COVID-19 count")</code><br>
 </li>
 <li>There may be random uncertainty in the reported state-by-state death data</li>
 <li>There is uncertainty in the reported information coming from cities that seem to have already peaked</li>
@@ -390,14 +394,14 @@ ga('send', {
 6️⃣ data from the “peaked” locations</p>
 <p>In the original model (pre-last week) the error bands you saw only accounted for 3️⃣, since then the model was updated so that the uncertainty also accounts for out-of-sample uncertainty, which I believe covers 5️⃣</p>
 <p>The shaded red region in the model is the <em>uncertainty</em> the model accounts for, just two of the 6:</p>
-<p>❌1️⃣ model choice<br>
-❌2️⃣ model parameters<br>
-✅3️⃣ model estimation<br>
-❌4️⃣ data from the states (systematic)<br>
-✅5️⃣ data from the states (random)<br>
-❌6️⃣ data from the “peaked” locations</p>
+<p><code>r emo::ji("cross_mark")</code>1️⃣ model choice<br>
+<code>r emo::ji("cross_mark")</code>2️⃣ model parameters<br>
+<code>r emo::ji("white_heavy_check_mark")</code>3️⃣ model estimation<br>
+<code>r emo::ji("cross_mark")</code>4️⃣ data from the states (systematic)<br>
+<code>r emo::ji("white_heavy_check_mark")</code>5️⃣ data from the states (random)<br>
+<code>r emo::ji("cross_mark")</code>6️⃣ data from the “peaked” locations</p>
 <p><img src="https://pbs.twimg.com/media/EVHHUCqVAAAVbtw?format=jpg&amp;name=medium.png" class="img-fluid"></p>
-<p>This is not unusual or bad! It is just good to keep in mind the uncertainty that these projections carry with them. If all of the uncertainty we’ve talked about today was quantified, it’s possible we’d basically have no answers to go off of 🤷‍♀</p>
+<p>This is not unusual or bad! It is just good to keep in mind the uncertainty that these projections carry with them. If all of the uncertainty we’ve talked about today was quantified, it’s possible we’d basically have no answers to go off of <code>r emo::ji("woman_shrugging")</code></p>
 <blockquote class="twitter-tweet blockquote">
 <p lang="en" dir="ltr">
 "You guys think I don't give you straight answers. You have to talk to these statisticians. They will not give you a direct answer on anything." 🤣 <a href="https://t.co/4AhCHYaDtz">https://t.co/4AhCHYaDtz</a>
@@ -405,7 +409,7 @@ ga('send', {
 — Hilary Parker (<span class="citation" data-cites="hspter">@hspter</span>) <a href="https://twitter.com/hspter/status/1246955939946803202?ref_src=twsrc%5Etfw">April 6, 2020</a>
 </blockquote>
 <script async="" src="https://platform.twitter.com/widgets.js" charset="utf-8"></script>
-<p>Think I missed something important? Please let me know! 🙏</p>
+<p>Think I missed something important? Please let me know! <code>r emo::ji("folded_hands")</code></p>
 
 
 </section>
@@ -438,9 +442,23 @@ window.document.addEventListener("DOMContentLoaded", function (event) {
     icon: icon
   };
   anchorJS.add('.anchored');
+  const isCodeAnnotation = (el) => {
+    for (const clz of el.classList) {
+      if (clz.startsWith('code-annotation-')) {                     
+        return true;
+      }
+    }
+    return false;
+  }
   const clipboard = new window.ClipboardJS('.code-copy-button', {
-    target: function(trigger) {
-      return trigger.previousElementSibling;
+    text: function(trigger) {
+      const codeEl = trigger.previousElementSibling.cloneNode(true);
+      for (const childEl of codeEl.children) {
+        if (isCodeAnnotation(childEl)) {
+          childEl.remove();
+        }
+      }
+      return codeEl.innerText;
     }
   });
   clipboard.on('success', function(e) {
@@ -452,7 +470,24 @@ window.document.addEventListener("DOMContentLoaded", function (event) {
     button.classList.add('code-copy-button-checked');
     var currentTitle = button.getAttribute("title");
     button.setAttribute("title", "Copied!");
+    let tooltip;
+    if (window.bootstrap) {
+      button.setAttribute("data-bs-toggle", "tooltip");
+      button.setAttribute("data-bs-placement", "left");
+      button.setAttribute("data-bs-title", "Copied!");
+      tooltip = new bootstrap.Tooltip(button, 
+        { trigger: "manual", 
+          customClass: "code-copy-button-tooltip",
+          offset: [0, -8]});
+      tooltip.show();    
+    }
     setTimeout(function() {
+      if (tooltip) {
+        tooltip.hide();
+        button.removeAttribute("data-bs-title");
+        button.removeAttribute("data-bs-toggle");
+        button.removeAttribute("data-bs-placement");
+      }
       button.setAttribute("title", currentTitle);
       button.classList.remove('code-copy-button-checked');
     }, 1000);
@@ -488,24 +523,128 @@ window.document.addEventListener("DOMContentLoaded", function (event) {
       return note.innerHTML;
     });
   }
+      let selectedAnnoteEl;
+      const selectorForAnnotation = ( cell, annotation) => {
+        let cellAttr = 'data-code-cell="' + cell + '"';
+        let lineAttr = 'data-code-annotation="' +  annotation + '"';
+        const selector = 'span[' + cellAttr + '][' + lineAttr + ']';
+        return selector;
+      }
+      const selectCodeLines = (annoteEl) => {
+        const doc = window.document;
+        const targetCell = annoteEl.getAttribute("data-target-cell");
+        const targetAnnotation = annoteEl.getAttribute("data-target-annotation");
+        const annoteSpan = window.document.querySelector(selectorForAnnotation(targetCell, targetAnnotation));
+        const lines = annoteSpan.getAttribute("data-code-lines").split(",");
+        const lineIds = lines.map((line) => {
+          return targetCell + "-" + line;
+        })
+        let top = null;
+        let height = null;
+        let parent = null;
+        if (lineIds.length > 0) {
+            //compute the position of the single el (top and bottom and make a div)
+            const el = window.document.getElementById(lineIds[0]);
+            top = el.offsetTop;
+            height = el.offsetHeight;
+            parent = el.parentElement.parentElement;
+          if (lineIds.length > 1) {
+            const lastEl = window.document.getElementById(lineIds[lineIds.length - 1]);
+            const bottom = lastEl.offsetTop + lastEl.offsetHeight;
+            height = bottom - top;
+          }
+          if (top !== null && height !== null && parent !== null) {
+            // cook up a div (if necessary) and position it 
+            let div = window.document.getElementById("code-annotation-line-highlight");
+            if (div === null) {
+              div = window.document.createElement("div");
+              div.setAttribute("id", "code-annotation-line-highlight");
+              div.style.position = 'absolute';
+              parent.appendChild(div);
+            }
+            div.style.top = top - 2 + "px";
+            div.style.height = height + 4 + "px";
+            let gutterDiv = window.document.getElementById("code-annotation-line-highlight-gutter");
+            if (gutterDiv === null) {
+              gutterDiv = window.document.createElement("div");
+              gutterDiv.setAttribute("id", "code-annotation-line-highlight-gutter");
+              gutterDiv.style.position = 'absolute';
+              const codeCell = window.document.getElementById(targetCell);
+              const gutter = codeCell.querySelector('.code-annotation-gutter');
+              gutter.appendChild(gutterDiv);
+            }
+            gutterDiv.style.top = top - 2 + "px";
+            gutterDiv.style.height = height + 4 + "px";
+          }
+          selectedAnnoteEl = annoteEl;
+        }
+      };
+      const unselectCodeLines = () => {
+        const elementsIds = ["code-annotation-line-highlight", "code-annotation-line-highlight-gutter"];
+        elementsIds.forEach((elId) => {
+          const div = window.document.getElementById(elId);
+          if (div) {
+            div.remove();
+          }
+        });
+        selectedAnnoteEl = undefined;
+      };
+      // Attach click handler to the DT
+      const annoteDls = window.document.querySelectorAll('dt[data-target-cell]');
+      for (const annoteDlNode of annoteDls) {
+        annoteDlNode.addEventListener('click', (event) => {
+          const clickedEl = event.target;
+          if (clickedEl !== selectedAnnoteEl) {
+            unselectCodeLines();
+            const activeEl = window.document.querySelector('dt[data-target-cell].code-annotation-active');
+            if (activeEl) {
+              activeEl.classList.remove('code-annotation-active');
+            }
+            selectCodeLines(clickedEl);
+            clickedEl.classList.add('code-annotation-active');
+          } else {
+            // Unselect the line
+            unselectCodeLines();
+            clickedEl.classList.remove('code-annotation-active');
+          }
+        });
+      }
+  const findCites = (el) => {
+    const parentEl = el.parentElement;
+    if (parentEl) {
+      const cites = parentEl.dataset.cites;
+      if (cites) {
+        return {
+          el,
+          cites: cites.split(' ')
+        };
+      } else {
+        return findCites(el.parentElement)
+      }
+    } else {
+      return undefined;
+    }
+  };
   var bibliorefs = window.document.querySelectorAll('a[role="doc-biblioref"]');
   for (var i=0; i<bibliorefs.length; i++) {
     const ref = bibliorefs[i];
-    const cites = ref.parentNode.getAttribute('data-cites').split(' ');
-    tippyHover(ref, function() {
-      var popup = window.document.createElement('div');
-      cites.forEach(function(cite) {
-        var citeDiv = window.document.createElement('div');
-        citeDiv.classList.add('hanging-indent');
-        citeDiv.classList.add('csl-entry');
-        var biblioDiv = window.document.getElementById('ref-' + cite);
-        if (biblioDiv) {
-          citeDiv.innerHTML = biblioDiv.innerHTML;
-        }
-        popup.appendChild(citeDiv);
+    const citeInfo = findCites(ref);
+    if (citeInfo) {
+      tippyHover(citeInfo.el, function() {
+        var popup = window.document.createElement('div');
+        citeInfo.cites.forEach(function(cite) {
+          var citeDiv = window.document.createElement('div');
+          citeDiv.classList.add('hanging-indent');
+          citeDiv.classList.add('csl-entry');
+          var biblioDiv = window.document.getElementById('ref-' + cite);
+          if (biblioDiv) {
+            citeDiv.innerHTML = biblioDiv.innerHTML;
+          }
+          popup.appendChild(citeDiv);
+        });
+        return popup.innerHTML;
       });
-      return popup.innerHTML;
-    });
+    }
   }
 });
 </script>
