@@ -1,0 +1,34 @@
+---
+title: "Causal Quartets"
+author: Lucy D'Agostino McGowan
+date: '2023-04-24'
+image: featured.jpeg
+categories: ["causal inference", "statistical communication", "data science pedoagogy", "confounding"]
+description: "On this weeks episode of Casual Inference we talk about a “Causal Quartet” a set of four datasets generated under different mechanisms, all with the same statistical summaries (including visualizations!) but different true causal effects."
+---
+
+On this weeks episode of [Casual Inference](https://casualinfer.libsyn.com) we talk about a “Causal Quartet” a set of four datasets generated under different mechanisms, all with the same statistical summaries (including visualizations!) but different true causal effects.
+
+*The figures and tables are from our recent preprint: https://arxiv.org/pdf/2304.02683.pdf*
+![](../../media/images/2023-04-24/plot1.jpeg)
+
+![](../../media/images/2023-04-24/plot2.jpeg)
+
+Given a single dataset with 3 variables: exposure, outcome and covariate (z) how can statistics help you decide whether to adjust for z? It can’t! For example here, the correlation between z and the exposure in all 4 datasets is 0.7!
+
+![](../../media/images/2023-04-24/tab1.jpeg)
+![](../../media/images/2023-04-24/tab2.jpeg)
+So if Stats can’t help what can we do? Well the best thing is just to know the data generating mechanism but that is hard! An easier solution is to make sure to have time varying measurements and only adjust for pre-exposure covariates! This solves the problem in 3/4 of the sets!
+
+![](../../media/images/2023-04-24/plot3.jpeg)
+
+![](../../media/images/2023-04-24/tab3.jpeg)
+
+The one it doesn’t solve is M-bias, but as our podcast episode title suggests ([M-Bias: Much Ado About Nothing?](https://casualinfer.libsyn.com/m-bias-much-ado-about-nothing-season-4-episode-10)) this may be much ado about nothing (give a listen to find out why!) Also...credit to ChatGPT for our episode title 😂
+
+Malcolm Barrett, Travis Gerke, and I have a preprint with details: https://arxiv.org/pdf/2304.02683.pdf
+
+Also the [`quartets`](https://r-causal.github.io/quartets/) package includes the datasets if you’d like to play with it yourselves!
+
+*I also learned last month about another awesome “causal quartet” by Gelman, Jessica Hullman, and Lauren Kennedy that focuses on treatment heterogeneity so I could use help coming up with a new name for ours!*
+
