@@ -436,7 +436,7 @@ d %>%
 p
 ```
 
-```{r, echo = FAlSE, eval = FALSE}
+```{r, echo = FALSE, eval = FALSE}
 anim_save("../../media/data/gganimation-greatest-covid-cases.gif", p)
 ```
 
