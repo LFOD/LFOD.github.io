@@ -1,0 +1,13 @@
+---
+title: "It's just a linear model: neural networks edition"
+author: Lucy D'Agostino McGowan
+date: '2023-04-29'
+categories: ["statistical communication", "data science pedoagogy", "neural-networks"]
+description: "I created a little Shiny application to demonstrate that Neural Networks are just souped up linear models: https://lucy.shinyapps.io/neural-net-linear/"
+---
+
+I created a little Shiny application to demonstrate that Neural Networks are just souped up linear models: https://lucy.shinyapps.io/neural-net-linear/
+
+![](../../media/images/2023-04-27/app.gif)
+
+This application has a neural network fit to a dataset with one predictor, x, and one outcome, y. The network has one hidden layer with three activations. You can click a "Play" button to watch how the neural network fits across 300 epochs. You can also click on the nodes of the neural network diagram to highlight each of the individual activations across the applciation (along with their corresponding coefficients). 
