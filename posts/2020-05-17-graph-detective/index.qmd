@@ -432,9 +432,17 @@ d %>%
     caption = "Data: NY Times\nGraph: @LucyStats") -> p
 ```
 
-```{r, cache = TRUE}
+```{r, eval = FALSE}
 p
 ```
+
+```{r, echo = FAlSE, eval = FALSE}
+anim_save("../../media/data/gganimation-greatest-covid-cases.gif", p)
+```
+
+
+![](../../media/data/gganimation-greatest-covid-cases.gif)
+
 
 
 
