@@ -6,13 +6,13 @@ execute:
   
 website:
   site-url: "https://www.livefreeordichotomize.com"
-  description: "Live Free or Dichotomize"
+  description: "Lucy D'Agostino McGowan & Nick Strayer's Blog"
+  title: "Live Free or Dichotomize"
   navbar:
     left:
       - text: "Home"
         file: index.qmd
       - about.qmd
-    right: 
       - icon: rss
         href: index.xml
   comments: 
