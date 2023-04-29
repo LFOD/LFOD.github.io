@@ -219,7 +219,7 @@ mod_imp_noise
 This is also wrong (womp womp!) What if we try two wrong models?
 
 ```{r}
-mod_double_noise <-  with(imp_data_c_y,lm(y ~ x_obs + noise)) |>
+mod_double_noise <-  with(imp_data_noise,lm(y ~ x_obs + noise)) |>
   pool() |>
   tidy(conf.int = TRUE) |>
   filter(term == "x_obs") |>
