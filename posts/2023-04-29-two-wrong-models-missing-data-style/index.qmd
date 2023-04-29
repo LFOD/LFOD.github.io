@@ -56,7 +56,7 @@ Oops! As expected, we have some bias here. Specifically, we are off by 0.13. Now
 
 
 ```{r}
-#| eval : false
+#| eval: false
 imp_data <- mice::mice(
   data, 
   m = 1, 
