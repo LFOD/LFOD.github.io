@@ -630,7 +630,7 @@ ga('send', {
 </div>
 <p>This is also wrong (womp womp!) What if we try two wrong models?</p>
 <div class="cell">
-<div class="sourceCode cell-code" id="cb27"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb27-1"><a href="#cb27-1" aria-hidden="true" tabindex="-1"></a>mod_double_noise <span class="ot">&lt;-</span>  <span class="fu">with</span>(imp_data_c_y,<span class="fu">lm</span>(y <span class="sc">~</span> x_obs <span class="sc">+</span> noise)) <span class="sc">|&gt;</span></span>
+<div class="sourceCode cell-code" id="cb27"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb27-1"><a href="#cb27-1" aria-hidden="true" tabindex="-1"></a>mod_double_noise <span class="ot">&lt;-</span>  <span class="fu">with</span>(imp_data_noise,<span class="fu">lm</span>(y <span class="sc">~</span> x_obs <span class="sc">+</span> noise)) <span class="sc">|&gt;</span></span>
 <span id="cb27-2"><a href="#cb27-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">pool</span>() <span class="sc">|&gt;</span></span>
 <span id="cb27-3"><a href="#cb27-3" aria-hidden="true" tabindex="-1"></a>  <span class="fu">tidy</span>(<span class="at">conf.int =</span> <span class="cn">TRUE</span>) <span class="sc">|&gt;</span></span>
 <span id="cb27-4"><a href="#cb27-4" aria-hidden="true" tabindex="-1"></a>  <span class="fu">filter</span>(term <span class="sc">==</span> <span class="st">"x_obs"</span>) <span class="sc">|&gt;</span></span>
@@ -639,7 +639,7 @@ ga('send', {
 <span id="cb27-7"><a href="#cb27-7" aria-hidden="true" tabindex="-1"></a>mod_double_noise</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output cell-output-stdout">
 <pre><code>   estimate  conf.low conf.high
-1 0.6910456 0.5300967 0.8519946</code></pre>
+1 0.8865363 0.7275635  1.045509</code></pre>
 </div>
 </div>
 <p>Nope 😢. Two wrong models here are not better than one! It’s worse! Womp womp.</p>
