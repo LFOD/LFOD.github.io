@@ -150,7 +150,7 @@ mod_cc <- lm(y ~ x, data_cc) |>
 #| eval: false
 mi_data <- mice::mice(
   data, 
-  m = 5, 
+  m = 50, 
   formulas = list(x_obs ~ c_wrong),
   print = FALSE)
 
