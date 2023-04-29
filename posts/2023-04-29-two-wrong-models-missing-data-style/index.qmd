@@ -22,7 +22,7 @@ A "correct" model will be one that estimates that the coefficient for `x` is 1.
 #| message: false
 #| warning: false
 library(tidyverse)
-n <- 100000
+n <- 1000
 
 set.seed(1)
 
@@ -52,10 +52,11 @@ This checks out! `c_wrong` basically does nothing for us here, but because `c_ri
 data_cc <- na.omit(data)
 lm(y ~ x + c_wrong, data = data_cc)
 ```
-Oops! As expected, we have some bias here. Specifically, we are off by 0.16. Now let's do some imputation. I am going to use the `mice` package. I am going to fit the "wrong" imputation model, only including `c_wrong`. 
+Oops! As expected, we have some bias here. Specifically, we are off by 0.13. Now let's do some imputation. I am going to use the `mice` package. I am going to fit the "wrong" imputation model, only including `c_wrong`. 
 
 
 ```{r}
+#| eval : false
 imp_data <- mice::mice(
   data, 
   m = 1, 
@@ -64,12 +65,24 @@ imp_data <- mice::mice(
   complete()
 ```
 
+```{r}
+#| echo: false
+#| eval: false
+save(imp_data, file = "../../media/data/imputation_data.rda")
+```
+
+```{r}
+#| echo: false
+load("../../media/data/imputation_data.rda")
+```
+
+
 Ok let's compare how this model does "alone".
 ```{r}
 lm(y ~ x_obs, data = imp_data)
 ```
 
-Oh no, very bad! The wrong imputation model is worse than complete case! By a lot! This estimate is off by 0.58. Does conditioning on `c_wrong` help us at all?
+Oh no, very bad! The wrong imputation model is worse than complete case! By a lot! This estimate is off by 0.65. Does conditioning on `c_wrong` help us at all?
 
 ```{r}
 lm(y ~ x_obs + c_wrong, data = imp_data)
@@ -88,7 +101,8 @@ Well that at least gets us back to our complete case bias (although seems like a
 What if we had included `y` in our imputation model?
 
 ```{r}
-imp_data <- mice::mice(
+#| eval: false
+imp_data_2 <- mice::mice(
   data, 
   m = 1, 
   formulas = list(x_obs ~ c_wrong + y),
@@ -96,12 +110,24 @@ imp_data <- mice::mice(
   complete()
 ```
 
+```{r}
+#| echo: false
+#| eval: false
+save(imp_data_2, file = "../../media/data/imputation_data_2.rda")
+```
+
+```{r}
+#| echo: false
+load("../../media/data/imputation_data_2.rda")
+```
+
+
 Ok let's compare how this model does "alone".
 
 ```{r}
-lm(y ~ x_obs, data = imp_data)
+lm(y ~ x_obs, data = imp_data_2)
 ```
 
-Wow, much better. Only off by 0.04. Including `y` in the imputation model [is definitely recommended](https://pubmed.ncbi.nlm.nih.gov/16980150/), as was hammered home for me by the wonderful Frank Harrell, but I'm not sure this recommendation has permeated through the field yet (although [this paper re-iterating this result](https://journals.sagepub.com/doi/10.1177/09622802231165001) just came out yesterday so maybe it is!).
+Wow, much better. Only off by 0.005. Including `y` in the imputation model [is definitely recommended](https://pubmed.ncbi.nlm.nih.gov/16980150/), as was hammered home for me by the wonderful Frank Harrell, but I'm not sure this recommendation has permeated through the field yet (although [this paper re-iterating this result](https://journals.sagepub.com/doi/10.1177/09622802231165001) just came out yesterday so maybe it is!).
 
 So there you have it. Two wrong models are not really better than one, but including the outcome in your imputation model might save you. 

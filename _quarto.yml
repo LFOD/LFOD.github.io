@@ -5,7 +5,8 @@ execute:
   freeze: auto
   
 website:
-  site-url: "https://www.livefreeordichtomize.com"
+  site-url: "https://www.livefreeordichotomize.com"
+  description: "Live Free or Dichotomize"
   navbar:
     left:
       - text: "Home"
