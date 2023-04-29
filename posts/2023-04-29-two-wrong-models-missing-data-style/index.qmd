@@ -14,7 +14,7 @@ After my [previous post about missing data](https://livefreeordichotomize.com/po
 
 This is a great question! I am going to investigate via a small simulation (so the answer could be "it depends", but at least we will know how it seems to work in this very simple case) `r emo::ji("laughing")`.
 
-Ok so here I have some predictor, `x` that is missing 50% of the time, dependent on `c_right`. The right imputation model (or right outcome model) would include `c_right`. Unfortunately, we only have access to `c_wrong` which is a useless variable, but what we will try to use in our imputation model (and outcome model). Let's see whether two (wrong) models are better than one!
+Ok so here I have some predictor, `x` that is missing 50% of the time, dependent on `c_x` and `c_y`. The right imputation model would have `c_x`, the right outcome model needs `c_y`. Unfortunately, we only have access to one, which we will try to use in our imputation model (and outcome model). Let's see whether two (wrong) models are better than one!
 
 A "correct" model will be one that estimates that the coefficient for `x` is 1. 
 
@@ -22,164 +22,262 @@ A "correct" model will be one that estimates that the coefficient for `x` is 1.
 #| message: false
 #| warning: false
 library(tidyverse)
+library(broom)
+library(mice)
+
 n <- 1000
 
-set.seed(1)
+set.seed(928)
 
 data <- tibble(
-  x = rnorm(n),
-  c_right = rnorm(n),
-  c_wrong = rnorm(n),
-  y = x + c_right + rnorm(n),
-  x_miss = rbinom(n, 1, 1 / (1 + exp(-(x + c_right)))),
+  c_x = rnorm(n, sd = 0.71),
+  x = c_x + rnorm(n, sd = 0.71),
+  c_y = rnorm(n),
+  y = x + c_y + rnorm(n),
+  noise = rnorm(n),
+  x_miss = rbinom(n, 1, 1 / (1 + exp(-(c_x + c_y)))),
   x_obs = ifelse(
     x_miss,
     NA,
     x
   )
 )
+
 ```
+
+## We only have `c_x`
 
 Ok first let's look at the whole dataset.
 
 ```{r}
-lm(y ~ x + c_wrong, data = data)
+mod_full_c_x <- lm(y ~ x + c_x, data = data) |>
+  tidy(conf.int = TRUE) |>
+  filter(term == "x") |>
+  select(estimate, conf.low, conf.high)
+
+mod_full_c_x
 ```
 
-This checks out! `c_wrong` basically does nothing for us here, but because `c_right` is not actually a confounder (it just informs the missingness, which we aren't observing here), we are just fine estimating our "wrong" model in the fully observed data. Now let's do the "complete cases" analysis
+This checks out! `c_x` basically does nothing for us here, but because `c_y` is not actually a confounder (it just informs the missingness & `y`, which we aren't observing here), we are just fine estimating our "wrong" model in the fully observed data. Now let's do the "complete cases" analysis.
 
 ```{r}
 data_cc <- na.omit(data)
-lm(y ~ x + c_wrong, data = data_cc)
-```
-Oops! As expected, we have some bias here. Specifically, we are off by 0.13. Now let's do some imputation. I am going to use the `mice` package. I am going to fit the "wrong" imputation model, only including `c_wrong`. 
-
-
-```{r}
-#| eval: false
-imp_data <- mice::mice(
-  data, 
-  m = 1, 
-  formulas = list(x_obs ~ c_wrong),
-  print = FALSE) |>
-  complete()
-```
-
-```{r}
-#| echo: false
-#| eval: false
-save(imp_data, file = "../../media/data/imputation_data.rda")
-```
-
-```{r}
-#| echo: false
-load("../../media/data/imputation_data.rda")
-```
-
-
-Ok let's compare how this model does "alone".
-```{r}
-lm(y ~ x_obs, data = imp_data)
-```
-
-Oh no, very bad! The wrong imputation model is worse than complete case! By a lot! This estimate is off by 0.65. Does conditioning on `c_wrong` help us at all?
-
-```{r}
-lm(y ~ x_obs + c_wrong, data = imp_data)
-```
-
-Nope `r emo::ji("cry")`. Two wrong models here is not better than one and in fact the imputation model is the problem! Womp womp. 
-
-What if we used an indicator for missingness in our second model?
-
-```{r}
-lm(y ~ x_obs + c_wrong + x_miss * x_obs, data = imp_data)
-```
-
-Well that at least gets us back to our complete case bias (although seems like a long way to get there!).
-
-What if we had included `y` in our imputation model?
-
-```{r}
-#| eval: false
-imp_data_2 <- mice::mice(
-  data, 
-  m = 1, 
-  formulas = list(x_obs ~ c_wrong + y),
-  print = FALSE) |>
-  complete()
-```
-
-```{r}
-#| echo: false
-#| eval: false
-save(imp_data_2, file = "../../media/data/imputation_data_2.rda")
-```
-
-```{r}
-#| echo: false
-load("../../media/data/imputation_data_2.rda")
-```
-
-
-Ok let's compare how this model does "alone".
-
-```{r}
-lm(y ~ x_obs, data = imp_data_2)
-```
-
-Wow, much better. Only off by 0.005. Including `y` in the imputation model [is definitely recommended](https://pubmed.ncbi.nlm.nih.gov/16980150/), as was hammered home for me by the wonderful Frank Harrell, but I'm not sure this recommendation has permeated through the field yet (although [this paper re-iterating this result](https://journals.sagepub.com/doi/10.1177/09622802231165001) just came out yesterday so maybe it is!).
-
-So there you have it. Two wrong models are not really better than one, but including the outcome in your imputation model might save you. 
-
-## Precision!
-
-Addendum, Kathy mentioned that maybe we win on precision with MI. 
-
-```{r}
-library(broom)
-
-mod_cc <- lm(y ~ x, data_cc) |> 
+mod_cc_c_x <- lm(y ~ x + c_x, data = data_cc) |>
   tidy(conf.int = TRUE) |>
   filter(term == "x") |>
-  select(conf.low, estimate, conf.high)
-```
+  select(estimate, conf.low, conf.high)
 
+mod_cc_c_x
+```
+This does fine! Now let's do some imputation. I am going to use the `mice` package.
 
 ```{r}
-#| eval: false
-mi_data <- mice::mice(
+imp_data_c_x <- mice(
   data, 
-  m = 50, 
-  formulas = list(x_obs ~ c_wrong),
+  m = 5, 
+  method = "norm.predict",
+  formulas = list(x_obs ~ c_x),
   print = FALSE)
+```
 
-mod_mi <- with(mi_data, lm(y ~ x_obs)) |>
-  mice::pool() |>
+Ok let's compare how this model does "alone".
+
+```{r}
+mod_imp_c_x <- with(imp_data_c_x, lm(y ~ x_obs)) |>
+  pool() |>
   tidy(conf.int = TRUE) |>
   filter(term == "x_obs") |>
-  select(conf.low, estimate, conf.high)
+  select(estimate, conf.low, conf.high)
 
-to_plot <- bind_rows(mod_mi, mod_cc) |>
-  mutate(mod = c("Multiple Imputation", "Complete Case"))
+mod_imp_c_x
 ```
 
+Great! This was the right model, so we would expect this to perform well.
+
+Now what happens if we adjust for `c_x` in addition in the outcome model:
+
 ```{r}
-#| echo: false
-#| eval: false
-save(to_plot, file = "../../media/data/to_plot_mi.rda")
+mod_double_c_x <- with(imp_data_c_x, lm(y ~ x_obs + c_x)) |>
+  pool() |>
+  tidy(conf.int = TRUE) |>
+  filter(term == "x_obs") |>
+  select(estimate, conf.low, conf.high)
+
+mod_double_c_x
+```
+The right imputation model with the wrong outcome model is fine!
+
+## We only have `c_y`
+
+Ok first let's look at the whole dataset.
+
+```{r}
+mod_full_c_y <- lm(y ~ x + c_y, data = data) |>
+  tidy(conf.int = TRUE) |>
+  filter(term == "x") |>
+  select(estimate, conf.low, conf.high)
+
+mod_full_c_y
 ```
 
-```{r}
-#| echo: false
+Looks good! Now let's do the "complete cases" analysis.
 
-load("../../media/data/to_plot_mi.rda")
+```{r}
+mod_cc_c_y <- lm(y ~ x + c_y, data = data_cc) |>
+  tidy(conf.int = TRUE) |>
+  filter(term == "x") |>
+  select(estimate, conf.low, conf.high)
+
+mod_cc_c_y
 ```
 
+Great! It works. This shows that as long as we have the right outcome model we can do complete case analysis even if the data is missing not at random (cool!). Now let's do some imputation. 
 
 ```{r}
+imp_data_c_y <- mice(
+  data, 
+  m = 5, 
+  method = "norm.predict",
+  formulas = list(x_obs ~ c_y),
+  print = FALSE)
+```
+
+Ok let's compare how this model does "alone".
+
+```{r}
+mod_imp_c_y <- with(imp_data_c_y,lm(y ~ x_obs)) |>
+  pool() |>
+  tidy(conf.int = TRUE) |>
+  filter(term == "x_obs") |>
+  select(estimate, conf.low, conf.high)
+
+mod_imp_c_y
+```
+
+Oh no, very bad! The wrong imputation model is worse than complete case! By a lot! This estimate is off by 0.31. Does conditioning on `c_y` help us at all?
+
+```{r}
+mod_double_c_y <-  with(imp_data_c_y, lm(y ~ x_obs + c_y)) |>
+  pool() |>
+  tidy(conf.int = TRUE) |>
+  filter(term == "x_obs") |>
+  select(estimate, conf.low, conf.high)
+
+mod_double_c_y
+```
+
+Phew, the wrong imputation model with the wrong outcome model is back to being fine.
+
+## What if both are wrong?
+
+Ok, what if we just had our useless variable, `noise`. 
+
+```{r}
+mod_full_noise <- lm(y ~ x + noise, data = data) |>
+  tidy(conf.int = TRUE) |>
+  filter(term == "x") |>
+  select(estimate, conf.low, conf.high)
+
+mod_full_noise
+```
+This is fine! `c_x` and `c_y` aren't confoudners so we can estimate the coefficent for `x` without them -- `noise` doesn't do anything, but it also doesn't hurt. What about complete case?
+
+```{r}
+mod_cc_noise <- lm(y ~ x + noise, data = data_cc) |>
+  tidy(conf.int = TRUE) |>
+  filter(term == "x") |>
+  select(estimate, conf.low, conf.high)
+
+mod_cc_noise
+```
+
+Oops! We've got bias (as expected!) -- we end up with a biased estimate by ~0.11.
+
+What if we build the (wrong) imputation model?
+
+```{r}
+imp_data_noise <- mice(
+  data, 
+  m = 5, 
+  method = "norm.predict",
+  formulas = list(x_obs ~ noise),
+  print = FALSE) 
+```
+
+Ok let's compare how this model does "alone".
+
+```{r}
+mod_imp_noise <-  with(imp_data_noise, lm(y ~ x_obs)) |>
+  pool() |>
+  tidy(conf.int = TRUE) |>
+  filter(term == "x_obs") |>
+  select(estimate, conf.low, conf.high)
+
+mod_imp_noise
+```
+
+This is also wrong (womp womp!) What if we try two wrong models?
+
+```{r}
+mod_double_noise <-  with(imp_data_c_y,lm(y ~ x_obs + noise)) |>
+  pool() |>
+  tidy(conf.int = TRUE) |>
+  filter(term == "x_obs") |>
+  select(estimate, conf.low, conf.high)
+
+mod_double_noise
+```
+
+Nope `r emo::ji("cry")`. Two wrong models here are not better than one! It's worse! Womp womp. 
+
+Let's put these all together:
+
+```{r}
+bind_rows(
+  mod_full_c_x,
+  mod_full_c_y,
+  mod_full_noise,
+  mod_cc_c_x,
+  mod_cc_c_y,
+  mod_cc_noise,
+  mod_imp_c_x,
+  mod_imp_c_y,
+  mod_imp_noise,
+  mod_double_c_x,
+  mod_double_c_y,
+  mod_double_noise
+) |>
+  mutate(
+    mod = factor(c("Full data with c_x", 
+                   "Full data with c_y", 
+                   "Full data with noise",
+                   "Complete case with c_x",
+                   "Complete case wtih c_y",
+                   "Complete case with noise",
+                   "Imputation with c_x",
+                   "Imputation with c_y",
+                   "Imputation with noise",
+                   "Two models with c_x",
+                   "Two models with c_y",
+                   "Two models with noise" ),
+                 levels = c("Full data with c_x", 
+                            "Complete case with c_x",
+                            "Imputation with c_x",
+                            "Two models with c_x",
+                            "Full data with c_y", 
+                            "Complete case wtih c_y",
+                            "Imputation with c_y",
+                            "Two models with c_y",
+                            "Full data with noise",
+                            "Complete case with noise",
+                            "Imputation with noise",
+                            "Two models with noise" )),
+    mod = fct_rev(mod),
+  ) -> to_plot
+
 ggplot(to_plot, aes(x = estimate, xmin = conf.low, xmax = conf.high, y = mod)) +
   geom_pointrange() + 
-  geom_textvline(xintercept = 1, lty = 2, label = "truth")
+  geom_vline(xintercept = 1, lty = 2)
 ```
 
+So there you have it, two wrong models are rarely better than one.
