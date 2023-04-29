@@ -12,6 +12,9 @@ website:
       - text: "Home"
         file: index.qmd
       - about.qmd
+    right: 
+      - icon: rss
+        href: index.xml
   comments: 
     utterances:
       repo: lfod/lfod.github.io
