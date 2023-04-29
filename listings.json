@@ -2,6 +2,7 @@
   {
     "listing": "/index.html",
     "items": [
+      "/posts/2023-04-29-two-wrong-models-missing-data-style/index.html",
       "/posts/2023-04-28-imputation-might-be-silly/index.html",
       "/posts/2023-04-27-its-just-a-linear-model-neural-nets/index.html",
       "/posts/2023-04-24-causal-quartets/index.html",

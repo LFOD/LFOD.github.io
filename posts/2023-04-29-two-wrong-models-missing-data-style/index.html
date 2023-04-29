@@ -7,10 +7,10 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
 
 <meta name="author" content="Lucy D’Agostino McGowan">
-<meta name="dcterms.date" content="2023-04-27">
-<meta name="description" content="I created a little Shiny application to demonstrate that Neural Networks are just souped up linear models: https://lucy.shinyapps.io/neural-net-linear/">
+<meta name="dcterms.date" content="2023-04-29">
+<meta name="description" content="Would imputing + fitting an outcome model using the wrong variables be better than just fitting the wrong outcome model? Let’s investigate">
 
-<title>It’s just a linear model: neural networks edition</title>
+<title>Are two wrong models better than one? Missing data style</title>
 <style>
 code{white-space: pre-wrap;}
 span.smallcaps{font-variant: small-caps;}
@@ -22,6 +22,40 @@ ul.task-list li input[type="checkbox"] {
   width: 0.8em;
   margin: 0 0.8em 0.2em -1em; /* quarto-specific, see https://github.com/quarto-dev/quarto-cli/issues/4556 */ 
   vertical-align: middle;
+}
+/* CSS for syntax highlighting */
+pre > code.sourceCode { white-space: pre; position: relative; }
+pre > code.sourceCode > span { display: inline-block; line-height: 1.25; }
+pre > code.sourceCode > span:empty { height: 1.2em; }
+.sourceCode { overflow: visible; }
+code.sourceCode > span { color: inherit; text-decoration: inherit; }
+div.sourceCode { margin: 1em 0; }
+pre.sourceCode { margin: 0; }
+@media screen {
+div.sourceCode { overflow: auto; }
+}
+@media print {
+pre > code.sourceCode { white-space: pre-wrap; }
+pre > code.sourceCode > span { text-indent: -5em; padding-left: 5em; }
+}
+pre.numberSource code
+  { counter-reset: source-line 0; }
+pre.numberSource code > span
+  { position: relative; left: -4em; counter-increment: source-line; }
+pre.numberSource code > span > a:first-child::before
+  { content: counter(source-line);
+    position: relative; left: -1em; text-align: right; vertical-align: baseline;
+    border: none; display: inline-block;
+    -webkit-touch-callout: none; -webkit-user-select: none;
+    -khtml-user-select: none; -moz-user-select: none;
+    -ms-user-select: none; user-select: none;
+    padding: 0 4px; width: 4em;
+  }
+pre.numberSource { margin-left: 3em;  padding-left: 4px; }
+div.sourceCode
+  {   }
+@media screen {
+pre > code.sourceCode > span > a:first-child::before { text-decoration: underline; }
 }
 </style>
 
@@ -89,12 +123,11 @@ ga('send', {
 </style>
 
 
-<meta property="og:title" content="It’s just a linear model: neural networks edition">
-<meta property="og:description" content="I created a little Shiny application to demonstrate that Neural Networks are just souped up linear models: https://lucy.shinyapps.io/neural-net-linear/">
-<meta property="og:image" content="https://www.livefreeordichotomize.com/media/images/2023-04-27/app.gif">
+<meta property="og:title" content="Are two wrong models better than one? Missing data style">
+<meta property="og:description" content="Would imputing + fitting an outcome model using the wrong variables be better than just fitting the wrong outcome model? Let’s investigate">
 <meta name="twitter:title" content="Live Free or Dichotomize">
-<meta name="twitter:description" content="I created a little Shiny application to demonstrate that Neural Networks are just souped up linear models: https://lucy.shinyapps.io/neural-net-linear/">
-<meta name="twitter:image" content="https://www.livefreeordichotomize.com/posts/2023-04-27-its-just-a-linear-model-neural-nets/media/lfod-card.png">
+<meta name="twitter:description" content="Would imputing + fitting an outcome model using the wrong variables be better than just fitting the wrong outcome model? Let’s investigate">
+<meta name="twitter:image" content="https://www.livefreeordichotomize.com/posts/2023-04-29-two-wrong-models-missing-data-style/media/lfod-card.png">
 <meta name="twitter:creator" content="@LucyStats">
 <meta name="twitter:card" content="summary_large_image">
 </head><body class="nav-fixed fullcontent"><header id="custom-header">
@@ -310,16 +343,16 @@ ga('send', {
 <header id="title-block-header" class="quarto-title-block default page-columns page-full">
   <div class="quarto-title-banner page-columns page-full">
     <div class="quarto-title column-body">
-      <h1 class="title">It’s just a linear model: neural networks edition</h1>
+      <h1 class="title">Are two wrong models better than one? Missing data style</h1>
                   <div>
         <div class="description">
-          I created a little Shiny application to demonstrate that Neural Networks are just souped up linear models: https://lucy.shinyapps.io/neural-net-linear/
+          Would imputing + fitting an outcome model using the wrong variables be better than just fitting the wrong outcome model? Let’s investigate
         </div>
       </div>
                           <div class="quarto-categories">
-                <div class="quarto-category">statistical communication</div>
-                <div class="quarto-category">data science pedoagogy</div>
-                <div class="quarto-category">neural-networks</div>
+                <div class="quarto-category">rstats</div>
+                <div class="quarto-category">simulations</div>
+                <div class="quarto-category">missing data</div>
               </div>
                   </div>
   </div>
@@ -337,7 +370,7 @@ ga('send', {
       <div>
       <div class="quarto-title-meta-heading">Published</div>
       <div class="quarto-title-meta-contents">
-        <p class="date">April 27, 2023</p>
+        <p class="date">April 29, 2023</p>
       </div>
     </div>
     
@@ -355,9 +388,136 @@ ga('send', {
 
 
 
-<p>I created a little Shiny application to demonstrate that Neural Networks are just souped up linear models: https://lucy.shinyapps.io/neural-net-linear/</p>
-<p><img src="../../media/images/2023-04-27/app.gif" class="img-fluid"></p>
-<p>This application has a neural network fit to a dataset with one predictor, x, and one outcome, y. The network has one hidden layer with three activations. You can click a “Play” button to watch how the neural network fits across 300 epochs. You can also click on the nodes of the neural network diagram to highlight each of the individual activations across the applciation (along with their corresponding coefficients).</p>
+<p>After my <a href="https://livefreeordichotomize.com/posts/2023-04-28-imputation-might-be-silly/">previous post about missing data</a>, Cathy <a href="https://twitter.com/CausalKathy/status/1652138888100470785?s=20">asked on Twitter</a> whether two wrong models (the imputation model + the outcome model) would be better than one (the outcome model alone).</p>
+<blockquote class="blockquote">
+<p>Without doing any of the math, I’d guess the assumption of correctly spec the model also has a bigger impact in the CC analysis.</p>
+</blockquote>
+<blockquote class="blockquote">
+<p>You need correct spec in MI, twice, but trade off that potential bias for higher prec.</p>
+</blockquote>
+<p>This is a great question! I am going to investigate via a small simulation (so the answer could be “it depends”, but at least we will know how it seems to work in this very simple case) 😆.</p>
+<p>Ok so here I have some predictor, <code>x</code> that is missing 50% of the time, dependent on <code>c_right</code>. The right imputation model (or right outcome model) would include <code>c_right</code>. Unfortunately, we only have access to <code>c_wrong</code> which is a useless variable, but what we will try to use in our imputation model (and outcome model). Let’s see whether two (wrong) models are better than one!</p>
+<p>A “correct” model will be one that estimates that the coefficient for <code>x</code> is 1.</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb1"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb1-1"><a href="#cb1-1" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(tidyverse)</span>
+<span id="cb1-2"><a href="#cb1-2" aria-hidden="true" tabindex="-1"></a>n <span class="ot">&lt;-</span> <span class="dv">1000</span></span>
+<span id="cb1-3"><a href="#cb1-3" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb1-4"><a href="#cb1-4" aria-hidden="true" tabindex="-1"></a><span class="fu">set.seed</span>(<span class="dv">1</span>)</span>
+<span id="cb1-5"><a href="#cb1-5" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb1-6"><a href="#cb1-6" aria-hidden="true" tabindex="-1"></a>data <span class="ot">&lt;-</span> <span class="fu">tibble</span>(</span>
+<span id="cb1-7"><a href="#cb1-7" aria-hidden="true" tabindex="-1"></a>  <span class="at">x =</span> <span class="fu">rnorm</span>(n),</span>
+<span id="cb1-8"><a href="#cb1-8" aria-hidden="true" tabindex="-1"></a>  <span class="at">c_right =</span> <span class="fu">rnorm</span>(n),</span>
+<span id="cb1-9"><a href="#cb1-9" aria-hidden="true" tabindex="-1"></a>  <span class="at">c_wrong =</span> <span class="fu">rnorm</span>(n),</span>
+<span id="cb1-10"><a href="#cb1-10" aria-hidden="true" tabindex="-1"></a>  <span class="at">y =</span> x <span class="sc">+</span> c_right <span class="sc">+</span> <span class="fu">rnorm</span>(n),</span>
+<span id="cb1-11"><a href="#cb1-11" aria-hidden="true" tabindex="-1"></a>  <span class="at">x_miss =</span> <span class="fu">rbinom</span>(n, <span class="dv">1</span>, <span class="dv">1</span> <span class="sc">/</span> (<span class="dv">1</span> <span class="sc">+</span> <span class="fu">exp</span>(<span class="sc">-</span>(x <span class="sc">+</span> c_right)))),</span>
+<span id="cb1-12"><a href="#cb1-12" aria-hidden="true" tabindex="-1"></a>  <span class="at">x_obs =</span> <span class="fu">ifelse</span>(</span>
+<span id="cb1-13"><a href="#cb1-13" aria-hidden="true" tabindex="-1"></a>    x_miss,</span>
+<span id="cb1-14"><a href="#cb1-14" aria-hidden="true" tabindex="-1"></a>    <span class="cn">NA</span>,</span>
+<span id="cb1-15"><a href="#cb1-15" aria-hidden="true" tabindex="-1"></a>    x</span>
+<span id="cb1-16"><a href="#cb1-16" aria-hidden="true" tabindex="-1"></a>  )</span>
+<span id="cb1-17"><a href="#cb1-17" aria-hidden="true" tabindex="-1"></a>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+<p>Ok first let’s look at the whole dataset.</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb2"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb2-1"><a href="#cb2-1" aria-hidden="true" tabindex="-1"></a><span class="fu">lm</span>(y <span class="sc">~</span> x <span class="sc">+</span> c_wrong, <span class="at">data =</span> data)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>
+Call:
+lm(formula = y ~ x + c_wrong, data = data)
+
+Coefficients:
+(Intercept)            x      c_wrong  
+  0.0003004    1.0284117    0.0320622  </code></pre>
+</div>
+</div>
+<p>This checks out! <code>c_wrong</code> basically does nothing for us here, but because <code>c_right</code> is not actually a confounder (it just informs the missingness, which we aren’t observing here), we are just fine estimating our “wrong” model in the fully observed data. Now let’s do the “complete cases” analysis</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb4"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb4-1"><a href="#cb4-1" aria-hidden="true" tabindex="-1"></a>data_cc <span class="ot">&lt;-</span> <span class="fu">na.omit</span>(data)</span>
+<span id="cb4-2"><a href="#cb4-2" aria-hidden="true" tabindex="-1"></a><span class="fu">lm</span>(y <span class="sc">~</span> x <span class="sc">+</span> c_wrong, <span class="at">data =</span> data_cc)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>
+Call:
+lm(formula = y ~ x + c_wrong, data = data_cc)
+
+Coefficients:
+(Intercept)            x      c_wrong  
+   -0.47218      0.87102      0.06116  </code></pre>
+</div>
+</div>
+<p>Oops! As expected, we have some bias here. Specifically, we are off by 0.13. Now let’s do some imputation. I am going to use the <code>mice</code> package. I am going to fit the “wrong” imputation model, only including <code>c_wrong</code>.</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb6"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb6-1"><a href="#cb6-1" aria-hidden="true" tabindex="-1"></a>imp_data <span class="ot">&lt;-</span> mice<span class="sc">::</span><span class="fu">mice</span>(</span>
+<span id="cb6-2"><a href="#cb6-2" aria-hidden="true" tabindex="-1"></a>  data, </span>
+<span id="cb6-3"><a href="#cb6-3" aria-hidden="true" tabindex="-1"></a>  <span class="at">m =</span> <span class="dv">1</span>, </span>
+<span id="cb6-4"><a href="#cb6-4" aria-hidden="true" tabindex="-1"></a>  <span class="at">formulas =</span> <span class="fu">list</span>(x_obs <span class="sc">~</span> c_wrong),</span>
+<span id="cb6-5"><a href="#cb6-5" aria-hidden="true" tabindex="-1"></a>  <span class="at">print =</span> <span class="cn">FALSE</span>) <span class="sc">|&gt;</span></span>
+<span id="cb6-6"><a href="#cb6-6" aria-hidden="true" tabindex="-1"></a>  <span class="fu">complete</span>()</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+<p>Ok let’s compare how this model does “alone”.</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb7"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb7-1"><a href="#cb7-1" aria-hidden="true" tabindex="-1"></a><span class="fu">lm</span>(y <span class="sc">~</span> x_obs, <span class="at">data =</span> imp_data)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>
+Call:
+lm(formula = y ~ x_obs, data = imp_data)
+
+Coefficients:
+(Intercept)        x_obs  
+     0.1455       0.3494  </code></pre>
+</div>
+</div>
+<p>Oh no, very bad! The wrong imputation model is worse than complete case! By a lot! This estimate is off by 0.65. Does conditioning on <code>c_wrong</code> help us at all?</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb9"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb9-1"><a href="#cb9-1" aria-hidden="true" tabindex="-1"></a><span class="fu">lm</span>(y <span class="sc">~</span> x_obs <span class="sc">+</span> c_wrong, <span class="at">data =</span> imp_data)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>
+Call:
+lm(formula = y ~ x_obs + c_wrong, data = imp_data)
+
+Coefficients:
+(Intercept)        x_obs      c_wrong  
+    0.14519      0.35184      0.09175  </code></pre>
+</div>
+</div>
+<p>Nope 😢. Two wrong models here is not better than one and in fact the imputation model is the problem! Womp womp.</p>
+<p>What if we used an indicator for missingness in our second model?</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb11"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb11-1"><a href="#cb11-1" aria-hidden="true" tabindex="-1"></a><span class="fu">lm</span>(y <span class="sc">~</span> x_obs <span class="sc">+</span> c_wrong <span class="sc">+</span> x_miss <span class="sc">*</span> x_obs, <span class="at">data =</span> imp_data)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>
+Call:
+lm(formula = y ~ x_obs + c_wrong + x_miss * x_obs, data = imp_data)
+
+Coefficients:
+ (Intercept)         x_obs       c_wrong        x_miss  x_obs:x_miss  
+   -0.475637      0.872720      0.004504      1.251428     -0.897128  </code></pre>
+</div>
+</div>
+<p>Well that at least gets us back to our complete case bias (although seems like a long way to get there!).</p>
+<p>What if we had included <code>y</code> in our imputation model?</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb13"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb13-1"><a href="#cb13-1" aria-hidden="true" tabindex="-1"></a>imp_data_2 <span class="ot">&lt;-</span> mice<span class="sc">::</span><span class="fu">mice</span>(</span>
+<span id="cb13-2"><a href="#cb13-2" aria-hidden="true" tabindex="-1"></a>  data, </span>
+<span id="cb13-3"><a href="#cb13-3" aria-hidden="true" tabindex="-1"></a>  <span class="at">m =</span> <span class="dv">1</span>, </span>
+<span id="cb13-4"><a href="#cb13-4" aria-hidden="true" tabindex="-1"></a>  <span class="at">formulas =</span> <span class="fu">list</span>(x_obs <span class="sc">~</span> c_wrong <span class="sc">+</span> y),</span>
+<span id="cb13-5"><a href="#cb13-5" aria-hidden="true" tabindex="-1"></a>  <span class="at">print =</span> <span class="cn">FALSE</span>) <span class="sc">|&gt;</span></span>
+<span id="cb13-6"><a href="#cb13-6" aria-hidden="true" tabindex="-1"></a>  <span class="fu">complete</span>()</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+<p>Ok let’s compare how this model does “alone”.</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb14"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb14-1"><a href="#cb14-1" aria-hidden="true" tabindex="-1"></a><span class="fu">lm</span>(y <span class="sc">~</span> x_obs, <span class="at">data =</span> imp_data_2)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>
+Call:
+lm(formula = y ~ x_obs, data = imp_data_2)
+
+Coefficients:
+(Intercept)        x_obs  
+     0.1653       0.9955  </code></pre>
+</div>
+</div>
+<p>Wow, much better. Only off by 0.005. Including <code>y</code> in the imputation model <a href="https://pubmed.ncbi.nlm.nih.gov/16980150/">is definitely recommended</a>, as was hammered home for me by the wonderful Frank Harrell, but I’m not sure this recommendation has permeated through the field yet (although <a href="https://journals.sagepub.com/doi/10.1177/09622802231165001">this paper re-iterating this result</a> just came out yesterday so maybe it is!).</p>
+<p>So there you have it. Two wrong models are not really better than one, but including the outcome in your imputation model might save you.</p>
 
 
 
