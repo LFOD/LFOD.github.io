@@ -179,6 +179,7 @@ load("../../media/data/to_plot_mi.rda")
 
 ```{r}
 ggplot(to_plot, aes(x = estimate, xmin = conf.low, xmax = conf.high, y = mod)) +
-  geom_pointrange()
+  geom_pointrange() + 
+  geom_textvline(xintercept = 1, lty = 2, label = "truth")
 ```
 
