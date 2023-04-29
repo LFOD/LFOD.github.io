@@ -6,8 +6,8 @@ execute:
   
 website:
   site-url: "https://www.livefreeordichotomize.com"
-  description: "Lucy D'Agostino McGowan & Nick Strayer's Blog"
-  title: "Live Free or Dichotomize"
+  description: "Live Free or Dichotomize: Lucy D'Agostino McGowan & Nick Strayer's Blog"
+  title: " "
   navbar:
     left:
       - text: "Home"
