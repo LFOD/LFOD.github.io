@@ -1,0 +1,107 @@
+---
+title: "Are two wrong models better than one? Missing data style"
+author: Lucy D'Agostino McGowan
+date: '2023-04-29'
+categories: ["rstats", "simulations", "missing data"]
+description: "Would imputing + fitting an outcome model using the wrong variables be better than just fitting the wrong outcome model? Let's investigate"
+---
+
+After my [previous post about missing data](https://livefreeordichotomize.com/posts/2023-04-28-imputation-might-be-silly/), Cathy [asked on Twitter](https://twitter.com/CausalKathy/status/1652138888100470785?s=20) whether two wrong models (the imputation model + the outcome model) would be better than one (the outcome model alone).
+
+> Without doing any of the math, I'd guess the assumption of correctly spec the model also has a bigger impact in the CC analysis.
+
+> You need correct spec in MI, twice, but trade off that potential bias for higher prec.
+
+This is a great question! I am going to investigate via a small simulation (so the answer could be "it depends", but at least we will know how it seems to work in this very simple case) `r emo::ji("laughing")`.
+
+Ok so here I have some predictor, `x` that is missing 50% of the time, dependent on `c_right`. The right imputation model (or right outcome model) would include `c_right`. Unfortunately, we only have access to `c_wrong` which is a useless variable, but what we will try to use in our imputation model (and outcome model). Let's see whether two (wrong) models are better than one!
+
+A "correct" model will be one that estimates that the coefficient for `x` is 1. 
+
+```{r}
+#| message: false
+#| warning: false
+library(tidyverse)
+n <- 100000
+
+set.seed(1)
+
+data <- tibble(
+  x = rnorm(n),
+  c_right = rnorm(n),
+  c_wrong = rnorm(n),
+  y = x + c_right + rnorm(n),
+  x_miss = rbinom(n, 1, 1 / (1 + exp(-(x + c_right)))),
+  x_obs = ifelse(
+    x_miss,
+    NA,
+    x
+  )
+)
+```
+
+Ok first let's look at the whole dataset.
+
+```{r}
+lm(y ~ x + c_wrong, data = data)
+```
+
+This checks out! `c_wrong` basically does nothing for us here, but because `c_right` is not actually a confounder (it just informs the missingness, which we aren't observing here), we are just fine estimating our "wrong" model in the fully observed data. Now let's do the "complete cases" analysis
+
+```{r}
+data_cc <- na.omit(data)
+lm(y ~ x + c_wrong, data = data_cc)
+```
+Oops! As expected, we have some bias here. Specifically, we are off by 0.16. Now let's do some imputation. I am going to use the `mice` package. I am going to fit the "wrong" imputation model, only including `c_wrong`. 
+
+
+```{r}
+imp_data <- mice::mice(
+  data, 
+  m = 1, 
+  formulas = list(x_obs ~ c_wrong),
+  print = FALSE) |>
+  complete()
+```
+
+Ok let's compare how this model does "alone".
+```{r}
+lm(y ~ x_obs, data = imp_data)
+```
+
+Oh no, very bad! The wrong imputation model is worse than complete case! By a lot! This estimate is off by 0.58. Does conditioning on `c_wrong` help us at all?
+
+```{r}
+lm(y ~ x_obs + c_wrong, data = imp_data)
+```
+
+Nope `r emo::ji("cry")`. Two wrong models here is not better than one and in fact the imputation model is the problem! Womp womp. 
+
+What if we used an indicator for missingness in our second model?
+
+```{r}
+lm(y ~ x_obs + c_wrong + x_miss * x_obs, data = imp_data)
+```
+
+Well that at least gets us back to our complete case bias (although seems like a long way to get there!).
+
+What if we had included `y` in our imputation model?
+
+```{r}
+imp_data <- mice::mice(
+  data, 
+  m = 1, 
+  formulas = list(x_obs ~ c_wrong + y),
+  print = FALSE) |>
+  complete()
+```
+
+Ok let's compare how this model does "alone".
+
+```{r}
+lm(y ~ x_obs, data = imp_data)
+```
+
+Wow, much better. Only off by 0.04. Including `y` in the imputation model [is definitely recommended](https://pubmed.ncbi.nlm.nih.gov/16980150/), as was hammered home for me by the wonderful Frank Harrell, but I'm not sure this recommendation has permeated through the field yet (although [this paper re-iterating this result](https://journals.sagepub.com/doi/10.1177/09622802231165001) just came out yesterday so maybe it is!).
+
+So there you have it. Two wrong models are not really better than one, but including the outcome in your imputation model might save you. 
