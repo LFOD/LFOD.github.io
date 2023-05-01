@@ -212,7 +212,7 @@ lm(y ~ x, data = data_cc)
 
 ```
 
-Oops! Now we are seeing an effect of 0.9 when the true effect of the exposure is 1 (because we did a bad thing and just deleted all the missing rows). In the past, this is where I would say *and therefore you should do imputation!* BUT instead, just adjust for `c`, that is correctly specify your outcome model and all will be well:
+Oops! Now we are seeing an effect of 0.825 when the true effect of the exposure is 1 (because we did a bad thing and just deleted all the missing rows). In the past, this is where I would say *and therefore you should do imputation!* BUT instead, just adjust for `c`, that is correctly specify your outcome model and all will be well:
 
 ```{r}
 lm(y ~ x + c, data = data_cc)
