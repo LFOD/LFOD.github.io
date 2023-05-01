@@ -281,3 +281,155 @@ ggplot(to_plot, aes(x = estimate, xmin = conf.low, xmax = conf.high, y = mod)) +
 ```
 
 So there you have it, two wrong models are rarely better than one.
+
+## Addendum!
+
+In writing this post, I found that I was getting biased results when I was correctly specifying my imputation model when using the `{mice}` defaults (which is why the code above specifies `norm.predict` for the method, forcing it to use linear regression, as the data were generated). I don't understand why this is happening (and am completely open to it being some kind of user error on my part!). But here are those results in case someone can help me figure it out.
+
+```{r}
+imp_default_c_x <- mice(
+  data, 
+  m = 5, 
+  formulas = list(x_obs ~ c_x),
+  print = FALSE)
+```
+
+```{r}
+mod_imp_c_x <- with(imp_default_c_x, lm(y ~ x_obs)) |>
+  pool() |>
+  tidy(conf.int = TRUE) |>
+  filter(term == "x_obs") |>
+  select(estimate, conf.low, conf.high)
+
+mod_imp_c_x
+```
+
+Bad!
+
+```{r}
+mod_double_c_x <-  with(imp_default_c_x, lm(y ~ x_obs + c_x)) |>
+  pool() |>
+  tidy(conf.int = TRUE) |>
+  filter(term == "x_obs") |>
+  select(estimate, conf.low, conf.high)
+
+mod_double_c_x
+```
+
+Even worse!!
+
+```{r}
+imp_default_c_y <- mice(
+  data, 
+  m = 5, 
+  formulas = list(x_obs ~ c_y),
+  print = FALSE)
+```
+
+```{r}
+mod_imp_c_y <- with(imp_default_c_y, lm(y ~ x_obs)) |>
+  pool() |>
+  tidy(conf.int = TRUE) |>
+  filter(term == "x_obs") |>
+  select(estimate, conf.low, conf.high)
+
+mod_imp_c_y
+```
+
+YIKES!
+
+```{r}
+mod_double_c_y <-  with(imp_default_c_y, lm(y ~ x_obs + c_y)) |>
+  pool() |>
+  tidy(conf.int = TRUE) |>
+  filter(term == "x_obs") |>
+  select(estimate, conf.low, conf.high)
+
+mod_double_c_y
+```
+
+Better since we are conditioning on `c_y` (but still bad!)
+
+```{r}
+imp_default_noise <- mice(
+  data, 
+  m = 5, 
+  formulas = list(x_obs ~ noise),
+  print = FALSE) 
+```
+
+```{r}
+mod_imp_noise <-  with(imp_default_noise, lm(y ~ x_obs)) |>
+  pool() |>
+  tidy(conf.int = TRUE) |>
+  filter(term == "x_obs") |>
+  select(estimate, conf.low, conf.high)
+
+mod_imp_noise
+```
+
+EEK!
+
+```{r}
+mod_double_noise <-  with(imp_default_noise,lm(y ~ x_obs + noise)) |>
+  pool() |>
+  tidy(conf.int = TRUE) |>
+  filter(term == "x_obs") |>
+  select(estimate, conf.low, conf.high)
+
+mod_double_noise
+```
+
+Just as bad..
+
+Let's put those in the original plot:
+
+```{r}
+bind_rows(
+  mod_full_c_x,
+  mod_full_c_y,
+  mod_full_noise,
+  mod_cc_c_x,
+  mod_cc_c_y,
+  mod_cc_noise,
+  mod_imp_c_x,
+  mod_imp_c_y,
+  mod_imp_noise,
+  mod_double_c_x,
+  mod_double_c_y,
+  mod_double_noise
+) |>
+  mutate(
+    mod = factor(c("Full data with c_x", 
+                   "Full data with c_y", 
+                   "Full data with noise",
+                   "Complete case with c_x",
+                   "Complete case wtih c_y",
+                   "Complete case with noise",
+                   "Default Imputation with c_x",
+                   "Default Imputation with c_y",
+                   "Default Imputation with noise",
+                   "Two models with c_x",
+                   "Two models with c_y",
+                   "Two models with noise" ),
+                 levels = c("Full data with c_x", 
+                            "Complete case with c_x",
+                            "Default Imputation with c_x",
+                            "Two models with c_x",
+                            "Full data with c_y", 
+                            "Complete case wtih c_y",
+                            "Default Imputation with c_y",
+                            "Two models with c_y",
+                            "Full data with noise",
+                            "Complete case with noise",
+                            "Default Imputation with noise",
+                            "Two models with noise" )),
+    mod = fct_rev(mod),
+  ) -> to_plot
+
+ggplot(to_plot, aes(x = estimate, xmin = conf.low, xmax = conf.high, y = mod)) +
+  geom_pointrange() + 
+  geom_vline(xintercept = 1, lty = 2)
+```
+AHH! This makes me so scared of imputation!!
+
