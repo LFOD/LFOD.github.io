@@ -647,7 +647,7 @@ Coefficients:
      -0.413        0.825  </code></pre>
 </div>
 </div>
-<p>Oops! Now we are seeing an effect of 0.9 when the true effect of the exposure is 1 (because we did a bad thing and just deleted all the missing rows). In the past, this is where I would say <em>and therefore you should do imputation!</em> BUT instead, just adjust for <code>c</code>, that is correctly specify your outcome model and all will be well:</p>
+<p>Oops! Now we are seeing an effect of 0.825 when the true effect of the exposure is 1 (because we did a bad thing and just deleted all the missing rows). In the past, this is where I would say <em>and therefore you should do imputation!</em> BUT instead, just adjust for <code>c</code>, that is correctly specify your outcome model and all will be well:</p>
 <div class="cell">
 <div class="sourceCode cell-code" id="cb28"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb28-1"><a href="#cb28-1" aria-hidden="true" tabindex="-1"></a><span class="fu">lm</span>(y <span class="sc">~</span> x <span class="sc">+</span> c, <span class="at">data =</span> data_cc)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output cell-output-stdout">
