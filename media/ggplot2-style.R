@@ -21,5 +21,5 @@ theme_set(
 
 ggplot <- function(...){
   ggplot2::ggplot(...) +
-    labs(caption = "\nlivefreeordichtomize.com")
+    labs(caption = "\nlivefreeordichotomize.com")
 }
