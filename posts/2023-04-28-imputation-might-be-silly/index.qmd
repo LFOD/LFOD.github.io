@@ -8,6 +8,11 @@ description: "I have been thinking about scenarios under which it makes sense to
 
 ```{r}
 #| echo: false
+source("../../media/ggplot2-style.R")
+```
+
+```{r}
+#| echo: false
 options(digits = 2)
 ```
 

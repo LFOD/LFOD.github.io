@@ -8,7 +8,6 @@ description: "Would imputing + fitting an outcome model using the wrong variable
 
 ```{r}
 #| echo: false
-
 source("../../media/ggplot2-style.R")
 ```
 
