@@ -42,7 +42,7 @@ HTTP requests are the lingua-franca of the web. Every time you access a website 
 You'll notice that we add the line User-Agent = woofbot 2000 in the GET request. This is because reddit gets suspicious whenever its api gets hit by a client not introducing itself and will only allow a request every minute or so. When we introduce our app with user-agent reddit will send us as many photo links as our heart desires.
 :::
 
-If one is developing an app to get photos of cute animals, a natural place to go to find photos is Reddit. Conveniently they also have a fantastically easy to use API for getting information about the posts on a given subreddit. Say you want to get the 'hot' posts for the subreddit 'r/catslaps'. To do this you simply put together a url as if you were going to visit the subreddit in your browser and append `.json` at the end of it. Really, it's that easy. So in the case of catslaps: `www.reddit.com/r/catslaps/hot/.json`. (We'll also limit the number of posts we get back to 20 with `?limit=20` to keep things speedy) Let's demo this really quick: 
+If one is developing an app to get photos of cute animals, a natural place to go to find photos is Reddit. Conveniently they also have a fantastically easy to use API for getting information about the posts on a given subreddit. Say you want to get the 'hot' posts for the subreddit 'r/catslaps'. To do this you simply put together a url as if you were going to visit the subreddit in your browser and append `.json` at the end of it. Really, it's that easy. So in the case of catslaps: `www.reddit.com/r/catslaps/hot/.json`. (We'll also limit the number of posts we get back to 100 with `?limit=100` to keep things speedy) Let's demo this really quick: 
 
 
 
@@ -52,7 +52,7 @@ library(httr)
 
 redditTopPosts <- function(subreddit){
   query <- sprintf(
-    'https://www.reddit.com/r/%s/hot/.json?limit=20',
+    'https://www.reddit.com/r/%s/hot/.json?limit=100',
     subreddit
   )
   
@@ -60,12 +60,29 @@ redditTopPosts <- function(subreddit){
     content('text') %>% 
     jsonlite::fromJSON() 
 }
+```
 
+```{r}
+#| eval: false
 catslapsTop <- redditTopPosts(subreddit = 'catslaps')
+```
 
+```{r}
+#| echo: false
+#| eval: false
+save(catslapsTop, file = "../../media/data/catslapsTop.rds")
+```
+
+```{r}
+#| echo: false
+load("../../media/data/catslapsTop.rds")
+```
+
+```{r}
 # View it
 jsonedit(catslapsTop)
 ```
+
 
 We get back a big hairy list of data on the top posts. What we are after (the links to the images) is in the path `data -> children -> data`. So we can write a function to get that out of our api response and simplify our life in the future: 
 
@@ -158,8 +175,27 @@ To break this down a tiny bit: first we are grabbing a random photo from reddit 
 We can test this really quick to see how it looks. 
 
 ```{r}
+#| echo: false
+#| eval: false
+s <- sendToSlack()
+save(s, file = "../../media/data/sendtoslack.rds")
+```
+
+```{r}
+#| echo: false
+load("../../media/data/sendtoslack.rds")
+```
+
+```{r}
+#| eval: false
 sendToSlack() %>% jsonedit()
 ```
+
+```{r}
+#| echo: false
+s %>% jsonedit()
+```
+
 
 Looks like it's formatting correctly! Now let's wire up `plumber`! Buckle in, this takes a while....
 
