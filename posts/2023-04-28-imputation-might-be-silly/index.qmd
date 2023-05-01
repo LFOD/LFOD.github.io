@@ -182,7 +182,7 @@ Would you look at that. Correct coefficients! How could we break that? If we mis
 ```{r}
 lm(y ~ x, data = data_cc)
 ```
-But is this a terribly interesting case? If we didn't have `c`, then we couldn't impute based on it anyways, so we would be in trouble imputation or not!
+But is this a terribly interesting case? If we don't have a way to predict the missing `x` values (MNAR!) we couldn't impute it anyways, so we would be in trouble imputation or not!
 
 ## Scenario 3: What about inference?
 
