@@ -1025,6 +1025,16 @@
         "vctrs"
       ]
     },
+    "ggokabeito": {
+      "Package": "ggokabeito",
+      "Version": "0.1.0",
+      "Source": "Repository",
+      "Repository": "CRAN",
+      "Hash": "3ebb1aa87a9e095e5693c7fa782a6b1b",
+      "Requirements": [
+        "ggplot2"
+      ]
+    },
     "ggplot2": {
       "Package": "ggplot2",
       "Version": "3.4.2",
