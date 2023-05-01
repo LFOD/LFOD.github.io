@@ -433,3 +433,154 @@ ggplot(to_plot, aes(x = estimate, xmin = conf.low, xmax = conf.high, y = mod)) +
 ```
 AHH! This makes me so scared of imputation!!
 
+## What if we use `y` in the imputation models
+
+Including `y` in the imputation model [is definitely recommended](https://pubmed.ncbi.nlm.nih.gov/16980150/), as was hammered home for me by the wonderful Frank Harrell, but I'm not sure this recommendation has permeated through the field yet (although [this paper re-iterating this result](https://journals.sagepub.com/doi/10.1177/09622802231165001) just came out yesterday so maybe it is!).
+
+Let's see how that improves our imputation models:
+
+```{r}
+imp_y_c_x <- mice(
+  data, 
+  m = 5, 
+  formulas = list(x_obs ~ c_x + y),
+  print = FALSE)
+```
+
+```{r}
+mod_imp_c_x <- with(imp_y_c_x, lm(y ~ x_obs)) |>
+  pool() |>
+  tidy(conf.int = TRUE) |>
+  filter(term == "x_obs") |>
+  select(estimate, conf.low, conf.high)
+
+mod_imp_c_x
+```
+
+Beautiful!
+
+```{r}
+mod_double_c_x <-  with(imp_y_c_x, lm(y ~ x_obs + c_x)) |>
+  pool() |>
+  tidy(conf.int = TRUE) |>
+  filter(term == "x_obs") |>
+  select(estimate, conf.low, conf.high)
+
+mod_double_c_x
+```
+
+A bit worse, but not bad!
+
+```{r}
+imp_y_c_y <- mice(
+  data, 
+  m = 5, 
+  formulas = list(x_obs ~ c_y + y),
+  print = FALSE)
+```
+
+```{r}
+mod_imp_c_y <- with(imp_y_c_y, lm(y ~ x_obs)) |>
+  pool() |>
+  tidy(conf.int = TRUE) |>
+  filter(term == "x_obs") |>
+  select(estimate, conf.low, conf.high)
+
+mod_imp_c_y
+```
+
+Not bad!! A bit biased but way better.
+
+```{r}
+mod_double_c_y <-  with(imp_y_c_y, lm(y ~ x_obs + c_y)) |>
+  pool() |>
+  tidy(conf.int = TRUE) |>
+  filter(term == "x_obs") |>
+  select(estimate, conf.low, conf.high)
+
+mod_double_c_y
+```
+
+Love it, looks great after conditioning on `c_y`
+
+```{r}
+imp_y_noise <- mice(
+  data, 
+  m = 5, 
+  formulas = list(x_obs ~ noise + y),
+  print = FALSE) 
+```
+
+```{r}
+mod_imp_noise <-  with(imp_y_noise, lm(y ~ x_obs)) |>
+  pool() |>
+  tidy(conf.int = TRUE) |>
+  filter(term == "x_obs") |>
+  select(estimate, conf.low, conf.high)
+
+mod_imp_noise
+```
+
+Oo lala, even does well when we don't have the right model (this makes sense because we are using `y`!)
+
+```{r}
+mod_double_noise <-  with(imp_y_noise, lm(y ~ x_obs + noise)) |>
+  pool() |>
+  tidy(conf.int = TRUE) |>
+  filter(term == "x_obs") |>
+  select(estimate, conf.low, conf.high)
+
+mod_double_noise
+```
+
+Let's put those in the original plot:
+
+```{r}
+bind_rows(
+  mod_full_c_x,
+  mod_full_c_y,
+  mod_full_noise,
+  mod_cc_c_x,
+  mod_cc_c_y,
+  mod_cc_noise,
+  mod_imp_c_x,
+  mod_imp_c_y,
+  mod_imp_noise,
+  mod_double_c_x,
+  mod_double_c_y,
+  mod_double_noise
+) |>
+  mutate(
+    mod = factor(c("Full data with c_x", 
+                   "Full data with c_y", 
+                   "Full data with noise",
+                   "Complete case with c_x",
+                   "Complete case wtih c_y",
+                   "Complete case with noise",
+                   "Imputation with c_x and y",
+                   "Imputation with c_y and y",
+                   "Imputation with noise and y",
+                   "Two models with c_x",
+                   "Two models with c_y",
+                   "Two models with noise" ),
+                 levels = c("Full data with c_x", 
+                            "Complete case with c_x",
+                            "Imputation with c_x and y",
+                            "Two models with c_x",
+                            "Full data with c_y", 
+                            "Complete case wtih c_y",
+                            "Imputation with c_y and y",
+                            "Two models with c_y",
+                            "Full data with noise",
+                            "Complete case with noise",
+                            "Imputation with noise and y",
+                            "Two models with noise" )),
+    mod = fct_rev(mod),
+  ) -> to_plot
+
+ggplot(to_plot, aes(x = estimate, xmin = conf.low, xmax = conf.high, y = mod)) +
+  geom_pointrange() + 
+  geom_vline(xintercept = 1, lty = 2)
+```
+
+Pretty good! Maybe I'm feeling a little better about imputation. Maybe. But it had better include the outcome (which I'll admit feels *very* weird for my little causal brain).
