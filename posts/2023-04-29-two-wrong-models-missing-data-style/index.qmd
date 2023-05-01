@@ -439,7 +439,7 @@ AHH! This makes me so scared of imputation!!
 ggplot(data, aes(x = x, y = y, color = factor(x_miss))) +
   geom_point() + 
   geom_vline(xintercept = 2.31, lty = 2) +
-  labs(color = "x Missing?")
+  labs(color = "missing")
 ```
 Take a look at the plot above. We have *no* non-missing `x` values that are greater than 2.3. The way predictive mean matching (the default `{mice}` method) works is it finds the observation(s) that have the closest predicted value to the observation that is missing a data point and gives you *that* non-missing data point's value. So here, we are essentially truncating our distribution at 2.3, since that is the highest value observed. Any value that would have been higher is going to be necessarily too small instead of the right value (this is different from the linear model method used in the first part of this post, which allows you to extrapolate). This is supposed to be a less biased approach, since it doesn't allow you to extrapolate beyond the bounds of your observed data, but it can actually induce bias when you have pockets of missingness with no observed `x`s (which I would argue might happen frequently!). Here is an example of one of the imputed datasets, notice nothing is above that 2.3 line!
 
@@ -448,7 +448,7 @@ ggplot(complete(imp_default_c_x), aes(x = x_obs, y = y, color = factor(x_miss)))
   geom_point() + 
   scale_x_continuous(limits = c(-2.8, 3.1)) +
   geom_vline(xintercept = 2.31, lty = 2) +
-  labs(color = "x Missing?") 
+  labs(color = "imputed") 
 ```
 
 
