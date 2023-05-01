@@ -6,6 +6,13 @@ categories: ["rstats", "simulations", "missing data"]
 description: "Would imputing + fitting an outcome model using the wrong variables be better than just fitting the wrong outcome model? Let's investigate!"
 ---
 
+```{r}
+#| echo: false
+
+source("../../media/ggplot2-style.R")
+```
+
+
 After my [previous post about missing data](https://livefreeordichotomize.com/posts/2023-04-28-imputation-might-be-silly/), Kathy [asked on Twitter](https://twitter.com/CausalKathy/status/1652138888100470785?s=20) whether two wrong models (the imputation model + the outcome model) would be better than one (the outcome model alone).
 
 > Without doing any of the math, I'd guess the assumption of correctly spec the model also has a bigger impact in the CC analysis.
