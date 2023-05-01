@@ -14,12 +14,12 @@ theme_set(
     theme(
       panel.grid.minor = element_blank(),
       legend.position = "bottom",
-      plot.background = element_rect(colour = "black", fill = NA, size = 3),
-      plot.caption = element_text(color = "darkgrey")
+      plot.background = element_rect(color = "black", fill = NA, size = 3),
+      plot.caption = element_text(color = "darkgrey", hjust = 1, size = 10)
     )
 )
 
 ggplot <- function(...){
   ggplot2::ggplot(...) +
-    labs(caption = "livefreeordichtomize.com")
+    labs(caption = "\nlivefreeordichtomize.com")
 }

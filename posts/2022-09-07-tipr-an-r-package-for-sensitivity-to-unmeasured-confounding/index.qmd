@@ -7,6 +7,11 @@ categories: ["rstats"]
 description: "The tipr R package has new updates!"
 ---
 
+```{r}
+#| echo: false
+source("../../media/ggplot2-style.R")
+```
+
 The `tipr` R package has some new features! And a new and improved API! 
 
 ## What is `tipr`
