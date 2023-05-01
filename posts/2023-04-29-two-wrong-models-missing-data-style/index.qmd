@@ -284,8 +284,7 @@ So there you have it, two wrong models are rarely better than one.
 
 ## Addendum!
 
-In writing this post, I found that I was getting biased results when I was correctly specifying my imputation model when using the `{mice}` defaults (which is why the code above specifies `norm.predict` for the method, forcing it to use linear regression, as the data were generated). I didn't understand why this is happening until some helpful friends on Twitter explained it (thank you (Rebecca)[https://twitter.com/rrandridge], (Julian)[https://twitter.com/DrJWolfson
-], and (Mario)[https://twitter.com/mariokeko1995/]). I'll show you what is happening and then I'll show a quick explanation. Let's try to redo the imputation models using the defaults:
+In writing this post, I found that I was getting biased results when I was correctly specifying my imputation model when using the `{mice}` defaults (which is why the code above specifies `norm.predict` for the method, forcing it to use linear regression, as the data were generated). I didn't understand why this is happening until some helpful friends on Twitter explained it (thank you [Rebecca](https://twitter.com/rrandridge), [Julian](https://twitter.com/DrJWolfson), and [Mario](https://twitter.com/mariokeko1995/). I'll show you what is happening and then I'll show a quick explanation. Let's try to redo the imputation models using the defaults:
 
 ```{r}
 imp_default_c_x <- mice(
