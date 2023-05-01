@@ -8,12 +8,8 @@ description: "I have been thinking about scenarios under which it makes sense to
 
 ```{r}
 #| echo: false
-source("../../media/ggplot2-style.R")
-```
-
-```{r}
-#| echo: false
 options(digits = 2)
+source("../../media/ggplot2-style.R")
 ```
 
 Here is the scenario: You are trying to predict some outcome, $y$, and some of your predictors have missing data. Will doing a complete case analysis give you unbiased results? What additional information do you need before deciding? 
