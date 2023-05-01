@@ -14,7 +14,7 @@ theme_set(
     theme(
       panel.grid.minor = element_blank(),
       legend.position = "bottom",
-      plot.background = element_rect(color = "black", fill = NA, size = 3),
+      plot.background = element_rect(color = "black", fill = NA, linewidth = 3),
       plot.caption = element_text(color = "darkgrey", hjust = 1, size = 10)
     )
 )
