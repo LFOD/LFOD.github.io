@@ -20,15 +20,15 @@ theme_set(
     base_family = "sans"
   ) %+replace% 
     theme(
-      text = element_text(color = "#3a4145"),
+      text = element_text(color = "#3a4145", size = 14, family = "Palatino"),
       axis.line = element_blank(),
       axis.ticks = element_blank(),
       panel.grid = element_blank(),
-      panel.grid.major = element_line(color = "#d2d2d2"),
-      strip.background = element_rect(),
+      panel.grid.major = element_line(color = "#d2d2d2", linewidth = 0.25),
       panel.grid.minor = element_blank(),
-      plot.margin = unit(c(1, 1, 1, 1), "lines"),
-      panel.background = element_rect(fill = "#fffff8"),
+      strip.background = element_rect(),
+      panel.background = element_rect(fill = "#fffff8", color = NA),
+      panel.border = element_blank(),
       plot.background = element_rect(color = "#3a4145", fill = "#fffff8", linewidth = 3),
       plot.caption = element_text(color = "darkgrey", hjust = 1, size = 10),
       legend.position = "bottom"
