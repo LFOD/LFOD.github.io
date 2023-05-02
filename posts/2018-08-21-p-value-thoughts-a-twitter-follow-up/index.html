@@ -504,16 +504,18 @@ ga('send', {
 <span id="cb7-3"><a href="#cb7-3" aria-hidden="true" tabindex="-1"></a>  <span class="fu">bind_cols</span>(broom<span class="sc">::</span><span class="fu">confint_tidy</span>(mod_a)) <span class="sc">%&gt;%</span></span>
 <span id="cb7-4"><a href="#cb7-4" aria-hidden="true" tabindex="-1"></a>  <span class="fu">filter</span>(term <span class="sc">==</span> <span class="st">"drug_a"</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output cell-output-stderr">
-<pre><code>Warning: confint_tidy is now deprecated and will be removed from a future
-release of broom. Please use the applicable confint method.</code></pre>
+<pre><code>Warning: confint_tidy is now deprecated and will be removed
+from a future release of broom. Please use the applicable
+confint method.</code></pre>
 </div>
 <div class="sourceCode cell-code" id="cb9"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb9-1"><a href="#cb9-1" aria-hidden="true" tabindex="-1"></a>mod_b <span class="ot">&lt;-</span> <span class="fu">lm</span>(outcome <span class="sc">~</span> baseline_bp <span class="sc">+</span> drug_b, <span class="at">data =</span> study_b)</span>
 <span id="cb9-2"><a href="#cb9-2" aria-hidden="true" tabindex="-1"></a>confint_b <span class="ot">&lt;-</span> broom<span class="sc">::</span><span class="fu">tidy</span>(mod_b) <span class="sc">%&gt;%</span></span>
 <span id="cb9-3"><a href="#cb9-3" aria-hidden="true" tabindex="-1"></a>  <span class="fu">bind_cols</span>(broom<span class="sc">::</span><span class="fu">confint_tidy</span>(mod_b)) <span class="sc">%&gt;%</span></span>
 <span id="cb9-4"><a href="#cb9-4" aria-hidden="true" tabindex="-1"></a>  <span class="fu">filter</span>(term <span class="sc">==</span> <span class="st">"drug_b"</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output cell-output-stderr">
-<pre><code>Warning: confint_tidy is now deprecated and will be removed from a future
-release of broom. Please use the applicable confint method.</code></pre>
+<pre><code>Warning: confint_tidy is now deprecated and will be removed
+from a future release of broom. Please use the applicable
+confint method.</code></pre>
 </div>
 <div class="sourceCode cell-code" id="cb11"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb11-1"><a href="#cb11-1" aria-hidden="true" tabindex="-1"></a>confints <span class="ot">&lt;-</span> <span class="fu">bind_rows</span>(confint_a, confint_b)</span>
 <span id="cb11-2"><a href="#cb11-2" aria-hidden="true" tabindex="-1"></a></span>
@@ -555,8 +557,9 @@ release of broom. Please use the applicable confint method.</code></pre>
 <span id="cb13-20"><a href="#cb13-20" aria-hidden="true" tabindex="-1"></a>  <span class="fu">bind_cols</span>(broom<span class="sc">::</span><span class="fu">confint_tidy</span>(mod_c)) <span class="sc">%&gt;%</span></span>
 <span id="cb13-21"><a href="#cb13-21" aria-hidden="true" tabindex="-1"></a>  <span class="fu">filter</span>(term <span class="sc">==</span> <span class="st">"drug_c"</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output cell-output-stderr">
-<pre><code>Warning: confint_tidy is now deprecated and will be removed from a future
-release of broom. Please use the applicable confint method.</code></pre>
+<pre><code>Warning: confint_tidy is now deprecated and will be removed
+from a future release of broom. Please use the applicable
+confint method.</code></pre>
 </div>
 <div class="sourceCode cell-code" id="cb15"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb15-1"><a href="#cb15-1" aria-hidden="true" tabindex="-1"></a>confints <span class="ot">&lt;-</span> <span class="fu">bind_rows</span>(confints, confint_c)</span>
 <span id="cb15-2"><a href="#cb15-2" aria-hidden="true" tabindex="-1"></a></span>

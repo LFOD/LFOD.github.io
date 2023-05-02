@@ -412,19 +412,20 @@ ga('send', {
 <div class="sourceCode cell-code" id="cb3"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb3-1"><a href="#cb3-1" aria-hidden="true" tabindex="-1"></a>exdata_rr</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output cell-output-stdout">
 <pre><code># A tibble: 2,000 × 4
-   .unmeasured_confounder measured_confounder exposure outcome
-                    &lt;dbl&gt;               &lt;dbl&gt;    &lt;dbl&gt;   &lt;int&gt;
- 1                0.716                -0.890        0       0
- 2                0.134                -0.249        0       0
- 3                0.238                -0.104        0       0
- 4                0.0286                0.165        0       0
- 5               -0.598                 0.812        0       0
- 6                0.00419              -0.563        0       0
- 7               -0.960                -0.559        0       0
- 8               -1.15                  1.14         0       0
- 9               -0.374                -1.23         0       0
-10                1.80                  0.495        0       0
-# ℹ 1,990 more rows</code></pre>
+   .unmeasured_confounder measured_confounder exposure
+                    &lt;dbl&gt;               &lt;dbl&gt;    &lt;dbl&gt;
+ 1                0.716                -0.890        0
+ 2                0.134                -0.249        0
+ 3                0.238                -0.104        0
+ 4                0.0286                0.165        0
+ 5               -0.598                 0.812        0
+ 6                0.00419              -0.563        0
+ 7               -0.960                -0.559        0
+ 8               -1.15                  1.14         0
+ 9               -0.374                -1.23         0
+10                1.80                  0.495        0
+# ℹ 1,990 more rows
+# ℹ 1 more variable: outcome &lt;int&gt;</code></pre>
 </div>
 </div>
 <p>Using this data, we could estimate the exposure-outcome relationship using the measured confounder as follows:</p>
@@ -471,11 +472,11 @@ with the following specifications:
 </div>
 <div class="cell-output cell-output-stdout">
 <pre><code># A tibble: 1 × 5
-  effect_adjusted effect_observed exposure_confounder_e…¹ confounder_outcome_e…²
-            &lt;dbl&gt;           &lt;dbl&gt;                   &lt;dbl&gt;                  &lt;dbl&gt;
-1               1             1.5                     0.5                   2.25
-# ℹ abbreviated names: ¹​exposure_confounder_effect, ²​confounder_outcome_effect
-# ℹ 1 more variable: n_unmeasured_confounders &lt;dbl&gt;</code></pre>
+  effect_adjusted effect_observed exposure_confounder_effect
+            &lt;dbl&gt;           &lt;dbl&gt;                      &lt;dbl&gt;
+1               1             1.5                        0.5
+# ℹ 2 more variables: confounder_outcome_effect &lt;dbl&gt;,
+#   n_unmeasured_confounders &lt;dbl&gt;</code></pre>
 </div>
 </div>
 <p>The output is a data frame with 5 variables – in this case, we are interested in the <code>confounder_outcome_effect</code> column, as this tells us the magnitude of the relationship between an unmeasured confounder and outcome needed to tip this analysis. This results in a confounder-outcome effect of 2.25, meaning that a hypothetical unobserved continuous confounder with a mean difference of <code>0.5</code> would need a relationship of at least <code>2.25</code> with the outcome to tip the analysis at the point estimate.</p>
@@ -513,10 +514,10 @@ with the following specifications:
 <span id="cb14-6"><a href="#cb14-6" aria-hidden="true" tabindex="-1"></a><span class="fu">coef</span>(mod_actual) <span class="sc">%&gt;%</span></span>
 <span id="cb14-7"><a href="#cb14-7" aria-hidden="true" tabindex="-1"></a>  <span class="fu">exp</span>()</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output cell-output-stdout">
-<pre><code>           (Intercept)               exposure    measured_confounder 
-            0.02450901             0.92108511             2.43654796 
-.unmeasured_confounder 
-            2.41680059 </code></pre>
+<pre><code>           (Intercept)               exposure 
+            0.02450901             0.92108511 
+   measured_confounder .unmeasured_confounder 
+            2.43654796             2.41680059 </code></pre>
 </div>
 <div class="sourceCode cell-code" id="cb16"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb16-1"><a href="#cb16-1" aria-hidden="true" tabindex="-1"></a>lmtest<span class="sc">::</span><span class="fu">coefci</span>(mod_actual, <span class="at">vcov =</span> sandwich<span class="sc">::</span>vcovHC) <span class="sc">%&gt;%</span> </span>
 <span id="cb16-2"><a href="#cb16-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">exp</span>()</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
