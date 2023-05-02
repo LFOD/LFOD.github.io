@@ -1,10 +1,15 @@
 
 options(
-  ggplot2.discrete.colour = ggokabeito::palette_okabe_ito(),
-  ggplot2.discrete.fill = ggokabeito::palette_okabe_ito(),
+  ggplot2.discrete.colour = c(
+    "#E69F00", "#56B4E9", "#009E73", "#F0E442", "#0072B2", "#D55E00", "#CC79A7",
+    "#999999", "#000000"),
+  ggplot2.discrete.fill = c(
+    "#E69F00", "#56B4E9", "#009E73", "#F0E442", "#0072B2", "#D55E00", "#CC79A7",
+    "#999999", "#000000"),
   ggplot2.continuous.colour = "viridis",
   ggplot2.continuous.fill = "viridis"
 )
+
 library(ggplot2)
 update_geom_defaults("point", aes(color = "#3a4145", size = 2.5))
 update_geom_defaults("line", aes(color = "#3a4145", linewidth = 1.5))

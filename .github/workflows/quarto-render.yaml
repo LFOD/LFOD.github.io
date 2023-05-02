@@ -23,7 +23,11 @@ jobs:
           sudo apt install libudunits2-dev
           sudo apt install libgdal-dev
           sudo apt-get install libharfbuzz-dev libfribidi-dev
-
+          
+      - name: Install ggplot
+        run: |
+          R -e 'install.packages("ggplot2")'
+          
       - uses: r-lib/actions/setup-r@v2
 
       - name: Create and populate .Renviron file
@@ -39,11 +43,6 @@ jobs:
 
       - name: Set up Quarto
         uses: quarto-dev/quarto-actions/setup@v2
-
-      - name: Add ggplot theme
-        run: |
-          echo source\("media/ggplot2-style.R"\) >> ~/.Rprofile
-        shell: bash
         
       - name: Render and Publish
         if: github.event_name != 'pull_request'
