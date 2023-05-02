@@ -40,10 +40,10 @@ jobs:
       - name: Set up Quarto
         uses: quarto-dev/quarto-actions/setup@v2
 
-      - name: Run ggplot theme
+      - name: Add ggplot theme
         run: |
-          source("media/ggplot2-style.R")
-        shell: Rscript {0}
+          echo source("media/ggplot2-style.R") >> ~/.Rprofile
+        shell: bash
         
       - name: Render and Publish
         if: github.event_name != 'pull_request'
