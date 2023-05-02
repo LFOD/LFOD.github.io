@@ -13,11 +13,16 @@ For today's rendition of *I am curious about everything*, in [Hilary Parker](htt
 
 I pulled the iTunes API for the term `drunk` in podcasts & plotted the results over time. I also finally found an excuse to use [emoGG](https://github.com/dill/emoGG).
 
-```{r, message = FALSE, warning = FALSE}
-library('dplyr')
-library('ggplot2')
+```{r}
+#| message: false
+#| warning: false
+library(dplyr)
+library(ggplot2)
+```
 
 
+```{r}
+#| eval: false
 req <- httr::GET(url = "https://itunes.apple.com/search",
           query = list(
             term = "drunk",
@@ -28,7 +33,19 @@ req <- httr::GET(url = "https://itunes.apple.com/search",
 itunes <- jsonlite::fromJSON(httr::content(req))$results
 ```
 
-This resulted in `170` podcasts, which I grouped by month/year released.
+```{r}
+#| echo: false
+#| eval: false
+save(itunes, file = "../../media/data/itunes.rda")
+```
+
+```{r}
+#| echo: false
+load("../../media/data/itunes.rda")
+```
+
+
+This resulted in `200` podcasts, which I grouped by month/year released.
 
 ```{r}
 itunes %>%
@@ -39,8 +56,7 @@ itunes %>%
   ggplot(aes(x = date,y=n)) +
     scale_x_date() +
     emoGG::geom_emoji(emoji="1f37a") + 
-    ylab("Number of 'Drunk' podcasts released") +
-    theme_minimal()
+    ylab("Number of 'Drunk' podcasts released")
 ```
 
 
@@ -72,8 +88,7 @@ itunes %>%
   ggplot(aes(x = date,y=n)) +
     scale_x_date() +
     emoGG::geom_emoji(emoji="1f37a") + 
-    ylab("Number of 'Drunk' podcasts released") +
-    theme_minimal()
+    ylab("Number of 'Drunk' podcasts released")
 ```
 
 *If you are interested in other things NSSD has inspired me to do, check out [this](http://livefreeordichotomize.com/2016/12/15/hill-for-the-data-scientist-an-xkcd-story/), or [this](http://www.lucymcgowan.com/NHTSA-safety-analysis.html).*
