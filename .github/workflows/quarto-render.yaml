@@ -42,7 +42,7 @@ jobs:
 
       - name: Add ggplot theme
         run: |
-          echo source("media/ggplot2-style.R") >> ~/.Rprofile
+          echo source\("media/ggplot2-style.R"\) >> ~/.Rprofile
         shell: bash
         
       - name: Render and Publish
