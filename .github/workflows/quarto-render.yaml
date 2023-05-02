@@ -40,6 +40,11 @@ jobs:
       - name: Set up Quarto
         uses: quarto-dev/quarto-actions/setup@v2
 
+      - name: Run ggplot theme
+        run: |
+          source("media/ggplot2-style.R")
+        shell: Rscript {0}
+        
       - name: Render and Publish
         if: github.event_name != 'pull_request'
         uses: quarto-dev/quarto-actions/publish@v2
