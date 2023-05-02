@@ -61,6 +61,8 @@ fig_3 <- tibble(
 ```
 
 ```{r}
+#| message: false
+#| warning: false
 s <- survfit(
   Surv(time = time, event = event) ~ 1, 
   data = fig_3
