@@ -125,7 +125,7 @@ ga('send', {
 
 <meta property="og:title" content="- Are two wrong models better than one? Missing data style">
 <meta property="og:description" content="Would imputing + fitting an outcome model using the wrong variables be better than just fitting the wrong outcome model? Let’s investigate!">
-<meta property="og:image" content="https://www.livefreeordichotomize.com/posts/2023-04-29-two-wrong-models-missing-data-style/index_files/figure-html/unnamed-chunk-18-1.png">
+<meta property="og:image" content="https://www.livefreeordichotomize.com/posts/2023-04-29-two-wrong-models-missing-data-style/index_files/figure-html/unnamed-chunk-17-1.png">
 <meta property="og:site-name" content=" ">
 <meta property="og:image:height" content="960">
 <meta property="og:image:width" content="1344">
@@ -691,7 +691,7 @@ ga('send', {
 <span id="cb29-44"><a href="#cb29-44" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_pointrange</span>() <span class="sc">+</span> </span>
 <span id="cb29-45"><a href="#cb29-45" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_vline</span>(<span class="at">xintercept =</span> <span class="dv">1</span>, <span class="at">lty =</span> <span class="dv">2</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output-display">
-<p><img src="index_files/figure-html/unnamed-chunk-18-1.png" class="img-fluid" width="672"></p>
+<p><img src="index_files/figure-html/unnamed-chunk-17-1.png" class="img-fluid" width="672"></p>
 </div>
 </div>
 <p>So there you have it, two wrong models are rarely better than one.</p>
@@ -852,7 +852,7 @@ ga('send', {
 <span id="cb45-44"><a href="#cb45-44" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_pointrange</span>() <span class="sc">+</span> </span>
 <span id="cb45-45"><a href="#cb45-45" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_vline</span>(<span class="at">xintercept =</span> <span class="dv">1</span>, <span class="at">lty =</span> <span class="dv">2</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output-display">
-<p><img src="index_files/figure-html/unnamed-chunk-28-1.png" class="img-fluid" width="672"></p>
+<p><img src="index_files/figure-html/unnamed-chunk-27-1.png" class="img-fluid" width="672"></p>
 </div>
 </div>
 <p>AHH! This makes me so scared of imputation!!</p>
@@ -863,7 +863,7 @@ ga('send', {
 <span id="cb46-3"><a href="#cb46-3" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_vline</span>(<span class="at">xintercept =</span> <span class="fl">2.31</span>, <span class="at">lty =</span> <span class="dv">2</span>) <span class="sc">+</span></span>
 <span id="cb46-4"><a href="#cb46-4" aria-hidden="true" tabindex="-1"></a>  <span class="fu">labs</span>(<span class="at">color =</span> <span class="st">"missing"</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output-display">
-<p><img src="index_files/figure-html/unnamed-chunk-29-1.png" class="img-fluid" width="672"></p>
+<p><img src="index_files/figure-html/unnamed-chunk-28-1.png" class="img-fluid" width="672"></p>
 </div>
 </div>
 <p>Take a look at the plot above. We have <em>no</em> non-missing <code>x</code> values that are greater than 2.3. The way predictive mean matching (the default <code>{mice}</code> method) works is it finds the observation(s) that have the closest predicted value to the observation that is missing a data point and gives you <em>that</em> non-missing data point’s value. So here, we are essentially truncating our distribution at 2.3, since that is the highest value observed. Any value that would have been higher is going to be necessarily too small instead of the right value (this is different from the linear model method used in the first part of this post, which allows you to extrapolate). This is supposed to be a less biased approach, since it doesn’t allow you to extrapolate beyond the bounds of your observed data, but it can actually induce bias when you have pockets of missingness with no observed <code>x</code>s (which I would argue might happen frequently!). Here is an example of one of the imputed datasets, notice nothing is above that 2.3 line!</p>
@@ -874,7 +874,7 @@ ga('send', {
 <span id="cb47-4"><a href="#cb47-4" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_vline</span>(<span class="at">xintercept =</span> <span class="fl">2.31</span>, <span class="at">lty =</span> <span class="dv">2</span>) <span class="sc">+</span></span>
 <span id="cb47-5"><a href="#cb47-5" aria-hidden="true" tabindex="-1"></a>  <span class="fu">labs</span>(<span class="at">color =</span> <span class="st">"imputed"</span>) </span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output-display">
-<p><img src="index_files/figure-html/unnamed-chunk-30-1.png" class="img-fluid" width="672"></p>
+<p><img src="index_files/figure-html/unnamed-chunk-29-1.png" class="img-fluid" width="672"></p>
 </div>
 </div>
 </section>
@@ -1034,7 +1034,7 @@ ga('send', {
 <span id="cb63-44"><a href="#cb63-44" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_pointrange</span>() <span class="sc">+</span> </span>
 <span id="cb63-45"><a href="#cb63-45" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_vline</span>(<span class="at">xintercept =</span> <span class="dv">1</span>, <span class="at">lty =</span> <span class="dv">2</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output-display">
-<p><img src="index_files/figure-html/unnamed-chunk-40-1.png" class="img-fluid" width="672"></p>
+<p><img src="index_files/figure-html/unnamed-chunk-39-1.png" class="img-fluid" width="672"></p>
 </div>
 </div>
 <p>Pretty good! Maybe I’m feeling a little better about imputation. Maybe. But it had better include the outcome (which I’ll admit feels <em>very</em> weird for my little causal brain).</p>

@@ -394,7 +394,8 @@ ga('send', {
 <p><em>As an aside, I’m better at implementing yoga for my models than yoga for myself, most of the time I end up like this:</em></p>
 <p><img src="http://imgs.xkcd.com/comics/picture_a_grassy_field.png" class="img-fluid"></p>
 <p>Anyways, let’s make our models flexible! By flexible, we mean let’s be more intentional about fitting nonlinear parametric models.</p>
-<p>##What do you mean by nonlinear modeling</p>
+<section id="what-do-you-mean-by-nonlinear-modeling" class="level2">
+<h2 class="anchored" data-anchor-id="what-do-you-mean-by-nonlinear-modeling">What do you mean by nonlinear modeling</h2>
 <p>By nonlinear modeling, we mean fitting parametric models with nonlinear terms. In particular, Professor Harrell suggests restricted cubic splines (more on this below). So by this definition, you could be fitting a “linear” model (as on ordinary least squares), with nonlinear terms. We brought up in class that this can cause some confusion, and setting on calling it “Gaussian regression” So you heard it here first, folks, from now on, refer to your ordinary least squares models as “Gaussian”.</p>
 <p style="text-align:right; color:#EB6864; font-size: 10pt;  LINE-HEIGHT:15px;">
 Update: Professor Harrell proofed this and suggested <br> “what about just calling it OLS?”, so nevermind on <br> Gaussian, it had a good run…
@@ -412,12 +413,18 @@ Update 2: Actually! We’re putting it to a vote. <br> Gaussian may have another
 <li><p><strong>regression coeffcients can be estimated using standard techniques</strong></p></li>
 <li><p><strong>there are easy functions in <code>R</code> to do it</strong> Harrell’s <code>rms</code> package makes restricted cubic spines very easy to implement. Simply wrap your predictor in the <code>rcs()</code> function within your model statement. For example, if I were to fit a Gaussian model (see what I did there 😉), I would run the following code to fit <code>x</code> flexibly with 4 knots:</p></li>
 </ol>
-<pre><code>library('rms')
-k &lt;- 4
-ols(y~rcs(x, k))</code></pre>
-<p>##Why should I care about nonlinear modeling</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb1"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb1-1"><a href="#cb1-1" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(rms)</span>
+<span id="cb1-2"><a href="#cb1-2" aria-hidden="true" tabindex="-1"></a>k <span class="ot">&lt;-</span> <span class="dv">4</span></span>
+<span id="cb1-3"><a href="#cb1-3" aria-hidden="true" tabindex="-1"></a><span class="fu">ols</span>(y <span class="sc">~</span> <span class="fu">rcs</span>(x, k))</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+</section>
+<section id="why-should-i-care-about-nonlinear-modeling" class="level2">
+<h2 class="anchored" data-anchor-id="why-should-i-care-about-nonlinear-modeling">Why should I care about nonlinear modeling</h2>
 <p>Fitting flexible models is an excellent way to avoid having to test a whole bunch of assumptions that are hard to prove/disprove! Additionally, once you’ve fit a model, changing it based on “model checking” procedures has the danger of inflating your type 1 error 😱. We discuss an excellent paper by <a href="http://onlinelibrary.wiley.com/doi/10.1002/sim.4780100504/full">Grambsch and O’Brien</a> demonstrating that testing for nonlinear effects &amp; then proceeding to drop from from the model if the test is not significant has real implications for the type 1 error. Might as well just model everything flexibly from the get-go! <em>But what about my degrees of freedom? ah yes, the next section is just for you!</em></p>
-<p>##What if I don’t have enough degrees of freedom for nonlinear modeling</p>
+</section>
+<section id="what-if-i-dont-have-enough-degrees-of-freedom-for-nonlinear-modeling" class="level2">
+<h2 class="anchored" data-anchor-id="what-if-i-dont-have-enough-degrees-of-freedom-for-nonlinear-modeling">What if I don’t have enough degrees of freedom for nonlinear modeling</h2>
 <p>In predictive modeling, we are always concerned with <em>overfitting</em>, or creating models that describe the population we’ve sampled very well, but are not generalizable. In the extreme case, you can imagine if you fit a model with 50 participants and included 50 covariates, one for each participant, you could perfectly predict any outcome (but that would be a pretty silly model). In order to avoid overfitting disasters, there are useful rules of thumb we try to follow. In general, we try to fit models that have around <span class="math inline">\(m/15\)</span> covariates, where <span class="math inline">\(m\)</span> varies depending on the type of model in the following manner (for those following along, this is on page 74 of <a href="https://www.amazon.com/Regression-Modeling-Strategies-Applications-Statistics/dp/3319194240/ref=sr_1_1?ie=UTF8&amp;qid=1484713166&amp;sr=8-1&amp;keywords=regression+modeling+strategies">Regression Modeling Strategies</a>).</p>
 <table class="table">
 <thead>
@@ -453,16 +460,17 @@ ols(y~rcs(x, k))</code></pre>
 <p><span style="color:#EB6864; font-size: 15pt"> VERY IMPORTANT: Make certain that tests of nonlinearity are not revealed as this would bias the analyst.</span></p>
 <p>Here is a little snippet of <code>R</code> code to do just that in a logistic regression case. We are using the <code>support2</code> dataset as an example.</p>
 <div class="cell">
-<div class="sourceCode cell-code" id="cb2"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb2-1"><a href="#cb2-1" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(<span class="st">'rms'</span>)</span>
+<div class="sourceCode cell-code" id="cb2"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb2-1"><a href="#cb2-1" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(rms)</span>
 <span id="cb2-2"><a href="#cb2-2" aria-hidden="true" tabindex="-1"></a><span class="fu">getHdata</span>(support2)</span>
 <span id="cb2-3"><a href="#cb2-3" aria-hidden="true" tabindex="-1"></a>f <span class="ot">&lt;-</span> <span class="fu">lrm</span>(hospdead <span class="sc">~</span> <span class="fu">rcs</span>(age,<span class="dv">5</span>) <span class="sc">+</span> <span class="fu">rcs</span>(temp, <span class="dv">5</span>) <span class="sc">+</span> <span class="fu">rcs</span>(hrt, <span class="dv">5</span>) <span class="sc">+</span> <span class="fu">rcs</span>(pafi, <span class="dv">5</span>) <span class="sc">+</span> edu <span class="sc">+</span> sex, <span class="at">data =</span> support2)</span>
 <span id="cb2-4"><a href="#cb2-4" aria-hidden="true" tabindex="-1"></a><span class="fu">plot</span>(<span class="fu">anova</span>(f))</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output-display">
-<p><img src="index_files/figure-html/unnamed-chunk-1-1.png" class="img-fluid" width="672"></p>
+<p><img src="index_files/figure-html/unnamed-chunk-2-1.png" class="img-fluid" width="672"></p>
 </div>
 </div>
 <p>And there you have it.</p>
 <p><img src="https://raw.githubusercontent.com/LucyMcGowan/lucymcgowan.github.io/master/figs/df_meme.png" width="60%"> <em>meme cred: Nick Strayer</em></p>
+</section>
 <section id="take-away" class="level2">
 <h2 class="anchored" data-anchor-id="take-away">Take Away</h2>
 <ul>
