@@ -2,11 +2,7 @@
 title: 'First year as faculty'
 author: "Lucy D'Agostino McGowan"
 date: '2020-05-15'
-slug: first-year-as-faculty
-categories: []
-tags: []
-math: no
-meta: yes
+categories: ["higher education", "thoughts", "work-life harmony"]
 description: "I just completed my first year as a faculty member - here is what I've learned! I'll start by giving some context for where I am, what my university is like, etc. Then I'll describe four recommendations, summarized by: discover your institution's culture, become a peer, find harmony, and build community!"
 ---
 
