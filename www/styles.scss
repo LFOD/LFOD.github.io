@@ -220,11 +220,11 @@ section {
 }
 
 p, ol, ul { 
-  font-size: 1.2rem; 
+  font-size: 1rem; 
 }
 
 p { 
-  line-height: 2rem;
+  line-height: 1.5rem;
   margin-top: 1.4rem;
   margin-bottom: 1.4rem;
   padding-right: 0;
@@ -260,17 +260,17 @@ blockquote {
 }
 
 blockquote p { 
-  width: 50%; 
+  width: 100%; 
 }
 
 blockquote footer { 
-  width: 50%;
+  width: 90%;
   font-size: 1.1rem;
   text-align: right; 
 }
 
 ol, ul { 
-  width: 60%;
+  width: 90%;
   -webkit-padding-start: 5%;
   -webkit-padding-end: 5%; 
 }
@@ -325,7 +325,7 @@ img {
   float: right;
   clear: right;
   margin-right: -60%;
-  width: 50%;
+  width: 100%;
   margin-top: 0;
   margin-bottom: 0;
   font-size: 1.1rem;
@@ -369,12 +369,12 @@ img {
 }
 
 p, footer, table, div.table-wrapper-small, div.supertable-wrapper > p, div.booktabs-wrapper { 
-  width: 75%; 
+  width: 100%; 
 }
 
 div.sourceCode, div.sourceCode pre.sourceCode {
     color: #003B4F;
-    width: 75%;
+    width: 100%;
 }
 
 div.fullwidth, table.fullwidth { 
@@ -408,11 +408,11 @@ pre {
     background-color: initial;
     padding: initial;
     border: initial;
-    width: 75%;
+    width: 100%;
 }
 pre.code { 
   overflow-x: scroll; 
-  width: 75%;
+  width: 100%;
 }
 
 .fullwidth { 
@@ -519,10 +519,10 @@ label.margin-toggle:not(.sidenote-number) { display: none; }
 @media all and (max-width: 760px) {
 
   pre {
-   width: 85%;
+   width: 100%;
   }
   pre code {
-    width: 90% !important;
+    width: 100% !important;
     padding: 0 !important;
   }
   .marginnote {
