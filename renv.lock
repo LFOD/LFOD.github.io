@@ -2968,10 +2968,10 @@
     },
     "tidysmd": {
       "Package": "tidysmd",
-      "Version": "0.2.0.9000",
+      "Version": "0.2.0",
       "Source": "Repository",
       "Repository": "CRAN",
-      "Hash": "1547c69393c9c23a76ff5e6a15f07fb5",
+      "Hash": "8a4c237581aa589cbc9ed0770c56ef91",
       "Requirements": [
         "dplyr",
         "purrr",
