@@ -9,8 +9,594 @@
 <link>https://www.livefreeordichotomize.com/index.html</link>
 <atom:link href="https://www.livefreeordichotomize.com/index.xml" rel="self" type="application/rss+xml"/>
 <description>Live Free or Dichotomize: Lucy D&#39;Agostino McGowan &amp; Nick Strayer&#39;s Blog</description>
-<generator>quarto-1.3.340</generator>
-<lastBuildDate>Sat, 29 Apr 2023 00:00:00 GMT</lastBuildDate>
+<generator>quarto-1.3.433</generator>
+<lastBuildDate>Wed, 26 Jul 2023 00:00:00 GMT</lastBuildDate>
+<item>
+  <title>Visual Diagnostic Tool for Causal Inference</title>
+  <dc:creator>Lucy D&#39;Agostino McGowan</dc:creator>
+  <link>https://www.livefreeordichotomize.com/posts/2023-07-26-visual-diagnostic-tool-for-causal-inference/index.html</link>
+  <description><![CDATA[ 
+
+
+
+
+<p>To celebrate the 40th anniversary of the paper <em>The Central Role of the Propensity Score in Observational Studies for Causal Effects</em> published in Biometrika in 1983, the journal Observational Studies had a special issue highlighting the methods in the paper and developed since. This led us to take a closer look at this seminal paper, and in doing so we noticed mention of a visual diagnostic tool that we haven’t see used often but might be useful for exploring potential treatment effect heterogeneity.</p>
+
+<div class="no-row-height column-margin column-container"><div class="">
+<p>We initially wrote this up as part of this special issue, you can find the paper here: D’Agostino McGowan, D’Agostino, and D’Agostino (2023) <a href="https://doi.org/10.1353/obs.2023.0008">doi.org/10.1353/obs.2023.0008</a>. Another special aspect of this paper is it is the first (and only!) paper I have written with both my father and grandfather ❤️</p>
+</div></div><section id="whats-old-is-new" class="level2">
+<h2 class="anchored" data-anchor-id="whats-old-is-new">What’s old is new!</h2>
+<p>Here are the lines from the original paper:</p>
+<blockquote class="blockquote">
+<p>Since covariance adjustment is effectively adjustment for the linear discriminant, plots of the responses <img src="https://latex.codecogs.com/png.latex?r_%7B1i%7D"> and <img src="https://latex.codecogs.com/png.latex?r_%7B0i%7D"> or residuals <img src="https://latex.codecogs.com/png.latex?r_%7Bki%7D%20%E2%80%94%20%5Chat%7Br%7D_%7Bki%7D"> where <img src="https://latex.codecogs.com/png.latex?%5Chat%7Br%7D_%7Bki%7D"> is the value of <img src="https://latex.codecogs.com/png.latex?r_%7Bki%7D"> predicted from the regression model used in the covariance adjustment, versus the linear discriminant are useful in identifying nonlinear or nonparallel response surfaces, as well as extrapolations, which might distort the estimate of the average treatment effect. Furthermore, such a plot is a bivariate display of multivariate adjustment, and as such might be useful for general presentation.</p>
+</blockquote>
+<blockquote class="blockquote">
+<p>Generally, plots of responses and residuals from covariance analysis against the propensity score <img src="https://latex.codecogs.com/png.latex?e(x)"> are more appropriate than against the discriminant, unless of course the covariates are multivariate normal with common covariance matrix in which case the propensity score is a monotone function of the discriminant.</p>
+</blockquote>
+<p>So simple! They are just suggesting for continuous outcomes plotting the outcome (or residuals) against the propensity score. If you use a linear discriminant to estimate the propensity score, this is basically a residuals vs.&nbsp;fits plot (stratified by treatment group). Let’s look at an example</p>
+</section>
+<section id="toy-example" class="level2 page-columns page-full">
+<h2 class="anchored" data-anchor-id="toy-example">Toy Example</h2>
+<p>Let’s generate some data to see how this works. We have a standard normal confounder, <img src="https://latex.codecogs.com/png.latex?X">:</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb1" style="background: #f1f3f5;"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb1-1"><span class="fu" style="color: #4758AB;
+background-color: null;
+font-style: inherit;">library</span>(tidyverse)</span>
+<span id="cb1-2"><span class="fu" style="color: #4758AB;
+background-color: null;
+font-style: inherit;">set.seed</span>(<span class="dv" style="color: #AD0000;
+background-color: null;
+font-style: inherit;">8</span>)</span>
+<span id="cb1-3">n <span class="ot" style="color: #003B4F;
+background-color: null;
+font-style: inherit;">&lt;-</span> <span class="dv" style="color: #AD0000;
+background-color: null;
+font-style: inherit;">1000</span></span>
+<span id="cb1-4">x <span class="ot" style="color: #003B4F;
+background-color: null;
+font-style: inherit;">&lt;-</span> <span class="fu" style="color: #4758AB;
+background-color: null;
+font-style: inherit;">rnorm</span>(n)</span></code></pre></div>
+</div>
+<p>The “true” propensity score, that is the probability that <img src="https://latex.codecogs.com/png.latex?T=1"> given <img src="https://latex.codecogs.com/png.latex?X"> is as follows:</p>
+<p><img src="https://latex.codecogs.com/png.latex?e(x)%20=%20%5Cexp(x)%20/%20(1%20+%20%5Cexp(x))"></p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb2" style="background: #f1f3f5;"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb2-1">e_x <span class="ot" style="color: #003B4F;
+background-color: null;
+font-style: inherit;">&lt;-</span> <span class="fu" style="color: #4758AB;
+background-color: null;
+font-style: inherit;">exp</span>(x) <span class="sc" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">/</span> (<span class="dv" style="color: #AD0000;
+background-color: null;
+font-style: inherit;">1</span> <span class="sc" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">+</span> <span class="fu" style="color: #4758AB;
+background-color: null;
+font-style: inherit;">exp</span>(x))</span>
+<span id="cb2-2">t <span class="ot" style="color: #003B4F;
+background-color: null;
+font-style: inherit;">&lt;-</span> <span class="fu" style="color: #4758AB;
+background-color: null;
+font-style: inherit;">rbinom</span>(n, <span class="dv" style="color: #AD0000;
+background-color: null;
+font-style: inherit;">1</span>, e_x)</span></code></pre></div>
+</div>
+<p>The effect of the treatment, <img src="https://latex.codecogs.com/png.latex?T">, is <em>heterogeneous</em>, that is, it depends on <img src="https://latex.codecogs.com/png.latex?X">, as follows:</p>
+<p><img src="https://latex.codecogs.com/png.latex?%0A%5Cbegin%7Baligned%7D%0AY(1)%20&amp;=%200.5%20%5Ctimes%20X%5C%5C%0AY(0)%20&amp;=%20-0.5%20%5Ctimes%20X%5C%5C%0AY_%7Bobs%7D%20&amp;=%20T%5Ctimes%20Y(1)%20+%20(1-T)%5Ctimes%20Y(0)%0A%5Cend%7Baligned%7D%0A"></p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb3" style="background: #f1f3f5;"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb3-1">y1 <span class="ot" style="color: #003B4F;
+background-color: null;
+font-style: inherit;">&lt;-</span> <span class="fl" style="color: #AD0000;
+background-color: null;
+font-style: inherit;">0.5</span> <span class="sc" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">*</span> x <span class="sc" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">+</span> <span class="fu" style="color: #4758AB;
+background-color: null;
+font-style: inherit;">rnorm</span>(n)</span>
+<span id="cb3-2">y0 <span class="ot" style="color: #003B4F;
+background-color: null;
+font-style: inherit;">&lt;-</span> <span class="sc" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">-</span> <span class="fl" style="color: #AD0000;
+background-color: null;
+font-style: inherit;">0.5</span> <span class="sc" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">*</span> x <span class="sc" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">+</span> <span class="fu" style="color: #4758AB;
+background-color: null;
+font-style: inherit;">rnorm</span>(n)</span>
+<span id="cb3-3">y_obs <span class="ot" style="color: #003B4F;
+background-color: null;
+font-style: inherit;">&lt;-</span> t <span class="sc" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">*</span> y1 <span class="sc" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">+</span> (<span class="dv" style="color: #AD0000;
+background-color: null;
+font-style: inherit;">1</span> <span class="sc" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">-</span> t) <span class="sc" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">*</span> y0</span></code></pre></div>
+</div>
+<p>Ok, now we have our observed data, let’s put it all together:</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb4" style="background: #f1f3f5;"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb4-1">data <span class="ot" style="color: #003B4F;
+background-color: null;
+font-style: inherit;">&lt;-</span> <span class="fu" style="color: #4758AB;
+background-color: null;
+font-style: inherit;">data.frame</span>(</span>
+<span id="cb4-2">  <span class="at" style="color: #657422;
+background-color: null;
+font-style: inherit;">y =</span> y_obs,</span>
+<span id="cb4-3">  <span class="at" style="color: #657422;
+background-color: null;
+font-style: inherit;">t =</span> t,</span>
+<span id="cb4-4">  <span class="at" style="color: #657422;
+background-color: null;
+font-style: inherit;">x =</span> x</span>
+<span id="cb4-5">)</span></code></pre></div>
+</div>
+<section id="covariate-adjustment" class="level3 page-columns page-full">
+<h3 class="anchored" data-anchor-id="covariate-adjustment">Covariate adjustment</h3>
+<p>Let’s begin by estimating our causal effect by adjusting for <img src="https://latex.codecogs.com/png.latex?X"> directly in a model. Since <img src="https://latex.codecogs.com/png.latex?X"> is standard normal, this is actually going to be just fine.</p>
+
+<div class="no-row-height column-margin column-container"><div class="">
+<p>On when covariate adjustment will work, from Rosenbaum &amp; Rubin 1983: <em>Cases where covariance adjustment has been seen to perform quite poorly are precisely those cases in which the linear discriminant is not a monotone function of the propensity score, so that covariance adjustment is implicitly adjusting for a poor approximation to the propensity score. In the case of univariate <img src="https://latex.codecogs.com/png.latex?x">, the linear discriminant is a linear function of <img src="https://latex.codecogs.com/png.latex?x">, whereas the propensity score may not be a monotone function of <img src="https://latex.codecogs.com/png.latex?x"> if the variances of <img src="https://latex.codecogs.com/png.latex?x"> in the treated and control groups are unequal.</em></p>
+</div></div><div class="cell">
+<div class="sourceCode cell-code" id="cb5" style="background: #f1f3f5;"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb5-1">model_noint <span class="ot" style="color: #003B4F;
+background-color: null;
+font-style: inherit;">&lt;-</span> <span class="fu" style="color: #4758AB;
+background-color: null;
+font-style: inherit;">lm</span>(y <span class="sc" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">~</span> t <span class="sc" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">+</span> x, data)</span>
+<span id="cb5-2">model_noint</span></code></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>
+Call:
+lm(formula = y ~ t + x, data = data)
+
+Coefficients:
+(Intercept)            t            x  
+   0.226609    -0.003062    -0.012806  </code></pre>
+</div>
+</div>
+<p>Looks like the treatment effect controlling for <img src="https://latex.codecogs.com/png.latex?X"> is ~0. Let’s look at some diagnostics, for example we can look at the residuals vs.&nbsp;fits plot.</p>
+
+<div class="no-row-height column-margin column-container"><div class="">
+<p>In an unfortunate oversight, in the paper I call this a <em>biased</em> estimate of the causal effect – it isn’t biased (it is the actual average treatment effect!) – It just isn’t terribly interesting as it doesn’t take the interaction into account.</p>
+</div></div><div class="cell">
+<div class="sourceCode cell-code" id="cb7" style="background: #f1f3f5;"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb7-1"><span class="fu" style="color: #4758AB;
+background-color: null;
+font-style: inherit;">ggplot</span>(data, <span class="fu" style="color: #4758AB;
+background-color: null;
+font-style: inherit;">aes</span>(<span class="at" style="color: #657422;
+background-color: null;
+font-style: inherit;">x =</span> <span class="fu" style="color: #4758AB;
+background-color: null;
+font-style: inherit;">fitted</span>(model_noint), <span class="at" style="color: #657422;
+background-color: null;
+font-style: inherit;">y =</span> <span class="fu" style="color: #4758AB;
+background-color: null;
+font-style: inherit;">residuals</span>(model_noint))) <span class="sc" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">+</span> </span>
+<span id="cb7-2">  <span class="fu" style="color: #4758AB;
+background-color: null;
+font-style: inherit;">geom_point</span>() <span class="sc" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">+</span> </span>
+<span id="cb7-3">  <span class="fu" style="color: #4758AB;
+background-color: null;
+font-style: inherit;">geom_smooth</span>(<span class="at" style="color: #657422;
+background-color: null;
+font-style: inherit;">method =</span> <span class="st" style="color: #20794D;
+background-color: null;
+font-style: inherit;">"loess"</span>, <span class="at" style="color: #657422;
+background-color: null;
+font-style: inherit;">formula =</span> <span class="st" style="color: #20794D;
+background-color: null;
+font-style: inherit;">"y ~ x"</span>, <span class="at" style="color: #657422;
+background-color: null;
+font-style: inherit;">se =</span> <span class="cn" style="color: #8f5902;
+background-color: null;
+font-style: inherit;">FALSE</span>, <span class="at" style="color: #657422;
+background-color: null;
+font-style: inherit;">span =</span> <span class="dv" style="color: #AD0000;
+background-color: null;
+font-style: inherit;">1</span>) <span class="sc" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">+</span> </span>
+<span id="cb7-4">  <span class="fu" style="color: #4758AB;
+background-color: null;
+font-style: inherit;">labs</span>(<span class="at" style="color: #657422;
+background-color: null;
+font-style: inherit;">x =</span> <span class="st" style="color: #20794D;
+background-color: null;
+font-style: inherit;">"Fitted"</span>, <span class="at" style="color: #657422;
+background-color: null;
+font-style: inherit;">y =</span> <span class="st" style="color: #20794D;
+background-color: null;
+font-style: inherit;">"Residuals"</span>)</span></code></pre></div>
+<div class="cell-output-display">
+<p><img src="https://www.livefreeordichotomize.com/posts/2023-07-26-visual-diagnostic-tool-for-causal-inference/index_files/figure-html/unnamed-chunk-6-1.png" class="img-fluid" width="672"></p>
+</div>
+</div>
+<p>Ok, looks ok – maybe suggests a slightly non-linear relationship. Now let’s do what Rosenbaum &amp; Rubin suggest and examine this same plot stratified by treatment group.</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb8" style="background: #f1f3f5;"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb8-1"><span class="fu" style="color: #4758AB;
+background-color: null;
+font-style: inherit;">ggplot</span>(data, <span class="fu" style="color: #4758AB;
+background-color: null;
+font-style: inherit;">aes</span>(<span class="at" style="color: #657422;
+background-color: null;
+font-style: inherit;">x =</span> <span class="fu" style="color: #4758AB;
+background-color: null;
+font-style: inherit;">fitted</span>(model_noint), <span class="at" style="color: #657422;
+background-color: null;
+font-style: inherit;">y =</span> <span class="fu" style="color: #4758AB;
+background-color: null;
+font-style: inherit;">residuals</span>(model_noint), <span class="at" style="color: #657422;
+background-color: null;
+font-style: inherit;">color =</span> <span class="fu" style="color: #4758AB;
+background-color: null;
+font-style: inherit;">factor</span>(t))) <span class="sc" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">+</span> </span>
+<span id="cb8-2">  <span class="fu" style="color: #4758AB;
+background-color: null;
+font-style: inherit;">geom_point</span>(<span class="at" style="color: #657422;
+background-color: null;
+font-style: inherit;">alpha =</span> <span class="fl" style="color: #AD0000;
+background-color: null;
+font-style: inherit;">0.3</span>) <span class="sc" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">+</span> </span>
+<span id="cb8-3">  <span class="fu" style="color: #4758AB;
+background-color: null;
+font-style: inherit;">geom_smooth</span>(<span class="at" style="color: #657422;
+background-color: null;
+font-style: inherit;">method =</span> <span class="st" style="color: #20794D;
+background-color: null;
+font-style: inherit;">"loess"</span>, <span class="at" style="color: #657422;
+background-color: null;
+font-style: inherit;">formula =</span> <span class="st" style="color: #20794D;
+background-color: null;
+font-style: inherit;">"y ~ x"</span>, <span class="at" style="color: #657422;
+background-color: null;
+font-style: inherit;">se =</span> <span class="cn" style="color: #8f5902;
+background-color: null;
+font-style: inherit;">FALSE</span>, <span class="at" style="color: #657422;
+background-color: null;
+font-style: inherit;">span =</span> <span class="dv" style="color: #AD0000;
+background-color: null;
+font-style: inherit;">1</span>) <span class="sc" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">+</span> </span>
+<span id="cb8-4">  <span class="fu" style="color: #4758AB;
+background-color: null;
+font-style: inherit;">labs</span>(<span class="at" style="color: #657422;
+background-color: null;
+font-style: inherit;">x =</span> <span class="st" style="color: #20794D;
+background-color: null;
+font-style: inherit;">"Fitted"</span>, <span class="at" style="color: #657422;
+background-color: null;
+font-style: inherit;">y =</span> <span class="st" style="color: #20794D;
+background-color: null;
+font-style: inherit;">"Residuals"</span>, <span class="at" style="color: #657422;
+background-color: null;
+font-style: inherit;">color =</span> <span class="st" style="color: #20794D;
+background-color: null;
+font-style: inherit;">"treatment"</span>)</span></code></pre></div>
+<div class="cell-output-display">
+<p><img src="https://www.livefreeordichotomize.com/posts/2023-07-26-visual-diagnostic-tool-for-causal-inference/index_files/figure-html/unnamed-chunk-7-1.png" class="img-fluid" width="672"></p>
+</div>
+</div>
+<p>Whoa! Look at that heterogeneity. Looks like that “average” treatment effect really only represents those in the middle of the distribution of the confounder, <img src="https://latex.codecogs.com/png.latex?X"> (which of course is exactly how we created the variable!).</p>
+<p>We can fit the “correct” model, including the interaction and examine the plot again.</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb9" style="background: #f1f3f5;"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb9-1">model_int <span class="ot" style="color: #003B4F;
+background-color: null;
+font-style: inherit;">&lt;-</span> <span class="fu" style="color: #4758AB;
+background-color: null;
+font-style: inherit;">lm</span>(y <span class="sc" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">~</span> t <span class="sc" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">+</span> x <span class="sc" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">+</span> t<span class="sc" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">*</span>x, data)</span>
+<span id="cb9-2">model_int</span></code></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>
+Call:
+lm(formula = y ~ t + x + t * x, data = data)
+
+Coefficients:
+(Intercept)            t            x          t:x  
+    0.01437      0.02939     -0.48962      0.98383  </code></pre>
+</div>
+</div>
+<p>Now let’s recreate the plot.</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb11" style="background: #f1f3f5;"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb11-1"><span class="fu" style="color: #4758AB;
+background-color: null;
+font-style: inherit;">ggplot</span>(data, <span class="fu" style="color: #4758AB;
+background-color: null;
+font-style: inherit;">aes</span>(<span class="at" style="color: #657422;
+background-color: null;
+font-style: inherit;">x =</span> <span class="fu" style="color: #4758AB;
+background-color: null;
+font-style: inherit;">fitted</span>(model_int), <span class="at" style="color: #657422;
+background-color: null;
+font-style: inherit;">y =</span> <span class="fu" style="color: #4758AB;
+background-color: null;
+font-style: inherit;">residuals</span>(model_int), <span class="at" style="color: #657422;
+background-color: null;
+font-style: inherit;">color =</span> <span class="fu" style="color: #4758AB;
+background-color: null;
+font-style: inherit;">factor</span>(t))) <span class="sc" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">+</span> </span>
+<span id="cb11-2">  <span class="fu" style="color: #4758AB;
+background-color: null;
+font-style: inherit;">geom_point</span>(<span class="at" style="color: #657422;
+background-color: null;
+font-style: inherit;">alpha =</span> <span class="fl" style="color: #AD0000;
+background-color: null;
+font-style: inherit;">0.3</span>) <span class="sc" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">+</span> </span>
+<span id="cb11-3">  <span class="fu" style="color: #4758AB;
+background-color: null;
+font-style: inherit;">geom_smooth</span>(<span class="at" style="color: #657422;
+background-color: null;
+font-style: inherit;">method =</span> <span class="st" style="color: #20794D;
+background-color: null;
+font-style: inherit;">"loess"</span>, <span class="at" style="color: #657422;
+background-color: null;
+font-style: inherit;">formula =</span> <span class="st" style="color: #20794D;
+background-color: null;
+font-style: inherit;">"y ~ x"</span>, <span class="at" style="color: #657422;
+background-color: null;
+font-style: inherit;">se =</span> <span class="cn" style="color: #8f5902;
+background-color: null;
+font-style: inherit;">FALSE</span>, <span class="at" style="color: #657422;
+background-color: null;
+font-style: inherit;">span =</span> <span class="dv" style="color: #AD0000;
+background-color: null;
+font-style: inherit;">1</span>) <span class="sc" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">+</span> </span>
+<span id="cb11-4">  <span class="fu" style="color: #4758AB;
+background-color: null;
+font-style: inherit;">labs</span>(<span class="at" style="color: #657422;
+background-color: null;
+font-style: inherit;">x =</span> <span class="st" style="color: #20794D;
+background-color: null;
+font-style: inherit;">"Fitted"</span>, <span class="at" style="color: #657422;
+background-color: null;
+font-style: inherit;">y =</span> <span class="st" style="color: #20794D;
+background-color: null;
+font-style: inherit;">"Residuals"</span>, <span class="at" style="color: #657422;
+background-color: null;
+font-style: inherit;">color =</span> <span class="st" style="color: #20794D;
+background-color: null;
+font-style: inherit;">"treatment"</span>)</span></code></pre></div>
+<div class="cell-output-display">
+<p><img src="https://www.livefreeordichotomize.com/posts/2023-07-26-visual-diagnostic-tool-for-causal-inference/index_files/figure-html/unnamed-chunk-9-1.png" class="img-fluid" width="672"></p>
+</div>
+</div>
+<p>Beautiful!</p>
+</section>
+<section id="propensity-score" class="level3 page-columns page-full">
+<h3 class="anchored" data-anchor-id="propensity-score">Propensity score</h3>
+<p>Instead of using covariate adjustment, we could estimate our causal effect using propensity scores.</p>
+
+<div class="no-row-height column-margin column-container"><div class="">
+<p>Note, here I am using logistic regression to fit the propensity score model, if I had used LDA instead and adjusted for that we would get the <em>exact</em> same answer as the previous section</p>
+</div></div><p>Let’s begin by fitting a propensity score model:</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb12" style="background: #f1f3f5;"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb12-1">data <span class="ot" style="color: #003B4F;
+background-color: null;
+font-style: inherit;">&lt;-</span> data <span class="sc" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">|&gt;</span></span>
+<span id="cb12-2">  <span class="fu" style="color: #4758AB;
+background-color: null;
+font-style: inherit;">mutate</span>(<span class="at" style="color: #657422;
+background-color: null;
+font-style: inherit;">p =</span> <span class="fu" style="color: #4758AB;
+background-color: null;
+font-style: inherit;">glm</span>(t <span class="sc" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">~</span> x, <span class="at" style="color: #657422;
+background-color: null;
+font-style: inherit;">data =</span> data, <span class="at" style="color: #657422;
+background-color: null;
+font-style: inherit;">family =</span> binomial) <span class="sc" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">|&gt;</span></span>
+<span id="cb12-3">           <span class="fu" style="color: #4758AB;
+background-color: null;
+font-style: inherit;">predict</span>(<span class="at" style="color: #657422;
+background-color: null;
+font-style: inherit;">type =</span> <span class="st" style="color: #20794D;
+background-color: null;
+font-style: inherit;">"response"</span>)</span>
+<span id="cb12-4">  ) </span></code></pre></div>
+</div>
+<p>We can examine the distribution of the propensity score. Let’s use the <code>halfmoon</code> package to create a mirrored histogram 😎</p>
+
+<div class="no-row-height column-margin column-container"><div class="">
+<p>Malcolm Barrett, Travis Gerke, and I have been working on a new suite of R packages for helping complete common causal inference tasks, check out our most recent posts here: https://r-causal.github.io/r-causal-blog/</p>
+</div></div><div class="cell">
+<div class="sourceCode cell-code" id="cb13" style="background: #f1f3f5;"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb13-1"><span class="fu" style="color: #4758AB;
+background-color: null;
+font-style: inherit;">library</span>(halfmoon)</span>
+<span id="cb13-2"></span>
+<span id="cb13-3"><span class="fu" style="color: #4758AB;
+background-color: null;
+font-style: inherit;">ggplot</span>(data, <span class="fu" style="color: #4758AB;
+background-color: null;
+font-style: inherit;">aes</span>(p, <span class="at" style="color: #657422;
+background-color: null;
+font-style: inherit;">fill =</span> <span class="fu" style="color: #4758AB;
+background-color: null;
+font-style: inherit;">factor</span>(t))) <span class="sc" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">+</span></span>
+<span id="cb13-4">  <span class="fu" style="color: #4758AB;
+background-color: null;
+font-style: inherit;">geom_mirror_histogram</span>(<span class="at" style="color: #657422;
+background-color: null;
+font-style: inherit;">bins =</span> <span class="dv" style="color: #AD0000;
+background-color: null;
+font-style: inherit;">30</span>) <span class="sc" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">+</span> </span>
+<span id="cb13-5">  <span class="fu" style="color: #4758AB;
+background-color: null;
+font-style: inherit;">labs</span>(<span class="at" style="color: #657422;
+background-color: null;
+font-style: inherit;">x =</span> <span class="st" style="color: #20794D;
+background-color: null;
+font-style: inherit;">"propensity score"</span>,</span>
+<span id="cb13-6">       <span class="at" style="color: #657422;
+background-color: null;
+font-style: inherit;">fill =</span> <span class="st" style="color: #20794D;
+background-color: null;
+font-style: inherit;">"treatment"</span>)</span></code></pre></div>
+<div class="cell-output-display">
+<p><img src="https://www.livefreeordichotomize.com/posts/2023-07-26-visual-diagnostic-tool-for-causal-inference/index_files/figure-html/unnamed-chunk-11-1.png" class="img-fluid" width="672"></p>
+</div>
+</div>
+<p>Great! Looks good.</p>
+<p>Now let’s estimate our average treatment effect. We can use the <code>propensity</code> package to calculate ATE weights:</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb14" style="background: #f1f3f5;"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb14-1">data <span class="ot" style="color: #003B4F;
+background-color: null;
+font-style: inherit;">&lt;-</span> data <span class="sc" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">|&gt;</span></span>
+<span id="cb14-2">  <span class="fu" style="color: #4758AB;
+background-color: null;
+font-style: inherit;">mutate</span>(<span class="at" style="color: #657422;
+background-color: null;
+font-style: inherit;">wt_ate =</span> propensity<span class="sc" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">::</span><span class="fu" style="color: #4758AB;
+background-color: null;
+font-style: inherit;">wt_ate</span>(p, t, <span class="at" style="color: #657422;
+background-color: null;
+font-style: inherit;">.treated =</span> <span class="dv" style="color: #AD0000;
+background-color: null;
+font-style: inherit;">1</span>))</span>
+<span id="cb14-3">model <span class="ot" style="color: #003B4F;
+background-color: null;
+font-style: inherit;">&lt;-</span> <span class="fu" style="color: #4758AB;
+background-color: null;
+font-style: inherit;">lm</span>(y <span class="sc" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">~</span> t, <span class="at" style="color: #657422;
+background-color: null;
+font-style: inherit;">weights =</span> wt_ate, data)</span>
+<span id="cb14-4">model</span></code></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>
+Call:
+lm(formula = y ~ t, data = data, weights = wt_ate)
+
+Coefficients:
+(Intercept)            t  
+    0.05113     -0.02105  </code></pre>
+</div>
+</div>
+<p>Great (although again we know this isn’t representative of most people in this population since we’ve induced some serious heterogeneity!). Now let’s create the plot suggested in the 1983 paper, examining the outcome vs the propensity score.</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb16" style="background: #f1f3f5;"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb16-1"><span class="fu" style="color: #4758AB;
+background-color: null;
+font-style: inherit;">ggplot</span>(data, <span class="fu" style="color: #4758AB;
+background-color: null;
+font-style: inherit;">aes</span>(<span class="at" style="color: #657422;
+background-color: null;
+font-style: inherit;">x =</span> p, <span class="at" style="color: #657422;
+background-color: null;
+font-style: inherit;">y =</span> y, <span class="at" style="color: #657422;
+background-color: null;
+font-style: inherit;">color =</span> <span class="fu" style="color: #4758AB;
+background-color: null;
+font-style: inherit;">factor</span>(t))) <span class="sc" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">+</span> </span>
+<span id="cb16-2">  <span class="fu" style="color: #4758AB;
+background-color: null;
+font-style: inherit;">geom_point</span>(<span class="at" style="color: #657422;
+background-color: null;
+font-style: inherit;">alpha =</span> <span class="fl" style="color: #AD0000;
+background-color: null;
+font-style: inherit;">0.3</span>) <span class="sc" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">+</span> </span>
+<span id="cb16-3">  <span class="fu" style="color: #4758AB;
+background-color: null;
+font-style: inherit;">geom_smooth</span>(<span class="at" style="color: #657422;
+background-color: null;
+font-style: inherit;">method =</span> <span class="st" style="color: #20794D;
+background-color: null;
+font-style: inherit;">"loess"</span>, <span class="at" style="color: #657422;
+background-color: null;
+font-style: inherit;">formula =</span> <span class="st" style="color: #20794D;
+background-color: null;
+font-style: inherit;">"y ~ x"</span>, <span class="at" style="color: #657422;
+background-color: null;
+font-style: inherit;">se =</span> <span class="cn" style="color: #8f5902;
+background-color: null;
+font-style: inherit;">FALSE</span>, <span class="at" style="color: #657422;
+background-color: null;
+font-style: inherit;">span =</span> <span class="dv" style="color: #AD0000;
+background-color: null;
+font-style: inherit;">1</span>) <span class="sc" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">+</span> </span>
+<span id="cb16-4">  <span class="fu" style="color: #4758AB;
+background-color: null;
+font-style: inherit;">labs</span>(<span class="at" style="color: #657422;
+background-color: null;
+font-style: inherit;">x =</span> <span class="st" style="color: #20794D;
+background-color: null;
+font-style: inherit;">"propensity score"</span>, <span class="at" style="color: #657422;
+background-color: null;
+font-style: inherit;">color =</span> <span class="st" style="color: #20794D;
+background-color: null;
+font-style: inherit;">"treatment"</span>)</span></code></pre></div>
+<div class="cell-output-display">
+<p><img src="https://www.livefreeordichotomize.com/posts/2023-07-26-visual-diagnostic-tool-for-causal-inference/index_files/figure-html/unnamed-chunk-13-1.png" class="img-fluid" width="672"></p>
+</div>
+</div>
+<p>Whoa! Look at that effect heterogeneity! Looks like the only place where the average treatment effect (~0) is representative is when the propensity score is 0.5, when it is less, the effect is negative, and greater is it positive.</p>
+<p>So there you have it! A simple plot to give a little more information than a single number summary (the average treatment effect). When estimating causal effects using covariate adjustment, a sensible and straightforward diagnostic plot to use is the residuals versus fits plot stratified by treatment assignment. If using a propensity score (as in this example) you can look at the outcome versus the propensity score. As mentioned in the paper, ideally these plots would be generated during the exploratory phase of the modeling process and once in the confirmatory phase the correct relationship between the treatment, confounders, and outcome would be well understood allowing the correct model to be pre-specified. Perhaps this can be added to the set of routine diagnostic tools used when assessing propensity score + outcome models in the future.</p>
+
+
+</section>
+</section>
+
+ ]]></description>
+  <category>rstats</category>
+  <category>causal inference</category>
+  <category>treatment heterogeneity</category>
+  <guid>https://www.livefreeordichotomize.com/posts/2023-07-26-visual-diagnostic-tool-for-causal-inference/index.html</guid>
+  <pubDate>Wed, 26 Jul 2023 00:00:00 GMT</pubDate>
+</item>
 <item>
   <title>Are two wrong models better than one? Missing data style</title>
   <dc:creator>Lucy D&#39;Agostino McGowan</dc:creator>
@@ -9705,8 +10291,8 @@ font-style: inherit;">-&gt;</span> p</span>
 background-color: null;
 font-style: inherit;">ggplotly</span>(p)</span></code></pre></div>
 <div class="cell-output-display">
-<div class="plotly html-widget html-fill-item-overflow-hidden html-fill-item" id="htmlwidget-954518a27bb85f755a88" style="width:100%;height:361px;"></div>
-<script type="application/json" data-for="htmlwidget-954518a27bb85f755a88">{"x":{"data":[{"orientation":"v","width":[0.900000000001455,0.900000000001455,0.900000000001455,0.900000000001455,0.900000000001455,0.900000000001455,0.900000000001455,0.900000000001455,0.900000000001455,0.900000000001455,0.900000000001455,0.900000000001455,0.900000000001455,0.900000000001455],"base":[0,0,0,0,0,0,0,0,0,0,0,0,0,0],"x":[18378,18379,18380,18381,18382,18383,18384,18385,18386,18387,18388,18389,18390,18391],"y":[33,55,56,42,40,58,70,19,71,48,111,26,48,56],"text":["date: 2020-04-26<br />case:  33<br />county: Cobb","date: 2020-04-27<br />case:  55<br />county: Cobb","date: 2020-04-28<br />case:  56<br />county: Cobb","date: 2020-04-29<br />case:  42<br />county: Cobb","date: 2020-04-30<br />case:  40<br />county: Cobb","date: 2020-05-01<br />case:  58<br />county: Cobb","date: 2020-05-02<br />case:  70<br />county: Cobb","date: 2020-05-03<br />case:  19<br />county: Cobb","date: 2020-05-04<br />case:  71<br />county: Cobb","date: 2020-05-05<br />case:  48<br />county: Cobb","date: 2020-05-06<br />case: 111<br />county: Cobb","date: 2020-05-07<br />case:  26<br />county: Cobb","date: 2020-05-08<br />case:  48<br />county: Cobb","date: 2020-05-09<br />case:  56<br />county: Cobb"],"type":"bar","textposition":"none","marker":{"autocolorscale":false,"color":"rgba(88,84,168,0.75)","line":{"width":1.88976377952756,"color":"transparent"}},"name":"Cobb","legendgroup":"Cobb","showlegend":true,"xaxis":"x","yaxis":"y","hoverinfo":"text","frame":null},{"orientation":"v","width":[0.900000000001455,0.900000000001455,0.900000000001455,0.900000000001455,0.900000000001455,0.900000000001455,0.900000000001455,0.900000000001455,0.900000000001455,0.900000000001455,0.900000000001455,0.900000000001455,0.900000000001455,0.900000000001455],"base":[0,0,0,0,0,0,0,0,0,0,0,0,0,0],"x":[18378,18379,18380,18381,18382,18383,18384,18385,18386,18387,18388,18389,18390,18391],"y":[12,55,52,73,47,46,75,36,71,29,73,39,49,44],"text":["date: 2020-04-26<br />case:  12<br />county: DeKalb","date: 2020-04-27<br />case:  55<br />county: DeKalb","date: 2020-04-28<br />case:  52<br />county: DeKalb","date: 2020-04-29<br />case:  73<br />county: DeKalb","date: 2020-04-30<br />case:  47<br />county: DeKalb","date: 2020-05-01<br />case:  46<br />county: DeKalb","date: 2020-05-02<br />case:  75<br />county: DeKalb","date: 2020-05-03<br />case:  36<br />county: DeKalb","date: 2020-05-04<br />case:  71<br />county: DeKalb","date: 2020-05-05<br />case:  29<br />county: DeKalb","date: 2020-05-06<br />case:  73<br />county: DeKalb","date: 2020-05-07<br />case:  39<br />county: DeKalb","date: 2020-05-08<br />case:  49<br />county: DeKalb","date: 2020-05-09<br />case:  44<br />county: DeKalb"],"type":"bar","textposition":"none","marker":{"autocolorscale":false,"color":"rgba(70,134,142,0.75)","line":{"width":1.88976377952756,"color":"transparent"}},"name":"DeKalb","legendgroup":"DeKalb","showlegend":true,"xaxis":"x","yaxis":"y","hoverinfo":"text","frame":null},{"orientation":"v","width":[0.900000000001455,0.900000000001455,0.900000000001455,0.900000000001455,0.900000000001455,0.900000000001455,0.900000000001455,0.900000000001455,0.900000000001455,0.900000000001455,0.900000000001455,0.900000000001455,0.900000000001455,0.900000000001455],"base":[0,0,0,0,0,0,0,0,0,0,0,0,0,0],"x":[18378,18379,18380,18381,18382,18383,18384,18385,18386,18387,18388,18389,18390,18391],"y":[2,135,73,32,36,59,48,53,76,108,85,10,57,68],"text":["date: 2020-04-26<br />case:   2<br />county: Fulton","date: 2020-04-27<br />case: 135<br />county: Fulton","date: 2020-04-28<br />case:  73<br />county: Fulton","date: 2020-04-29<br />case:  32<br />county: Fulton","date: 2020-04-30<br />case:  36<br />county: Fulton","date: 2020-05-01<br />case:  59<br />county: Fulton","date: 2020-05-02<br />case:  48<br />county: Fulton","date: 2020-05-03<br />case:  53<br />county: Fulton","date: 2020-05-04<br />case:  76<br />county: Fulton","date: 2020-05-05<br />case: 108<br />county: Fulton","date: 2020-05-06<br />case:  85<br />county: Fulton","date: 2020-05-07<br />case:  10<br />county: Fulton","date: 2020-05-08<br />case:  57<br />county: Fulton","date: 2020-05-09<br />case:  68<br />county: Fulton"],"type":"bar","textposition":"none","marker":{"autocolorscale":false,"color":"rgba(149,134,72,0.75)","line":{"width":1.88976377952756,"color":"transparent"}},"name":"Fulton","legendgroup":"Fulton","showlegend":true,"xaxis":"x","yaxis":"y","hoverinfo":"text","frame":null},{"orientation":"v","width":[0.900000000001455,0.900000000001455,0.900000000001455,0.900000000001455,0.900000000001455,0.900000000001455,0.900000000001455,0.900000000001455,0.900000000001455,0.900000000001455,0.900000000001455,0.900000000001455,0.900000000001455,0.900000000001455],"base":[0,0,0,0,0,0,0,0,0,0,0,0,0,0],"x":[18378,18379,18380,18381,18382,18383,18384,18385,18386,18387,18388,18389,18390,18391],"y":[44,41,75,124,49,55,86,46,77,45,120,32,68,81],"text":["date: 2020-04-26<br />case:  44<br />county: Gwinnett","date: 2020-04-27<br />case:  41<br />county: Gwinnett","date: 2020-04-28<br />case:  75<br />county: Gwinnett","date: 2020-04-29<br />case: 124<br />county: Gwinnett","date: 2020-04-30<br />case:  49<br />county: Gwinnett","date: 2020-05-01<br />case:  55<br />county: Gwinnett","date: 2020-05-02<br />case:  86<br />county: Gwinnett","date: 2020-05-03<br />case:  46<br />county: Gwinnett","date: 2020-05-04<br />case:  77<br />county: Gwinnett","date: 2020-05-05<br />case:  45<br />county: Gwinnett","date: 2020-05-06<br />case: 120<br />county: Gwinnett","date: 2020-05-07<br />case:  32<br />county: Gwinnett","date: 2020-05-08<br />case:  68<br />county: Gwinnett","date: 2020-05-09<br />case:  81<br />county: Gwinnett"],"type":"bar","textposition":"none","marker":{"autocolorscale":false,"color":"rgba(143,93,55,0.75)","line":{"width":1.88976377952756,"color":"transparent"}},"name":"Gwinnett","legendgroup":"Gwinnett","showlegend":true,"xaxis":"x","yaxis":"y","hoverinfo":"text","frame":null},{"orientation":"v","width":[0.900000000001455,0.900000000001455,0.900000000001455,0.900000000001455,0.900000000001455,0.900000000001455,0.900000000001455,0.900000000001455,0.900000000001455,0.900000000001455,0.900000000001455,0.900000000001455,0.900000000001455,0.900000000001455],"base":[0,0,0,0,0,0,0,0,0,0,0,0,0,0],"x":[18378,18379,18380,18381,18382,18383,18384,18385,18386,18387,18388,18389,18390,18391],"y":[1,65,87,76,85,136,212,6,76,70,68,42,41,5],"text":["date: 2020-04-26<br />case:   1<br />county: Hall","date: 2020-04-27<br />case:  65<br />county: Hall","date: 2020-04-28<br />case:  87<br />county: Hall","date: 2020-04-29<br />case:  76<br />county: Hall","date: 2020-04-30<br />case:  85<br />county: Hall","date: 2020-05-01<br />case: 136<br />county: Hall","date: 2020-05-02<br />case: 212<br />county: Hall","date: 2020-05-03<br />case:   6<br />county: Hall","date: 2020-05-04<br />case:  76<br />county: Hall","date: 2020-05-05<br />case:  70<br />county: Hall","date: 2020-05-06<br />case:  68<br />county: Hall","date: 2020-05-07<br />case:  42<br />county: Hall","date: 2020-05-08<br />case:  41<br />county: Hall","date: 2020-05-09<br />case:   5<br />county: Hall"],"type":"bar","textposition":"none","marker":{"autocolorscale":false,"color":"rgba(93,152,219,0.75)","line":{"width":1.88976377952756,"color":"transparent"}},"name":"Hall","legendgroup":"Hall","showlegend":true,"xaxis":"x","yaxis":"y","hoverinfo":"text","frame":null}],"layout":{"margin":{"t":46.6849315068493,"r":7.30593607305936,"b":43.1050228310502,"l":43.1050228310502},"plot_bgcolor":"rgba(24,47,78,1)","paper_bgcolor":"rgba(24,47,78,1)","font":{"color":"rgba(0,0,0,1)","family":"","size":14.6118721461187},"title":{"text":"Top 5 Counties with the Greatest Number of Confirmed COVID-19 Cases","font":{"color":"rgba(255,255,255,1)","family":"","size":17.5342465753425},"x":0,"xref":"paper"},"xaxis":{"domain":[0,1],"automargin":true,"type":"linear","autorange":false,"range":[18376.855,18392.145],"tickmode":"array","ticktext":["28Apr2020","03May2020","08May2020"],"tickvals":[18380,18385,18390],"categoryorder":"array","categoryarray":["28Apr2020","03May2020","08May2020"],"nticks":null,"ticks":"outside","tickcolor":"rgba(51,51,51,1)","ticklen":3.65296803652968,"tickwidth":0.66417600664176,"showticklabels":true,"tickfont":{"color":"rgba(255,255,255,1)","family":"","size":11.689497716895},"tickangle":-0,"showline":true,"linecolor":"rgba(255,255,255,1)","linewidth":0.66417600664176,"showgrid":false,"gridcolor":null,"gridwidth":0,"zeroline":false,"anchor":"y","title":{"text":"date","font":{"color":"rgba(255,255,255,1)","family":"","size":14.6118721461187}},"hoverformat":".2f"},"yaxis":{"domain":[0,1],"automargin":true,"type":"linear","autorange":false,"range":[-10.6,222.6],"tickmode":"array","ticktext":["0","50","100","150","200"],"tickvals":[0,50,100,150,200],"categoryorder":"array","categoryarray":["0","50","100","150","200"],"nticks":null,"ticks":"outside","tickcolor":"rgba(51,51,51,1)","ticklen":3.65296803652968,"tickwidth":0.66417600664176,"showticklabels":true,"tickfont":{"color":"rgba(255,255,255,1)","family":"","size":11.689497716895},"tickangle":-0,"showline":true,"linecolor":"rgba(255,255,255,1)","linewidth":0.66417600664176,"showgrid":false,"gridcolor":null,"gridwidth":0,"zeroline":false,"anchor":"x","title":{"text":"case","font":{"color":"rgba(255,255,255,1)","family":"","size":14.6118721461187}},"hoverformat":".2f"},"shapes":[{"type":"rect","fillcolor":null,"line":{"color":null,"width":0,"linetype":[]},"yref":"paper","xref":"paper","x0":0,"x1":1,"y0":0,"y1":1}],"showlegend":true,"legend":{"bgcolor":"rgba(24,47,78,1)","bordercolor":"transparent","borderwidth":1.88976377952756,"font":{"color":"rgba(255,255,255,1)","family":"","size":11.689497716895},"title":{"text":"County","font":{"color":"rgba(255,255,255,1)","family":"","size":14.6118721461187}}},"hovermode":"closest","barmode":"relative"},"config":{"doubleClick":"reset","modeBarButtonsToAdd":["hoverclosest","hovercompare"],"showSendToCloud":false},"source":"A","attrs":{"271855c75db3":{"x":{},"y":{},"fill":{},"type":"bar"}},"cur_data":"271855c75db3","visdat":{"271855c75db3":["function (y) ","x"]},"highlight":{"on":"plotly_click","persistent":false,"dynamic":false,"selectize":false,"opacityDim":0.2,"selected":{"opacity":1},"debounce":0},"shinyEvents":["plotly_hover","plotly_click","plotly_selected","plotly_relayout","plotly_brushed","plotly_brushing","plotly_clickannotation","plotly_doubleclick","plotly_deselect","plotly_afterplot","plotly_sunburstclick"],"base_url":"https://plot.ly"},"evals":[],"jsHooks":[]}</script>
+<div class="plotly html-widget html-fill-item-overflow-hidden html-fill-item" id="htmlwidget-6ff1c42d04cb7b2f1ff1" style="width:100%;height:361px;"></div>
+<script type="application/json" data-for="htmlwidget-6ff1c42d04cb7b2f1ff1">{"x":{"data":[{"orientation":"v","width":[0.900000000001455,0.900000000001455,0.900000000001455,0.900000000001455,0.900000000001455,0.900000000001455,0.900000000001455,0.900000000001455,0.900000000001455,0.900000000001455,0.900000000001455,0.900000000001455,0.900000000001455,0.900000000001455],"base":[0,0,0,0,0,0,0,0,0,0,0,0,0,0],"x":[18378,18379,18380,18381,18382,18383,18384,18385,18386,18387,18388,18389,18390,18391],"y":[33,55,56,42,40,58,70,19,71,48,111,26,48,56],"text":["date: 2020-04-26<br />case:  33<br />county: Cobb","date: 2020-04-27<br />case:  55<br />county: Cobb","date: 2020-04-28<br />case:  56<br />county: Cobb","date: 2020-04-29<br />case:  42<br />county: Cobb","date: 2020-04-30<br />case:  40<br />county: Cobb","date: 2020-05-01<br />case:  58<br />county: Cobb","date: 2020-05-02<br />case:  70<br />county: Cobb","date: 2020-05-03<br />case:  19<br />county: Cobb","date: 2020-05-04<br />case:  71<br />county: Cobb","date: 2020-05-05<br />case:  48<br />county: Cobb","date: 2020-05-06<br />case: 111<br />county: Cobb","date: 2020-05-07<br />case:  26<br />county: Cobb","date: 2020-05-08<br />case:  48<br />county: Cobb","date: 2020-05-09<br />case:  56<br />county: Cobb"],"type":"bar","textposition":"none","marker":{"autocolorscale":false,"color":"rgba(88,84,168,0.75)","line":{"width":1.88976377952756,"color":"transparent"}},"name":"Cobb","legendgroup":"Cobb","showlegend":true,"xaxis":"x","yaxis":"y","hoverinfo":"text","frame":null},{"orientation":"v","width":[0.900000000001455,0.900000000001455,0.900000000001455,0.900000000001455,0.900000000001455,0.900000000001455,0.900000000001455,0.900000000001455,0.900000000001455,0.900000000001455,0.900000000001455,0.900000000001455,0.900000000001455,0.900000000001455],"base":[0,0,0,0,0,0,0,0,0,0,0,0,0,0],"x":[18378,18379,18380,18381,18382,18383,18384,18385,18386,18387,18388,18389,18390,18391],"y":[12,55,52,73,47,46,75,36,71,29,73,39,49,44],"text":["date: 2020-04-26<br />case:  12<br />county: DeKalb","date: 2020-04-27<br />case:  55<br />county: DeKalb","date: 2020-04-28<br />case:  52<br />county: DeKalb","date: 2020-04-29<br />case:  73<br />county: DeKalb","date: 2020-04-30<br />case:  47<br />county: DeKalb","date: 2020-05-01<br />case:  46<br />county: DeKalb","date: 2020-05-02<br />case:  75<br />county: DeKalb","date: 2020-05-03<br />case:  36<br />county: DeKalb","date: 2020-05-04<br />case:  71<br />county: DeKalb","date: 2020-05-05<br />case:  29<br />county: DeKalb","date: 2020-05-06<br />case:  73<br />county: DeKalb","date: 2020-05-07<br />case:  39<br />county: DeKalb","date: 2020-05-08<br />case:  49<br />county: DeKalb","date: 2020-05-09<br />case:  44<br />county: DeKalb"],"type":"bar","textposition":"none","marker":{"autocolorscale":false,"color":"rgba(70,134,142,0.75)","line":{"width":1.88976377952756,"color":"transparent"}},"name":"DeKalb","legendgroup":"DeKalb","showlegend":true,"xaxis":"x","yaxis":"y","hoverinfo":"text","frame":null},{"orientation":"v","width":[0.900000000001455,0.900000000001455,0.900000000001455,0.900000000001455,0.900000000001455,0.900000000001455,0.900000000001455,0.900000000001455,0.900000000001455,0.900000000001455,0.900000000001455,0.900000000001455,0.900000000001455,0.900000000001455],"base":[0,0,0,0,0,0,0,0,0,0,0,0,0,0],"x":[18378,18379,18380,18381,18382,18383,18384,18385,18386,18387,18388,18389,18390,18391],"y":[2,135,73,32,36,59,48,53,76,108,85,10,57,68],"text":["date: 2020-04-26<br />case:   2<br />county: Fulton","date: 2020-04-27<br />case: 135<br />county: Fulton","date: 2020-04-28<br />case:  73<br />county: Fulton","date: 2020-04-29<br />case:  32<br />county: Fulton","date: 2020-04-30<br />case:  36<br />county: Fulton","date: 2020-05-01<br />case:  59<br />county: Fulton","date: 2020-05-02<br />case:  48<br />county: Fulton","date: 2020-05-03<br />case:  53<br />county: Fulton","date: 2020-05-04<br />case:  76<br />county: Fulton","date: 2020-05-05<br />case: 108<br />county: Fulton","date: 2020-05-06<br />case:  85<br />county: Fulton","date: 2020-05-07<br />case:  10<br />county: Fulton","date: 2020-05-08<br />case:  57<br />county: Fulton","date: 2020-05-09<br />case:  68<br />county: Fulton"],"type":"bar","textposition":"none","marker":{"autocolorscale":false,"color":"rgba(149,134,72,0.75)","line":{"width":1.88976377952756,"color":"transparent"}},"name":"Fulton","legendgroup":"Fulton","showlegend":true,"xaxis":"x","yaxis":"y","hoverinfo":"text","frame":null},{"orientation":"v","width":[0.900000000001455,0.900000000001455,0.900000000001455,0.900000000001455,0.900000000001455,0.900000000001455,0.900000000001455,0.900000000001455,0.900000000001455,0.900000000001455,0.900000000001455,0.900000000001455,0.900000000001455,0.900000000001455],"base":[0,0,0,0,0,0,0,0,0,0,0,0,0,0],"x":[18378,18379,18380,18381,18382,18383,18384,18385,18386,18387,18388,18389,18390,18391],"y":[44,41,75,124,49,55,86,46,77,45,120,32,68,81],"text":["date: 2020-04-26<br />case:  44<br />county: Gwinnett","date: 2020-04-27<br />case:  41<br />county: Gwinnett","date: 2020-04-28<br />case:  75<br />county: Gwinnett","date: 2020-04-29<br />case: 124<br />county: Gwinnett","date: 2020-04-30<br />case:  49<br />county: Gwinnett","date: 2020-05-01<br />case:  55<br />county: Gwinnett","date: 2020-05-02<br />case:  86<br />county: Gwinnett","date: 2020-05-03<br />case:  46<br />county: Gwinnett","date: 2020-05-04<br />case:  77<br />county: Gwinnett","date: 2020-05-05<br />case:  45<br />county: Gwinnett","date: 2020-05-06<br />case: 120<br />county: Gwinnett","date: 2020-05-07<br />case:  32<br />county: Gwinnett","date: 2020-05-08<br />case:  68<br />county: Gwinnett","date: 2020-05-09<br />case:  81<br />county: Gwinnett"],"type":"bar","textposition":"none","marker":{"autocolorscale":false,"color":"rgba(143,93,55,0.75)","line":{"width":1.88976377952756,"color":"transparent"}},"name":"Gwinnett","legendgroup":"Gwinnett","showlegend":true,"xaxis":"x","yaxis":"y","hoverinfo":"text","frame":null},{"orientation":"v","width":[0.900000000001455,0.900000000001455,0.900000000001455,0.900000000001455,0.900000000001455,0.900000000001455,0.900000000001455,0.900000000001455,0.900000000001455,0.900000000001455,0.900000000001455,0.900000000001455,0.900000000001455,0.900000000001455],"base":[0,0,0,0,0,0,0,0,0,0,0,0,0,0],"x":[18378,18379,18380,18381,18382,18383,18384,18385,18386,18387,18388,18389,18390,18391],"y":[1,65,87,76,85,136,212,6,76,70,68,42,41,5],"text":["date: 2020-04-26<br />case:   1<br />county: Hall","date: 2020-04-27<br />case:  65<br />county: Hall","date: 2020-04-28<br />case:  87<br />county: Hall","date: 2020-04-29<br />case:  76<br />county: Hall","date: 2020-04-30<br />case:  85<br />county: Hall","date: 2020-05-01<br />case: 136<br />county: Hall","date: 2020-05-02<br />case: 212<br />county: Hall","date: 2020-05-03<br />case:   6<br />county: Hall","date: 2020-05-04<br />case:  76<br />county: Hall","date: 2020-05-05<br />case:  70<br />county: Hall","date: 2020-05-06<br />case:  68<br />county: Hall","date: 2020-05-07<br />case:  42<br />county: Hall","date: 2020-05-08<br />case:  41<br />county: Hall","date: 2020-05-09<br />case:   5<br />county: Hall"],"type":"bar","textposition":"none","marker":{"autocolorscale":false,"color":"rgba(93,152,219,0.75)","line":{"width":1.88976377952756,"color":"transparent"}},"name":"Hall","legendgroup":"Hall","showlegend":true,"xaxis":"x","yaxis":"y","hoverinfo":"text","frame":null}],"layout":{"margin":{"t":46.6849315068493,"r":7.30593607305936,"b":43.1050228310502,"l":43.1050228310502},"plot_bgcolor":"rgba(24,47,78,1)","paper_bgcolor":"rgba(24,47,78,1)","font":{"color":"rgba(0,0,0,1)","family":"","size":14.6118721461187},"title":{"text":"Top 5 Counties with the Greatest Number of Confirmed COVID-19 Cases","font":{"color":"rgba(255,255,255,1)","family":"","size":17.5342465753425},"x":0,"xref":"paper"},"xaxis":{"domain":[0,1],"automargin":true,"type":"linear","autorange":false,"range":[18376.855,18392.145],"tickmode":"array","ticktext":["28Apr2020","03May2020","08May2020"],"tickvals":[18380,18385,18390],"categoryorder":"array","categoryarray":["28Apr2020","03May2020","08May2020"],"nticks":null,"ticks":"outside","tickcolor":"rgba(51,51,51,1)","ticklen":3.65296803652968,"tickwidth":0.66417600664176,"showticklabels":true,"tickfont":{"color":"rgba(255,255,255,1)","family":"","size":11.689497716895},"tickangle":-0,"showline":true,"linecolor":"rgba(255,255,255,1)","linewidth":0.66417600664176,"showgrid":false,"gridcolor":null,"gridwidth":0,"zeroline":false,"anchor":"y","title":{"text":"date","font":{"color":"rgba(255,255,255,1)","family":"","size":14.6118721461187}},"hoverformat":".2f"},"yaxis":{"domain":[0,1],"automargin":true,"type":"linear","autorange":false,"range":[-10.6,222.6],"tickmode":"array","ticktext":["0","50","100","150","200"],"tickvals":[0,50,100,150,200],"categoryorder":"array","categoryarray":["0","50","100","150","200"],"nticks":null,"ticks":"outside","tickcolor":"rgba(51,51,51,1)","ticklen":3.65296803652968,"tickwidth":0.66417600664176,"showticklabels":true,"tickfont":{"color":"rgba(255,255,255,1)","family":"","size":11.689497716895},"tickangle":-0,"showline":true,"linecolor":"rgba(255,255,255,1)","linewidth":0.66417600664176,"showgrid":false,"gridcolor":null,"gridwidth":0,"zeroline":false,"anchor":"x","title":{"text":"case","font":{"color":"rgba(255,255,255,1)","family":"","size":14.6118721461187}},"hoverformat":".2f"},"shapes":[{"type":"rect","fillcolor":null,"line":{"color":null,"width":0,"linetype":[]},"yref":"paper","xref":"paper","x0":0,"x1":1,"y0":0,"y1":1}],"showlegend":true,"legend":{"bgcolor":"rgba(24,47,78,1)","bordercolor":"transparent","borderwidth":1.88976377952756,"font":{"color":"rgba(255,255,255,1)","family":"","size":11.689497716895},"title":{"text":"County","font":{"color":"rgba(255,255,255,1)","family":"","size":14.6118721461187}}},"hovermode":"closest","barmode":"relative"},"config":{"doubleClick":"reset","modeBarButtonsToAdd":["hoverclosest","hovercompare"],"showSendToCloud":false},"source":"A","attrs":{"142a734d2f50c":{"x":{},"y":{},"fill":{},"type":"bar"}},"cur_data":"142a734d2f50c","visdat":{"142a734d2f50c":["function (y) ","x"]},"highlight":{"on":"plotly_click","persistent":false,"dynamic":false,"selectize":false,"opacityDim":0.2,"selected":{"opacity":1},"debounce":0},"shinyEvents":["plotly_hover","plotly_click","plotly_selected","plotly_relayout","plotly_brushed","plotly_brushing","plotly_clickannotation","plotly_doubleclick","plotly_deselect","plotly_afterplot","plotly_sunburstclick"],"base_url":"https://plot.ly"},"evals":[],"jsHooks":[]}</script>
 </div>
 </div>
 <p>You can click on the legend to hide counties, allowing you to compare just 2 at a time. This seems marginally better.</p>
@@ -10048,452 +10634,6 @@ font-style: inherit;">-&gt;</span> p</span></code></pre></div>
   <category>data visualizations</category>
   <guid>https://www.livefreeordichotomize.com/posts/2020-05-17-graph-detective/index.html</guid>
   <pubDate>Sun, 17 May 2020 00:00:00 GMT</pubDate>
-</item>
-<item>
-  <title>This one cool hack will…help you categorize Harry Potter characters!</title>
-  <dc:creator>Lucy D&#39;Agostino McGowan</dc:creator>
-  <link>https://www.livefreeordichotomize.com/posts/2020-05-16-this-one-cool-hack/index.html</link>
-  <description><![CDATA[ 
-
-
-
-
-<p>Hilary Parker &amp; Roger Peng mention a cool tactic for categorizing data on their podcast, <a href="http://nssdeviations.com">Not So Standard Deviations</a>. (If I recall correctly, I think Hilary mentioned it first, then Roger used it in a subsequent episode, unfortunately I don’t remember which episodes these were and a quick look-back proved futile. If I figure it out, I’ll link it here!)</p>
-<p>The basic concept is to make a small table &amp; join it into the data frame you are trying to categorize instead of writing a bunch of if/else statements. This is especially useful if you are:</p>
-<p>☝️ Using the same categories on a bunch of different data frames (you can just create the small table of categories once!)<br>
-✌️ Creating multiple <em>new</em> variables from a single variable</p>
-<blockquote class="twitter-tweet blockquote">
-<p lang="en" dir="ltr">
-Have a bunch of things to re-categorize?<br><br>TIRED: write a bunch of case_when or if/else statements <br><br>WIRED: left join a small data frame with the updated categories <br><br>*this message is brought to you by <a href="https://twitter.com/NSSDeviations?ref_src=twsrc%5Etfw"><span class="citation" data-cites="nssdeviations">@nssdeviations</span></a> (THANK YOU!) and my HAPPY HEART each time I do this now <a href="https://t.co/smFubWEGcq">pic.twitter.com/smFubWEGcq</a>
-</p>
-— Lucy D’Agostino McGowan (<span class="citation" data-cites="LucyStats">@LucyStats</span>) <a href="https://twitter.com/LucyStats/status/1261260481467224064?ref_src=twsrc%5Etfw">May 15, 2020</a>
-</blockquote>
-<script async="" src="https://platform.twitter.com/widgets.js" charset="utf-8"></script>
-<p>I tweeted about this kernel of wisdom and a few people asked me to write up an example, so here it is!</p>
-<section id="example" class="level2">
-<h2 class="anchored" data-anchor-id="example">Example</h2>
-<p>For this example, I am going to rank Harry Potter characters based on the house they were sorted into on a variety of characteristics.</p>
-<p><label for="tufte-mn-" class="margin-toggle">⊕</label><input type="checkbox" id="tufte-mn-" class="margin-toggle"><span class="marginnote">This data originated from a <a href="https://www.kaggle.com/gulsahdemiryurek/harry-potter-dataset">Kaggle Dataset by Gulsah Demiryurek</a></span></p>
-<div class="cell">
-<div class="sourceCode cell-code" id="cb1" style="background: #f1f3f5;"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb1-1"><span class="fu" style="color: #4758AB;
-background-color: null;
-font-style: inherit;">library</span>(tidyverse)</span>
-<span id="cb1-2">harry_potter <span class="ot" style="color: #003B4F;
-background-color: null;
-font-style: inherit;">&lt;-</span> <span class="fu" style="color: #4758AB;
-background-color: null;
-font-style: inherit;">read_csv</span>(<span class="st" style="color: #20794D;
-background-color: null;
-font-style: inherit;">"https://raw.githubusercontent.com/LFOD/real-blog/master/static/data/harry-potter.csv"</span>)</span></code></pre></div>
-</div>
-<!-- ```{r, echo = FALSE, eval = FALSE} -->
-<!-- d <- read_delim("~/Downloads/Characters.csv", delim = ";") -->
-<!-- set.seed(1) -->
-<!-- d <- d %>% -->
-<!--   filter(House %in% c("Gryffindor", "Ravenclaw", "Hufflepuff", "Slytherin")) %>% -->
-<!--   select(Name, House) %>% -->
-<!--   mutate(Name = ifelse(grepl("Lee Jordan", Name), "Lee Jordan", Name)) -->
-<!-- d <- d[sample(nrow(d)),] -->
-<!-- write_csv(d, "../../media/data/harry-potter.csv") -->
-<!-- ``` -->
-</section>
-<section id="tired" class="level2">
-<h2 class="anchored" data-anchor-id="tired">Tired</h2>
-<p>Here is how I would do this with <code>case_when()</code>.</p>
-<div class="cell">
-<div class="sourceCode cell-code" id="cb2" style="background: #f1f3f5;"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb2-1">harry_potter <span class="sc" style="color: #5E5E5E;
-background-color: null;
-font-style: inherit;">%&gt;%</span></span>
-<span id="cb2-2">  <span class="fu" style="color: #4758AB;
-background-color: null;
-font-style: inherit;">mutate</span>(</span>
-<span id="cb2-3">    <span class="at" style="color: #657422;
-background-color: null;
-font-style: inherit;">smart_rank =</span> <span class="fu" style="color: #4758AB;
-background-color: null;
-font-style: inherit;">case_when</span>(</span>
-<span id="cb2-4">      House <span class="sc" style="color: #5E5E5E;
-background-color: null;
-font-style: inherit;">==</span> <span class="st" style="color: #20794D;
-background-color: null;
-font-style: inherit;">"Ravenclaw"</span> <span class="sc" style="color: #5E5E5E;
-background-color: null;
-font-style: inherit;">~</span> <span class="dv" style="color: #AD0000;
-background-color: null;
-font-style: inherit;">1</span>,</span>
-<span id="cb2-5">      House <span class="sc" style="color: #5E5E5E;
-background-color: null;
-font-style: inherit;">==</span> <span class="st" style="color: #20794D;
-background-color: null;
-font-style: inherit;">"Gryffindor"</span> <span class="sc" style="color: #5E5E5E;
-background-color: null;
-font-style: inherit;">~</span> <span class="dv" style="color: #AD0000;
-background-color: null;
-font-style: inherit;">2</span>,</span>
-<span id="cb2-6">      House <span class="sc" style="color: #5E5E5E;
-background-color: null;
-font-style: inherit;">==</span> <span class="st" style="color: #20794D;
-background-color: null;
-font-style: inherit;">"Slytherin"</span> <span class="sc" style="color: #5E5E5E;
-background-color: null;
-font-style: inherit;">~</span> <span class="dv" style="color: #AD0000;
-background-color: null;
-font-style: inherit;">3</span>,</span>
-<span id="cb2-7">      House <span class="sc" style="color: #5E5E5E;
-background-color: null;
-font-style: inherit;">==</span> <span class="st" style="color: #20794D;
-background-color: null;
-font-style: inherit;">"Hufflepuff"</span> <span class="sc" style="color: #5E5E5E;
-background-color: null;
-font-style: inherit;">~</span> <span class="dv" style="color: #AD0000;
-background-color: null;
-font-style: inherit;">4</span></span>
-<span id="cb2-8">    ),</span>
-<span id="cb2-9">    <span class="at" style="color: #657422;
-background-color: null;
-font-style: inherit;">brave_rank =</span> <span class="fu" style="color: #4758AB;
-background-color: null;
-font-style: inherit;">case_when</span>(</span>
-<span id="cb2-10">      House <span class="sc" style="color: #5E5E5E;
-background-color: null;
-font-style: inherit;">==</span> <span class="st" style="color: #20794D;
-background-color: null;
-font-style: inherit;">"Gryffindor"</span> <span class="sc" style="color: #5E5E5E;
-background-color: null;
-font-style: inherit;">~</span> <span class="dv" style="color: #AD0000;
-background-color: null;
-font-style: inherit;">1</span>,</span>
-<span id="cb2-11">      House <span class="sc" style="color: #5E5E5E;
-background-color: null;
-font-style: inherit;">==</span> <span class="st" style="color: #20794D;
-background-color: null;
-font-style: inherit;">"Slytherin"</span> <span class="sc" style="color: #5E5E5E;
-background-color: null;
-font-style: inherit;">~</span> <span class="dv" style="color: #AD0000;
-background-color: null;
-font-style: inherit;">2</span>,</span>
-<span id="cb2-12">      House <span class="sc" style="color: #5E5E5E;
-background-color: null;
-font-style: inherit;">==</span> <span class="st" style="color: #20794D;
-background-color: null;
-font-style: inherit;">"Ravenclaw"</span> <span class="sc" style="color: #5E5E5E;
-background-color: null;
-font-style: inherit;">~</span> <span class="dv" style="color: #AD0000;
-background-color: null;
-font-style: inherit;">3</span>,</span>
-<span id="cb2-13">      House <span class="sc" style="color: #5E5E5E;
-background-color: null;
-font-style: inherit;">==</span> <span class="st" style="color: #20794D;
-background-color: null;
-font-style: inherit;">"Hufflepuff"</span> <span class="sc" style="color: #5E5E5E;
-background-color: null;
-font-style: inherit;">~</span> <span class="dv" style="color: #AD0000;
-background-color: null;
-font-style: inherit;">4</span></span>
-<span id="cb2-14">    ),</span>
-<span id="cb2-15">    <span class="at" style="color: #657422;
-background-color: null;
-font-style: inherit;">cunning_rank =</span> <span class="fu" style="color: #4758AB;
-background-color: null;
-font-style: inherit;">case_when</span>(</span>
-<span id="cb2-16">      House <span class="sc" style="color: #5E5E5E;
-background-color: null;
-font-style: inherit;">==</span> <span class="st" style="color: #20794D;
-background-color: null;
-font-style: inherit;">"Slytherin"</span> <span class="sc" style="color: #5E5E5E;
-background-color: null;
-font-style: inherit;">~</span> <span class="dv" style="color: #AD0000;
-background-color: null;
-font-style: inherit;">1</span>,</span>
-<span id="cb2-17">      House <span class="sc" style="color: #5E5E5E;
-background-color: null;
-font-style: inherit;">==</span> <span class="st" style="color: #20794D;
-background-color: null;
-font-style: inherit;">"Ravenclaw"</span> <span class="sc" style="color: #5E5E5E;
-background-color: null;
-font-style: inherit;">~</span> <span class="dv" style="color: #AD0000;
-background-color: null;
-font-style: inherit;">2</span>,</span>
-<span id="cb2-18">      House <span class="sc" style="color: #5E5E5E;
-background-color: null;
-font-style: inherit;">==</span> <span class="st" style="color: #20794D;
-background-color: null;
-font-style: inherit;">"Gryffindor"</span> <span class="sc" style="color: #5E5E5E;
-background-color: null;
-font-style: inherit;">~</span> <span class="dv" style="color: #AD0000;
-background-color: null;
-font-style: inherit;">3</span>,</span>
-<span id="cb2-19">      House <span class="sc" style="color: #5E5E5E;
-background-color: null;
-font-style: inherit;">==</span> <span class="st" style="color: #20794D;
-background-color: null;
-font-style: inherit;">"Hufflepuff"</span> <span class="sc" style="color: #5E5E5E;
-background-color: null;
-font-style: inherit;">~</span> <span class="dv" style="color: #AD0000;
-background-color: null;
-font-style: inherit;">4</span></span>
-<span id="cb2-20">    ),</span>
-<span id="cb2-21">    <span class="at" style="color: #657422;
-background-color: null;
-font-style: inherit;">kind_rank =</span> <span class="fu" style="color: #4758AB;
-background-color: null;
-font-style: inherit;">case_when</span>(</span>
-<span id="cb2-22">      House <span class="sc" style="color: #5E5E5E;
-background-color: null;
-font-style: inherit;">==</span> <span class="st" style="color: #20794D;
-background-color: null;
-font-style: inherit;">"Hufflepuff"</span> <span class="sc" style="color: #5E5E5E;
-background-color: null;
-font-style: inherit;">~</span> <span class="dv" style="color: #AD0000;
-background-color: null;
-font-style: inherit;">1</span>,</span>
-<span id="cb2-23">      House <span class="sc" style="color: #5E5E5E;
-background-color: null;
-font-style: inherit;">==</span> <span class="st" style="color: #20794D;
-background-color: null;
-font-style: inherit;">"Gryffindor"</span> <span class="sc" style="color: #5E5E5E;
-background-color: null;
-font-style: inherit;">~</span> <span class="dv" style="color: #AD0000;
-background-color: null;
-font-style: inherit;">2</span>,</span>
-<span id="cb2-24">      House <span class="sc" style="color: #5E5E5E;
-background-color: null;
-font-style: inherit;">==</span> <span class="st" style="color: #20794D;
-background-color: null;
-font-style: inherit;">"Ravenclaw"</span> <span class="sc" style="color: #5E5E5E;
-background-color: null;
-font-style: inherit;">~</span> <span class="dv" style="color: #AD0000;
-background-color: null;
-font-style: inherit;">3</span>,</span>
-<span id="cb2-25">      House <span class="sc" style="color: #5E5E5E;
-background-color: null;
-font-style: inherit;">==</span> <span class="st" style="color: #20794D;
-background-color: null;
-font-style: inherit;">"Slytherin"</span> <span class="sc" style="color: #5E5E5E;
-background-color: null;
-font-style: inherit;">~</span> <span class="dv" style="color: #AD0000;
-background-color: null;
-font-style: inherit;">4</span></span>
-<span id="cb2-26">    )</span>
-<span id="cb2-27">  )</span></code></pre></div>
-</div>
-<div class="cell">
-<div class="cell-output-display">
-
-<div class="datatables html-widget html-fill-item-overflow-hidden html-fill-item" id="htmlwidget-017e65a53fb4eaefe7e8" style="width:100%;height:auto;"></div>
-<script type="application/json" data-for="htmlwidget-017e65a53fb4eaefe7e8">{"x":{"filter":"none","vertical":false,"data":[["1","2","3","4","5","6","7","8","9","10","11","12","13","14","15","16","17","18","19","20","21","22","23","24","25","26","27","28","29","30","31","32","33","34","35","36","37","38","39","40","41","42","43","44","45","46","47","48","49","50","51","52","53","54","55","56","57","58","59","60","61","62","63","64","65","66","67","68","69","70","71","72","73","74","75","76","77","78","79","80","81","82","83","84","85","86","87","88","89","90","91","92","93","94","95","96","97"],["Colin Creevey","Michael Corner","Albus Percival Wulfric Brian Dumbledore","Bloody Baron","Molly Weasley","Antonin Dolohov","Sirius Black","Edgar Bones","Rubeus Hagrid","Hannah Abbott","Cedric Diggory","Padma Patil","Rose Granger-Weasley","Marcus Belby","Dennis Creevey","Draco Malfoy","Rowena Ravenclaw","Augustus Rookwood","Ernest Macmillan","Vincent Crabbe","Penelope Clearwater","Susan Bones","James Sirius Potter","Neville Longbottom","Millicent Bulstrode","Romilda Vane","Parvati Patil","Harry James Potter","George Weasley","Dean Thomas","Horace Eugene Flaccus Slughorn","Salazar Slytherin","Remus John Lupin","Peter Pettigrew","Amycus Carrow","Filius Flitwick","Godric Gryffindor","Scorpius Hyperion Malfoy","Terry Boot","Blaise Zabini","Ronald Bilius Weasley","Fat Friar","Minerva McGonagall","Alicia Spinnet","Pomona Sprout","Edward Remus Lupin","Gilderoy Lockhart","Oliver Wood","Frank Longbottom","Lily J. Potter","Gregory Goyle","Ginevra (Ginny) Molly Weasley","Arthur Weasley","(Bill) William Arthur Weasley","Walden Macnair","Charles Weasley","Theodore Nott","Alecto Carrow","Severus Snape","Narcissa Malfoy","Tom Marvolo Riddle","Bellatrix Lestrange","Anthony Goldstein","Nicholas de Mimsy-Porpington","Percy Ignatius Weasley","Pansy Parkinson","Marcus Flint","James Potter","Regulus Arcturus Black","Lee Jordan","Nymphadora Tonks","Angelina Johnson","Myrtle Elizabeth Warren (Moaning Myrtle)","Albus Severus Potter","Hermione Jean Granger","Cormac McLaggen","Justin Finch-Fletchley","Rodolphus Lestrange","Newton Scamander","Luna Lovegood","Marietta Edgecombe","Sybill Patricia Trelawney","Dolores Jane Umbridge","Roger Davies","Lavender Brown","Helena Ravenclaw","Lucius Malfoy","Katie Bell","Fred Weasley","Corban Yaxley","Seamus Finnigan","Helga Hufflepuff","Garrick Ollivander","Quirinus Quirrell","Cho Chang","Zacharias Smith","Graham Montague"],["Gryffindor","Ravenclaw","Gryffindor","Slytherin","Gryffindor","Slytherin","Gryffindor","Hufflepuff","Gryffindor","Hufflepuff","Hufflepuff","Ravenclaw","Gryffindor","Ravenclaw","Gryffindor","Slytherin","Ravenclaw","Slytherin","Hufflepuff","Slytherin","Ravenclaw","Hufflepuff","Gryffindor","Gryffindor","Slytherin","Gryffindor","Gryffindor","Gryffindor","Gryffindor","Gryffindor","Slytherin","Slytherin","Gryffindor","Gryffindor","Slytherin","Ravenclaw","Gryffindor","Slytherin","Ravenclaw","Slytherin","Gryffindor","Hufflepuff","Gryffindor","Gryffindor","Hufflepuff","Hufflepuff","Ravenclaw","Gryffindor","Gryffindor","Gryffindor","Slytherin","Gryffindor","Gryffindor","Gryffindor","Slytherin","Gryffindor","Slytherin","Slytherin","Slytherin","Slytherin","Slytherin","Slytherin","Ravenclaw","Gryffindor","Gryffindor","Slytherin","Slytherin","Gryffindor","Slytherin","Gryffindor","Hufflepuff","Gryffindor","Ravenclaw","Slytherin","Gryffindor","Gryffindor","Hufflepuff","Slytherin","Hufflepuff","Ravenclaw","Ravenclaw","Ravenclaw","Slytherin","Ravenclaw","Gryffindor","Ravenclaw","Slytherin","Gryffindor","Gryffindor","Slytherin","Gryffindor","Hufflepuff","Ravenclaw","Ravenclaw","Ravenclaw","Hufflepuff","Slytherin"],[2,1,2,3,2,3,2,4,2,4,4,1,2,1,2,3,1,3,4,3,1,4,2,2,3,2,2,2,2,2,3,3,2,2,3,1,2,3,1,3,2,4,2,2,4,4,1,2,2,2,3,2,2,2,3,2,3,3,3,3,3,3,1,2,2,3,3,2,3,2,4,2,1,3,2,2,4,3,4,1,1,1,3,1,2,1,3,2,2,3,2,4,1,1,1,4,3],[1,3,1,2,1,2,1,4,1,4,4,3,1,3,1,2,3,2,4,2,3,4,1,1,2,1,1,1,1,1,2,2,1,1,2,3,1,2,3,2,1,4,1,1,4,4,3,1,1,1,2,1,1,1,2,1,2,2,2,2,2,2,3,1,1,2,2,1,2,1,4,1,3,2,1,1,4,2,4,3,3,3,2,3,1,3,2,1,1,2,1,4,3,3,3,4,2],[3,2,3,1,3,1,3,4,3,4,4,2,3,2,3,1,2,1,4,1,2,4,3,3,1,3,3,3,3,3,1,1,3,3,1,2,3,1,2,1,3,4,3,3,4,4,2,3,3,3,1,3,3,3,1,3,1,1,1,1,1,1,2,3,3,1,1,3,1,3,4,3,2,1,3,3,4,1,4,2,2,2,1,2,3,2,1,3,3,1,3,4,2,2,2,4,1],[2,3,2,4,2,4,2,1,2,1,1,3,2,3,2,4,3,4,1,4,3,1,2,2,4,2,2,2,2,2,4,4,2,2,4,3,2,4,3,4,2,1,2,2,1,1,3,2,2,2,4,2,2,2,4,2,4,4,4,4,4,4,3,2,2,4,4,2,4,2,1,2,3,4,2,2,1,4,1,3,3,3,4,3,2,3,4,2,2,4,2,1,3,3,3,1,4]],"container":"<table class=\"display\">\n  <thead>\n    <tr>\n      <th> <\/th>\n      <th>Name<\/th>\n      <th>House<\/th>\n      <th>smart_rank<\/th>\n      <th>brave_rank<\/th>\n      <th>cunning_rank<\/th>\n      <th>kind_rank<\/th>\n    <\/tr>\n  <\/thead>\n<\/table>","options":{"columnDefs":[{"className":"dt-right","targets":[3,4,5,6]},{"orderable":false,"targets":0}],"order":[],"autoWidth":false,"orderClasses":false}},"evals":[],"jsHooks":[]}</script>
-</div>
-</div>
-</section>
-<section id="wired" class="level2">
-<h2 class="anchored" data-anchor-id="wired">Wired</h2>
-<p>Here’s how I would do this with a data frame</p>
-<div class="cell">
-<div class="sourceCode cell-code" id="cb3" style="background: #f1f3f5;"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb3-1">ranks <span class="ot" style="color: #003B4F;
-background-color: null;
-font-style: inherit;">&lt;-</span> <span class="fu" style="color: #4758AB;
-background-color: null;
-font-style: inherit;">tibble</span>(</span>
-<span id="cb3-2">  <span class="at" style="color: #657422;
-background-color: null;
-font-style: inherit;">House =</span> <span class="fu" style="color: #4758AB;
-background-color: null;
-font-style: inherit;">c</span>(<span class="st" style="color: #20794D;
-background-color: null;
-font-style: inherit;">"Gryffindor"</span>, <span class="st" style="color: #20794D;
-background-color: null;
-font-style: inherit;">"Ravenclaw"</span>, <span class="st" style="color: #20794D;
-background-color: null;
-font-style: inherit;">"Hufflepuff"</span>, <span class="st" style="color: #20794D;
-background-color: null;
-font-style: inherit;">"Slytherin"</span>),</span>
-<span id="cb3-3">  <span class="at" style="color: #657422;
-background-color: null;
-font-style: inherit;">smart_rank =</span> <span class="fu" style="color: #4758AB;
-background-color: null;
-font-style: inherit;">c</span>(<span class="dv" style="color: #AD0000;
-background-color: null;
-font-style: inherit;">2</span>, <span class="dv" style="color: #AD0000;
-background-color: null;
-font-style: inherit;">1</span>, <span class="dv" style="color: #AD0000;
-background-color: null;
-font-style: inherit;">4</span>, <span class="dv" style="color: #AD0000;
-background-color: null;
-font-style: inherit;">3</span>),</span>
-<span id="cb3-4">  <span class="at" style="color: #657422;
-background-color: null;
-font-style: inherit;">brave_rank =</span> <span class="fu" style="color: #4758AB;
-background-color: null;
-font-style: inherit;">c</span>(<span class="dv" style="color: #AD0000;
-background-color: null;
-font-style: inherit;">1</span>, <span class="dv" style="color: #AD0000;
-background-color: null;
-font-style: inherit;">3</span>, <span class="dv" style="color: #AD0000;
-background-color: null;
-font-style: inherit;">4</span>, <span class="dv" style="color: #AD0000;
-background-color: null;
-font-style: inherit;">2</span>),</span>
-<span id="cb3-5">  <span class="at" style="color: #657422;
-background-color: null;
-font-style: inherit;">cunning_rank =</span> <span class="fu" style="color: #4758AB;
-background-color: null;
-font-style: inherit;">c</span>(<span class="dv" style="color: #AD0000;
-background-color: null;
-font-style: inherit;">3</span>, <span class="dv" style="color: #AD0000;
-background-color: null;
-font-style: inherit;">2</span>, <span class="dv" style="color: #AD0000;
-background-color: null;
-font-style: inherit;">4</span>, <span class="dv" style="color: #AD0000;
-background-color: null;
-font-style: inherit;">1</span>),</span>
-<span id="cb3-6">  <span class="at" style="color: #657422;
-background-color: null;
-font-style: inherit;">kind_rank =</span> <span class="fu" style="color: #4758AB;
-background-color: null;
-font-style: inherit;">c</span>(<span class="dv" style="color: #AD0000;
-background-color: null;
-font-style: inherit;">2</span>, <span class="dv" style="color: #AD0000;
-background-color: null;
-font-style: inherit;">3</span>, <span class="dv" style="color: #AD0000;
-background-color: null;
-font-style: inherit;">1</span>, <span class="dv" style="color: #AD0000;
-background-color: null;
-font-style: inherit;">4</span>)</span>
-<span id="cb3-7">)</span>
-<span id="cb3-8"></span>
-<span id="cb3-9">harry_potter <span class="sc" style="color: #5E5E5E;
-background-color: null;
-font-style: inherit;">%&gt;%</span></span>
-<span id="cb3-10">  <span class="fu" style="color: #4758AB;
-background-color: null;
-font-style: inherit;">left_join</span>(ranks, <span class="at" style="color: #657422;
-background-color: null;
-font-style: inherit;">by =</span> <span class="st" style="color: #20794D;
-background-color: null;
-font-style: inherit;">"House"</span>)</span></code></pre></div>
-</div>
-<div class="cell">
-<div class="cell-output-display">
-
-<div class="datatables html-widget html-fill-item-overflow-hidden html-fill-item" id="htmlwidget-b9c24a14f7f9a26aafae" style="width:100%;height:auto;"></div>
-<script type="application/json" data-for="htmlwidget-b9c24a14f7f9a26aafae">{"x":{"filter":"none","vertical":false,"data":[["1","2","3","4","5","6","7","8","9","10","11","12","13","14","15","16","17","18","19","20","21","22","23","24","25","26","27","28","29","30","31","32","33","34","35","36","37","38","39","40","41","42","43","44","45","46","47","48","49","50","51","52","53","54","55","56","57","58","59","60","61","62","63","64","65","66","67","68","69","70","71","72","73","74","75","76","77","78","79","80","81","82","83","84","85","86","87","88","89","90","91","92","93","94","95","96","97"],["Colin Creevey","Michael Corner","Albus Percival Wulfric Brian Dumbledore","Bloody Baron","Molly Weasley","Antonin Dolohov","Sirius Black","Edgar Bones","Rubeus Hagrid","Hannah Abbott","Cedric Diggory","Padma Patil","Rose Granger-Weasley","Marcus Belby","Dennis Creevey","Draco Malfoy","Rowena Ravenclaw","Augustus Rookwood","Ernest Macmillan","Vincent Crabbe","Penelope Clearwater","Susan Bones","James Sirius Potter","Neville Longbottom","Millicent Bulstrode","Romilda Vane","Parvati Patil","Harry James Potter","George Weasley","Dean Thomas","Horace Eugene Flaccus Slughorn","Salazar Slytherin","Remus John Lupin","Peter Pettigrew","Amycus Carrow","Filius Flitwick","Godric Gryffindor","Scorpius Hyperion Malfoy","Terry Boot","Blaise Zabini","Ronald Bilius Weasley","Fat Friar","Minerva McGonagall","Alicia Spinnet","Pomona Sprout","Edward Remus Lupin","Gilderoy Lockhart","Oliver Wood","Frank Longbottom","Lily J. Potter","Gregory Goyle","Ginevra (Ginny) Molly Weasley","Arthur Weasley","(Bill) William Arthur Weasley","Walden Macnair","Charles Weasley","Theodore Nott","Alecto Carrow","Severus Snape","Narcissa Malfoy","Tom Marvolo Riddle","Bellatrix Lestrange","Anthony Goldstein","Nicholas de Mimsy-Porpington","Percy Ignatius Weasley","Pansy Parkinson","Marcus Flint","James Potter","Regulus Arcturus Black","Lee Jordan","Nymphadora Tonks","Angelina Johnson","Myrtle Elizabeth Warren (Moaning Myrtle)","Albus Severus Potter","Hermione Jean Granger","Cormac McLaggen","Justin Finch-Fletchley","Rodolphus Lestrange","Newton Scamander","Luna Lovegood","Marietta Edgecombe","Sybill Patricia Trelawney","Dolores Jane Umbridge","Roger Davies","Lavender Brown","Helena Ravenclaw","Lucius Malfoy","Katie Bell","Fred Weasley","Corban Yaxley","Seamus Finnigan","Helga Hufflepuff","Garrick Ollivander","Quirinus Quirrell","Cho Chang","Zacharias Smith","Graham Montague"],["Gryffindor","Ravenclaw","Gryffindor","Slytherin","Gryffindor","Slytherin","Gryffindor","Hufflepuff","Gryffindor","Hufflepuff","Hufflepuff","Ravenclaw","Gryffindor","Ravenclaw","Gryffindor","Slytherin","Ravenclaw","Slytherin","Hufflepuff","Slytherin","Ravenclaw","Hufflepuff","Gryffindor","Gryffindor","Slytherin","Gryffindor","Gryffindor","Gryffindor","Gryffindor","Gryffindor","Slytherin","Slytherin","Gryffindor","Gryffindor","Slytherin","Ravenclaw","Gryffindor","Slytherin","Ravenclaw","Slytherin","Gryffindor","Hufflepuff","Gryffindor","Gryffindor","Hufflepuff","Hufflepuff","Ravenclaw","Gryffindor","Gryffindor","Gryffindor","Slytherin","Gryffindor","Gryffindor","Gryffindor","Slytherin","Gryffindor","Slytherin","Slytherin","Slytherin","Slytherin","Slytherin","Slytherin","Ravenclaw","Gryffindor","Gryffindor","Slytherin","Slytherin","Gryffindor","Slytherin","Gryffindor","Hufflepuff","Gryffindor","Ravenclaw","Slytherin","Gryffindor","Gryffindor","Hufflepuff","Slytherin","Hufflepuff","Ravenclaw","Ravenclaw","Ravenclaw","Slytherin","Ravenclaw","Gryffindor","Ravenclaw","Slytherin","Gryffindor","Gryffindor","Slytherin","Gryffindor","Hufflepuff","Ravenclaw","Ravenclaw","Ravenclaw","Hufflepuff","Slytherin"],[2,1,2,3,2,3,2,4,2,4,4,1,2,1,2,3,1,3,4,3,1,4,2,2,3,2,2,2,2,2,3,3,2,2,3,1,2,3,1,3,2,4,2,2,4,4,1,2,2,2,3,2,2,2,3,2,3,3,3,3,3,3,1,2,2,3,3,2,3,2,4,2,1,3,2,2,4,3,4,1,1,1,3,1,2,1,3,2,2,3,2,4,1,1,1,4,3],[1,3,1,2,1,2,1,4,1,4,4,3,1,3,1,2,3,2,4,2,3,4,1,1,2,1,1,1,1,1,2,2,1,1,2,3,1,2,3,2,1,4,1,1,4,4,3,1,1,1,2,1,1,1,2,1,2,2,2,2,2,2,3,1,1,2,2,1,2,1,4,1,3,2,1,1,4,2,4,3,3,3,2,3,1,3,2,1,1,2,1,4,3,3,3,4,2],[3,2,3,1,3,1,3,4,3,4,4,2,3,2,3,1,2,1,4,1,2,4,3,3,1,3,3,3,3,3,1,1,3,3,1,2,3,1,2,1,3,4,3,3,4,4,2,3,3,3,1,3,3,3,1,3,1,1,1,1,1,1,2,3,3,1,1,3,1,3,4,3,2,1,3,3,4,1,4,2,2,2,1,2,3,2,1,3,3,1,3,4,2,2,2,4,1],[2,3,2,4,2,4,2,1,2,1,1,3,2,3,2,4,3,4,1,4,3,1,2,2,4,2,2,2,2,2,4,4,2,2,4,3,2,4,3,4,2,1,2,2,1,1,3,2,2,2,4,2,2,2,4,2,4,4,4,4,4,4,3,2,2,4,4,2,4,2,1,2,3,4,2,2,1,4,1,3,3,3,4,3,2,3,4,2,2,4,2,1,3,3,3,1,4]],"container":"<table class=\"display\">\n  <thead>\n    <tr>\n      <th> <\/th>\n      <th>Name<\/th>\n      <th>House<\/th>\n      <th>smart_rank<\/th>\n      <th>brave_rank<\/th>\n      <th>cunning_rank<\/th>\n      <th>kind_rank<\/th>\n    <\/tr>\n  <\/thead>\n<\/table>","options":{"columnDefs":[{"className":"dt-right","targets":[3,4,5,6]},{"orderable":false,"targets":0}],"order":[],"autoWidth":false,"orderClasses":false}},"evals":[],"jsHooks":[]}</script>
-</div>
-</div>
-</section>
-<section id="inspired" class="level2">
-<h2 class="anchored" data-anchor-id="inspired">Inspired</h2>
-<p>After tweeting this out, several people pointed out that this is a nice use case for <code>tribble()</code>!</p>
-<blockquote class="twitter-tweet blockquote" data-conversation="none">
-<p lang="en" dir="ltr">
-Such lookup tables are things where <code>tribble</code> really shines, IMHO.
-</p>
-— Konrad Rudolph (<span class="citation" data-cites="klmr">@klmr</span>) <a href="https://twitter.com/klmr/status/1261677585404174350?ref_src=twsrc%5Etfw">May 16, 2020</a>
-</blockquote>
-<script async="" src="https://platform.twitter.com/widgets.js" charset="utf-8"></script>
-<blockquote class="twitter-tweet blockquote" data-conversation="none">
-<p lang="en" dir="ltr">
-tribble() would be just as clear as the tired one and just as nifty as the wired one.
-</p>
-— Dave Harris, but masked (<span class="citation" data-cites="davidjayharris">@davidjayharris</span>) <a href="https://twitter.com/davidjayharris/status/1261702260486221824?ref_src=twsrc%5Etfw">May 16, 2020</a>
-</blockquote>
-<script async="" src="https://platform.twitter.com/widgets.js" charset="utf-8"></script>
-<blockquote class="twitter-tweet blockquote" data-conversation="none">
-<p lang="en" dir="ltr">
-That’s how set nice labels for plots and tables. Make a tribble and join at the last minute.
-</p>
-— tj mahr 🍕🍍 (<span class="citation" data-cites="tjmahr">@tjmahr</span>) <a href="https://twitter.com/tjmahr/status/1261695799056117762?ref_src=twsrc%5Etfw">May 16, 2020</a>
-</blockquote>
-<script async="" src="https://platform.twitter.com/widgets.js" charset="utf-8"></script>
-<p>Let’s see how that looks!</p>
-<div class="cell">
-<div class="sourceCode cell-code" id="cb4" style="background: #f1f3f5;"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb4-1">ranks <span class="ot" style="color: #003B4F;
-background-color: null;
-font-style: inherit;">&lt;-</span> <span class="fu" style="color: #4758AB;
-background-color: null;
-font-style: inherit;">tribble</span>(</span>
-<span id="cb4-2">  <span class="sc" style="color: #5E5E5E;
-background-color: null;
-font-style: inherit;">~</span>House,      <span class="sc" style="color: #5E5E5E;
-background-color: null;
-font-style: inherit;">~</span>smart_rank, <span class="sc" style="color: #5E5E5E;
-background-color: null;
-font-style: inherit;">~</span>brave_rank, <span class="sc" style="color: #5E5E5E;
-background-color: null;
-font-style: inherit;">~</span>cunning_rank, <span class="sc" style="color: #5E5E5E;
-background-color: null;
-font-style: inherit;">~</span>kind_rank,</span>
-<span id="cb4-3">  <span class="st" style="color: #20794D;
-background-color: null;
-font-style: inherit;">"Gryffindor"</span>, <span class="dv" style="color: #AD0000;
-background-color: null;
-font-style: inherit;">2</span>,           <span class="dv" style="color: #AD0000;
-background-color: null;
-font-style: inherit;">1</span>,          <span class="dv" style="color: #AD0000;
-background-color: null;
-font-style: inherit;">3</span>,             <span class="dv" style="color: #AD0000;
-background-color: null;
-font-style: inherit;">2</span>,</span>
-<span id="cb4-4">  <span class="st" style="color: #20794D;
-background-color: null;
-font-style: inherit;">"Ravenclaw"</span>,  <span class="dv" style="color: #AD0000;
-background-color: null;
-font-style: inherit;">1</span>,           <span class="dv" style="color: #AD0000;
-background-color: null;
-font-style: inherit;">3</span>,          <span class="dv" style="color: #AD0000;
-background-color: null;
-font-style: inherit;">3</span>,             <span class="dv" style="color: #AD0000;
-background-color: null;
-font-style: inherit;">3</span>,</span>
-<span id="cb4-5">  <span class="st" style="color: #20794D;
-background-color: null;
-font-style: inherit;">"Hufflepuff"</span>, <span class="dv" style="color: #AD0000;
-background-color: null;
-font-style: inherit;">4</span>,           <span class="dv" style="color: #AD0000;
-background-color: null;
-font-style: inherit;">4</span>,          <span class="dv" style="color: #AD0000;
-background-color: null;
-font-style: inherit;">4</span>,             <span class="dv" style="color: #AD0000;
-background-color: null;
-font-style: inherit;">1</span>,</span>
-<span id="cb4-6">  <span class="st" style="color: #20794D;
-background-color: null;
-font-style: inherit;">"Slytherin"</span>,  <span class="dv" style="color: #AD0000;
-background-color: null;
-font-style: inherit;">3</span>,           <span class="dv" style="color: #AD0000;
-background-color: null;
-font-style: inherit;">2</span>,          <span class="dv" style="color: #AD0000;
-background-color: null;
-font-style: inherit;">1</span>,             <span class="dv" style="color: #AD0000;
-background-color: null;
-font-style: inherit;">4</span>,</span>
-<span id="cb4-7">)</span>
-<span id="cb4-8"></span>
-<span id="cb4-9">harry_potter <span class="sc" style="color: #5E5E5E;
-background-color: null;
-font-style: inherit;">%&gt;%</span></span>
-<span id="cb4-10">  <span class="fu" style="color: #4758AB;
-background-color: null;
-font-style: inherit;">left_join</span>(ranks, <span class="at" style="color: #657422;
-background-color: null;
-font-style: inherit;">by =</span> <span class="st" style="color: #20794D;
-background-color: null;
-font-style: inherit;">"House"</span>) </span></code></pre></div>
-</div>
-<div class="cell">
-<div class="cell-output-display">
-
-<div class="datatables html-widget html-fill-item-overflow-hidden html-fill-item" id="htmlwidget-e0a036acd24ce4d3a8eb" style="width:100%;height:auto;"></div>
-<script type="application/json" data-for="htmlwidget-e0a036acd24ce4d3a8eb">{"x":{"filter":"none","vertical":false,"data":[["1","2","3","4","5","6","7","8","9","10","11","12","13","14","15","16","17","18","19","20","21","22","23","24","25","26","27","28","29","30","31","32","33","34","35","36","37","38","39","40","41","42","43","44","45","46","47","48","49","50","51","52","53","54","55","56","57","58","59","60","61","62","63","64","65","66","67","68","69","70","71","72","73","74","75","76","77","78","79","80","81","82","83","84","85","86","87","88","89","90","91","92","93","94","95","96","97"],["Colin Creevey","Michael Corner","Albus Percival Wulfric Brian Dumbledore","Bloody Baron","Molly Weasley","Antonin Dolohov","Sirius Black","Edgar Bones","Rubeus Hagrid","Hannah Abbott","Cedric Diggory","Padma Patil","Rose Granger-Weasley","Marcus Belby","Dennis Creevey","Draco Malfoy","Rowena Ravenclaw","Augustus Rookwood","Ernest Macmillan","Vincent Crabbe","Penelope Clearwater","Susan Bones","James Sirius Potter","Neville Longbottom","Millicent Bulstrode","Romilda Vane","Parvati Patil","Harry James Potter","George Weasley","Dean Thomas","Horace Eugene Flaccus Slughorn","Salazar Slytherin","Remus John Lupin","Peter Pettigrew","Amycus Carrow","Filius Flitwick","Godric Gryffindor","Scorpius Hyperion Malfoy","Terry Boot","Blaise Zabini","Ronald Bilius Weasley","Fat Friar","Minerva McGonagall","Alicia Spinnet","Pomona Sprout","Edward Remus Lupin","Gilderoy Lockhart","Oliver Wood","Frank Longbottom","Lily J. Potter","Gregory Goyle","Ginevra (Ginny) Molly Weasley","Arthur Weasley","(Bill) William Arthur Weasley","Walden Macnair","Charles Weasley","Theodore Nott","Alecto Carrow","Severus Snape","Narcissa Malfoy","Tom Marvolo Riddle","Bellatrix Lestrange","Anthony Goldstein","Nicholas de Mimsy-Porpington","Percy Ignatius Weasley","Pansy Parkinson","Marcus Flint","James Potter","Regulus Arcturus Black","Lee Jordan","Nymphadora Tonks","Angelina Johnson","Myrtle Elizabeth Warren (Moaning Myrtle)","Albus Severus Potter","Hermione Jean Granger","Cormac McLaggen","Justin Finch-Fletchley","Rodolphus Lestrange","Newton Scamander","Luna Lovegood","Marietta Edgecombe","Sybill Patricia Trelawney","Dolores Jane Umbridge","Roger Davies","Lavender Brown","Helena Ravenclaw","Lucius Malfoy","Katie Bell","Fred Weasley","Corban Yaxley","Seamus Finnigan","Helga Hufflepuff","Garrick Ollivander","Quirinus Quirrell","Cho Chang","Zacharias Smith","Graham Montague"],["Gryffindor","Ravenclaw","Gryffindor","Slytherin","Gryffindor","Slytherin","Gryffindor","Hufflepuff","Gryffindor","Hufflepuff","Hufflepuff","Ravenclaw","Gryffindor","Ravenclaw","Gryffindor","Slytherin","Ravenclaw","Slytherin","Hufflepuff","Slytherin","Ravenclaw","Hufflepuff","Gryffindor","Gryffindor","Slytherin","Gryffindor","Gryffindor","Gryffindor","Gryffindor","Gryffindor","Slytherin","Slytherin","Gryffindor","Gryffindor","Slytherin","Ravenclaw","Gryffindor","Slytherin","Ravenclaw","Slytherin","Gryffindor","Hufflepuff","Gryffindor","Gryffindor","Hufflepuff","Hufflepuff","Ravenclaw","Gryffindor","Gryffindor","Gryffindor","Slytherin","Gryffindor","Gryffindor","Gryffindor","Slytherin","Gryffindor","Slytherin","Slytherin","Slytherin","Slytherin","Slytherin","Slytherin","Ravenclaw","Gryffindor","Gryffindor","Slytherin","Slytherin","Gryffindor","Slytherin","Gryffindor","Hufflepuff","Gryffindor","Ravenclaw","Slytherin","Gryffindor","Gryffindor","Hufflepuff","Slytherin","Hufflepuff","Ravenclaw","Ravenclaw","Ravenclaw","Slytherin","Ravenclaw","Gryffindor","Ravenclaw","Slytherin","Gryffindor","Gryffindor","Slytherin","Gryffindor","Hufflepuff","Ravenclaw","Ravenclaw","Ravenclaw","Hufflepuff","Slytherin"],[2,1,2,3,2,3,2,4,2,4,4,1,2,1,2,3,1,3,4,3,1,4,2,2,3,2,2,2,2,2,3,3,2,2,3,1,2,3,1,3,2,4,2,2,4,4,1,2,2,2,3,2,2,2,3,2,3,3,3,3,3,3,1,2,2,3,3,2,3,2,4,2,1,3,2,2,4,3,4,1,1,1,3,1,2,1,3,2,2,3,2,4,1,1,1,4,3],[1,3,1,2,1,2,1,4,1,4,4,3,1,3,1,2,3,2,4,2,3,4,1,1,2,1,1,1,1,1,2,2,1,1,2,3,1,2,3,2,1,4,1,1,4,4,3,1,1,1,2,1,1,1,2,1,2,2,2,2,2,2,3,1,1,2,2,1,2,1,4,1,3,2,1,1,4,2,4,3,3,3,2,3,1,3,2,1,1,2,1,4,3,3,3,4,2],[3,2,3,1,3,1,3,4,3,4,4,2,3,2,3,1,2,1,4,1,2,4,3,3,1,3,3,3,3,3,1,1,3,3,1,2,3,1,2,1,3,4,3,3,4,4,2,3,3,3,1,3,3,3,1,3,1,1,1,1,1,1,2,3,3,1,1,3,1,3,4,3,2,1,3,3,4,1,4,2,2,2,1,2,3,2,1,3,3,1,3,4,2,2,2,4,1],[2,3,2,4,2,4,2,1,2,1,1,3,2,3,2,4,3,4,1,4,3,1,2,2,4,2,2,2,2,2,4,4,2,2,4,3,2,4,3,4,2,1,2,2,1,1,3,2,2,2,4,2,2,2,4,2,4,4,4,4,4,4,3,2,2,4,4,2,4,2,1,2,3,4,2,2,1,4,1,3,3,3,4,3,2,3,4,2,2,4,2,1,3,3,3,1,4]],"container":"<table class=\"display\">\n  <thead>\n    <tr>\n      <th> <\/th>\n      <th>Name<\/th>\n      <th>House<\/th>\n      <th>smart_rank<\/th>\n      <th>brave_rank<\/th>\n      <th>cunning_rank<\/th>\n      <th>kind_rank<\/th>\n    <\/tr>\n  <\/thead>\n<\/table>","options":{"columnDefs":[{"className":"dt-right","targets":[3,4,5,6]},{"orderable":false,"targets":0}],"order":[],"autoWidth":false,"orderClasses":false}},"evals":[],"jsHooks":[]}</script>
-</div>
-</div>
-
-
-</section>
-
- ]]></description>
-  <category>rstats</category>
-  <guid>https://www.livefreeordichotomize.com/posts/2020-05-16-this-one-cool-hack/index.html</guid>
-  <pubDate>Sat, 16 May 2020 00:00:00 GMT</pubDate>
 </item>
 </channel>
 </rss>
