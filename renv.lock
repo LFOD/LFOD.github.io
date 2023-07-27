@@ -1025,16 +1025,6 @@
         "vctrs"
       ]
     },
-    "ggokabeito": {
-      "Package": "ggokabeito",
-      "Version": "0.1.0",
-      "Source": "Repository",
-      "Repository": "CRAN",
-      "Hash": "3ebb1aa87a9e095e5693c7fa782a6b1b",
-      "Requirements": [
-        "ggplot2"
-      ]
-    },
     "ggplot2": {
       "Package": "ggplot2",
       "Version": "3.4.2",
@@ -1290,6 +1280,19 @@
         "glue",
         "lifecycle",
         "rlang"
+      ]
+    },
+    "halfmoon": {
+      "Package": "halfmoon",
+      "Version": "0.1.0",
+      "Source": "Repository",
+      "Repository": "CRAN",
+      "Hash": "2cab32cc0e4aea3a4b80430301507706",
+      "Requirements": [
+        "cli",
+        "ggplot2",
+        "tidyselect",
+        "tidysmd"
       ]
     },
     "haven": {
@@ -2148,6 +2151,22 @@
         "rlang"
       ]
     },
+    "propensity": {
+      "Package": "propensity",
+      "Version": "0.0.0.9000",
+      "Source": "GitHub",
+      "RemoteType": "github",
+      "RemoteHost": "api.github.com",
+      "RemoteUsername": "r-causal",
+      "RemoteRepo": "propensity",
+      "RemoteRef": "main",
+      "RemoteSha": "93bfa39eba27ee1d595328d9c1b25d9b436c59c1",
+      "Hash": "5a5b5dd0e124a400c7e00a1d8f379bd3",
+      "Requirements": [
+        "cli",
+        "rlang"
+      ]
+    },
     "proto": {
       "Package": "proto",
       "Version": "1.0.0",
@@ -2636,6 +2655,16 @@
         "sysfonts"
       ]
     },
+    "smd": {
+      "Package": "smd",
+      "Version": "0.6.6",
+      "Source": "Repository",
+      "Repository": "CRAN",
+      "Hash": "9e7db31cc3f062292e5a3e71b0365390",
+      "Requirements": [
+        "MASS"
+      ]
+    },
     "sourcetools": {
       "Package": "sourcetools",
       "Version": "0.1.7",
@@ -2935,6 +2964,21 @@
         "rlang",
         "vctrs",
         "withr"
+      ]
+    },
+    "tidysmd": {
+      "Package": "tidysmd",
+      "Version": "0.2.0.9000",
+      "Source": "Repository",
+      "Repository": "CRAN",
+      "Hash": "1547c69393c9c23a76ff5e6a15f07fb5",
+      "Requirements": [
+        "dplyr",
+        "purrr",
+        "rlang",
+        "smd",
+        "tidyr",
+        "tidyselect"
       ]
     },
     "tidytext": {
