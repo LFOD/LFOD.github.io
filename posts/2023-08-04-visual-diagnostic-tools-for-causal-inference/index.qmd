@@ -3,12 +3,12 @@ title: "Visual Diagnostic Tools for Causal Inference"
 author: Lucy D'Agostino McGowan
 date: '2023-08-04'
 categories: ["rstats", "causal inference", "mirrored histograms", "balance", "propensity scores", "treatment effect heterogeneity"]
-description: "Here we are going to look at several diagnostic plots are helpful when attempting to answer a causal question. They can be used to visualize the target population, balance, and treatment effect heterogeneity."
+description: "Here we are going to look at several diagnostic plots that are helpful when attempting to answer a causal question. They can be used to visualize the target population, balance, and treatment effect heterogeneity."
 ---
 
 **This post is cross-posted on our [R Causal blog](https://r-causal.github.io/r-causal-blog/posts.html)**
 
-Here we are going to look at several diagnostic plots are helpful when attempting to answer a causal question. They can be used to visualize the target population, balance, and treatment effect heterogeneity.
+Here we are going to look at several diagnostic plots that are helpful when attempting to answer a causal question. They can be used to visualize the target population, balance, and treatment effect heterogeneity.
 
 ## Setup 
 
