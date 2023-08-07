@@ -142,7 +142,6 @@ ggplot(data, aes(p, fill = t, group = t)) +
   annotate("label", 0.5, 10, label = "treated", color = "cornflower blue") +
   scale_y_continuous(labels = abs) +
   labs(x = "propensity score",
-       fill = "treatment",
        y = "count") + 
   theme(legend.position = "none")
 ```
@@ -156,7 +155,6 @@ ggplot(data, aes(p, fill = t, group = t)) +
   annotate("label", 0.5, 10, label = "treated", color = "cornflower blue") +
   scale_y_continuous(labels = abs) +
   labs(x = "propensity score",
-       fill = "treatment",
        y = "count") + 
   theme(legend.position = "none")
 ```
@@ -171,7 +169,6 @@ ggplot(data, aes(p, fill = t, group = t)) +
   annotate("label", 0.5, 10, label = "treated", color = "cornflower blue") +
   scale_y_continuous(labels = abs) +
   labs(x = "propensity score",
-       fill = "treatment",
        y = "count") + 
   theme(legend.position = "none")
 ```
@@ -186,7 +183,6 @@ ggplot(data, aes(p, fill = t, group = t)) +
   annotate("label", 0.5, 10, label = "treated", color = "cornflower blue") +
   scale_y_continuous(labels = abs) +
   labs(x = "propensity score",
-       fill = "treatment",
        y = "count") + 
   theme(legend.position = "none")
 ```
