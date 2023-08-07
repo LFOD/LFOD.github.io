@@ -6,6 +6,8 @@ categories: ["rstats", "causal inference", "mirrored histograms", "balance", "pr
 description: "Here we are going to look at several diagnostic plots are helpful when attempting to answer a causal question. They can be used to visualize the target population, balance, and treatment effect heterogeneity."
 ---
 
+**This post is cross-posted on our [R Causal blog](https://r-causal.github.io/r-causal-blog/posts.html)**
+
 Here we are going to look at several diagnostic plots are helpful when attempting to answer a causal question. They can be used to visualize the target population, balance, and treatment effect heterogeneity.
 
 ## Setup 
