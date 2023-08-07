@@ -1,5 +1,5 @@
 ---
-title: "Visual Diagnostic Tool for Causal Inference"
+title: "Visual Diagnostic Tool for Causal Inference: Heterogeneous Treatment Effects"
 author: Lucy D'Agostino McGowan
 date: '2023-07-26'
 categories: ["rstats", "causal inference", "treatment heterogeneity"]
