@@ -351,6 +351,10 @@ ggplot(data, aes(x = p, y = y, color = t)) +
 
 The lines cross! This indicates that there is treatment effect heterogeneity (in this particular case, when the propensity score is greater than 0.5, there is a positive treatment effect, and when less than 0.5 there is a negative treatment effect).
 
+::: column-margin
+You can find a longer post about these plots [here](https://livefreeordichotomize.com/posts/2023-07-26-visual-diagnostic-tool-for-causal-inference/).
+:::
+
 Just to see what it looks like when there is *not* a heterogeneous treatment effect, let's check out the `data_nonlinear` dataset (where I simulated a constant effect). Notice below the lines don't cross, the width between them is constant across the covariate space.
 
 ```{r}
@@ -359,8 +363,7 @@ ggplot(data_nonlinear, aes(x = p, y = y, color = t)) +
   geom_smooth(method = "loess", formula = "y ~ x", span = 50)
 ```
 
-::: column-margin
-You can find a longer post about these plots [here](https://livefreeordichotomize.com/posts/2023-07-26-visual-diagnostic-tool-for-causal-inference/).
-:::
 
+## Wrap up
 
+So there you have it! Four visualizations to add to your tool kit when attempting to answer causal questions.
