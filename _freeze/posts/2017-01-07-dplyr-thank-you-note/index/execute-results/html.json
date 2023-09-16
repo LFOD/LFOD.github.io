@@ -1,0 +1,14 @@
+{
+  "hash": "27579417527e472d86f54a5bb1043310",
+  "result": {
+    "markdown": "---\nauthor: \"Lucy D'Agostino McGowan\"\ndate: 2017-01-07T12:12:28-06:00\ndraft: false\nimage: \"\"\nshare: true\ncategories:\n- thankyou\n- rstats\ntitle: \"dplyr thank you note\"\ndescription: \"It's that post-holiday time of year to write some thank yous! I'm getting excited to attend rstudio::conf next week, so in that spirit, I have put together a little thank you using dplyr\"\n---\n\n\n\nIt's that post-holiday time of year to write some thank yous! I'm getting excited to attend rstudio::conf next week, so in that spirit, I have put together a little thank you using `dplyr`.\n\n::: {.cell}\n\n```{.r .cell-code}\nlibrary(\"dplyr\")\n```\n:::\n\n::: {.cell}\n\n```{.r .cell-code}\ndear <-function(input, you = \"you\") {\n  cat(input, \"\\nDear \", you, \",\", sep = \"\")\n}\n\nthank_you <- function(input, for_the = \"gift\") {\n  cat(input, \"\\n Thank you for the\", for_the)\n}\n\npersonal_touch <- function(input, from_the_heart = \"I hope you have a lovely New Year!\") {\n  cat(input, from_the_heart)\n}\n\nfrom <- function(input, us = \"us\"){\n  cat(input, \"\\n Cheers,\\n\", us)\n}\n```\n:::\n\n::: {.cell}\n\n```{.r .cell-code}\n\"A dplyr Thank You Note\" %>%\n  dear(you = \"R Studio\") %>%\n  thank_you(for_the = \"opportunity to attend rstudio::conf.\") %>%\n  personal_touch(from_the_heart = \"We are SO looking forward to learning from and with you all.\") %>%\n  from(us = \"Lucy, Jacquelyn, and Alli\")\n```\n\n::: {.cell-output .cell-output-stdout}\n\n```\nA dplyr Thank You Note\nDear R Studio, \n Thank you for the opportunity to attend rstudio::conf. We are SO looking forward to learning from and with you all. \n Cheers,\n Lucy, Jacquelyn, and Alli\n```\n\n\n:::\n:::\n",
+    "supporting": [],
+    "filters": [
+      "rmarkdown/pagebreak.lua"
+    ],
+    "includes": {},
+    "engineDependencies": {},
+    "preserve": {},
+    "postProcess": true
+  }
+}

@@ -1,47 +1,23 @@
 on:
+  workflow_dispatch:
   push:
     branches: main
-  pull_request:
-    branches: [main]
-  workflow_dispatch:
 
-name: renderbook
+name: Quarto Publish
 
 jobs:
-  render:
+  build-deploy:
     runs-on: ubuntu-latest
     permissions:
       contents: write
     steps:
       - name: Check out repository
-        uses: actions/checkout@v2
-
-      - name: Setup dependencies
-        run: |
-          sudo apt install libcurl4-openssl-dev
-          sudo apt-get install libmagick++-dev
-          sudo apt install libudunits2-dev
-          sudo apt install libgdal-dev
-          sudo apt-get install libharfbuzz-dev libfribidi-dev
-          
-      - uses: r-lib/actions/setup-r@v2
-
-      - name: Create and populate .Renviron file
-        run: |
-          echo OPENCAGE_KEY="$MAPPED_OPENCAGE_KEY" >> ~/.Renviron
-          echo CENSUS_API_KEY="$MAPPED_CENSUS_API_KEY " >> ~/.Renviron
-        shell: bash
-        env:
-          MAPPED_OPENCAGE_KEY: ${{ secrets.OPENCAGE_KEY}}
-          MAPPED_CENSUS_API_KEY: ${{ secrets.CENSUS_API_KEY }}
-
-      - uses: r-lib/actions/setup-renv@v2
+        uses: actions/checkout@v4
 
       - name: Set up Quarto
         uses: quarto-dev/quarto-actions/setup@v2
-        
+
       - name: Render and Publish
-        if: github.event_name != 'pull_request'
         uses: quarto-dev/quarto-actions/publish@v2
         with:
           target: gh-pages
