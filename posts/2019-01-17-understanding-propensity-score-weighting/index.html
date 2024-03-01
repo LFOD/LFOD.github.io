@@ -139,7 +139,7 @@ ga('send', {
 <meta name="twitter:image" content="https://www.livefreeordichotomize.com/posts/2019-01-17-understanding-propensity-score-weighting/media/lfod-card.png">
 <meta name="twitter:creator" content="@LucyStats">
 <meta name="twitter:card" content="summary_large_image">
-</head><body class="nav-fixed fullcontent"><header id="custom-header">
+</head><body class="nav-fixed"><header id="custom-header">
   <div id="header_viz"></div>
 </header>
 
@@ -421,17 +421,23 @@ window.Quarto = {
   </header><div id="quarto-content" class="quarto-container page-columns page-rows-contents page-layout-article page-navbar">
 <!-- sidebar -->
 <!-- margin-sidebar -->
-    
+    <div id="quarto-margin-sidebar" class="sidebar margin-sidebar">
+        
+    </div>
 <!-- main -->
-<main class="content quarto-banner-title-block" id="quarto-document-content">
+<main class="content quarto-banner-title-block page-columns page-full" id="quarto-document-content">
 
 
 
 
 
-<section id="lets-create-a-toy-dataset" class="level2">
+<section id="lets-create-a-toy-dataset" class="level2 page-columns page-full">
 <h2 class="anchored" data-anchor-id="lets-create-a-toy-dataset">Let’s create a toy dataset</h2>
-<p>For this post, I’m going to use this generated dataset as an example. <label for="tufte-mn-" class="margin-toggle">⊕</label><input type="checkbox" id="tufte-mn-" class="margin-toggle"><span class="marginnote">Here I am using the terminology ‘treatment’ for consistency, but these methods are not confined to the medical setting. You can also think of this as an ‘exposure’. For example, you could be interested in how ‘exposing’ users to a certain UI effects an outcome, like whether they purchase a product.</span> Here, I am simulating two variables, <span class="math inline">\(x_1\)</span> and <span class="math inline">\(x_2\)</span>. These are my <em>pre-treatment characteristics</em> (we’ll define that soon!). I am then using these to create a binary <code>treatment</code> variable. This <code>treatment</code> variable depends on <code>x_1</code> and <code>x_2</code>. Finally, I have generated an <code>outcome</code> variable dependent on the <code>treatment</code> and these pre-treatment characteristics, making the treatment effect equal to 2.</p>
+<p>For this post, I’m going to use this generated dataset as an example.</p>
+
+<div class="no-row-height column-margin column-container"><div class="">
+<p>Here I am using the terminology ‘treatment’ for consistency, but these methods are not confined to the medical setting. You can also think of this as an ‘exposure’. For example, you could be interested in how ‘exposing’ users to a certain UI effects an outcome, like whether they purchase a product.</p>
+</div></div><p>Here, I am simulating two variables, <span class="math inline">\(x_1\)</span> and <span class="math inline">\(x_2\)</span>. These are my <em>pre-treatment characteristics</em> (we’ll define that soon!). I am then using these to create a binary <code>treatment</code> variable. This <code>treatment</code> variable depends on <code>x_1</code> and <code>x_2</code>. Finally, I have generated an <code>outcome</code> variable dependent on the <code>treatment</code> and these pre-treatment characteristics, making the treatment effect equal to 2.</p>
 <div class="cell">
 <div class="sourceCode cell-code" id="cb1"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb1-1"><a href="#cb1-1" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(tidyverse)</span>
 <span id="cb1-2"><a href="#cb1-2" aria-hidden="true" tabindex="-1"></a><span class="fu">set.seed</span>(<span class="dv">928</span>)</span>
@@ -482,7 +488,7 @@ window.Quarto = {
 </div>
 <p>Notice here I fit a logistic regression, predicting the <code>treatment</code> from the pre-treatment characteristics, <code>x_1</code> and <code>x_2</code> using the <code>glm()</code> function along with the <code>family = "binomial"</code> option. I then used the <code>predict()</code> function along with <code>type = "response"</code> to obtain the conditional probabilities of treatment assignment.</p>
 </section>
-<section id="what-are-we-trying-to-estimate" class="level2">
+<section id="what-are-we-trying-to-estimate" class="level2 page-columns page-full">
 <h2 class="anchored" data-anchor-id="what-are-we-trying-to-estimate">What are we trying to estimate?</h2>
 <p>The point of the propensity score is to allow you to estimate the <em>treatment</em> or <em>exposure</em> effect in an unbiased way. This works based on a few assumptions:</p>
 <ul>
@@ -502,17 +508,19 @@ window.Quarto = {
 <h3 class="anchored" data-anchor-id="average-treatment-effect-among-the-controls">Average Treatment Effect Among the Controls</h3>
 <p>The Average Treatment Effect Among the Controls (ATC) estimates the treatment effect with the <em>controlled</em> population as the target population.</p>
 </section>
-<section id="average-treatment-effect-among-the-evenly-matchable" class="level3">
+<section id="average-treatment-effect-among-the-evenly-matchable" class="level3 page-columns page-full">
 <h3 class="anchored" data-anchor-id="average-treatment-effect-among-the-evenly-matchable">Average Treatment Effect Among the Evenly Matchable</h3>
 <p>The Average Treatment Effect Among the Evenly Matchable (ATM) estimates the treatment effect with a <em>matched</em> population as the target population. The estimated population is nearly equivalent to the cohort formed by one-to-one pair matching.</p>
-<p><label for="tufte-mn-" class="margin-toggle">⊕</label><input type="checkbox" id="tufte-mn-" class="margin-toggle"><span class="marginnote">My <a href="https://www.lucymcgowan.com/publication/mcgowan2018/">dissertation</a> explores some nice properties of ATM and ATO weights if you are interested in a deeper dive!</span></p>
-</section>
+
+<div class="no-row-height column-margin column-container"><div class="">
+<p>My <a href="https://www.lucymcgowan.com/publication/mcgowan2018/">dissertation</a> explores some nice properties of ATM and ATO weights if you are interested in a deeper dive!”</p>
+</div></div></section>
 <section id="average-treatment-effect-among-the-overlap-population" class="level3">
 <h3 class="anchored" data-anchor-id="average-treatment-effect-among-the-overlap-population">Average Treatment Effect Among the Overlap Population</h3>
 <p>The Average Treatment Effect Among the Overlap Population (ATO) estimates the treatment effect very similar to the ATM, with some improved variance properties. Basically, if you estimated the probability of receiving treatment, the “overlap” population would consist of participants who fall in the middle - you’re estimating the treatment effect among those likely to have received either treatment or control. I’ll include some graphs in the following sections to help better understand this causal quantity.</p>
 </section>
 </section>
-<section id="how-do-we-incorporate-a-propensity-score-in-a-weight" class="level2">
+<section id="how-do-we-incorporate-a-propensity-score-in-a-weight" class="level2 page-columns page-full">
 <h2 class="anchored" data-anchor-id="how-do-we-incorporate-a-propensity-score-in-a-weight">How do we incorporate a propensity score in a weight?</h2>
 <p>Each of these causal quantities has a weight associated with it. Brace yourself for a little bit of math (but I’ll include R code immediate after so hopefully it won’t be too bad!).</p>
 <p>The propensity score for participant <span class="math inline">\(i\)</span> is defined here as <span class="math inline">\(e_i\)</span> and the treatment assignment is <span class="math inline">\(Z_i\)</span>, where <span class="math inline">\(Z = 1\)</span> indicates the participant received the treatment and <span class="math inline">\(Z = 0\)</span> indicates they received the control.</p>
@@ -537,8 +545,11 @@ window.Quarto = {
 <span id="cb4-12"><a href="#cb4-12" aria-hidden="true" tabindex="-1"></a>      propensity_score <span class="sc">*</span> (<span class="dv">1</span> <span class="sc">-</span> treatment)</span>
 <span id="cb4-13"><a href="#cb4-13" aria-hidden="true" tabindex="-1"></a>  )</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </div>
-<p>Let’s look at some graphs to better understand what these weights are doing. <label for="tufte-mn-" class="margin-toggle">⊕</label><input type="checkbox" id="tufte-mn-" class="margin-toggle"><span class="marginnote">I first saw these <em>mirrored histograms</em> in this context in a paper by <a href="https://www.ncbi.nlm.nih.gov/pubmed/23902694">Li &amp; Greene</a> and <strong>loved</strong> them!</span></p>
-<p>First, I am going to just plot a histogram of the propensity scores for the two populations, those who received treatment (<code>treatment = 1</code>), and those who received the control (<code>treatment = 0</code>). The histogram above the 0 line is the distribution of propensity scores among the treated. The histogram below the 0 line is the distribution of propensity scores among the controls.</p>
+<p>Let’s look at some graphs to better understand what these weights are doing.</p>
+
+<div class="no-row-height column-margin column-container"><div class="">
+<p>I first saw these <em>mirrored histograms</em> in this context in a paper by <a href="https://www.ncbi.nlm.nih.gov/pubmed/23902694">Li &amp; Greene</a> and <strong>loved</strong> them!</p>
+</div></div><p>First, I am going to just plot a histogram of the propensity scores for the two populations, those who received treatment (<code>treatment = 1</code>), and those who received the control (<code>treatment = 0</code>). The histogram above the 0 line is the distribution of propensity scores among the treated. The histogram below the 0 line is the distribution of propensity scores among the controls.</p>
 <div class="cell">
 <div class="sourceCode cell-code" id="cb5"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb5-1"><a href="#cb5-1" aria-hidden="true" tabindex="-1"></a>d <span class="ot">&lt;-</span> dat <span class="sc">%&gt;%</span></span>
 <span id="cb5-2"><a href="#cb5-2" aria-hidden="true" tabindex="-1"></a>  tidyr<span class="sc">::</span><span class="fu">spread</span>(treatment, propensity_score, <span class="at">sep =</span> <span class="st">"_p"</span>)</span>
