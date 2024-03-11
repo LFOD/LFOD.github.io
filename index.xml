@@ -9,7 +9,7 @@
 <link>https://www.livefreeordichotomize.com/</link>
 <atom:link href="https://www.livefreeordichotomize.com/index.xml" rel="self" type="application/rss+xml"/>
 <description>Live Free or Dichotomize: Lucy D&#39;Agostino McGowan &amp; Nick Strayer&#39;s Blog</description>
-<generator>quarto-1.4.550</generator>
+<generator>quarto-1.4.551</generator>
 <lastBuildDate>Fri, 04 Aug 2023 00:00:00 GMT</lastBuildDate>
 <item>
   <title>Visual Diagnostic Tools for Causal Inference</title>
@@ -20,8 +20,8 @@
 
 
 
-
-<p>Here we are going to look at several diagnostic plots are helpful when attempting to answer a causal question. They can be used to visualize the target population, balance, and treatment effect heterogeneity.</p>
+<p><strong>This post is cross-posted on our <a href="https://r-causal.github.io/r-causal-blog/posts.html">R Causal blog</a></strong></p>
+<p>Here we are going to look at several diagnostic plots that are helpful when attempting to answer a causal question. They can be used to visualize the target population, balance, and treatment effect heterogeneity.</p>
 <section id="setup" class="level2 page-columns page-full">
 <h2 class="anchored" data-anchor-id="setup">Setup</h2>
 <p>I’ve simulated data to demonstrate the utility of the various plots. In each simulation, we have four pre-treatment variables: <code>var1</code>, <code>var2</code>, <code>var3</code>, and <code>var4</code>, a treatment, <code>t</code>, and an outcome <code>y</code>. I have also fit a propensity score model for each and calculated ATE, ATT, and overlap weights (unsure what these are? <a href="https://livefreeordichotomize.com/posts/2019-01-17-understanding-propensity-score-weighting/">Check out this post on propensity score weighting</a>). I will also create three propensity score matched cohorts, each with a different caliper.</p>
@@ -643,7 +643,7 @@ font-style: inherit;">1</span>)</span>
 </section>
 <section id="target-population" class="level2 page-columns page-full">
 <h2 class="anchored" data-anchor-id="target-population">Target Population</h2>
-<p>Targeting different causal estimands will yield different target populations (for a longer discussion of target populations <a href="https://livefreeordichotomize.com/posts/2019-01-17-understanding-propensity-score-weighting/">see this post</a> and check out <a href="TODO add link">this awesome pre-print by Noah Griefer and Liz Stuart</a>. For example, if you are interested in answering a question with the treated group in mind, an estimand that estimates the average treatment effect among the treated (ATT), will be appropriate. Targeting this estimand will lead to selecting unexposed individuals who match the characterstics of the treated population (whether via matching to these individuals or upweighting them in the sample). Mirrored histograms can be a nice way to visualize the distribution of your target population after incorporating the propensity score when either matching or weighting are used. These basic plots are simply histograms of the <em>propensity score</em>, stratified by exposure. “Mirroring” these histograms above and below the x-axis, can make it easier to compare regions of overlap.</p>
+<p>Targeting different causal estimands will yield different target populations (for a longer discussion of target populations <a href="https://livefreeordichotomize.com/posts/2019-01-17-understanding-propensity-score-weighting/">see this post</a> and check out <a href="https://arxiv.org/abs/2106.10577">this awesome pre-print by Noah Griefer and Liz Stuart</a>. For example, if you are interested in answering a question with the treated group in mind, an estimand that estimates the average treatment effect among the treated (ATT), will be appropriate. Targeting this estimand will lead to selecting unexposed individuals who match the characterstics of the treated population (whether via matching to these individuals or upweighting them in the sample). Mirrored histograms can be a nice way to visualize the distribution of your target population after incorporating the propensity score when either matching or weighting are used. These basic plots are simply histograms of the <em>propensity score</em>, stratified by exposure. “Mirroring” these histograms above and below the x-axis, can make it easier to compare regions of overlap.</p>
 <section id="what-am-i-looking-for" class="level3 page-columns page-full">
 <h3 class="anchored" data-anchor-id="what-am-i-looking-for">What am I looking for?</h3>
 <ul>
@@ -733,17 +733,12 @@ background-color: null;
 font-style: inherit;">"propensity score"</span>,</span>
 <span id="cb3-7">       <span class="at" style="color: #657422;
 background-color: null;
-font-style: inherit;">fill =</span> <span class="st" style="color: #20794D;
-background-color: null;
-font-style: inherit;">"treatment"</span>,</span>
-<span id="cb3-8">       <span class="at" style="color: #657422;
-background-color: null;
 font-style: inherit;">y =</span> <span class="st" style="color: #20794D;
 background-color: null;
 font-style: inherit;">"count"</span>) <span class="sc" style="color: #5E5E5E;
 background-color: null;
 font-style: inherit;">+</span> </span>
-<span id="cb3-9">  <span class="fu" style="color: #4758AB;
+<span id="cb3-8">  <span class="fu" style="color: #4758AB;
 background-color: null;
 font-style: inherit;">theme</span>(<span class="at" style="color: #657422;
 background-color: null;
@@ -857,17 +852,12 @@ background-color: null;
 font-style: inherit;">"propensity score"</span>,</span>
 <span id="cb4-8">       <span class="at" style="color: #657422;
 background-color: null;
-font-style: inherit;">fill =</span> <span class="st" style="color: #20794D;
-background-color: null;
-font-style: inherit;">"treatment"</span>,</span>
-<span id="cb4-9">       <span class="at" style="color: #657422;
-background-color: null;
 font-style: inherit;">y =</span> <span class="st" style="color: #20794D;
 background-color: null;
 font-style: inherit;">"count"</span>) <span class="sc" style="color: #5E5E5E;
 background-color: null;
 font-style: inherit;">+</span> </span>
-<span id="cb4-10">  <span class="fu" style="color: #4758AB;
+<span id="cb4-9">  <span class="fu" style="color: #4758AB;
 background-color: null;
 font-style: inherit;">theme</span>(<span class="at" style="color: #657422;
 background-color: null;
@@ -981,17 +971,12 @@ background-color: null;
 font-style: inherit;">"propensity score"</span>,</span>
 <span id="cb5-8">       <span class="at" style="color: #657422;
 background-color: null;
-font-style: inherit;">fill =</span> <span class="st" style="color: #20794D;
-background-color: null;
-font-style: inherit;">"treatment"</span>,</span>
-<span id="cb5-9">       <span class="at" style="color: #657422;
-background-color: null;
 font-style: inherit;">y =</span> <span class="st" style="color: #20794D;
 background-color: null;
 font-style: inherit;">"count"</span>) <span class="sc" style="color: #5E5E5E;
 background-color: null;
 font-style: inherit;">+</span> </span>
-<span id="cb5-10">  <span class="fu" style="color: #4758AB;
+<span id="cb5-9">  <span class="fu" style="color: #4758AB;
 background-color: null;
 font-style: inherit;">theme</span>(<span class="at" style="color: #657422;
 background-color: null;
@@ -1105,17 +1090,12 @@ background-color: null;
 font-style: inherit;">"propensity score"</span>,</span>
 <span id="cb6-8">       <span class="at" style="color: #657422;
 background-color: null;
-font-style: inherit;">fill =</span> <span class="st" style="color: #20794D;
-background-color: null;
-font-style: inherit;">"treatment"</span>,</span>
-<span id="cb6-9">       <span class="at" style="color: #657422;
-background-color: null;
 font-style: inherit;">y =</span> <span class="st" style="color: #20794D;
 background-color: null;
 font-style: inherit;">"count"</span>) <span class="sc" style="color: #5E5E5E;
 background-color: null;
 font-style: inherit;">+</span> </span>
-<span id="cb6-10">  <span class="fu" style="color: #4758AB;
+<span id="cb6-9">  <span class="fu" style="color: #4758AB;
 background-color: null;
 font-style: inherit;">theme</span>(<span class="at" style="color: #657422;
 background-color: null;
@@ -2008,7 +1988,10 @@ font-style: inherit;">"y ~ x"</span>)</span></code></pre></div>
 </div>
 </div>
 <p>The lines cross! This indicates that there is treatment effect heterogeneity (in this particular case, when the propensity score is greater than 0.5, there is a positive treatment effect, and when less than 0.5 there is a negative treatment effect).</p>
-<p>Just to see what it looks like when there is <em>not</em> a heterogeneous treatment effect, let’s check out the <code>data_nonlinear</code> dataset (where I simulated a constant effect). Notice below the lines don’t cross, the width between them is constant across the covariate space.</p>
+
+<div class="no-row-height column-margin column-container"><div class="">
+<p>You can find a longer post about these plots <a href="https://livefreeordichotomize.com/posts/2023-07-26-visual-diagnostic-tool-for-causal-inference/">here</a>.</p>
+</div></div><p>Just to see what it looks like when there is <em>not</em> a heterogeneous treatment effect, let’s check out the <code>data_nonlinear</code> dataset (where I simulated a constant effect). Notice below the lines don’t cross, the width between them is constant across the covariate space.</p>
 <div class="cell">
 <div class="sourceCode cell-code" id="cb20" style="background: #f1f3f5;"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb20-1"><span class="fu" style="color: #4758AB;
 background-color: null;
@@ -2038,15 +2021,11 @@ font-style: inherit;">geom_smooth</span>(<span class="at" style="color: #657422;
 background-color: null;
 font-style: inherit;">method =</span> <span class="st" style="color: #20794D;
 background-color: null;
-font-style: inherit;">"loess"</span>, <span class="at" style="color: #657422;
+font-style: inherit;">"lm"</span>, <span class="at" style="color: #657422;
 background-color: null;
 font-style: inherit;">formula =</span> <span class="st" style="color: #20794D;
 background-color: null;
-font-style: inherit;">"y ~ x"</span>, <span class="at" style="color: #657422;
-background-color: null;
-font-style: inherit;">span =</span> <span class="dv" style="color: #AD0000;
-background-color: null;
-font-style: inherit;">50</span>)</span></code></pre></div>
+font-style: inherit;">"y ~ x"</span>)</span></code></pre></div>
 <div class="cell-output-display">
 <div>
 <figure class="figure">
@@ -2055,12 +2034,13 @@ font-style: inherit;">50</span>)</span></code></pre></div>
 </div>
 </div>
 </div>
+</section>
+</section>
+<section id="wrap-up" class="level2">
+<h2 class="anchored" data-anchor-id="wrap-up">Wrap up</h2>
+<p>So there you have it! Four visualizations to add to your tool kit when attempting to answer causal questions.</p>
 
 
-
-<div class="no-row-height column-margin column-container"><div class="">
-<p>You can find a longer post about these plots <a href="https://livefreeordichotomize.com/posts/2023-07-26-visual-diagnostic-tool-for-causal-inference/">here</a>.</p>
-</div></div></section>
 </section>
 
  ]]></description>
@@ -2074,11 +2054,10 @@ font-style: inherit;">50</span>)</span></code></pre></div>
   <pubDate>Fri, 04 Aug 2023 00:00:00 GMT</pubDate>
 </item>
 <item>
-  <title>Visual Diagnostic Tool for Causal Inference</title>
+  <title>Visual Diagnostic Tool for Causal Inference: Heterogeneous Treatment Effects</title>
   <dc:creator>Lucy D&#39;Agostino McGowan</dc:creator>
   <link>https://www.livefreeordichotomize.com/posts/2023-07-26-visual-diagnostic-tool-for-causal-inference/</link>
   <description><![CDATA[ 
-
 
 
 
@@ -2685,7 +2664,6 @@ font-style: inherit;">"treatment"</span>)</span></code></pre></div>
   <dc:creator>Lucy D&#39;Agostino McGowan</dc:creator>
   <link>https://www.livefreeordichotomize.com/posts/2023-04-29-two-wrong-models-missing-data-style/</link>
   <description><![CDATA[ 
-
 
 
 
@@ -4791,7 +4769,6 @@ font-style: inherit;">2</span>)</span></code></pre></div>
 
 
 
-
 <p>Here is the scenario: You are trying to predict some outcome, <img src="https://latex.codecogs.com/png.latex?y">, and some of your predictors have missing data. Will doing a complete case analysis give you unbiased results? What additional information do you need before deciding?</p>
 <p>For some reason, when I tried to answer this question, my first instinct was to try to decide whether the data were <em>missing at random</em>, but it turns out, this might not be the right first question! Why? Complete case analysis will give us unbiased estimates <strong>even if the data are not missing at random</strong>. Excuse me? Yes. When is this the case? When:</p>
 <ol type="1">
@@ -6218,7 +6195,6 @@ font-style: inherit;">"none"</span>)</span></code></pre></div>
 
 
 
-
 <p>I created a little Shiny application to demonstrate that Neural Networks are just souped up linear models: https://lucy.shinyapps.io/neural-net-linear/</p>
 <p><img src="https://www.livefreeordichotomize.com/media/images/2023-04-27/app.gif" class="img-fluid"></p>
 <p>This application has a neural network fit to a dataset with one predictor, x, and one outcome, y. The network has one hidden layer with three activations. You can click a “Play” button to watch how the neural network fits across 300 epochs. You can also click on the nodes of the neural network diagram to highlight each of the individual activations across the applciation (along with their corresponding coefficients).</p>
@@ -6237,7 +6213,6 @@ font-style: inherit;">"none"</span>)</span></code></pre></div>
   <dc:creator>Lucy D&#39;Agostino McGowan</dc:creator>
   <link>https://www.livefreeordichotomize.com/posts/2023-04-24-causal-quartets/</link>
   <description><![CDATA[ 
-
 
 
 
@@ -6270,7 +6245,6 @@ font-style: inherit;">"none"</span>)</span></code></pre></div>
   <dc:creator>Lucy D&#39;Agostino McGowan</dc:creator>
   <link>https://www.livefreeordichotomize.com/posts/2022-12-14-transparency-in-public-health/</link>
   <description><![CDATA[ 
-
 
 
 
@@ -6309,7 +6283,6 @@ font-style: inherit;">"none"</span>)</span></code></pre></div>
   <dc:creator>Lucy D&#39;Agostino McGowan</dc:creator>
   <link>https://www.livefreeordichotomize.com/posts/2022-09-19-migrating-from-hugo-to-quarto/</link>
   <description><![CDATA[ 
-
 
 
 
@@ -6477,8 +6450,7 @@ font-style: inherit;">---</span></span></code></pre></div>
 <section id="comments-and-google-analytics" class="level2">
 <h2 class="anchored" data-anchor-id="comments-and-google-analytics">4. Comments and Google analytics</h2>
 <p>It is straightforward to incorporate comments on your blog – our old site used utterance. Likewise, it is simple to add Google Analytics. To use this in Quarto, we can add the following to the website’s global <code>yaml</code>:</p>
-<div class="cell">
-<div class="sourceCode cell-code" id="cb4" style="background: #f1f3f5;"><pre class="sourceCode yaml code-with-copy"><code class="sourceCode yaml"><span id="cb4-1"><span class="fu" style="color: #4758AB;
+<div class="sourceCode" id="cb4" style="background: #f1f3f5;"><pre class="sourceCode yaml code-with-copy"><code class="sourceCode yaml"><span id="cb4-1"><span class="fu" style="color: #4758AB;
 background-color: null;
 font-style: inherit;">website</span><span class="kw" style="color: #003B4F;
 background-color: null;
@@ -6519,7 +6491,6 @@ background-color: null;
 font-style: inherit;"> </span><span class="st" style="color: #20794D;
 background-color: null;
 font-style: inherit;">"UA------"</span></span></code></pre></div>
-</div>
 <p>To see our full setup, check out our GitHub repo: <a href="https://github.com/LFOD/LFOD.github.io">github.com/LFOD/LFOD.github.io</a></p>
 <p>Have other questions? Feel free to leave them in the comments!</p>
 
@@ -6539,7 +6510,6 @@ font-style: inherit;">"UA------"</span></span></code></pre></div>
   <dc:creator>Lucy D&#39;Agostino McGowan</dc:creator>
   <link>https://www.livefreeordichotomize.com/posts/2022-09-07-tipr-an-r-package-for-sensitivity-to-unmeasured-confounding/</link>
   <description><![CDATA[ 
-
 
 
 
@@ -7017,7 +6987,6 @@ font-style: inherit;">"Unmeasured confounder - outcome effect"</span>)</span></c
 
 
 
-
 <p>I recently noticed that the Pfizer immunobridging trials, presumably set up to demonstrate that their COVID-19 vaccines elicit the same antibody response in children as was seen in 16-25 year olds, for whom efficacy has previously been demonstrated, have a strange criteria for “success”.</p>
 
 <div class="no-row-height column-margin column-container"><div class="">
@@ -7070,7 +7039,6 @@ font-style: inherit;">"Unmeasured confounder - outcome effect"</span>)</span></c
   <dc:creator>Lucy D&#39;Agostino McGowan</dc:creator>
   <link>https://www.livefreeordichotomize.com/posts/2022-02-20-exploring-impacts-of-noninferiority-thresholds/</link>
   <description><![CDATA[ 
-
 
 
 
@@ -7234,7 +7202,6 @@ font-style: inherit;">"Unmeasured confounder - outcome effect"</span>)</span></c
   <dc:creator>Lucy D&#39;Agostino McGowan</dc:creator>
   <link>https://www.livefreeordichotomize.com/posts/2022-01-16-would-seeing-spider-man-no-way-home-decrease-covid19-cases/</link>
   <description><![CDATA[ 
-
 
 
 
@@ -7795,7 +7762,6 @@ font-style: inherit;">NA</span>))</span></code></pre></div>
 
 
 
-
 <p>I’m seeing lots of confusion around the <em>frequency</em> of breakthrough cases and the effectiveness of vaccines (in fact, a recent interview I did resulted in a confusing headline on this topic!) so let’s dive in!</p>
 <p>Vaccine effectiveness is a relative measure, it tells us how protected you will be relative to an unvaccinated person. Even with delta, this looks ok for infections (and <em>very good</em> for severe illness)</p>
 <section id="scenario-1" class="level3">
@@ -7847,7 +7813,6 @@ font-style: inherit;">NA</span>))</span></code></pre></div>
 
 
 
-
 <p>I’ve seen a lot today about how effective the vaccines are; mistakes aside, lots of folks seem to be mixing up which denominators matter - good thing statisticians <em>LOVE</em> denominators!</p>
 <p><img src="https://www.livefreeordichotomize.com/media/images/2021-07-21/effective.gif" class="img-fluid"></p>
 <p>If you see something like x% of the sick/hospitalized/deceased were vaccinated, the <em>better</em> the vaccine uptake the <em>scarier</em> this number will seem! It is using the wrong denominator. For example, here is a scenario with 90% vaccination, 4 people got sick: 2 vaccinated 2 unvaccinated:</p>
@@ -7875,7 +7840,6 @@ font-style: inherit;">NA</span>))</span></code></pre></div>
   <dc:creator>Lucy D&#39;Agostino McGowan</dc:creator>
   <link>https://www.livefreeordichotomize.com/posts/2021-04-07-nytimes-map-how-to/</link>
   <description><![CDATA[ 
-
 
 
 
@@ -8309,7 +8273,6 @@ font-style: inherit;">"none"</span>)</span></code></pre></div>
 
 
 
-
 <section id="summary" class="level2">
 <h2 class="anchored" data-anchor-id="summary">Summary</h2>
 <p>Grided is an app that lets you define CSS-Grid layouts in a simple GUI allowing you to see how your app will look while you define it. The app is hosted at <a href="https://nickstrayer.me/grided/">nickstrayer.me/grided</a> and <a href="https://github.com/nstrayer/grided">the source is on github.</a></p>
@@ -8372,7 +8335,6 @@ font-style: inherit;">"none"</span>)</span></code></pre></div>
 
 
 
-
 <div class="no-row-height column-margin column-container"><div class="">
 <p>Here are some examples of my DIY lightboard in action! <br> * <a href="https://youtu.be/caThvcHkysc">How logging symptoms helps slow the virus spread</a><br> * <a href="https://youtu.be/fczR2ZOL_h8">Lucy D’Agostino McGowan discusses peer learning communities</a><br> * <a href="https://youtu.be/Z8jToqxnAeU">Law of Iterated Expectation</a></p>
 </div></div><p>This summer in an effort to spruce up my home office and online statistics courses, I was in search of a simple solution that would let me walk through equations, as I normally would with a whiteboard in my office, remotely. Enter the <strong>lightboard</strong>! I <em>love</em> the aesthetic of these! They let you work through fun equations while still letting the viewer see your facial expressions, getting as close to an “in person” interaction as I’ve seen! The downside? They are super pricey! Some sites were quoting over $2,500 for the simpliest models. Even DIY “kits” were coming in at over $1,000 - yikes! Then I came across this <a href="https://www.youtube.com/watch?v=L1au1JxMSaA">amazing YouTube video</a> that lays out a simple DIY method that can be put together for <em>much</em> less - in fact, I was able to get my supplies together for less than $100. I put together a <a href="https://twitter.com/LucyStats/status/1285336981292163072">quick tweetorial</a> outlining the steps and the supplies I used; I thought I’d copy the contents here, since a blogpost is sometimes a bit easier to read!</p>
@@ -8424,7 +8386,6 @@ font-style: inherit;">"none"</span>)</span></code></pre></div>
   <dc:creator>Lucy D&#39;Agostino McGowan</dc:creator>
   <link>https://www.livefreeordichotomize.com/posts/2020-07-02-so-you-want-to-learn-r/</link>
   <description><![CDATA[ 
-
 
 
 
@@ -8620,7 +8581,6 @@ font-style: inherit;">"none"</span>)</span></code></pre></div>
   <dc:creator>Lucy D&#39;Agostino McGowan</dc:creator>
   <link>https://www.livefreeordichotomize.com/posts/2020-05-21-survival-model-detective-2/</link>
   <description><![CDATA[ 
-
 
 
 
@@ -9942,7 +9902,6 @@ font-style: inherit;">1</span>))</span></code></pre></div>
   <dc:creator>Lucy D&#39;Agostino McGowan</dc:creator>
   <link>https://www.livefreeordichotomize.com/posts/2020-05-21-survival-model-detective-1/</link>
   <description><![CDATA[ 
-
 
 
 

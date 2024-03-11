@@ -2,7 +2,7 @@
 <html xmlns="http://www.w3.org/1999/xhtml" lang="en" xml:lang="en"><head>
 
 <meta charset="utf-8">
-<meta name="generator" content="quarto-1.4.550">
+<meta name="generator" content="quarto-1.4.551">
 
 <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
 
@@ -317,7 +317,7 @@ ga('send', {
 
 
 <div id="quarto-search-results"></div>
-  <header id="quarto-header" class="headroom fixed-top quarto-banner">
+  <header id="quarto-header" class="headroom fixed-top">
     <nav class="navbar navbar-expand-lg " data-bs-theme="dark">
       <div class="navbar-container container-fluid">
       <div class="navbar-brand-container mx-auto">
@@ -352,68 +352,66 @@ ga('send', {
     </nav>
 </header>
 <!-- content -->
-<header id="title-block-header" class="quarto-title-block default page-columns page-full">
-  <div class="quarto-title-banner page-columns page-full">
-    <div class="quarto-title column-body">
-      <h1 class="title">A set.seed() + ggplot2 adventure</h1>
-                  <div>
-        <div class="description">
-          Recently I tweeted a small piece of advice re: when to set a seed in your script. Jenny pointed out that this may be blog post-worthy, so here we are!
-        </div>
-      </div>
-                          <div class="quarto-categories">
-                <div class="quarto-category">rstats</div>
-                <div class="quarto-category">ggplot2</div>
-              </div>
-                  </div>
-  </div>
-    
-  
-  <div class="quarto-title-meta">
-
-      <div>
-      <div class="quarto-title-meta-heading">Author</div>
-      <div class="quarto-title-meta-contents">
-               <p>Lucy D’Agostino McGowan </p>
-            </div>
-    </div>
-      
-      <div>
-      <div class="quarto-title-meta-heading">Published</div>
-      <div class="quarto-title-meta-contents">
-        <p class="date">January 22, 2018</p>
-      </div>
-    </div>
-    
-      
-    </div>
-    
-  
-  </header><div id="quarto-content" class="quarto-container page-columns page-rows-contents page-layout-article page-navbar">
+<div id="quarto-content" class="quarto-container page-columns page-rows-contents page-layout-article page-navbar">
 <!-- sidebar -->
 <!-- margin-sidebar -->
     <div id="quarto-margin-sidebar" class="sidebar margin-sidebar">
         
     </div>
 <!-- main -->
-<main class="content quarto-banner-title-block page-columns page-full" id="quarto-document-content">
+<main class="content page-columns page-full" id="quarto-document-content">
+
+<header id="title-block-header" class="quarto-title-block default">
+<div class="quarto-title">
+<h1 class="title">A set.seed() + ggplot2 adventure</h1>
+  <div class="quarto-categories">
+    <div class="quarto-category">rstats</div>
+    <div class="quarto-category">ggplot2</div>
+  </div>
+  </div>
+
+<div>
+  <div class="description">
+    Recently I tweeted a small piece of advice re: when to set a seed in your script. Jenny pointed out that this may be blog post-worthy, so here we are!
+  </div>
+</div>
 
 
+<div class="quarto-title-meta">
 
+    <div>
+    <div class="quarto-title-meta-heading">Author</div>
+    <div class="quarto-title-meta-contents">
+             <p>Lucy D’Agostino McGowan </p>
+          </div>
+  </div>
+    
+    <div>
+    <div class="quarto-title-meta-heading">Published</div>
+    <div class="quarto-title-meta-contents">
+      <p class="date">January 22, 2018</p>
+    </div>
+  </div>
+  
+    
+  </div>
+  
+
+
+</header>
 
 
 <p>Recently I tweeted a small piece of advice re: when to set a seed in your script:</p>
-<blockquote class="twitter-tweet blockquote" data-lang="en">
-<p lang="en" dir="ltr">
-<a href="https://twitter.com/hashtag/rstats?src=hash&amp;ref_src=twsrc%5Etfw">#rstats</a> tip: always <code>set.seed()</code> AFTER loading ggplot2 <a href="https://t.co/TLpdokbSlN">pic.twitter.com/TLpdokbSlN</a>
-</p>
-— Lucy 🌻 (<span class="citation" data-cites="LucyStats">@LucyStats</span>) <a href="https://twitter.com/LucyStats/status/954178919242063872?ref_src=twsrc%5Etfw">January 19, 2018</a>
+<blockquote class="blockquote">
+<p>tip: always <code>set.seed()</code> AFTER loading ggplot2</p>
 </blockquote>
-<script async="" src="https://platform.twitter.com/widgets.js" charset="utf-8"></script>
 <p><a href="http://twitter.com/JennyBryan">Jenny</a> pointed out that this may be blog post-worthy, so here we are!</p>
-<section id="background" class="level1">
+<section id="background" class="level1 page-columns page-full">
 <h1>Background</h1>
-<p><label for="tufte-mn-" class="margin-toggle">⊕</label><input type="checkbox" id="tufte-mn-" class="margin-toggle"><span class="marginnote"><img src="https://media1.giphy.com/media/JUh0yTz4h931K/giphy.gif" class="img-fluid"></span> A little bit about where this tweet came from: I was out to lunch with my friend <a href="https://twitter.com/JJ_Chipman">Jonathan</a> – over our scrumptious Thai food, he mentioned he was having some simulation trouble. In particular, some of his simulations were breaking, but when he tried to run the script locally, everything seemed fine. He was using the same seed in both instances, and in fact was running the exact same script – what could be causing this discrepancy! I recalled that ggplot2 would generate a random message about 10% the time, and asked whether he thought loading this package could somehow be affecting his simulation results. After some further investigation 🕵️‍♂️, it looked like indeed this may be the culprit!</p>
+
+<div class="no-row-height column-margin column-container"><div class="">
+<p><img src="https://media1.giphy.com/media/JUh0yTz4h931K/giphy.gif" class="img-fluid"></p>
+</div></div><p>A little bit about where this tweet came from: I was out to lunch with my friend <a href="https://twitter.com/JJ_Chipman">Jonathan</a> – over our scrumptious Thai food, he mentioned he was having some simulation trouble. In particular, some of his simulations were breaking, but when he tried to run the script locally, everything seemed fine. He was using the same seed in both instances, and in fact was running the exact same script – what could be causing this discrepancy! I recalled that ggplot2 would generate a random message about 10% the time, and asked whether he thought loading this package could somehow be affecting his simulation results. After some further investigation 🕵️‍♂️, it looked like indeed this may be the culprit!</p>
 </section>
 <section id="why-did-this-happen" class="level1 page-columns page-full">
 <h1>Why did this happen?</h1>
@@ -446,7 +444,9 @@ ga('send', {
 </div>
 <p>The second is different because I have already performed one random process, so now my starting point prior to running the latter <code>sample()</code> function is no longer <code>1</code>.</p>
 <p>There is a small function in ggplot2 that runs when the library is loaded for the first time.</p>
-<p><label for="tufte-mn-" class="margin-toggle">⊕</label><input type="checkbox" id="tufte-mn-" class="margin-toggle"><span class="marginnote">Note: This is a little different than this code looks now, it has been updated since this discussion began!</span></p>
+<div class="column-marign">
+<p>Note: This is a little different than this code looks now, it has been updated since this discussion began!</p>
+</div>
 <div class="cell">
 <div class="sourceCode cell-code" id="cb9"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb9-1"><a href="#cb9-1" aria-hidden="true" tabindex="-1"></a>.onAttach <span class="ot">&lt;-</span> <span class="cf">function</span>(...) {</span>
 <span id="cb9-2"><a href="#cb9-2" aria-hidden="true" tabindex="-1"></a>  <span class="cf">if</span> (<span class="sc">!</span><span class="fu">interactive</span>() <span class="sc">||</span> stats<span class="sc">::</span><span class="fu">runif</span>(<span class="dv">1</span>) <span class="sc">&gt;</span> <span class="fl">0.1</span>) <span class="fu">return</span>()</span>
@@ -484,9 +484,12 @@ ga('send', {
 </div>
 <p>Notice the second chunk gave us the same result as above, but the first chunk was different. That is because the first chunk runs the <code>.onAttach()</code> function between when I set my seed and when I drew my sample.</p>
 </section>
-<section id="reproducibility-crisis" class="level1">
+<section id="reproducibility-crisis" class="level1 page-columns page-full">
 <h1>Reproducibility crisis?</h1>
-<p><label for="tufte-mn-" class="margin-toggle">⊕</label><input type="checkbox" id="tufte-mn-" class="margin-toggle"><span class="marginnote"><img src="https://metrouk2.files.wordpress.com/2017/04/phew.gif?w=620&amp;h=392&amp;crop=1" class="img-fluid"></span> It turns out this isn’t cause for concern re: reproducibility, thanks to Jim Hester’s new patch to ggplot2 <em>phew!</em> Prior to this update, non-interactive scripts will be reproducible (if always run non-interactively), however interactive scripts can cause some issues, as shown above. In general, I like to provide future Lucy with as much assistance as possible, so I will likely avoid setting seeds prior to loading packages on the off chance that it will make my debugging trickier in the future.</p>
+
+<div class="no-row-height column-margin column-container"><div class="">
+<p><img src="https://metrouk2.files.wordpress.com/2017/04/phew.gif?w=620&amp;h=392&amp;crop=1" class="img-fluid"></p>
+</div></div><p>It turns out this isn’t cause for concern re: reproducibility, thanks to Jim Hester’s new patch to ggplot2 <em>phew!</em> Prior to this update, non-interactive scripts will be reproducible (if always run non-interactively), however interactive scripts can cause some issues, as shown above. In general, I like to provide future Lucy with as much assistance as possible, so I will likely avoid setting seeds prior to loading packages on the off chance that it will make my debugging trickier in the future.</p>
 </section>
 <section id="what-should-i-do" class="level1">
 <h1>What should I do?</h1>
@@ -593,6 +596,24 @@ window.document.addEventListener("DOMContentLoaded", function (event) {
     // clear code selection
     e.clearSelection();
   });
+    var localhostRegex = new RegExp(/^(?:http|https):\/\/localhost\:?[0-9]*\//);
+    var mailtoRegex = new RegExp(/^mailto:/);
+      var filterRegex = new RegExp("https:\/\/www\.livefreeordichotomize\.com");
+    var isInternal = (href) => {
+        return filterRegex.test(href) || localhostRegex.test(href) || mailtoRegex.test(href);
+    }
+    // Inspect non-navigation links and adorn them if external
+ 	var links = window.document.querySelectorAll('a[href]:not(.nav-link):not(.navbar-brand):not(.toc-action):not(.sidebar-link):not(.sidebar-item-toggle):not(.pagination-link):not(.no-external):not([aria-hidden]):not(.dropdown-item):not(.quarto-navigation-tool)');
+    for (var i=0; i<links.length; i++) {
+      const link = links[i];
+      if (!isInternal(link.href)) {
+        // undo the damage that might have been done by quarto-nav.js in the case of
+        // links that we want to consider external
+        if (link.dataset.originalHref !== undefined) {
+          link.href = link.dataset.originalHref;
+        }
+      }
+    }
   function tippyHover(el, contentFn, onTriggerFn, onUntriggerFn) {
     const config = {
       allowHTML: true,
@@ -627,7 +648,11 @@ window.document.addEventListener("DOMContentLoaded", function (event) {
       try { href = new URL(href).hash; } catch {}
       const id = href.replace(/^#\/?/, "");
       const note = window.document.getElementById(id);
-      return note.innerHTML;
+      if (note) {
+        return note.innerHTML;
+      } else {
+        return "";
+      }
     });
   }
   const xrefs = window.document.querySelectorAll('a.quarto-xref');

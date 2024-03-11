@@ -2,13 +2,13 @@
 <html xmlns="http://www.w3.org/1999/xhtml" lang="en" xml:lang="en"><head>
 
 <meta charset="utf-8">
-<meta name="generator" content="quarto-1.4.550">
+<meta name="generator" content="quarto-1.4.551">
 
 <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
 
 <meta name="author" content="Lucy D’Agostino McGowan">
 <meta name="dcterms.date" content="2023-08-04">
-<meta name="description" content="Here we are going to look at several diagnostic plots are helpful when attempting to answer a causal question. They can be used to visualize the target population, balance, and treatment effect heterogeneity.">
+<meta name="description" content="Here we are going to look at several diagnostic plots that are helpful when attempting to answer a causal question. They can be used to visualize the target population, balance, and treatment effect heterogeneity.">
 
 <title>- Visual Diagnostic Tools for Causal Inference</title>
 <style>
@@ -317,7 +317,7 @@ ga('send', {
 
 
 <div id="quarto-search-results"></div>
-  <header id="quarto-header" class="headroom fixed-top quarto-banner">
+  <header id="quarto-header" class="headroom fixed-top">
     <nav class="navbar navbar-expand-lg " data-bs-theme="dark">
       <div class="navbar-container container-fluid">
       <div class="navbar-brand-container mx-auto">
@@ -352,61 +352,61 @@ ga('send', {
     </nav>
 </header>
 <!-- content -->
-<header id="title-block-header" class="quarto-title-block default page-columns page-full">
-  <div class="quarto-title-banner page-columns page-full">
-    <div class="quarto-title column-body">
-      <h1 class="title">Visual Diagnostic Tools for Causal Inference</h1>
-                  <div>
-        <div class="description">
-          Here we are going to look at several diagnostic plots are helpful when attempting to answer a causal question. They can be used to visualize the target population, balance, and treatment effect heterogeneity.
-        </div>
-      </div>
-                          <div class="quarto-categories">
-                <div class="quarto-category">rstats</div>
-                <div class="quarto-category">causal inference</div>
-                <div class="quarto-category">mirrored histograms</div>
-                <div class="quarto-category">balance</div>
-                <div class="quarto-category">propensity scores</div>
-                <div class="quarto-category">treatment effect heterogeneity</div>
-              </div>
-                  </div>
-  </div>
-    
-  
-  <div class="quarto-title-meta">
-
-      <div>
-      <div class="quarto-title-meta-heading">Author</div>
-      <div class="quarto-title-meta-contents">
-               <p>Lucy D’Agostino McGowan </p>
-            </div>
-    </div>
-      
-      <div>
-      <div class="quarto-title-meta-heading">Published</div>
-      <div class="quarto-title-meta-contents">
-        <p class="date">August 4, 2023</p>
-      </div>
-    </div>
-    
-      
-    </div>
-    
-  
-  </header><div id="quarto-content" class="quarto-container page-columns page-rows-contents page-layout-article page-navbar">
+<div id="quarto-content" class="quarto-container page-columns page-rows-contents page-layout-article page-navbar">
 <!-- sidebar -->
 <!-- margin-sidebar -->
     <div id="quarto-margin-sidebar" class="sidebar margin-sidebar">
         
     </div>
 <!-- main -->
-<main class="content quarto-banner-title-block page-columns page-full" id="quarto-document-content">
+<main class="content page-columns page-full" id="quarto-document-content">
+
+<header id="title-block-header" class="quarto-title-block default">
+<div class="quarto-title">
+<h1 class="title">Visual Diagnostic Tools for Causal Inference</h1>
+  <div class="quarto-categories">
+    <div class="quarto-category">rstats</div>
+    <div class="quarto-category">causal inference</div>
+    <div class="quarto-category">mirrored histograms</div>
+    <div class="quarto-category">balance</div>
+    <div class="quarto-category">propensity scores</div>
+    <div class="quarto-category">treatment effect heterogeneity</div>
+  </div>
+  </div>
+
+<div>
+  <div class="description">
+    Here we are going to look at several diagnostic plots that are helpful when attempting to answer a causal question. They can be used to visualize the target population, balance, and treatment effect heterogeneity.
+  </div>
+</div>
 
 
+<div class="quarto-title-meta">
+
+    <div>
+    <div class="quarto-title-meta-heading">Author</div>
+    <div class="quarto-title-meta-contents">
+             <p>Lucy D’Agostino McGowan </p>
+          </div>
+  </div>
+    
+    <div>
+    <div class="quarto-title-meta-heading">Published</div>
+    <div class="quarto-title-meta-contents">
+      <p class="date">August 4, 2023</p>
+    </div>
+  </div>
+  
+    
+  </div>
+  
 
 
+</header>
 
-<p>Here we are going to look at several diagnostic plots are helpful when attempting to answer a causal question. They can be used to visualize the target population, balance, and treatment effect heterogeneity.</p>
+
+<p><strong>This post is cross-posted on our <a href="https://r-causal.github.io/r-causal-blog/posts.html">R Causal blog</a></strong></p>
+<p>Here we are going to look at several diagnostic plots that are helpful when attempting to answer a causal question. They can be used to visualize the target population, balance, and treatment effect heterogeneity.</p>
 <section id="setup" class="level2 page-columns page-full">
 <h2 class="anchored" data-anchor-id="setup">Setup</h2>
 <p>I’ve simulated data to demonstrate the utility of the various plots. In each simulation, we have four pre-treatment variables: <code>var1</code>, <code>var2</code>, <code>var3</code>, and <code>var4</code>, a treatment, <code>t</code>, and an outcome <code>y</code>. I have also fit a propensity score model for each and calculated ATE, ATT, and overlap weights (unsure what these are? <a href="https://livefreeordichotomize.com/posts/2019-01-17-understanding-propensity-score-weighting/">Check out this post on propensity score weighting</a>). I will also create three propensity score matched cohorts, each with a different caliper.</p>
@@ -510,7 +510,7 @@ ga('send', {
 </section>
 <section id="target-population" class="level2 page-columns page-full">
 <h2 class="anchored" data-anchor-id="target-population">Target Population</h2>
-<p>Targeting different causal estimands will yield different target populations (for a longer discussion of target populations <a href="https://livefreeordichotomize.com/posts/2019-01-17-understanding-propensity-score-weighting/">see this post</a> and check out <a href="TODO add link">this awesome pre-print by Noah Griefer and Liz Stuart</a>. For example, if you are interested in answering a question with the treated group in mind, an estimand that estimates the average treatment effect among the treated (ATT), will be appropriate. Targeting this estimand will lead to selecting unexposed individuals who match the characterstics of the treated population (whether via matching to these individuals or upweighting them in the sample). Mirrored histograms can be a nice way to visualize the distribution of your target population after incorporating the propensity score when either matching or weighting are used. These basic plots are simply histograms of the <em>propensity score</em>, stratified by exposure. “Mirroring” these histograms above and below the x-axis, can make it easier to compare regions of overlap.</p>
+<p>Targeting different causal estimands will yield different target populations (for a longer discussion of target populations <a href="https://livefreeordichotomize.com/posts/2019-01-17-understanding-propensity-score-weighting/">see this post</a> and check out <a href="https://arxiv.org/abs/2106.10577">this awesome pre-print by Noah Griefer and Liz Stuart</a>. For example, if you are interested in answering a question with the treated group in mind, an estimand that estimates the average treatment effect among the treated (ATT), will be appropriate. Targeting this estimand will lead to selecting unexposed individuals who match the characterstics of the treated population (whether via matching to these individuals or upweighting them in the sample). Mirrored histograms can be a nice way to visualize the distribution of your target population after incorporating the propensity score when either matching or weighting are used. These basic plots are simply histograms of the <em>propensity score</em>, stratified by exposure. “Mirroring” these histograms above and below the x-axis, can make it easier to compare regions of overlap.</p>
 <section id="what-am-i-looking-for" class="level3 page-columns page-full">
 <h3 class="anchored" data-anchor-id="what-am-i-looking-for">What am I looking for?</h3>
 <ul>
@@ -530,9 +530,8 @@ ga('send', {
 <span id="cb3-4"><a href="#cb3-4" aria-hidden="true" tabindex="-1"></a>  <span class="fu">annotate</span>(<span class="st">"label"</span>, <span class="fl">0.5</span>, <span class="dv">10</span>, <span class="at">label =</span> <span class="st">"treated"</span>, <span class="at">color =</span> <span class="st">"cornflower blue"</span>) <span class="sc">+</span></span>
 <span id="cb3-5"><a href="#cb3-5" aria-hidden="true" tabindex="-1"></a>  <span class="fu">scale_y_continuous</span>(<span class="at">labels =</span> abs) <span class="sc">+</span></span>
 <span id="cb3-6"><a href="#cb3-6" aria-hidden="true" tabindex="-1"></a>  <span class="fu">labs</span>(<span class="at">x =</span> <span class="st">"propensity score"</span>,</span>
-<span id="cb3-7"><a href="#cb3-7" aria-hidden="true" tabindex="-1"></a>       <span class="at">fill =</span> <span class="st">"treatment"</span>,</span>
-<span id="cb3-8"><a href="#cb3-8" aria-hidden="true" tabindex="-1"></a>       <span class="at">y =</span> <span class="st">"count"</span>) <span class="sc">+</span> </span>
-<span id="cb3-9"><a href="#cb3-9" aria-hidden="true" tabindex="-1"></a>  <span class="fu">theme</span>(<span class="at">legend.position =</span> <span class="st">"none"</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<span id="cb3-7"><a href="#cb3-7" aria-hidden="true" tabindex="-1"></a>       <span class="at">y =</span> <span class="st">"count"</span>) <span class="sc">+</span> </span>
+<span id="cb3-8"><a href="#cb3-8" aria-hidden="true" tabindex="-1"></a>  <span class="fu">theme</span>(<span class="at">legend.position =</span> <span class="st">"none"</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output-display">
 <div>
 <figure class="figure">
@@ -550,9 +549,8 @@ ga('send', {
 <span id="cb4-5"><a href="#cb4-5" aria-hidden="true" tabindex="-1"></a>  <span class="fu">annotate</span>(<span class="st">"label"</span>, <span class="fl">0.5</span>, <span class="dv">10</span>, <span class="at">label =</span> <span class="st">"treated"</span>, <span class="at">color =</span> <span class="st">"cornflower blue"</span>) <span class="sc">+</span></span>
 <span id="cb4-6"><a href="#cb4-6" aria-hidden="true" tabindex="-1"></a>  <span class="fu">scale_y_continuous</span>(<span class="at">labels =</span> abs) <span class="sc">+</span></span>
 <span id="cb4-7"><a href="#cb4-7" aria-hidden="true" tabindex="-1"></a>  <span class="fu">labs</span>(<span class="at">x =</span> <span class="st">"propensity score"</span>,</span>
-<span id="cb4-8"><a href="#cb4-8" aria-hidden="true" tabindex="-1"></a>       <span class="at">fill =</span> <span class="st">"treatment"</span>,</span>
-<span id="cb4-9"><a href="#cb4-9" aria-hidden="true" tabindex="-1"></a>       <span class="at">y =</span> <span class="st">"count"</span>) <span class="sc">+</span> </span>
-<span id="cb4-10"><a href="#cb4-10" aria-hidden="true" tabindex="-1"></a>  <span class="fu">theme</span>(<span class="at">legend.position =</span> <span class="st">"none"</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<span id="cb4-8"><a href="#cb4-8" aria-hidden="true" tabindex="-1"></a>       <span class="at">y =</span> <span class="st">"count"</span>) <span class="sc">+</span> </span>
+<span id="cb4-9"><a href="#cb4-9" aria-hidden="true" tabindex="-1"></a>  <span class="fu">theme</span>(<span class="at">legend.position =</span> <span class="st">"none"</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output-display">
 <div>
 <figure class="figure">
@@ -570,9 +568,8 @@ ga('send', {
 <span id="cb5-5"><a href="#cb5-5" aria-hidden="true" tabindex="-1"></a>  <span class="fu">annotate</span>(<span class="st">"label"</span>, <span class="fl">0.5</span>, <span class="dv">10</span>, <span class="at">label =</span> <span class="st">"treated"</span>, <span class="at">color =</span> <span class="st">"cornflower blue"</span>) <span class="sc">+</span></span>
 <span id="cb5-6"><a href="#cb5-6" aria-hidden="true" tabindex="-1"></a>  <span class="fu">scale_y_continuous</span>(<span class="at">labels =</span> abs) <span class="sc">+</span></span>
 <span id="cb5-7"><a href="#cb5-7" aria-hidden="true" tabindex="-1"></a>  <span class="fu">labs</span>(<span class="at">x =</span> <span class="st">"propensity score"</span>,</span>
-<span id="cb5-8"><a href="#cb5-8" aria-hidden="true" tabindex="-1"></a>       <span class="at">fill =</span> <span class="st">"treatment"</span>,</span>
-<span id="cb5-9"><a href="#cb5-9" aria-hidden="true" tabindex="-1"></a>       <span class="at">y =</span> <span class="st">"count"</span>) <span class="sc">+</span> </span>
-<span id="cb5-10"><a href="#cb5-10" aria-hidden="true" tabindex="-1"></a>  <span class="fu">theme</span>(<span class="at">legend.position =</span> <span class="st">"none"</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<span id="cb5-8"><a href="#cb5-8" aria-hidden="true" tabindex="-1"></a>       <span class="at">y =</span> <span class="st">"count"</span>) <span class="sc">+</span> </span>
+<span id="cb5-9"><a href="#cb5-9" aria-hidden="true" tabindex="-1"></a>  <span class="fu">theme</span>(<span class="at">legend.position =</span> <span class="st">"none"</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output-display">
 <div>
 <figure class="figure">
@@ -590,9 +587,8 @@ ga('send', {
 <span id="cb6-5"><a href="#cb6-5" aria-hidden="true" tabindex="-1"></a>  <span class="fu">annotate</span>(<span class="st">"label"</span>, <span class="fl">0.5</span>, <span class="dv">10</span>, <span class="at">label =</span> <span class="st">"treated"</span>, <span class="at">color =</span> <span class="st">"cornflower blue"</span>) <span class="sc">+</span></span>
 <span id="cb6-6"><a href="#cb6-6" aria-hidden="true" tabindex="-1"></a>  <span class="fu">scale_y_continuous</span>(<span class="at">labels =</span> abs) <span class="sc">+</span></span>
 <span id="cb6-7"><a href="#cb6-7" aria-hidden="true" tabindex="-1"></a>  <span class="fu">labs</span>(<span class="at">x =</span> <span class="st">"propensity score"</span>,</span>
-<span id="cb6-8"><a href="#cb6-8" aria-hidden="true" tabindex="-1"></a>       <span class="at">fill =</span> <span class="st">"treatment"</span>,</span>
-<span id="cb6-9"><a href="#cb6-9" aria-hidden="true" tabindex="-1"></a>       <span class="at">y =</span> <span class="st">"count"</span>) <span class="sc">+</span> </span>
-<span id="cb6-10"><a href="#cb6-10" aria-hidden="true" tabindex="-1"></a>  <span class="fu">theme</span>(<span class="at">legend.position =</span> <span class="st">"none"</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<span id="cb6-8"><a href="#cb6-8" aria-hidden="true" tabindex="-1"></a>       <span class="at">y =</span> <span class="st">"count"</span>) <span class="sc">+</span> </span>
+<span id="cb6-9"><a href="#cb6-9" aria-hidden="true" tabindex="-1"></a>  <span class="fu">theme</span>(<span class="at">legend.position =</span> <span class="st">"none"</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output-display">
 <div>
 <figure class="figure">
@@ -829,11 +825,14 @@ Coefficients:
 </div>
 </div>
 <p>The lines cross! This indicates that there is treatment effect heterogeneity (in this particular case, when the propensity score is greater than 0.5, there is a positive treatment effect, and when less than 0.5 there is a negative treatment effect).</p>
-<p>Just to see what it looks like when there is <em>not</em> a heterogeneous treatment effect, let’s check out the <code>data_nonlinear</code> dataset (where I simulated a constant effect). Notice below the lines don’t cross, the width between them is constant across the covariate space.</p>
+
+<div class="no-row-height column-margin column-container"><div class="">
+<p>You can find a longer post about these plots <a href="https://livefreeordichotomize.com/posts/2023-07-26-visual-diagnostic-tool-for-causal-inference/">here</a>.</p>
+</div></div><p>Just to see what it looks like when there is <em>not</em> a heterogeneous treatment effect, let’s check out the <code>data_nonlinear</code> dataset (where I simulated a constant effect). Notice below the lines don’t cross, the width between them is constant across the covariate space.</p>
 <div class="cell">
 <div class="sourceCode cell-code" id="cb20"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb20-1"><a href="#cb20-1" aria-hidden="true" tabindex="-1"></a><span class="fu">ggplot</span>(data_nonlinear, <span class="fu">aes</span>(<span class="at">x =</span> p, <span class="at">y =</span> y, <span class="at">color =</span> t)) <span class="sc">+</span></span>
 <span id="cb20-2"><a href="#cb20-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_point</span>(<span class="at">alpha =</span> <span class="fl">0.5</span>) <span class="sc">+</span> </span>
-<span id="cb20-3"><a href="#cb20-3" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_smooth</span>(<span class="at">method =</span> <span class="st">"loess"</span>, <span class="at">formula =</span> <span class="st">"y ~ x"</span>, <span class="at">span =</span> <span class="dv">50</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<span id="cb20-3"><a href="#cb20-3" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_smooth</span>(<span class="at">method =</span> <span class="st">"lm"</span>, <span class="at">formula =</span> <span class="st">"y ~ x"</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output-display">
 <div>
 <figure class="figure">
@@ -842,12 +841,13 @@ Coefficients:
 </div>
 </div>
 </div>
+</section>
+</section>
+<section id="wrap-up" class="level2">
+<h2 class="anchored" data-anchor-id="wrap-up">Wrap up</h2>
+<p>So there you have it! Four visualizations to add to your tool kit when attempting to answer causal questions.</p>
 
 
-
-<div class="no-row-height column-margin column-container"><div class="">
-<p>You can find a longer post about these plots <a href="https://livefreeordichotomize.com/posts/2023-07-26-visual-diagnostic-tool-for-causal-inference/">here</a>.</p>
-</div></div></section>
 </section>
 
 </main> <!-- /main -->
@@ -930,6 +930,24 @@ window.document.addEventListener("DOMContentLoaded", function (event) {
     // clear code selection
     e.clearSelection();
   });
+    var localhostRegex = new RegExp(/^(?:http|https):\/\/localhost\:?[0-9]*\//);
+    var mailtoRegex = new RegExp(/^mailto:/);
+      var filterRegex = new RegExp("https:\/\/www\.livefreeordichotomize\.com");
+    var isInternal = (href) => {
+        return filterRegex.test(href) || localhostRegex.test(href) || mailtoRegex.test(href);
+    }
+    // Inspect non-navigation links and adorn them if external
+ 	var links = window.document.querySelectorAll('a[href]:not(.nav-link):not(.navbar-brand):not(.toc-action):not(.sidebar-link):not(.sidebar-item-toggle):not(.pagination-link):not(.no-external):not([aria-hidden]):not(.dropdown-item):not(.quarto-navigation-tool)');
+    for (var i=0; i<links.length; i++) {
+      const link = links[i];
+      if (!isInternal(link.href)) {
+        // undo the damage that might have been done by quarto-nav.js in the case of
+        // links that we want to consider external
+        if (link.dataset.originalHref !== undefined) {
+          link.href = link.dataset.originalHref;
+        }
+      }
+    }
   function tippyHover(el, contentFn, onTriggerFn, onUntriggerFn) {
     const config = {
       allowHTML: true,
@@ -964,7 +982,11 @@ window.document.addEventListener("DOMContentLoaded", function (event) {
       try { href = new URL(href).hash; } catch {}
       const id = href.replace(/^#\/?/, "");
       const note = window.document.getElementById(id);
-      return note.innerHTML;
+      if (note) {
+        return note.innerHTML;
+      } else {
+        return "";
+      }
     });
   }
   const xrefs = window.document.querySelectorAll('a.quarto-xref');

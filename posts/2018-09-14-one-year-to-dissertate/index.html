@@ -2,7 +2,7 @@
 <html xmlns="http://www.w3.org/1999/xhtml" lang="en" xml:lang="en"><head>
 
 <meta charset="utf-8">
-<meta name="generator" content="quarto-1.4.550">
+<meta name="generator" content="quarto-1.4.551">
 
 <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
 
@@ -317,7 +317,7 @@ ga('send', {
 
 
 <div id="quarto-search-results"></div>
-  <header id="quarto-header" class="headroom fixed-top quarto-banner">
+  <header id="quarto-header" class="headroom fixed-top">
     <nav class="navbar navbar-expand-lg " data-bs-theme="dark">
       <div class="navbar-container container-fluid">
       <div class="navbar-brand-container mx-auto">
@@ -352,54 +352,53 @@ ga('send', {
     </nav>
 </header>
 <!-- content -->
-<header id="title-block-header" class="quarto-title-block default page-columns page-full">
-  <div class="quarto-title-banner page-columns page-full">
-    <div class="quarto-title column-body">
-      <h1 class="title">One year to dissertate</h1>
-                  <div>
-        <div class="description">
-          I’ve compiled some resources that I used when completing my dissertation and I wanted to share them with YOU! Throughout this post, I link to a bunch of different templates that I used throughout my process. You can find them all in a GitHub repo. This how-to has gotten a biiiiiit long. This post contains the whole kit-and-kaboodle, but I will also be releasing these in a series of smaller posts over the next couple of weeks.
-        </div>
-      </div>
-                          <div class="quarto-categories">
-                <div class="quarto-category">phd</div>
-                <div class="quarto-category">one year dissertation</div>
-              </div>
-                  </div>
-  </div>
-    
-  
-  <div class="quarto-title-meta">
-
-      <div>
-      <div class="quarto-title-meta-heading">Author</div>
-      <div class="quarto-title-meta-contents">
-               <p>Lucy D’Agostino McGowan </p>
-            </div>
-    </div>
-      
-      <div>
-      <div class="quarto-title-meta-heading">Published</div>
-      <div class="quarto-title-meta-contents">
-        <p class="date">September 14, 2018</p>
-      </div>
-    </div>
-    
-      
-    </div>
-    
-  
-  </header><div id="quarto-content" class="quarto-container page-columns page-rows-contents page-layout-article page-navbar">
+<div id="quarto-content" class="quarto-container page-columns page-rows-contents page-layout-article page-navbar">
 <!-- sidebar -->
 <!-- margin-sidebar -->
     <div id="quarto-margin-sidebar" class="sidebar margin-sidebar">
         
     </div>
 <!-- main -->
-<main class="content quarto-banner-title-block page-columns page-full" id="quarto-document-content">
+<main class="content page-columns page-full" id="quarto-document-content">
+
+<header id="title-block-header" class="quarto-title-block default">
+<div class="quarto-title">
+<h1 class="title">One year to dissertate</h1>
+  <div class="quarto-categories">
+    <div class="quarto-category">phd</div>
+    <div class="quarto-category">one year dissertation</div>
+  </div>
+  </div>
+
+<div>
+  <div class="description">
+    I’ve compiled some resources that I used when completing my dissertation and I wanted to share them with YOU! Throughout this post, I link to a bunch of different templates that I used throughout my process. You can find them all in a GitHub repo. This how-to has gotten a biiiiiit long. This post contains the whole kit-and-kaboodle, but I will also be releasing these in a series of smaller posts over the next couple of weeks.
+  </div>
+</div>
 
 
+<div class="quarto-title-meta">
 
+    <div>
+    <div class="quarto-title-meta-heading">Author</div>
+    <div class="quarto-title-meta-contents">
+             <p>Lucy D’Agostino McGowan </p>
+          </div>
+  </div>
+    
+    <div>
+    <div class="quarto-title-meta-heading">Published</div>
+    <div class="quarto-title-meta-contents">
+      <p class="date">September 14, 2018</p>
+    </div>
+  </div>
+  
+    
+  </div>
+  
+
+
+</header>
 
 
 <p>I’ve compiled some resources that I used when completing my dissertation and I wanted to share them with YOU! Throughout this post, I link to a bunch of different templates that I used throughout my process. You can find them all in <a href="https://github.com/LucyMcGowan/dissertation-toolkit">this GitHub repo</a>.</p>
@@ -630,7 +629,7 @@ Here is the introduction to my thesis.</code></pre>
 </div></div><ol type="1">
 <li>📆 Add your defense goal in the <em>Date</em> box.<br>
 </li>
-<li>🕦 Set a timer for <strong>five minutes</strong> and write down all of the <em>tasks</em> that would need to happen in order to reach this goal.<br>
+<li>🕐 Set a timer for <strong>five minutes</strong> and write down all of the <em>tasks</em> that would need to happen in order to reach this goal.<br>
 </li>
 <li>☝️ Add in due dates for each of these tasks.<br>
 </li>
@@ -782,6 +781,24 @@ window.document.addEventListener("DOMContentLoaded", function (event) {
     // clear code selection
     e.clearSelection();
   });
+    var localhostRegex = new RegExp(/^(?:http|https):\/\/localhost\:?[0-9]*\//);
+    var mailtoRegex = new RegExp(/^mailto:/);
+      var filterRegex = new RegExp("https:\/\/www\.livefreeordichotomize\.com");
+    var isInternal = (href) => {
+        return filterRegex.test(href) || localhostRegex.test(href) || mailtoRegex.test(href);
+    }
+    // Inspect non-navigation links and adorn them if external
+ 	var links = window.document.querySelectorAll('a[href]:not(.nav-link):not(.navbar-brand):not(.toc-action):not(.sidebar-link):not(.sidebar-item-toggle):not(.pagination-link):not(.no-external):not([aria-hidden]):not(.dropdown-item):not(.quarto-navigation-tool)');
+    for (var i=0; i<links.length; i++) {
+      const link = links[i];
+      if (!isInternal(link.href)) {
+        // undo the damage that might have been done by quarto-nav.js in the case of
+        // links that we want to consider external
+        if (link.dataset.originalHref !== undefined) {
+          link.href = link.dataset.originalHref;
+        }
+      }
+    }
   function tippyHover(el, contentFn, onTriggerFn, onUntriggerFn) {
     const config = {
       allowHTML: true,
@@ -816,7 +833,11 @@ window.document.addEventListener("DOMContentLoaded", function (event) {
       try { href = new URL(href).hash; } catch {}
       const id = href.replace(/^#\/?/, "");
       const note = window.document.getElementById(id);
-      return note.innerHTML;
+      if (note) {
+        return note.innerHTML;
+      } else {
+        return "";
+      }
     });
   }
   const xrefs = window.document.querySelectorAll('a.quarto-xref');
