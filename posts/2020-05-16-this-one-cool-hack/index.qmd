@@ -25,7 +25,9 @@ I tweeted about this kernel of wisdom and a few people asked me to write up an e
 
 For this example, I am going to rank Harry Potter characters based on the house they were sorted into on a variety of characteristics. 
 
-`r tufte::margin_note("This data originated from a [Kaggle Dataset by Gulsah Demiryurek](https://www.kaggle.com/gulsahdemiryurek/harry-potter-dataset)")`
+::: column-margin
+This data originated from a [Kaggle Dataset by Gulsah Demiryurek](https://www.kaggle.com/gulsahdemiryurek/harry-potter-dataset)
+:::
 
 ```{r, message = FALSE, warning = FALSE}
 library(tidyverse)

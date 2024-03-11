@@ -1,5 +1,5 @@
 ---
-title: A set.seed() + ggplot2 adventure
+title: "A set.seed() + ggplot2 adventure"
 author: "Lucy D'Agostino McGowan"
 date: '2018-01-22'
 slug: a-set-seed-ggplot2-adventure
@@ -10,13 +10,17 @@ description: "Recently I tweeted a small piece of advice re: when to set a seed 
 
 Recently I tweeted a small piece of advice re: when to set a seed in your script: 
 
-<blockquote class="twitter-tweet" data-lang="en"><p lang="en" dir="ltr"><a href="https://twitter.com/hashtag/rstats?src=hash&amp;ref_src=twsrc%5Etfw">#rstats</a> tip: always `set.seed()` AFTER loading ggplot2 <a href="https://t.co/TLpdokbSlN">pic.twitter.com/TLpdokbSlN</a></p>&mdash; Lucy 🌻 (@LucyStats) <a href="https://twitter.com/LucyStats/status/954178919242063872?ref_src=twsrc%5Etfw">January 19, 2018</a></blockquote> <script async src="https://platform.twitter.com/widgets.js" charset="utf-8"></script> 
+> tip: always `set.seed()` AFTER loading ggplot2
 
 [Jenny](http://twitter.com/JennyBryan) pointed out that this may be blog post-worthy, so here we are! 
 
 # Background
 
-`r tufte::margin_note("![](https://media1.giphy.com/media/JUh0yTz4h931K/giphy.gif)")` A little bit about where this tweet came from: I was out to lunch with my friend [Jonathan](https://twitter.com/JJ_Chipman) -- over our scrumptious Thai food, he mentioned he was having some simulation trouble. In particular, some of his simulations were breaking, but when he tried to run the script locally, everything seemed fine. He was using the same seed in both instances, and in fact was running the exact same script -- what could be causing this discrepancy! I recalled that ggplot2 would generate a random message about 10% the time, and asked whether he thought loading this package could somehow be affecting his simulation results. After some further investigation `r emo::ji("man_detective")`, it looked like indeed this may be the culprit!
+::: column-margin
+![](https://media1.giphy.com/media/JUh0yTz4h931K/giphy.gif)
+:::
+
+A little bit about where this tweet came from: I was out to lunch with my friend [Jonathan](https://twitter.com/JJ_Chipman) -- over our scrumptious Thai food, he mentioned he was having some simulation trouble. In particular, some of his simulations were breaking, but when he tried to run the script locally, everything seemed fine. He was using the same seed in both instances, and in fact was running the exact same script -- what could be causing this discrepancy! I recalled that ggplot2 would generate a random message about 10% the time, and asked whether he thought loading this package could somehow be affecting his simulation results. After some further investigation `r emo::ji("man_detective")`, it looked like indeed this may be the culprit!
 
 # Why did this happen?
 
@@ -44,7 +48,9 @@ The second is different because I have already performed one random process, so 
 
 There is a small function in ggplot2 that runs when the library is loaded for the first time. 
 
-`r tufte::margin_note("Note: This is a little different than this code looks now, it has been updated since this discussion began!")`
+::: column-marign
+Note: This is a little different than this code looks now, it has been updated since this discussion began!
+:::
 
 ```{r, eval = FALSE}
 .onAttach <- function(...) {
@@ -88,7 +94,10 @@ Notice the second chunk gave us the same result as above, but the first chunk wa
 
 # Reproducibility crisis?
 
-`r tufte::margin_note("![](https://metrouk2.files.wordpress.com/2017/04/phew.gif?w=620&h=392&crop=1)")` It turns out this isn't cause for concern re: reproducibility, thanks to Jim Hester's new patch to ggplot2 _phew!_ Prior to this update, non-interactive scripts will be reproducible (if always run non-interactively), however interactive scripts can cause some issues, as shown above. In general, I like to provide future Lucy with as much assistance as possible, so I will likely avoid setting seeds prior to loading packages on the off chance that it will make my debugging trickier in the future.
+::: column-margin
+![](https://metrouk2.files.wordpress.com/2017/04/phew.gif?w=620&h=392&crop=1)
+:::
+It turns out this isn't cause for concern re: reproducibility, thanks to Jim Hester's new patch to ggplot2 _phew!_ Prior to this update, non-interactive scripts will be reproducible (if always run non-interactively), however interactive scripts can cause some issues, as shown above. In general, I like to provide future Lucy with as much assistance as possible, so I will likely avoid setting seeds prior to loading packages on the off chance that it will make my debugging trickier in the future.
 
 # What should I do?
 

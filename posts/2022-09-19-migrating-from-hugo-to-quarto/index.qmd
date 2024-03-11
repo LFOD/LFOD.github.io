@@ -75,7 +75,7 @@ This will create a searchable table listing of all of the previous posts, allowi
 
 It is straightforward to incorporate comments on your blog -- our old site used utterance. Likewise, it is simple to add Google Analytics. To use this in Quarto, we can add the following to the website's global `yaml`: 
 
-```{yaml}
+```yaml
 website:
   comments: 
     utterances:

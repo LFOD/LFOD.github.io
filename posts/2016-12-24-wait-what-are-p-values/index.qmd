@@ -203,7 +203,7 @@ I most likely made some mistakes somewhere in this article. If you catch them an
 
 Here is the plotting code I used for the head tails plots. It's kind of ugly and I'm sure there's a more elegant way to code it. 
 
-```{eval = FALSE}
+```{r eval = FALSE}
 #Function for plotting coin flips. 
 #Takes a dataframe with at least the column "flip" containing heads or tails in character value
 plot_flips <- function(flip_data){
