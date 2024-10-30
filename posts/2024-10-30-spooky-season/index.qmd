@@ -1,0 +1,100 @@
+---
+title: "Spooky Seasons Greetings"
+author: "Lucy D'Agostino McGowan"
+date: "2024-10-30"
+categories: ["rstats", "normal", "paranormal"]
+description: "Let's do some paranormal plotting!"
+execute: 
+  eval: false
+---
+
+I thought it'd be fun to celebrate spooky season with a little stats punny plot. We're going to turn a normal distribution into a *paranormal* distribution! HA!
+
+Ok first let's get some packages.
+
+```{r}
+#| message: false
+#| warning: false
+library(tidyverse)
+library(tweenr)
+library(gganimate)
+```
+
+
+Now let's generate our Normal data:
+
+::: column-margin
+We're doing this twice in the data frame because we need to have the same number of data points as the *paranormal* data, which has a little wiggly bottom.
+:::
+
+```{r}
+n <- 100
+x_top <- seq(-1.5, 1.5, length.out = n)
+y_top <- dnorm(x_top)
+
+data_normal <- data.frame(
+  x = c(x_top, rev(x_top)),
+  y = c(y_top, rep(0.1, n)),
+  state = "normal"
+)
+```
+
+Cool beans. Now, for the paranormal, I want a little sine wiggle so it looks like a cute ghost! Let's make that happen.
+
+```{r}
+x_bottom <- seq(-1.5, 1.5, length.out = n)
+y_bottom <- -0.15 + 0.1 * sin(3 * pi * (x_bottom + 1.5)) - 0.1
+
+data_ghost <- data.frame(
+  x = c(x_top, rev(x_bottom)),
+  y = c(y_top, rev(y_bottom)),
+  state = "paranormal"
+)
+
+```
+
+Ok, now let's use that `tween_states` function from the `tweenr` package to interpolate. This will make for a fun .gif!
+
+```{r}
+interpolated_data <- tween_states(
+  list(data_normal, data_ghost), 
+  nframes = 100,
+  tweenlength = 3,
+  statelength = 1,
+  ease = "cubic-in-out"
+)
+```
+
+I also want little labels for people who can't tell what we are going for (in case my pun is not wonderfuly obvious to everyone!)
+
+```{r}
+interpolated_data <- interpolated_data |>
+  mutate(label = case_when(
+    .frame < 75 ~ "normal",          
+    .frame >= 75 ~ "paranormal"  
+  ))
+```
+
+And now for the plot!
+
+```{r}
+p <- ggplot(interpolated_data, aes(x = x, y = y)) +
+  geom_polygon(fill = "white", color = "black", linewidth = 1.5) +
+  geom_label(aes(label = label), x = 0, y = 0, size = 6, vjust = -1, na.rm = TRUE) +  
+  theme_void() +
+  theme(
+    panel.background = element_rect(fill = "transparent", color = NA),
+    plot.background = element_rect(fill = "transparent", color = NA)
+  ) +
+  transition_time(.frame)
+
+```
+
+And finally, let's animate it!
+
+```{r}
+animate(p, duration = 5, fps = 30, width = 500, height = 500, 
+        renderer = gifski_renderer("ghost_morph.gif"))
+```
+
+![](ghost_morph.gif)
