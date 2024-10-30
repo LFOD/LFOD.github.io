@@ -23,8 +23,8 @@
     "/posts/2017-08-14-pvalues_can_be_inappropriate/index.html",
     "/posts/2017-08-30-exponential-power-series/index.html",
     "/posts/2017-09-03-plumber-slack-bot/index.html",
-    "/posts/2017-09-24-simulated-annealing/index.html",
     "/posts/2017-09-25-commentary-and-follow-up-to-p-0-005-suggestion/index.html",
+    "/posts/2017-09-24-simulated-annealing/index.html",
     "/posts/2017-09-28-r-release-names/index.html",
     "/posts/2017-10-14-mcmc-explainer/index.html",
     "/posts/2017-11-08-lstm-as-baseball/index.html",
@@ -72,6 +72,7 @@
     "/posts/2023-04-28-imputation-might-be-silly/index.html",
     "/posts/2023-04-29-two-wrong-models-missing-data-style/index.html",
     "/posts/2023-07-26-visual-diagnostic-tool-for-causal-inference/index.html",
-    "/posts/2023-08-04-visual-diagnostic-tools-for-causal-inference/index.html"
+    "/posts/2023-08-04-visual-diagnostic-tools-for-causal-inference/index.html",
+    "/posts/2024-10-30-spooky-season/index.html"
   ]
 }

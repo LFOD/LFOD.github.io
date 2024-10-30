@@ -9,8 +9,368 @@
 <link>https://www.livefreeordichotomize.com/</link>
 <atom:link href="https://www.livefreeordichotomize.com/index.xml" rel="self" type="application/rss+xml"/>
 <description>Live Free or Dichotomize: Lucy D&#39;Agostino McGowan &amp; Nick Strayer&#39;s Blog</description>
-<generator>quarto-1.4.551</generator>
-<lastBuildDate>Fri, 04 Aug 2023 00:00:00 GMT</lastBuildDate>
+<generator>quarto-1.5.57</generator>
+<lastBuildDate>Wed, 30 Oct 2024 00:00:00 GMT</lastBuildDate>
+<item>
+  <title>Spooky Seasons Greetings</title>
+  <dc:creator>Lucy D&#39;Agostino McGowan</dc:creator>
+  <link>https://www.livefreeordichotomize.com/posts/2024-10-30-spooky-season/</link>
+  <description><![CDATA[ 
+
+
+
+
+<p>I thought it’d be fun to celebrate spooky season with a little stats punny plot. We’re going to turn a normal distribution into a <em>paranormal</em> distribution! HA!</p>
+<p>Ok first let’s get some packages.</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb1" style="background: #f1f3f5;"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb1-1"><span class="fu" style="color: #4758AB;
+background-color: null;
+font-style: inherit;">library</span>(tidyverse)</span>
+<span id="cb1-2"><span class="fu" style="color: #4758AB;
+background-color: null;
+font-style: inherit;">library</span>(tweenr)</span>
+<span id="cb1-3"><span class="fu" style="color: #4758AB;
+background-color: null;
+font-style: inherit;">library</span>(gganimate)</span></code></pre></div>
+</div>
+<p>Now let’s generate our Normal data:</p>
+
+<div class="no-row-height column-margin column-container"><div class="">
+<p>We’re doing this twice in the data frame because we need to have the same number of data points as the <em>paranormal</em> data, which has a little wiggly bottom.</p>
+</div></div><div class="cell">
+<div class="sourceCode cell-code" id="cb2" style="background: #f1f3f5;"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb2-1">n <span class="ot" style="color: #003B4F;
+background-color: null;
+font-style: inherit;">&lt;-</span> <span class="dv" style="color: #AD0000;
+background-color: null;
+font-style: inherit;">100</span></span>
+<span id="cb2-2">x_top <span class="ot" style="color: #003B4F;
+background-color: null;
+font-style: inherit;">&lt;-</span> <span class="fu" style="color: #4758AB;
+background-color: null;
+font-style: inherit;">seq</span>(<span class="sc" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">-</span><span class="fl" style="color: #AD0000;
+background-color: null;
+font-style: inherit;">1.5</span>, <span class="fl" style="color: #AD0000;
+background-color: null;
+font-style: inherit;">1.5</span>, <span class="at" style="color: #657422;
+background-color: null;
+font-style: inherit;">length.out =</span> n)</span>
+<span id="cb2-3">y_top <span class="ot" style="color: #003B4F;
+background-color: null;
+font-style: inherit;">&lt;-</span> <span class="fu" style="color: #4758AB;
+background-color: null;
+font-style: inherit;">dnorm</span>(x_top)</span>
+<span id="cb2-4"></span>
+<span id="cb2-5">data_normal <span class="ot" style="color: #003B4F;
+background-color: null;
+font-style: inherit;">&lt;-</span> <span class="fu" style="color: #4758AB;
+background-color: null;
+font-style: inherit;">data.frame</span>(</span>
+<span id="cb2-6">  <span class="at" style="color: #657422;
+background-color: null;
+font-style: inherit;">x =</span> <span class="fu" style="color: #4758AB;
+background-color: null;
+font-style: inherit;">c</span>(x_top, <span class="fu" style="color: #4758AB;
+background-color: null;
+font-style: inherit;">rev</span>(x_top)),</span>
+<span id="cb2-7">  <span class="at" style="color: #657422;
+background-color: null;
+font-style: inherit;">y =</span> <span class="fu" style="color: #4758AB;
+background-color: null;
+font-style: inherit;">c</span>(y_top, <span class="fu" style="color: #4758AB;
+background-color: null;
+font-style: inherit;">rep</span>(<span class="fl" style="color: #AD0000;
+background-color: null;
+font-style: inherit;">0.1</span>, n)),</span>
+<span id="cb2-8">  <span class="at" style="color: #657422;
+background-color: null;
+font-style: inherit;">state =</span> <span class="st" style="color: #20794D;
+background-color: null;
+font-style: inherit;">"normal"</span></span>
+<span id="cb2-9">)</span></code></pre></div>
+</div>
+<p>Cool beans. Now, for the paranormal, I want a little sine wiggle so it looks like a cute ghost! Let’s make that happen.</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb3" style="background: #f1f3f5;"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb3-1">x_bottom <span class="ot" style="color: #003B4F;
+background-color: null;
+font-style: inherit;">&lt;-</span> <span class="fu" style="color: #4758AB;
+background-color: null;
+font-style: inherit;">seq</span>(<span class="sc" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">-</span><span class="fl" style="color: #AD0000;
+background-color: null;
+font-style: inherit;">1.5</span>, <span class="fl" style="color: #AD0000;
+background-color: null;
+font-style: inherit;">1.5</span>, <span class="at" style="color: #657422;
+background-color: null;
+font-style: inherit;">length.out =</span> n)</span>
+<span id="cb3-2">y_bottom <span class="ot" style="color: #003B4F;
+background-color: null;
+font-style: inherit;">&lt;-</span> <span class="sc" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">-</span><span class="fl" style="color: #AD0000;
+background-color: null;
+font-style: inherit;">0.15</span> <span class="sc" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">+</span> <span class="fl" style="color: #AD0000;
+background-color: null;
+font-style: inherit;">0.1</span> <span class="sc" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">*</span> <span class="fu" style="color: #4758AB;
+background-color: null;
+font-style: inherit;">sin</span>(<span class="dv" style="color: #AD0000;
+background-color: null;
+font-style: inherit;">3</span> <span class="sc" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">*</span> pi <span class="sc" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">*</span> (x_bottom <span class="sc" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">+</span> <span class="fl" style="color: #AD0000;
+background-color: null;
+font-style: inherit;">1.5</span>)) <span class="sc" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">-</span> <span class="fl" style="color: #AD0000;
+background-color: null;
+font-style: inherit;">0.1</span></span>
+<span id="cb3-3"></span>
+<span id="cb3-4">data_ghost <span class="ot" style="color: #003B4F;
+background-color: null;
+font-style: inherit;">&lt;-</span> <span class="fu" style="color: #4758AB;
+background-color: null;
+font-style: inherit;">data.frame</span>(</span>
+<span id="cb3-5">  <span class="at" style="color: #657422;
+background-color: null;
+font-style: inherit;">x =</span> <span class="fu" style="color: #4758AB;
+background-color: null;
+font-style: inherit;">c</span>(x_top, <span class="fu" style="color: #4758AB;
+background-color: null;
+font-style: inherit;">rev</span>(x_bottom)),</span>
+<span id="cb3-6">  <span class="at" style="color: #657422;
+background-color: null;
+font-style: inherit;">y =</span> <span class="fu" style="color: #4758AB;
+background-color: null;
+font-style: inherit;">c</span>(y_top, <span class="fu" style="color: #4758AB;
+background-color: null;
+font-style: inherit;">rev</span>(y_bottom)),</span>
+<span id="cb3-7">  <span class="at" style="color: #657422;
+background-color: null;
+font-style: inherit;">state =</span> <span class="st" style="color: #20794D;
+background-color: null;
+font-style: inherit;">"paranormal"</span></span>
+<span id="cb3-8">)</span></code></pre></div>
+</div>
+<p>Ok, now let’s use that <code>tween_states</code> function from the <code>tweenr</code> package to interpolate. This will make for a fun .gif!</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb4" style="background: #f1f3f5;"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb4-1">interpolated_data <span class="ot" style="color: #003B4F;
+background-color: null;
+font-style: inherit;">&lt;-</span> <span class="fu" style="color: #4758AB;
+background-color: null;
+font-style: inherit;">tween_states</span>(</span>
+<span id="cb4-2">  <span class="fu" style="color: #4758AB;
+background-color: null;
+font-style: inherit;">list</span>(data_normal, data_ghost), </span>
+<span id="cb4-3">  <span class="at" style="color: #657422;
+background-color: null;
+font-style: inherit;">nframes =</span> <span class="dv" style="color: #AD0000;
+background-color: null;
+font-style: inherit;">100</span>,</span>
+<span id="cb4-4">  <span class="at" style="color: #657422;
+background-color: null;
+font-style: inherit;">tweenlength =</span> <span class="dv" style="color: #AD0000;
+background-color: null;
+font-style: inherit;">3</span>,</span>
+<span id="cb4-5">  <span class="at" style="color: #657422;
+background-color: null;
+font-style: inherit;">statelength =</span> <span class="dv" style="color: #AD0000;
+background-color: null;
+font-style: inherit;">1</span>,</span>
+<span id="cb4-6">  <span class="at" style="color: #657422;
+background-color: null;
+font-style: inherit;">ease =</span> <span class="st" style="color: #20794D;
+background-color: null;
+font-style: inherit;">"cubic-in-out"</span></span>
+<span id="cb4-7">)</span></code></pre></div>
+</div>
+<p>I also want little labels for people who can’t tell what we are going for (in case my pun is not wonderfuly obvious to everyone!)</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb5" style="background: #f1f3f5;"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb5-1">interpolated_data <span class="ot" style="color: #003B4F;
+background-color: null;
+font-style: inherit;">&lt;-</span> interpolated_data <span class="sc" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">|&gt;</span></span>
+<span id="cb5-2">  <span class="fu" style="color: #4758AB;
+background-color: null;
+font-style: inherit;">mutate</span>(<span class="at" style="color: #657422;
+background-color: null;
+font-style: inherit;">label =</span> <span class="fu" style="color: #4758AB;
+background-color: null;
+font-style: inherit;">case_when</span>(</span>
+<span id="cb5-3">    .frame <span class="sc" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">&lt;</span> <span class="dv" style="color: #AD0000;
+background-color: null;
+font-style: inherit;">75</span> <span class="sc" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">~</span> <span class="st" style="color: #20794D;
+background-color: null;
+font-style: inherit;">"normal"</span>,          </span>
+<span id="cb5-4">    .frame <span class="sc" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">&gt;=</span> <span class="dv" style="color: #AD0000;
+background-color: null;
+font-style: inherit;">75</span> <span class="sc" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">~</span> <span class="st" style="color: #20794D;
+background-color: null;
+font-style: inherit;">"paranormal"</span>  </span>
+<span id="cb5-5">  ))</span></code></pre></div>
+</div>
+<p>And now for the plot!</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb6" style="background: #f1f3f5;"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb6-1">p <span class="ot" style="color: #003B4F;
+background-color: null;
+font-style: inherit;">&lt;-</span> <span class="fu" style="color: #4758AB;
+background-color: null;
+font-style: inherit;">ggplot</span>(interpolated_data, <span class="fu" style="color: #4758AB;
+background-color: null;
+font-style: inherit;">aes</span>(<span class="at" style="color: #657422;
+background-color: null;
+font-style: inherit;">x =</span> x, <span class="at" style="color: #657422;
+background-color: null;
+font-style: inherit;">y =</span> y)) <span class="sc" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">+</span></span>
+<span id="cb6-2">  <span class="fu" style="color: #4758AB;
+background-color: null;
+font-style: inherit;">geom_polygon</span>(<span class="at" style="color: #657422;
+background-color: null;
+font-style: inherit;">fill =</span> <span class="st" style="color: #20794D;
+background-color: null;
+font-style: inherit;">"white"</span>, <span class="at" style="color: #657422;
+background-color: null;
+font-style: inherit;">color =</span> <span class="st" style="color: #20794D;
+background-color: null;
+font-style: inherit;">"black"</span>, <span class="at" style="color: #657422;
+background-color: null;
+font-style: inherit;">linewidth =</span> <span class="fl" style="color: #AD0000;
+background-color: null;
+font-style: inherit;">1.5</span>) <span class="sc" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">+</span></span>
+<span id="cb6-3">  <span class="fu" style="color: #4758AB;
+background-color: null;
+font-style: inherit;">geom_label</span>(<span class="fu" style="color: #4758AB;
+background-color: null;
+font-style: inherit;">aes</span>(<span class="at" style="color: #657422;
+background-color: null;
+font-style: inherit;">label =</span> label), <span class="at" style="color: #657422;
+background-color: null;
+font-style: inherit;">x =</span> <span class="dv" style="color: #AD0000;
+background-color: null;
+font-style: inherit;">0</span>, <span class="at" style="color: #657422;
+background-color: null;
+font-style: inherit;">y =</span> <span class="dv" style="color: #AD0000;
+background-color: null;
+font-style: inherit;">0</span>, <span class="at" style="color: #657422;
+background-color: null;
+font-style: inherit;">size =</span> <span class="dv" style="color: #AD0000;
+background-color: null;
+font-style: inherit;">6</span>, <span class="at" style="color: #657422;
+background-color: null;
+font-style: inherit;">vjust =</span> <span class="sc" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">-</span><span class="dv" style="color: #AD0000;
+background-color: null;
+font-style: inherit;">1</span>, <span class="at" style="color: #657422;
+background-color: null;
+font-style: inherit;">na.rm =</span> <span class="cn" style="color: #8f5902;
+background-color: null;
+font-style: inherit;">TRUE</span>) <span class="sc" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">+</span>  </span>
+<span id="cb6-4">  <span class="fu" style="color: #4758AB;
+background-color: null;
+font-style: inherit;">theme_void</span>() <span class="sc" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">+</span></span>
+<span id="cb6-5">  <span class="fu" style="color: #4758AB;
+background-color: null;
+font-style: inherit;">theme</span>(</span>
+<span id="cb6-6">    <span class="at" style="color: #657422;
+background-color: null;
+font-style: inherit;">panel.background =</span> <span class="fu" style="color: #4758AB;
+background-color: null;
+font-style: inherit;">element_rect</span>(<span class="at" style="color: #657422;
+background-color: null;
+font-style: inherit;">fill =</span> <span class="st" style="color: #20794D;
+background-color: null;
+font-style: inherit;">"transparent"</span>, <span class="at" style="color: #657422;
+background-color: null;
+font-style: inherit;">color =</span> <span class="cn" style="color: #8f5902;
+background-color: null;
+font-style: inherit;">NA</span>),</span>
+<span id="cb6-7">    <span class="at" style="color: #657422;
+background-color: null;
+font-style: inherit;">plot.background =</span> <span class="fu" style="color: #4758AB;
+background-color: null;
+font-style: inherit;">element_rect</span>(<span class="at" style="color: #657422;
+background-color: null;
+font-style: inherit;">fill =</span> <span class="st" style="color: #20794D;
+background-color: null;
+font-style: inherit;">"transparent"</span>, <span class="at" style="color: #657422;
+background-color: null;
+font-style: inherit;">color =</span> <span class="cn" style="color: #8f5902;
+background-color: null;
+font-style: inherit;">NA</span>)</span>
+<span id="cb6-8">  ) <span class="sc" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">+</span></span>
+<span id="cb6-9">  <span class="fu" style="color: #4758AB;
+background-color: null;
+font-style: inherit;">transition_time</span>(.frame)</span></code></pre></div>
+</div>
+<p>And finally, let’s animate it!</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb7" style="background: #f1f3f5;"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb7-1"><span class="fu" style="color: #4758AB;
+background-color: null;
+font-style: inherit;">animate</span>(p, <span class="at" style="color: #657422;
+background-color: null;
+font-style: inherit;">duration =</span> <span class="dv" style="color: #AD0000;
+background-color: null;
+font-style: inherit;">5</span>, <span class="at" style="color: #657422;
+background-color: null;
+font-style: inherit;">fps =</span> <span class="dv" style="color: #AD0000;
+background-color: null;
+font-style: inherit;">30</span>, <span class="at" style="color: #657422;
+background-color: null;
+font-style: inherit;">width =</span> <span class="dv" style="color: #AD0000;
+background-color: null;
+font-style: inherit;">500</span>, <span class="at" style="color: #657422;
+background-color: null;
+font-style: inherit;">height =</span> <span class="dv" style="color: #AD0000;
+background-color: null;
+font-style: inherit;">500</span>, </span>
+<span id="cb7-2">        <span class="at" style="color: #657422;
+background-color: null;
+font-style: inherit;">renderer =</span> <span class="fu" style="color: #4758AB;
+background-color: null;
+font-style: inherit;">gifski_renderer</span>(<span class="st" style="color: #20794D;
+background-color: null;
+font-style: inherit;">"ghost_morph.gif"</span>))</span></code></pre></div>
+</div>
+<p><img src="https://www.livefreeordichotomize.com/posts/2024-10-30-spooky-season/ghost_morph.gif" class="img-fluid"></p>
+
+
+
+ ]]></description>
+  <category>rstats</category>
+  <category>normal</category>
+  <category>paranormal</category>
+  <guid>https://www.livefreeordichotomize.com/posts/2024-10-30-spooky-season/</guid>
+  <pubDate>Wed, 30 Oct 2024 00:00:00 GMT</pubDate>
+</item>
 <item>
   <title>Visual Diagnostic Tools for Causal Inference</title>
   <dc:creator>Lucy D&#39;Agostino McGowan</dc:creator>
@@ -6404,6 +6764,7 @@ font-style: inherit;">---</span></span>
 background-color: null;
 font-style: inherit;">title</span><span class="kw" style="color: #003B4F;
 background-color: null;
+font-weight: bold;
 font-style: inherit;">:</span><span class="at" style="color: #657422;
 background-color: null;
 font-style: inherit;"> Page Not Found</span></span>
@@ -6411,6 +6772,7 @@ font-style: inherit;"> Page Not Found</span></span>
 background-color: null;
 font-style: inherit;">listing</span><span class="kw" style="color: #003B4F;
 background-color: null;
+font-weight: bold;
 font-style: inherit;">:</span></span>
 <span id="cb3-4"><span class="at" style="color: #657422;
 background-color: null;
@@ -6418,6 +6780,7 @@ font-style: inherit;">  </span><span class="fu" style="color: #4758AB;
 background-color: null;
 font-style: inherit;">contents</span><span class="kw" style="color: #003B4F;
 background-color: null;
+font-weight: bold;
 font-style: inherit;">:</span><span class="at" style="color: #657422;
 background-color: null;
 font-style: inherit;"> posts</span></span>
@@ -6427,6 +6790,7 @@ font-style: inherit;">  </span><span class="fu" style="color: #4758AB;
 background-color: null;
 font-style: inherit;">type</span><span class="kw" style="color: #003B4F;
 background-color: null;
+font-weight: bold;
 font-style: inherit;">:</span><span class="at" style="color: #657422;
 background-color: null;
 font-style: inherit;"> table</span></span>
@@ -6436,6 +6800,7 @@ font-style: inherit;">  </span><span class="fu" style="color: #4758AB;
 background-color: null;
 font-style: inherit;">sort</span><span class="kw" style="color: #003B4F;
 background-color: null;
+font-weight: bold;
 font-style: inherit;">:</span><span class="at" style="color: #657422;
 background-color: null;
 font-style: inherit;"> </span><span class="st" style="color: #20794D;
@@ -6454,6 +6819,7 @@ font-style: inherit;">---</span></span></code></pre></div>
 background-color: null;
 font-style: inherit;">website</span><span class="kw" style="color: #003B4F;
 background-color: null;
+font-weight: bold;
 font-style: inherit;">:</span></span>
 <span id="cb4-2"><span class="at" style="color: #657422;
 background-color: null;
@@ -6461,6 +6827,7 @@ font-style: inherit;">  </span><span class="fu" style="color: #4758AB;
 background-color: null;
 font-style: inherit;">comments</span><span class="kw" style="color: #003B4F;
 background-color: null;
+font-weight: bold;
 font-style: inherit;">:</span><span class="at" style="color: #657422;
 background-color: null;
 font-style: inherit;"> </span></span>
@@ -6470,6 +6837,7 @@ font-style: inherit;">    </span><span class="fu" style="color: #4758AB;
 background-color: null;
 font-style: inherit;">utterances</span><span class="kw" style="color: #003B4F;
 background-color: null;
+font-weight: bold;
 font-style: inherit;">:</span></span>
 <span id="cb4-4"><span class="at" style="color: #657422;
 background-color: null;
@@ -6477,6 +6845,7 @@ font-style: inherit;">      </span><span class="fu" style="color: #4758AB;
 background-color: null;
 font-style: inherit;">repo</span><span class="kw" style="color: #003B4F;
 background-color: null;
+font-weight: bold;
 font-style: inherit;">:</span><span class="at" style="color: #657422;
 background-color: null;
 font-style: inherit;"> lfod/lfod.github.io</span></span>
@@ -6486,6 +6855,7 @@ font-style: inherit;">  </span><span class="fu" style="color: #4758AB;
 background-color: null;
 font-style: inherit;">google-analytics</span><span class="kw" style="color: #003B4F;
 background-color: null;
+font-weight: bold;
 font-style: inherit;">:</span><span class="at" style="color: #657422;
 background-color: null;
 font-style: inherit;"> </span><span class="st" style="color: #20794D;
@@ -6907,7 +7277,7 @@ font-style: inherit;">"Unmeasured confounder - outcome effect"</span>)</span></c
 <p>For example, to adjust (<code>action</code>) a coefficient (<code>effect</code>) with a binary unmeasured confounder (<code>what</code>), we use the function <code>adjust_coef_with_binary()</code>.</p>
 <p>Below is a copy of the table included in a <a href="https://doi.org/10.21105/joss.04495">recent JOSS article</a> about this package.</p>
 <p><strong>Table 1</strong>. Grammar of <code>tipr</code> functions.</p>
-<table class="table">
+<table class="caption-top table">
 <colgroup>
 <col style="width: 13%">
 <col style="width: 26%">
@@ -9896,375 +10266,6 @@ font-style: inherit;">1</span>))</span></code></pre></div>
   <category>competing risks</category>
   <guid>https://www.livefreeordichotomize.com/posts/2020-05-21-survival-model-detective-2/</guid>
   <pubDate>Fri, 22 May 2020 00:00:00 GMT</pubDate>
-</item>
-<item>
-  <title>Survival Model Detective: Part 1</title>
-  <dc:creator>Lucy D&#39;Agostino McGowan</dc:creator>
-  <link>https://www.livefreeordichotomize.com/posts/2020-05-21-survival-model-detective-1/</link>
-  <description><![CDATA[ 
-
-
-
-
-<p>A <a href="https://www.nejm.org/doi/full/10.1056/NEJMoa2007016">paper by Grein et al.&nbsp;was recently published in the New England Journal of Medicine</a> examining a cohort of patients with COVID-19 who were treated with compassionate-use remdesivir. There are two things that were interesting about this paper:</p>
-<ol type="1">
-<li>They had a very neat figure that included tons of information about their cohort</li>
-<li>The primary statistical analysis was not appropriately done</li>
-</ol>
-<p>This post focuses on the very neat figure!</p>
-<section id="figure-2" class="level2">
-<h2 class="anchored" data-anchor-id="figure-2">Figure 2</h2>
-<p>Figure 2 in the original paper shows the changes in oxygen-support status from baseline for each of the 53 patients. This figure includes information about:</p>
-<ul>
-<li>The duration of follow up for each individual patient</li>
-<li>Each patient’s oxygen trajectory</li>
-<li>Each patient’s ultimate outcome (death, discharged, censored)</li>
-</ul>
-<p>You can construct a whole dataset from this (and I did!) - you can find it <a href="https://github.com/LucyMcGowan/nejm-grein-reanalysis">on my GitHub</a>.</p>
-<p><img src="https://www.livefreeordichotomize.com/media/images/2020-05-21/fig2.png"></p>
-<p>Below is code to recreate their Figure 2 using #rstats 😎.</p>
-<div class="cell">
-<div class="sourceCode cell-code" id="cb1" style="background: #f1f3f5;"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb1-1"><span class="fu" style="color: #4758AB;
-background-color: null;
-font-style: inherit;">library</span>(tidyverse)</span>
-<span id="cb1-2">d <span class="ot" style="color: #003B4F;
-background-color: null;
-font-style: inherit;">&lt;-</span> <span class="fu" style="color: #4758AB;
-background-color: null;
-font-style: inherit;">read_csv</span>(<span class="st" style="color: #20794D;
-background-color: null;
-font-style: inherit;">"https://raw.githubusercontent.com/LucyMcGowan/nejm-grein-reanalysis/master/data/data-fig-2.csv"</span>)</span></code></pre></div>
-</div>
-<div class="cell">
-<div class="sourceCode cell-code" id="cb2" style="background: #f1f3f5;"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb2-1">long_dat <span class="ot" style="color: #003B4F;
-background-color: null;
-font-style: inherit;">&lt;-</span> d <span class="sc" style="color: #5E5E5E;
-background-color: null;
-font-style: inherit;">%&gt;%</span></span>
-<span id="cb2-2">  <span class="fu" style="color: #4758AB;
-background-color: null;
-font-style: inherit;">pivot_longer</span>(day_1<span class="sc" style="color: #5E5E5E;
-background-color: null;
-font-style: inherit;">:</span>day_36)</span>
-<span id="cb2-3"></span>
-<span id="cb2-4">cats <span class="ot" style="color: #003B4F;
-background-color: null;
-font-style: inherit;">&lt;-</span> <span class="fu" style="color: #4758AB;
-background-color: null;
-font-style: inherit;">tibble</span>(</span>
-<span id="cb2-5">  <span class="at" style="color: #657422;
-background-color: null;
-font-style: inherit;">value =</span> <span class="dv" style="color: #AD0000;
-background-color: null;
-font-style: inherit;">1</span><span class="sc" style="color: #5E5E5E;
-background-color: null;
-font-style: inherit;">:</span><span class="dv" style="color: #AD0000;
-background-color: null;
-font-style: inherit;">6</span>,</span>
-<span id="cb2-6">  <span class="at" style="color: #657422;
-background-color: null;
-font-style: inherit;">cat =</span> <span class="fu" style="color: #4758AB;
-background-color: null;
-font-style: inherit;">factor</span>(<span class="fu" style="color: #4758AB;
-background-color: null;
-font-style: inherit;">c</span>(<span class="st" style="color: #20794D;
-background-color: null;
-font-style: inherit;">"Ambient air"</span>, <span class="st" style="color: #20794D;
-background-color: null;
-font-style: inherit;">"Low-flow oxygen"</span>, <span class="st" style="color: #20794D;
-background-color: null;
-font-style: inherit;">"High-flow oxygen"</span>, <span class="st" style="color: #20794D;
-background-color: null;
-font-style: inherit;">"NIPPV"</span>, </span>
-<span id="cb2-7">                 <span class="st" style="color: #20794D;
-background-color: null;
-font-style: inherit;">"Mechanical ventilation"</span>, <span class="st" style="color: #20794D;
-background-color: null;
-font-style: inherit;">"ECMO"</span>),</span>
-<span id="cb2-8">               <span class="at" style="color: #657422;
-background-color: null;
-font-style: inherit;">levels =</span> <span class="fu" style="color: #4758AB;
-background-color: null;
-font-style: inherit;">c</span>(<span class="st" style="color: #20794D;
-background-color: null;
-font-style: inherit;">"ECMO"</span>, <span class="st" style="color: #20794D;
-background-color: null;
-font-style: inherit;">"Mechanical ventilation"</span>, <span class="st" style="color: #20794D;
-background-color: null;
-font-style: inherit;">"NIPPV"</span>, </span>
-<span id="cb2-9">                          <span class="st" style="color: #20794D;
-background-color: null;
-font-style: inherit;">"High-flow oxygen"</span>, <span class="st" style="color: #20794D;
-background-color: null;
-font-style: inherit;">"Low-flow oxygen"</span>, <span class="st" style="color: #20794D;
-background-color: null;
-font-style: inherit;">"Ambient air"</span>))</span>
-<span id="cb2-10">)</span>
-<span id="cb2-11">long_dat <span class="sc" style="color: #5E5E5E;
-background-color: null;
-font-style: inherit;">%&gt;%</span></span>
-<span id="cb2-12">  <span class="fu" style="color: #4758AB;
-background-color: null;
-font-style: inherit;">left_join</span>(cats, <span class="at" style="color: #657422;
-background-color: null;
-font-style: inherit;">by =</span> <span class="st" style="color: #20794D;
-background-color: null;
-font-style: inherit;">"value"</span>) <span class="sc" style="color: #5E5E5E;
-background-color: null;
-font-style: inherit;">%&gt;%</span></span>
-<span id="cb2-13">  <span class="fu" style="color: #4758AB;
-background-color: null;
-font-style: inherit;">filter</span>(<span class="sc" style="color: #5E5E5E;
-background-color: null;
-font-style: inherit;">!</span><span class="fu" style="color: #4758AB;
-background-color: null;
-font-style: inherit;">is.na</span>(value)) <span class="sc" style="color: #5E5E5E;
-background-color: null;
-font-style: inherit;">%&gt;%</span></span>
-<span id="cb2-14">  <span class="fu" style="color: #4758AB;
-background-color: null;
-font-style: inherit;">mutate</span>(<span class="at" style="color: #657422;
-background-color: null;
-font-style: inherit;">day_oxy =</span> <span class="fu" style="color: #4758AB;
-background-color: null;
-font-style: inherit;">as.numeric</span>(<span class="fu" style="color: #4758AB;
-background-color: null;
-font-style: inherit;">gsub</span>(<span class="st" style="color: #20794D;
-background-color: null;
-font-style: inherit;">"day_"</span>, <span class="st" style="color: #20794D;
-background-color: null;
-font-style: inherit;">""</span>, name)) <span class="sc" style="color: #5E5E5E;
-background-color: null;
-font-style: inherit;">-</span> <span class="dv" style="color: #AD0000;
-background-color: null;
-font-style: inherit;">1</span>,</span>
-<span id="cb2-15">         <span class="at" style="color: #657422;
-background-color: null;
-font-style: inherit;">day_oxy =</span> <span class="fu" style="color: #4758AB;
-background-color: null;
-font-style: inherit;">ifelse</span>(day_oxy <span class="sc" style="color: #5E5E5E;
-background-color: null;
-font-style: inherit;">&gt;</span> <span class="dv" style="color: #AD0000;
-background-color: null;
-font-style: inherit;">28</span>, <span class="dv" style="color: #AD0000;
-background-color: null;
-font-style: inherit;">28</span>, day_oxy),</span>
-<span id="cb2-16">         <span class="at" style="color: #657422;
-background-color: null;
-font-style: inherit;">day =</span> <span class="fu" style="color: #4758AB;
-background-color: null;
-font-style: inherit;">ifelse</span>(day <span class="sc" style="color: #5E5E5E;
-background-color: null;
-font-style: inherit;">&gt;</span> <span class="dv" style="color: #AD0000;
-background-color: null;
-font-style: inherit;">28</span>, <span class="dv" style="color: #AD0000;
-background-color: null;
-font-style: inherit;">28</span>, day),</span>
-<span id="cb2-17">         <span class="at" style="color: #657422;
-background-color: null;
-font-style: inherit;">patient =</span> <span class="fu" style="color: #4758AB;
-background-color: null;
-font-style: inherit;">factor</span>(patient, <span class="at" style="color: #657422;
-background-color: null;
-font-style: inherit;">levels =</span> <span class="dv" style="color: #AD0000;
-background-color: null;
-font-style: inherit;">53</span><span class="sc" style="color: #5E5E5E;
-background-color: null;
-font-style: inherit;">:</span><span class="dv" style="color: #AD0000;
-background-color: null;
-font-style: inherit;">1</span>),</span>
-<span id="cb2-18">         <span class="at" style="color: #657422;
-background-color: null;
-font-style: inherit;">event =</span> <span class="fu" style="color: #4758AB;
-background-color: null;
-font-style: inherit;">ifelse</span>(event <span class="sc" style="color: #5E5E5E;
-background-color: null;
-font-style: inherit;">==</span> <span class="st" style="color: #20794D;
-background-color: null;
-font-style: inherit;">"censor"</span>, <span class="cn" style="color: #8f5902;
-background-color: null;
-font-style: inherit;">NA</span>, event)</span>
-<span id="cb2-19">  ) <span class="sc" style="color: #5E5E5E;
-background-color: null;
-font-style: inherit;">%&gt;%</span></span>
-<span id="cb2-20">  <span class="fu" style="color: #4758AB;
-background-color: null;
-font-style: inherit;">ggplot</span>(<span class="fu" style="color: #4758AB;
-background-color: null;
-font-style: inherit;">aes</span>(<span class="at" style="color: #657422;
-background-color: null;
-font-style: inherit;">x =</span> patient, <span class="at" style="color: #657422;
-background-color: null;
-font-style: inherit;">y =</span> day_oxy, <span class="at" style="color: #657422;
-background-color: null;
-font-style: inherit;">fill =</span> cat)) <span class="sc" style="color: #5E5E5E;
-background-color: null;
-font-style: inherit;">+</span></span>
-<span id="cb2-21">  <span class="fu" style="color: #4758AB;
-background-color: null;
-font-style: inherit;">geom_segment</span>(<span class="fu" style="color: #4758AB;
-background-color: null;
-font-style: inherit;">aes</span>(<span class="at" style="color: #657422;
-background-color: null;
-font-style: inherit;">x =</span> patient, <span class="at" style="color: #657422;
-background-color: null;
-font-style: inherit;">xend =</span> patient,</span>
-<span id="cb2-22">                   <span class="at" style="color: #657422;
-background-color: null;
-font-style: inherit;">y =</span> <span class="dv" style="color: #AD0000;
-background-color: null;
-font-style: inherit;">0</span>, <span class="at" style="color: #657422;
-background-color: null;
-font-style: inherit;">yend =</span> day <span class="sc" style="color: #5E5E5E;
-background-color: null;
-font-style: inherit;">-</span> <span class="fl" style="color: #AD0000;
-background-color: null;
-font-style: inherit;">0.5</span>), <span class="at" style="color: #657422;
-background-color: null;
-font-style: inherit;">lty =</span> <span class="dv" style="color: #AD0000;
-background-color: null;
-font-style: inherit;">3</span>) <span class="sc" style="color: #5E5E5E;
-background-color: null;
-font-style: inherit;">+</span></span>
-<span id="cb2-23">  <span class="fu" style="color: #4758AB;
-background-color: null;
-font-style: inherit;">geom_tile</span>(<span class="at" style="color: #657422;
-background-color: null;
-font-style: inherit;">width =</span> <span class="fl" style="color: #AD0000;
-background-color: null;
-font-style: inherit;">0.5</span>) <span class="sc" style="color: #5E5E5E;
-background-color: null;
-font-style: inherit;">+</span> </span>
-<span id="cb2-24">  <span class="fu" style="color: #4758AB;
-background-color: null;
-font-style: inherit;">scale_fill_manual</span>(<span class="st" style="color: #20794D;
-background-color: null;
-font-style: inherit;">"Oxygen support"</span>,</span>
-<span id="cb2-25">                    <span class="at" style="color: #657422;
-background-color: null;
-font-style: inherit;">values =</span> <span class="fu" style="color: #4758AB;
-background-color: null;
-font-style: inherit;">c</span>(<span class="st" style="color: #20794D;
-background-color: null;
-font-style: inherit;">"#7D3A2C"</span>, <span class="st" style="color: #20794D;
-background-color: null;
-font-style: inherit;">"#AA3B2F"</span>, <span class="st" style="color: #20794D;
-background-color: null;
-font-style: inherit;">"#D36446"</span>, <span class="st" style="color: #20794D;
-background-color: null;
-font-style: inherit;">"#DEA568"</span>, </span>
-<span id="cb2-26">                               <span class="st" style="color: #20794D;
-background-color: null;
-font-style: inherit;">"#F5D280"</span>, <span class="st" style="color: #20794D;
-background-color: null;
-font-style: inherit;">"#FCEEBC"</span>)) <span class="sc" style="color: #5E5E5E;
-background-color: null;
-font-style: inherit;">+</span></span>
-<span id="cb2-27">  <span class="fu" style="color: #4758AB;
-background-color: null;
-font-style: inherit;">geom_point</span>(<span class="fu" style="color: #4758AB;
-background-color: null;
-font-style: inherit;">aes</span>(<span class="at" style="color: #657422;
-background-color: null;
-font-style: inherit;">x =</span> patient, <span class="at" style="color: #657422;
-background-color: null;
-font-style: inherit;">y =</span> day <span class="sc" style="color: #5E5E5E;
-background-color: null;
-font-style: inherit;">-</span> <span class="fl" style="color: #AD0000;
-background-color: null;
-font-style: inherit;">0.5</span>, <span class="at" style="color: #657422;
-background-color: null;
-font-style: inherit;">shape =</span> event)) <span class="sc" style="color: #5E5E5E;
-background-color: null;
-font-style: inherit;">+</span></span>
-<span id="cb2-28">  <span class="fu" style="color: #4758AB;
-background-color: null;
-font-style: inherit;">scale_shape_manual</span>(<span class="st" style="color: #20794D;
-background-color: null;
-font-style: inherit;">"Event"</span>, <span class="at" style="color: #657422;
-background-color: null;
-font-style: inherit;">values =</span> <span class="fu" style="color: #4758AB;
-background-color: null;
-font-style: inherit;">c</span>(<span class="dv" style="color: #AD0000;
-background-color: null;
-font-style: inherit;">15</span>, <span class="dv" style="color: #AD0000;
-background-color: null;
-font-style: inherit;">5</span>),</span>
-<span id="cb2-29">                     <span class="at" style="color: #657422;
-background-color: null;
-font-style: inherit;">labels =</span> <span class="fu" style="color: #4758AB;
-background-color: null;
-font-style: inherit;">c</span>(<span class="st" style="color: #20794D;
-background-color: null;
-font-style: inherit;">"Death"</span>, <span class="st" style="color: #20794D;
-background-color: null;
-font-style: inherit;">"Discharge"</span>, <span class="st" style="color: #20794D;
-background-color: null;
-font-style: inherit;">""</span>)) <span class="sc" style="color: #5E5E5E;
-background-color: null;
-font-style: inherit;">+</span></span>
-<span id="cb2-30">  <span class="fu" style="color: #4758AB;
-background-color: null;
-font-style: inherit;">guides</span>(<span class="at" style="color: #657422;
-background-color: null;
-font-style: inherit;">fill =</span> <span class="fu" style="color: #4758AB;
-background-color: null;
-font-style: inherit;">guide_legend</span>(<span class="at" style="color: #657422;
-background-color: null;
-font-style: inherit;">override.aes =</span> <span class="fu" style="color: #4758AB;
-background-color: null;
-font-style: inherit;">list</span>(<span class="at" style="color: #657422;
-background-color: null;
-font-style: inherit;">shape =</span> <span class="cn" style="color: #8f5902;
-background-color: null;
-font-style: inherit;">NA</span>), <span class="at" style="color: #657422;
-background-color: null;
-font-style: inherit;">order =</span> <span class="dv" style="color: #AD0000;
-background-color: null;
-font-style: inherit;">1</span>)) <span class="sc" style="color: #5E5E5E;
-background-color: null;
-font-style: inherit;">+</span></span>
-<span id="cb2-31">  <span class="fu" style="color: #4758AB;
-background-color: null;
-font-style: inherit;">coord_flip</span>() <span class="sc" style="color: #5E5E5E;
-background-color: null;
-font-style: inherit;">+</span></span>
-<span id="cb2-32">  <span class="fu" style="color: #4758AB;
-background-color: null;
-font-style: inherit;">labs</span>(<span class="at" style="color: #657422;
-background-color: null;
-font-style: inherit;">y =</span> <span class="st" style="color: #20794D;
-background-color: null;
-font-style: inherit;">"day"</span>, <span class="at" style="color: #657422;
-background-color: null;
-font-style: inherit;">x =</span> <span class="st" style="color: #20794D;
-background-color: null;
-font-style: inherit;">""</span>) <span class="sc" style="color: #5E5E5E;
-background-color: null;
-font-style: inherit;">+</span></span>
-<span id="cb2-33">  <span class="fu" style="color: #4758AB;
-background-color: null;
-font-style: inherit;">theme_classic</span>()</span></code></pre></div>
-<div class="cell-output-display">
-<div>
-<figure class="figure">
-<p><img src="https://www.livefreeordichotomize.com/posts/2020-05-21-survival-model-detective-1/index_files/figure-html/unnamed-chunk-2-1.png" class="img-fluid figure-img" width="672"></p>
-</figure>
-</div>
-</div>
-</div>
-<p>I definitely applaud the authors for making this so accessible! Check out <a href="https://livefreeordichotomize.com/2020/05/22/survival-model-detective-2/">Part 2</a> to see a bit about how their statistics could be improved.</p>
-
-
-</section>
-
- ]]></description>
-  <category>rstats</category>
-  <category>covid-19</category>
-  <category>survival analysis</category>
-  <category>competing risks</category>
-  <guid>https://www.livefreeordichotomize.com/posts/2020-05-21-survival-model-detective-1/</guid>
-  <pubDate>Thu, 21 May 2020 00:00:00 GMT</pubDate>
 </item>
 </channel>
 </rss>
