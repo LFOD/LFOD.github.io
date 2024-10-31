@@ -75,9 +75,7 @@ interpolated_data <- interpolated_data |>
   ))
 ```
 
-::: column-margin
-Thank you to Libby Heeren for the inspiration!
-:::
+
 
 And EYES! 
 
@@ -88,6 +86,10 @@ eyes_data <- expand_grid(
   .frame = 75:100
 )
 ```
+
+::: column-margin
+Thank you to Libby Heeren for the inspiration!
+:::
 
 And now for the plot!
 
