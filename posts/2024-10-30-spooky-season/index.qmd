@@ -65,7 +65,7 @@ interpolated_data <- tween_states(
 )
 ```
 
-I also want little labels for people who can't tell what we are going for (in case my pun is not wonderfuly obvious to everyone!)
+I also want little labels for people who can't tell what we are going for (in case my pun is not wonderfully obvious to everyone!)
 
 ```{r}
 interpolated_data <- interpolated_data |>
@@ -75,19 +75,29 @@ interpolated_data <- interpolated_data |>
   ))
 ```
 
+And EYES! 
+
+```{r}
+eyes_data <- expand_grid(
+  x = c(-0.5, 0.5), 
+  y = 0.15,
+  .frame = 75:100
+)
+```
+
 And now for the plot!
 
 ```{r}
 p <- ggplot(interpolated_data, aes(x = x, y = y)) +
   geom_polygon(fill = "white", color = "black", linewidth = 1.5) +
   geom_label(aes(label = label), x = 0, y = 0, size = 6, vjust = -1, na.rm = TRUE) +  
+  geom_point(data = eyes_data) +
   theme_void() +
   theme(
     panel.background = element_rect(fill = "transparent", color = NA),
     plot.background = element_rect(fill = "transparent", color = NA)
   ) +
   transition_time(.frame)
-
 ```
 
 And finally, let's animate it!
