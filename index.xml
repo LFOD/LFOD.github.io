@@ -227,10 +227,7 @@ background-color: null;
 font-style: inherit;">"paranormal"</span>  </span>
 <span id="cb5-5">  ))</span></code></pre></div>
 </div>
-
-<div class="no-row-height column-margin column-container"><div class="">
-<p>Thank you to Libby Heeren for the inspiration!</p>
-</div></div><p>And EYES!</p>
+<p>And EYES!</p>
 <div class="cell">
 <div class="sourceCode cell-code" id="cb6" style="background: #f1f3f5;"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb6-1">eyes_data <span class="ot" style="color: #003B4F;
 background-color: null;
@@ -264,7 +261,10 @@ background-color: null;
 font-style: inherit;">100</span></span>
 <span id="cb6-5">)</span></code></pre></div>
 </div>
-<p>And now for the plot!</p>
+
+<div class="no-row-height column-margin column-container"><div class="">
+<p>Thank you to Libby Heeren for the inspiration!</p>
+</div></div><p>And now for the plot!</p>
 <div class="cell">
 <div class="sourceCode cell-code" id="cb7" style="background: #f1f3f5;"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb7-1">p <span class="ot" style="color: #003B4F;
 background-color: null;
