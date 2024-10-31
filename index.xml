@@ -193,7 +193,7 @@ background-color: null;
 font-style: inherit;">"cubic-in-out"</span></span>
 <span id="cb4-7">)</span></code></pre></div>
 </div>
-<p>I also want little labels for people who can’t tell what we are going for (in case my pun is not wonderfuly obvious to everyone!)</p>
+<p>I also want little labels for people who can’t tell what we are going for (in case my pun is not wonderfully obvious to everyone!)</p>
 <div class="cell">
 <div class="sourceCode cell-code" id="cb5" style="background: #f1f3f5;"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb5-1">interpolated_data <span class="ot" style="color: #003B4F;
 background-color: null;
@@ -227,9 +227,38 @@ background-color: null;
 font-style: inherit;">"paranormal"</span>  </span>
 <span id="cb5-5">  ))</span></code></pre></div>
 </div>
+<p>And EYES!</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb6" style="background: #f1f3f5;"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb6-1">eyes_data <span class="ot" style="color: #003B4F;
+background-color: null;
+font-style: inherit;">&lt;-</span> <span class="fu" style="color: #4758AB;
+background-color: null;
+font-style: inherit;">data.frame</span>(</span>
+<span id="cb6-2">  <span class="at" style="color: #657422;
+background-color: null;
+font-style: inherit;">x =</span> <span class="fu" style="color: #4758AB;
+background-color: null;
+font-style: inherit;">c</span>(<span class="sc" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">-</span><span class="fl" style="color: #AD0000;
+background-color: null;
+font-style: inherit;">0.5</span>, <span class="fl" style="color: #AD0000;
+background-color: null;
+font-style: inherit;">0.5</span>), </span>
+<span id="cb6-3">  <span class="at" style="color: #657422;
+background-color: null;
+font-style: inherit;">y =</span> <span class="fu" style="color: #4758AB;
+background-color: null;
+font-style: inherit;">c</span>(<span class="fl" style="color: #AD0000;
+background-color: null;
+font-style: inherit;">0.15</span>, <span class="fl" style="color: #AD0000;
+background-color: null;
+font-style: inherit;">0.15</span>)</span>
+<span id="cb6-4">)</span></code></pre></div>
+</div>
 <p>And now for the plot!</p>
 <div class="cell">
-<div class="sourceCode cell-code" id="cb6" style="background: #f1f3f5;"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb6-1">p <span class="ot" style="color: #003B4F;
+<div class="sourceCode cell-code" id="cb7" style="background: #f1f3f5;"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb7-1">p <span class="ot" style="color: #003B4F;
 background-color: null;
 font-style: inherit;">&lt;-</span> <span class="fu" style="color: #4758AB;
 background-color: null;
@@ -242,7 +271,7 @@ background-color: null;
 font-style: inherit;">y =</span> y)) <span class="sc" style="color: #5E5E5E;
 background-color: null;
 font-style: inherit;">+</span></span>
-<span id="cb6-2">  <span class="fu" style="color: #4758AB;
+<span id="cb7-2">  <span class="fu" style="color: #4758AB;
 background-color: null;
 font-style: inherit;">geom_polygon</span>(<span class="at" style="color: #657422;
 background-color: null;
@@ -259,7 +288,7 @@ background-color: null;
 font-style: inherit;">1.5</span>) <span class="sc" style="color: #5E5E5E;
 background-color: null;
 font-style: inherit;">+</span></span>
-<span id="cb6-3">  <span class="fu" style="color: #4758AB;
+<span id="cb7-3">  <span class="fu" style="color: #4758AB;
 background-color: null;
 font-style: inherit;">geom_label</span>(<span class="fu" style="color: #4758AB;
 background-color: null;
@@ -290,15 +319,22 @@ background-color: null;
 font-style: inherit;">TRUE</span>) <span class="sc" style="color: #5E5E5E;
 background-color: null;
 font-style: inherit;">+</span>  </span>
-<span id="cb6-4">  <span class="fu" style="color: #4758AB;
+<span id="cb7-4">  <span class="fu" style="color: #4758AB;
+background-color: null;
+font-style: inherit;">geom_point</span>(<span class="at" style="color: #657422;
+background-color: null;
+font-style: inherit;">data =</span> eyes_data) <span class="sc" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">+</span></span>
+<span id="cb7-5">  <span class="fu" style="color: #4758AB;
 background-color: null;
 font-style: inherit;">theme_void</span>() <span class="sc" style="color: #5E5E5E;
 background-color: null;
 font-style: inherit;">+</span></span>
-<span id="cb6-5">  <span class="fu" style="color: #4758AB;
+<span id="cb7-6">  <span class="fu" style="color: #4758AB;
 background-color: null;
 font-style: inherit;">theme</span>(</span>
-<span id="cb6-6">    <span class="at" style="color: #657422;
+<span id="cb7-7">    <span class="at" style="color: #657422;
 background-color: null;
 font-style: inherit;">panel.background =</span> <span class="fu" style="color: #4758AB;
 background-color: null;
@@ -311,7 +347,7 @@ background-color: null;
 font-style: inherit;">color =</span> <span class="cn" style="color: #8f5902;
 background-color: null;
 font-style: inherit;">NA</span>),</span>
-<span id="cb6-7">    <span class="at" style="color: #657422;
+<span id="cb7-8">    <span class="at" style="color: #657422;
 background-color: null;
 font-style: inherit;">plot.background =</span> <span class="fu" style="color: #4758AB;
 background-color: null;
@@ -324,16 +360,16 @@ background-color: null;
 font-style: inherit;">color =</span> <span class="cn" style="color: #8f5902;
 background-color: null;
 font-style: inherit;">NA</span>)</span>
-<span id="cb6-8">  ) <span class="sc" style="color: #5E5E5E;
+<span id="cb7-9">  ) <span class="sc" style="color: #5E5E5E;
 background-color: null;
 font-style: inherit;">+</span></span>
-<span id="cb6-9">  <span class="fu" style="color: #4758AB;
+<span id="cb7-10">  <span class="fu" style="color: #4758AB;
 background-color: null;
 font-style: inherit;">transition_time</span>(.frame)</span></code></pre></div>
 </div>
 <p>And finally, let’s animate it!</p>
 <div class="cell">
-<div class="sourceCode cell-code" id="cb7" style="background: #f1f3f5;"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb7-1"><span class="fu" style="color: #4758AB;
+<div class="sourceCode cell-code" id="cb8" style="background: #f1f3f5;"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb8-1"><span class="fu" style="color: #4758AB;
 background-color: null;
 font-style: inherit;">animate</span>(p, <span class="at" style="color: #657422;
 background-color: null;
@@ -352,7 +388,7 @@ background-color: null;
 font-style: inherit;">height =</span> <span class="dv" style="color: #AD0000;
 background-color: null;
 font-style: inherit;">500</span>, </span>
-<span id="cb7-2">        <span class="at" style="color: #657422;
+<span id="cb8-2">        <span class="at" style="color: #657422;
 background-color: null;
 font-style: inherit;">renderer =</span> <span class="fu" style="color: #4758AB;
 background-color: null;
