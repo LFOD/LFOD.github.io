@@ -11,7 +11,6 @@ This analysis was made possible by the [mdr](https://lucymcgowan.github.io/mdr) 
 
 
 ```{r}
-#| echo: false
 #| message: false
 #| warning: false
 #| fig-width: 20
@@ -61,7 +60,6 @@ p <- ggplot(df, aes(x = i, y = pitch, color = io, shape = action,
 
 ggiraph::girafe(ggobj = p)
 ```
-
 
 
 
