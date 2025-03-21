@@ -10,7 +10,249 @@
 <atom:link href="https://www.livefreeordichotomize.com/index.xml" rel="self" type="application/rss+xml"/>
 <description>Live Free or Dichotomize: Lucy D&#39;Agostino McGowan &amp; Nick Strayer&#39;s Blog</description>
 <generator>quarto-1.6.42</generator>
-<lastBuildDate>Wed, 05 Feb 2025 00:00:00 GMT</lastBuildDate>
+<lastBuildDate>Thu, 20 Feb 2025 00:00:00 GMT</lastBuildDate>
+<item>
+  <title>How are we feeling: A Severance Analysis</title>
+  <dc:creator>Lucy D&#39;Agostino McGowan</dc:creator>
+  <link>https://www.livefreeordichotomize.com/posts/2025-02-20-how-are-we-feeling-a-severance-analysis/</link>
+  <description><![CDATA[ 
+
+
+
+
+<p>This analysis was made possible by the <a href="https://lucymcgowan.github.io/mdr">mdr</a> R package, which used data originally compiled by <a href="https://severance.wiki/">the Severance wiki</a>. Here, we create a little sentiment profile for each episode, binning them in three minute increments and calculating the AFINN average sentiment score in each.</p>
+<div class="cell" data-layout-align="center">
+<details class="code-fold">
+<summary>Code</summary>
+<div class="sourceCode cell-code" id="cb1" style="background: #f1f3f5;"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb1-1"><span class="fu" style="color: #4758AB;
+background-color: null;
+font-style: inherit;">library</span>(tidytext)</span>
+<span id="cb1-2"><span class="fu" style="color: #4758AB;
+background-color: null;
+font-style: inherit;">library</span>(mdr)</span>
+<span id="cb1-3"><span class="fu" style="color: #4758AB;
+background-color: null;
+font-style: inherit;">library</span>(tidyverse)</span>
+<span id="cb1-4"></span>
+<span id="cb1-5">df <span class="ot" style="color: #003B4F;
+background-color: null;
+font-style: inherit;">&lt;-</span> transcripts <span class="sc" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">|&gt;</span></span>
+<span id="cb1-6">  <span class="fu" style="color: #4758AB;
+background-color: null;
+font-style: inherit;">mutate</span>(<span class="at" style="color: #657422;
+background-color: null;
+font-style: inherit;">timestamp_seconds =</span> <span class="fu" style="color: #4758AB;
+background-color: null;
+font-style: inherit;">as.numeric</span>(timestamp), </span>
+<span id="cb1-7">         <span class="at" style="color: #657422;
+background-color: null;
+font-style: inherit;">bin =</span> <span class="fu" style="color: #4758AB;
+background-color: null;
+font-style: inherit;">floor</span>(timestamp_seconds <span class="sc" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">/</span> <span class="dv" style="color: #AD0000;
+background-color: null;
+font-style: inherit;">180</span>) <span class="sc" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">*</span> <span class="dv" style="color: #AD0000;
+background-color: null;
+font-style: inherit;">180</span>) <span class="sc" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">|&gt;</span></span>
+<span id="cb1-8">  <span class="fu" style="color: #4758AB;
+background-color: null;
+font-style: inherit;">left_join</span>(episodes, <span class="at" style="color: #657422;
+background-color: null;
+font-style: inherit;">by =</span> <span class="fu" style="color: #4758AB;
+background-color: null;
+font-style: inherit;">c</span>(<span class="st" style="color: #20794D;
+background-color: null;
+font-style: inherit;">"season"</span>, <span class="st" style="color: #20794D;
+background-color: null;
+font-style: inherit;">"episode"</span>))</span>
+<span id="cb1-9"></span>
+<span id="cb1-10">df <span class="sc" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">|&gt;</span></span>
+<span id="cb1-11">  <span class="fu" style="color: #4758AB;
+background-color: null;
+font-style: inherit;">mutate</span>(<span class="at" style="color: #657422;
+background-color: null;
+font-style: inherit;">id =</span> glue<span class="sc" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">::</span><span class="fu" style="color: #4758AB;
+background-color: null;
+font-style: inherit;">glue</span>(<span class="st" style="color: #20794D;
+background-color: null;
+font-style: inherit;">"Season {season} Episode {episode}</span><span class="sc" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">\n</span><span class="st" style="color: #20794D;
+background-color: null;
+font-style: inherit;">Written by: {writer}"</span>)) <span class="sc" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">|&gt;</span></span>
+<span id="cb1-12">  <span class="fu" style="color: #4758AB;
+background-color: null;
+font-style: inherit;">unnest_tokens</span>(word, dialogue) <span class="sc" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">|&gt;</span></span>
+<span id="cb1-13">  <span class="fu" style="color: #4758AB;
+background-color: null;
+font-style: inherit;">inner_join</span>(<span class="fu" style="color: #4758AB;
+background-color: null;
+font-style: inherit;">get_sentiments</span>(<span class="st" style="color: #20794D;
+background-color: null;
+font-style: inherit;">"afinn"</span>), <span class="at" style="color: #657422;
+background-color: null;
+font-style: inherit;">by =</span> <span class="st" style="color: #20794D;
+background-color: null;
+font-style: inherit;">"word"</span>) <span class="sc" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">|&gt;</span></span>
+<span id="cb1-14">  <span class="fu" style="color: #4758AB;
+background-color: null;
+font-style: inherit;">group_by</span>(id, bin) <span class="sc" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">|&gt;</span></span>
+<span id="cb1-15">  <span class="fu" style="color: #4758AB;
+background-color: null;
+font-style: inherit;">summarise</span>(<span class="at" style="color: #657422;
+background-color: null;
+font-style: inherit;">sentiment =</span> <span class="fu" style="color: #4758AB;
+background-color: null;
+font-style: inherit;">mean</span>(value)) <span class="sc" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">|&gt;</span></span>
+<span id="cb1-16">  <span class="fu" style="color: #4758AB;
+background-color: null;
+font-style: inherit;">ggplot</span>(<span class="fu" style="color: #4758AB;
+background-color: null;
+font-style: inherit;">aes</span>(<span class="at" style="color: #657422;
+background-color: null;
+font-style: inherit;">x =</span> bin, <span class="at" style="color: #657422;
+background-color: null;
+font-style: inherit;">y =</span> sentiment, <span class="at" style="color: #657422;
+background-color: null;
+font-style: inherit;">fill =</span> sentiment <span class="sc" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">&gt;</span> <span class="dv" style="color: #AD0000;
+background-color: null;
+font-style: inherit;">0</span>)) <span class="sc" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">+</span> </span>
+<span id="cb1-17">  <span class="fu" style="color: #4758AB;
+background-color: null;
+font-style: inherit;">geom_bar</span>(<span class="at" style="color: #657422;
+background-color: null;
+font-style: inherit;">stat =</span> <span class="st" style="color: #20794D;
+background-color: null;
+font-style: inherit;">"identity"</span>, <span class="at" style="color: #657422;
+background-color: null;
+font-style: inherit;">alpha =</span> <span class="fl" style="color: #AD0000;
+background-color: null;
+font-style: inherit;">0.8</span>) <span class="sc" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">+</span></span>
+<span id="cb1-18">  <span class="fu" style="color: #4758AB;
+background-color: null;
+font-style: inherit;">scale_fill_manual</span>(<span class="at" style="color: #657422;
+background-color: null;
+font-style: inherit;">values =</span> <span class="fu" style="color: #4758AB;
+background-color: null;
+font-style: inherit;">c</span>(<span class="st" style="color: #20794D;
+background-color: null;
+font-style: inherit;">"#C15C58"</span>, <span class="st" style="color: #20794D;
+background-color: null;
+font-style: inherit;">"#5BA9D0"</span>)) <span class="sc" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">+</span></span>
+<span id="cb1-19">  <span class="fu" style="color: #4758AB;
+background-color: null;
+font-style: inherit;">scale_x_time</span>(<span class="at" style="color: #657422;
+background-color: null;
+font-style: inherit;">labels =</span> scales<span class="sc" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">::</span><span class="fu" style="color: #4758AB;
+background-color: null;
+font-style: inherit;">time_format</span>(<span class="st" style="color: #20794D;
+background-color: null;
+font-style: inherit;">"%M:%S"</span>)) <span class="sc" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">+</span></span>
+<span id="cb1-20">  <span class="fu" style="color: #4758AB;
+background-color: null;
+font-style: inherit;">labs</span>(<span class="at" style="color: #657422;
+background-color: null;
+font-style: inherit;">x =</span> <span class="st" style="color: #20794D;
+background-color: null;
+font-style: inherit;">""</span>) <span class="sc" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">+</span></span>
+<span id="cb1-21">  <span class="fu" style="color: #4758AB;
+background-color: null;
+font-style: inherit;">facet_wrap</span>(<span class="sc" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">~</span>id, <span class="at" style="color: #657422;
+background-color: null;
+font-style: inherit;">ncol =</span> <span class="dv" style="color: #AD0000;
+background-color: null;
+font-style: inherit;">3</span>) <span class="sc" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">+</span> </span>
+<span id="cb1-22">  <span class="fu" style="color: #4758AB;
+background-color: null;
+font-style: inherit;">theme_mdr</span>() <span class="sc" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">+</span> </span>
+<span id="cb1-23">  <span class="fu" style="color: #4758AB;
+background-color: null;
+font-style: inherit;">theme</span>(</span>
+<span id="cb1-24">    <span class="at" style="color: #657422;
+background-color: null;
+font-style: inherit;">strip.text =</span> <span class="fu" style="color: #4758AB;
+background-color: null;
+font-style: inherit;">element_text</span>(<span class="at" style="color: #657422;
+background-color: null;
+font-style: inherit;">size =</span> <span class="dv" style="color: #AD0000;
+background-color: null;
+font-style: inherit;">8</span>),</span>
+<span id="cb1-25">    <span class="at" style="color: #657422;
+background-color: null;
+font-style: inherit;">legend.position =</span> <span class="st" style="color: #20794D;
+background-color: null;
+font-style: inherit;">"none"</span>,</span>
+<span id="cb1-26">    <span class="at" style="color: #657422;
+background-color: null;
+font-style: inherit;">panel.grid.minor =</span> <span class="fu" style="color: #4758AB;
+background-color: null;
+font-style: inherit;">element_blank</span>(),</span>
+<span id="cb1-27">    <span class="at" style="color: #657422;
+background-color: null;
+font-style: inherit;">panel.grid.major =</span> <span class="fu" style="color: #4758AB;
+background-color: null;
+font-style: inherit;">element_blank</span>())</span></code></pre></div>
+</details>
+<div class="cell-output-display">
+<div class="quarto-figure quarto-figure-center">
+<figure class="figure">
+<p><img src="https://www.livefreeordichotomize.com/posts/2025-02-20-how-are-we-feeling-a-severance-analysis/index_files/figure-html/unnamed-chunk-1-1.png" class="img-fluid quarto-figure quarto-figure-center figure-img" width="960"></p>
+</figure>
+</div>
+</div>
+</div>
+<p><em>This post was originally posted on my Severance themed site [<a href="https://mdr.lucymcgowan.com/analysis-whos-talking/">found here</a>]</em>.</p>
+
+
+
+ ]]></description>
+  <category>rstats</category>
+  <category>severance</category>
+  <category>data visualization</category>
+  <guid>https://www.livefreeordichotomize.com/posts/2025-02-20-how-are-we-feeling-a-severance-analysis/</guid>
+  <pubDate>Thu, 20 Feb 2025 00:00:00 GMT</pubDate>
+</item>
 <item>
   <title>Who’s talking: A Severance Analysis</title>
   <dc:creator>Lucy D&#39;Agostino McGowan</dc:creator>
@@ -9316,201 +9558,6 @@ font-style: inherit;">"none"</span>)</span></code></pre></div>
   <category>lightboard</category>
   <guid>https://www.livefreeordichotomize.com/posts/2020-10-02-how-to-build-a-diy-lightboard/</guid>
   <pubDate>Fri, 02 Oct 2020 00:00:00 GMT</pubDate>
-</item>
-<item>
-  <title>So you want to learn R…</title>
-  <dc:creator>Lucy D&#39;Agostino McGowan</dc:creator>
-  <link>https://www.livefreeordichotomize.com/posts/2020-07-02-so-you-want-to-learn-r/</link>
-  <description><![CDATA[ 
-
-
-
-
-<p>There have been several twitter threads circulating with (free!) resources for learning R - I wanted to collect some of my favorites here. Thanks to <a href="https://twitter.com/jessicallavs">Jessica Lavery</a>, <a href="https://twitter.com/djnavarro">Danielle Navarro</a>, <a href="https://www.twitter.com/kellybodwin">Kelly Bodwin</a>, <a href="https://twitter.com/Jonthegeek">Jon Harmon</a>, <a href="https://twitter.com/tylermorganwall">Tyler Morgan-Wall</a>, <a href="https://twitter.com/rctatman">Rachael Tatman</a> for their awesome threads on these topics!</p>
-<section id="beginnner" class="level2">
-<h2 class="anchored" data-anchor-id="beginnner">Beginnner</h2>
-<p><span style="font-size:30px"><strong>1. Teacup Giraffes and Stats [<a href="https://tinystats.github.io/teacups-giraffes-and-statistics">link</a>]</strong></span></p>
-<section id="what-is-it" class="level3">
-<h3 class="anchored" data-anchor-id="what-is-it">What is it?</h3>
-<p>This is a series of fabulous self-paced interactive modules by Hasse Walum and <a href="https://twitter.com/dcossyle">Desirée De Leon</a>. They begin by walking through the very basics of R and then teach basic statistics concepts such as measures of central tendency and variability, all with adorable illustrations of giraffes!</p>
-</section>
-<section id="this-is-good-for-you-if-you" class="level3">
-<h3 class="anchored" data-anchor-id="this-is-good-for-you-if-you">This is good for you if you</h3>
-<ul>
-<li>Learn best with self-paced interactive modules</li>
-<li>Are a beginner interested in getting acquainted with the basics of R and statistics</li>
-<li>Love giraffes</li>
-</ul>
-<p><span style="font-size:30px"><strong>2. Swirl [<a href="https://swirlstats.com/students.html">link</a>]</strong></span></p>
-</section>
-<section id="what-is-it-1" class="level3">
-<h3 class="anchored" data-anchor-id="what-is-it-1">What is it?</h3>
-<p>This is an R package that helps you learn R from <em>within</em> R. It’s an interactive course that runs from your R console!</p>
-</section>
-<section id="this-is-good-for-you-if-you-1" class="level3">
-<h3 class="anchored" data-anchor-id="this-is-good-for-you-if-you-1">This is good for you if you</h3>
-<ul>
-<li>Learn best with self-paced learning-while-doing coding</li>
-<li>Are a beginner interested in getting acquainted with the basics of R</li>
-</ul>
-<p><span style="font-size:30px"> <strong>3. RYouWithMe [<a href="https://rladiessydney.org/courses/ryouwithme/">link</a>]</strong></span></p>
-</section>
-<section id="what-is-it-2" class="level3">
-<h3 class="anchored" data-anchor-id="what-is-it-2">What is it?</h3>
-<p>This is a series of online learning resources for using R geared for beginners by <a href="https://twitter.com/williamslisaphd">Lisa Williams</a>, <a href="https://twitter.com/JenRichmondPhD">Jen Richmond</a>, and <a href="https://twitter.com/djnavarro">Danielle Navarro</a> as part of R-Ladies Sydney.</p>
-</section>
-<section id="this-is-good-for-you-if-you-2" class="level3">
-<h3 class="anchored" data-anchor-id="this-is-good-for-you-if-you-2">This is good for you if you</h3>
-<ul>
-<li>Learn best with self-paced modules</li>
-<li>Are interested in learning data science skills such as data wrangling and data visualization</li>
-</ul>
-<p><span style="font-size:30px"><strong>4. Adventures in R [<a href="https://www.adventures-in-r.com/">link</a>]</strong></span></p>
-</section>
-<section id="what-is-it-3" class="level3">
-<h3 class="anchored" data-anchor-id="what-is-it-3">What is it?</h3>
-<p>This is a college-level online course taught by <a href="https://www.twitter.com/kellybodwin">Kelly Bodwin</a> focusing on using R for Statistics and Data Science.</p>
-</section>
-<section id="this-is-good-for-you-if-you-3" class="level3">
-<h3 class="anchored" data-anchor-id="this-is-good-for-you-if-you-3">This is good for you if you</h3>
-<ul>
-<li>Learn best with a structured of a full course</li>
-<li>Have some knowledge of basic statistics and basic programming</li>
-</ul>
-<p><span style="font-size:30px"><strong>5. R4DataScience learning community [<a href="https://r4ds.io">link</a>] [<a href="https://r4ds.io/join">join</a>]</strong></span></p>
-</section>
-<section id="what-is-it-4" class="level3">
-<h3 class="anchored" data-anchor-id="what-is-it-4">What is it?</h3>
-<p>This is a learning community started by <a href="https://twitter.com/kierisi">Jessie Mostipak</a> that intitially went through Garret Grolemund and Hadley Wickham’s <a href="https://r4ds.had.co.nz/">R For Data Science</a> book. The group has since expanded to broadly welcome folks interested in learning R and / or improving their skills! The community is centered around a Slack group (<a href="https://r4ds.io/join">join here:</a>) and you can join as a learner or a mentor.</p>
-</section>
-<section id="this-is-good-for-you-if-you-4" class="level3">
-<h3 class="anchored" data-anchor-id="this-is-good-for-you-if-you-4">This is good for you if you</h3>
-<ul>
-<li>Learn best in a community</li>
-<li>Are looking for other folks interested in Data Science that use / are learning R</li>
-</ul>
-<p><span style="font-size:30px"><strong>6. Data Science: Foundations using R Specialization [<a href="https://www.coursera.org/specializations/data-science-foundations-r">link</a>]</strong> </span></p>
-</section>
-<section id="what-is-it-5" class="level3">
-<h3 class="anchored" data-anchor-id="what-is-it-5">What is it?</h3>
-<p>This is a Cousera course by the amazing JHU Data Science Lab team: Jeff Leek, Roger Peng, and Brian Caffo. This course will help you ask the right questions, manipulate data sets, and create visualizations to communicate results in R.</p>
-</section>
-<section id="this-is-good-for-you-if-you-5" class="level3">
-<h3 class="anchored" data-anchor-id="this-is-good-for-you-if-you-5">This is good for you if you</h3>
-<ul>
-<li>Learn best with a structured full course</li>
-<li>Are interested in beefing up your data science skills</li>
-</ul>
-<p><span style="font-size:30px"><strong>7. RStudio Primers [<a href="https://rstudio.cloud/learn/primers">link</a>]</strong></span></p>
-</section>
-<section id="what-is-it-6" class="level3">
-<h3 class="anchored" data-anchor-id="what-is-it-6">What is it?</h3>
-<p>These are interactive tutorials that teach everything from basic R skills to iterating and writing functions</p>
-</section>
-<section id="this-is-good-for-you-if-you-6" class="level3">
-<h3 class="anchored" data-anchor-id="this-is-good-for-you-if-you-6">This is good for you if you</h3>
-<ul>
-<li>Learn best from self-paced interactive modules</li>
-<li>Are interested in learning everything from the basics in R to more advanced skill</li>
-</ul>
-<p><span style="font-size:30px"><strong>8.</strong> <em>Suggested by <a href="https://twitter.com/GiulioCentorame">Giulio Centorame</a></em> <strong>Ready for R [<a href="https://ready4r.netlify.app/">link</a>]</strong></span></p>
-</section>
-<section id="what-is-it-7" class="level3">
-<h3 class="anchored" data-anchor-id="what-is-it-7">What is it?</h3>
-<p>A course by <a href="https://twitter.com/tladeras">Ted Laderas</a> meant to be a gentle introduction to using R/Rstudio in your daily work.</p>
-</section>
-<section id="this-is-good-for-you-if-you-7" class="level3">
-<h3 class="anchored" data-anchor-id="this-is-good-for-you-if-you-7">This is good for you if you</h3>
-<ul>
-<li>Learn best from a self-paced online course</li>
-<li>Are interested in learning the basics of R and RStudio</li>
-</ul>
-</section>
-</section>
-<section id="a-little-past-beginner" class="level2">
-<h2 class="anchored" data-anchor-id="a-little-past-beginner">A little past beginner</h2>
-<p><span style="font-size:30px"><strong>1. Creating dynamic dashboards with the shinydashboard R package [<a href="https://leanpub.com/c/shinydashboard">link</a>]</strong></span></p>
-<section id="what-is-it-8" class="level3">
-<h3 class="anchored" data-anchor-id="what-is-it-8">What is it?</h3>
-<p>An online course (by me!) on the shinydashboard package. This expects you know a <em>bit</em> about R and shiny, but aimed mostly at beginner / intermediate users.</p>
-</section>
-<section id="this-is-good-for-you-if-you-8" class="level3">
-<h3 class="anchored" data-anchor-id="this-is-good-for-you-if-you-8">This is good for you if you</h3>
-<ul>
-<li>Learn best with self-paced modules</li>
-<li>Are looking to build a simple, dynamic dashboard in R.</li>
-</ul>
-<p><span style="font-size:30px"><strong>2. Text Mining with R: A Tidy Approach [<a href="https://tidytextmining.com">link</a>]</strong></span></p>
-</section>
-<section id="what-is-it-9" class="level3">
-<h3 class="anchored" data-anchor-id="what-is-it-9">What is it?</h3>
-<p>This <a href="https://twitter.com/rctatman">Rachael Tatman</a> described this as a “code-along” - I love that description! This book by <a href="https://twitter.com/JuliaSilge">Julia Silge</a> and <a href="https://twitter.com/drob">David Robinson</a> is a great introduction to text mining the tidy way!</p>
-</section>
-<section id="this-is-good-for-you-if-you-9" class="level3">
-<h3 class="anchored" data-anchor-id="this-is-good-for-you-if-you-9">This is good for you if you</h3>
-<ul>
-<li>Learn best working through a self-pased book</li>
-<li>Are interested in natural language processing</li>
-</ul>
-<p><span style="font-size:30px"><strong>3. MasterClass Featuring Tyler Morgan-Wall: 3D Mapping and Dataviz in R [<a href="https://penniur.upenn.edu/events/musamasterclass-featuring-tyler-morgan-wall-3d-mapping-dataviz-in-r">link</a>]</strong></span></p>
-</section>
-<section id="what-is-it-10" class="level3">
-<h3 class="anchored" data-anchor-id="what-is-it-10">What is it?</h3>
-<p>A video-lecture by <a href="https://twitter.com/tylermorganwall">Tyler Morgan-Wall</a> on making 3D maps in R with rayshader.</p>
-</section>
-<section id="this-is-good-for-you-if-you-10" class="level3">
-<h3 class="anchored" data-anchor-id="this-is-good-for-you-if-you-10">This is good for you if you</h3>
-<ul>
-<li>Learn best from video lectures</li>
-<li>Are interested in 3D visualizations in R</li>
-</ul>
-<p><span style="font-size:30px"><strong>4.</strong> <em>Suggested by <a href="https://twitter.com/AkhondiAsl">Alireza Akhondi-asl</a></em> <strong>Interactive web-based data visualization with R, plotly, and shiny [<a href="https://plotly-r.com">link</a>]</strong></span></p>
-</section>
-<section id="what-is-it-11" class="level3">
-<h3 class="anchored" data-anchor-id="what-is-it-11">What is it?</h3>
-<p>A book by <a href="https://twitter.com/cpsievert">Carson Sievert</a> describing how to create interactive visualizations in R.</p>
-</section>
-<section id="this-is-good-for-you-if-you-11" class="level3">
-<h3 class="anchored" data-anchor-id="this-is-good-for-you-if-you-11">This is good for you if you</h3>
-<ul>
-<li>Learn best working through a self-paced book</li>
-<li>Are interested in creating interactive visualizations</li>
-</ul>
-<p><span style="font-size:30px"><strong>5.</strong> <em>Suggested by <a href="https://twitter.com/lisalendway">Lisa Lendway</a></em> <strong>Getting Started with Tidymodels [<a href="https://www.tidymodels.org/start/">link</a>]</strong> </span></p>
-</section>
-<section id="what-is-it-12" class="level3">
-<h3 class="anchored" data-anchor-id="what-is-it-12">What is it?</h3>
-<p>An set of modules by RStudio focused on the tidymodels package.</p>
-</section>
-<section id="this-is-good-for-you-if-you-12" class="level3">
-<h3 class="anchored" data-anchor-id="this-is-good-for-you-if-you-12">This is good for you if you</h3>
-<ul>
-<li>Learn best working through self-paced coding modules</li>
-<li>Are interested in learning advanced statistical modeling in R</li>
-</ul>
-<p><span style="font-size:30px"><strong>6.</strong> <em>Suggested by <a href="https://twitter.com/lisalendway">Lisa Lendway</a> and <a href="https://twitter.com/alexpghayes">Alex Hayes</a></em> <strong>Tidy machine learning in R [<a href="https://www.rebeccabarter.com/blog/2020-03-25_machine_learning/">link</a>]</strong></span></p>
-</section>
-<section id="what-is-it-13" class="level3">
-<h3 class="anchored" data-anchor-id="what-is-it-13">What is it?</h3>
-<p>A tutorial code-along by <a href="https://twitter.com/rlbarter">Rebecca Barter</a> on machine learning focusing on the tidymodels package.</p>
-</section>
-<section id="this-is-good-for-you-if-you-13" class="level3">
-<h3 class="anchored" data-anchor-id="this-is-good-for-you-if-you-13">This is good for you if you</h3>
-<ul>
-<li>Learn best working through self-paced code-alongs</li>
-<li>Are interested in learning advanced statistical modeling in R</li>
-</ul>
-<p><strong>Did I miss one of your favorites? Please let me know!</strong></p>
-
-
-
-</section>
-</section>
-
- ]]></description>
-  <category>rstats</category>
-  <guid>https://www.livefreeordichotomize.com/posts/2020-07-02-so-you-want-to-learn-r/</guid>
-  <pubDate>Thu, 02 Jul 2020 00:00:00 GMT</pubDate>
 </item>
 </channel>
 </rss>
