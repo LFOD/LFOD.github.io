@@ -1,0 +1,814 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml" lang="en" xml:lang="en"><head>
+
+<meta charset="utf-8">
+<meta name="generator" content="quarto-1.6.42">
+
+<meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
+
+<meta name="author" content="Lucy D’Agostino McGowan">
+<meta name="dcterms.date" content="2025-03-20">
+<meta name="description" content="This data consists of all elevator dings in the Severance episodes along with the episode number, time stamp, pitch of the ding, and the action associated.">
+
+<title>Elevator Dings: A Severance Analysis –</title>
+<style>
+code{white-space: pre-wrap;}
+span.smallcaps{font-variant: small-caps;}
+div.columns{display: flex; gap: min(4vw, 1.5em);}
+div.column{flex: auto; overflow-x: auto;}
+div.hanging-indent{margin-left: 1.5em; text-indent: -1.5em;}
+ul.task-list{list-style: none;}
+ul.task-list li input[type="checkbox"] {
+  width: 0.8em;
+  margin: 0 0.8em 0.2em -1em; /* quarto-specific, see https://github.com/quarto-dev/quarto-cli/issues/4556 */ 
+  vertical-align: middle;
+}
+</style>
+
+
+<script src="../../site_libs/quarto-nav/quarto-nav.js"></script>
+<script src="../../site_libs/quarto-nav/headroom.min.js"></script>
+<script src="../../site_libs/clipboard/clipboard.min.js"></script>
+<script src="../../site_libs/quarto-search/autocomplete.umd.js"></script>
+<script src="../../site_libs/quarto-search/fuse.min.js"></script>
+<script src="../../site_libs/quarto-search/quarto-search.js"></script>
+<meta name="quarto:offset" content="../../">
+<script src="../../site_libs/quarto-html/quarto.js"></script>
+<script src="../../site_libs/quarto-html/popper.min.js"></script>
+<script src="../../site_libs/quarto-html/tippy.umd.min.js"></script>
+<script src="../../site_libs/quarto-html/anchor.min.js"></script>
+<link href="../../site_libs/quarto-html/tippy.css" rel="stylesheet">
+<link href="../../site_libs/quarto-html/quarto-syntax-highlighting-2f5df379a58b258e96c21c0638c20c03.css" rel="stylesheet" id="quarto-text-highlighting-styles">
+<script src="../../site_libs/bootstrap/bootstrap.min.js"></script>
+<link href="../../site_libs/bootstrap/bootstrap-icons.css" rel="stylesheet">
+<link href="../../site_libs/bootstrap/bootstrap-ba9be416ddd7a7b08c104916ddc6a572.min.css" rel="stylesheet" append-hash="true" id="quarto-bootstrap" data-mode="light">
+<script id="quarto-search-options" type="application/json">{
+  "location": "navbar",
+  "copy-button": false,
+  "collapse-after": 3,
+  "panel-placement": "end",
+  "type": "overlay",
+  "limit": 50,
+  "keyboard-shortcut": [
+    "f",
+    "/",
+    "s"
+  ],
+  "show-item-context": false,
+  "language": {
+    "search-no-results-text": "No results",
+    "search-matching-documents-text": "matching documents",
+    "search-copy-link-title": "Copy link to search",
+    "search-hide-matches-text": "Hide additional matches",
+    "search-more-match-text": "more match in this document",
+    "search-more-matches-text": "more matches in this document",
+    "search-clear-button-title": "Clear",
+    "search-text-placeholder": "",
+    "search-detached-cancel-button-title": "Cancel",
+    "search-submit-button-title": "Submit",
+    "search-label": "Search"
+  }
+}</script>
+
+<script type="text/javascript">
+
+(function(i,s,o,g,r,a,m){i['GoogleAnalyticsObject']=r;i[r]=i[r]||function(){
+  (i[r].q=i[r].q||[]).push(arguments)},i[r].l=1*new Date();a=s.createElement(o),
+  m=s.getElementsByTagName(o)[0];a.async=1;a.src=g;m.parentNode.insertBefore(a,m)
+  })(window,document,'script','https://www.google-analytics.com/analytics.js','ga');
+ga('create', 'UA-92165973-1', 'auto');
+
+ga('send', {
+  hitType: 'pageview',
+  'anonymizeIp': true,
+});
+</script>
+<script src="https://code.jquery.com/jquery-3.2.1.min.js" integrity="sha256-hwg4gsxgFZhOsEEamdOYGBf13FyQuiTwlAQgxVSNgt4=" crossorigin="anonymous"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/d3/4.9.1/d3.min.js"></script>
+
+<style>
+  #custom-header {
+    height: 30vh;
+    width: 100%;
+    position:relative;
+    z-index:1;
+    margin:0 auto;
+  }
+</style>
+
+
+<meta property="og:title" content="Elevator Dings: A Severance Analysis –">
+<meta property="og:description" content="This data consists of all elevator dings in the Severance episodes along with the episode number, time stamp, pitch of the ding, and the action associated.">
+<meta property="og:site_name" content=" ">
+<meta name="twitter:title" content="Live Free or Dichotomize">
+<meta name="twitter:description" content="This data consists of all elevator dings in the Severance episodes along with the episode number, time stamp, pitch of the ding, and the action associated.">
+<meta name="twitter:image" content="https://www.livefreeordichotomize.com/posts/2025-03-20-elevator-ding/media/lfod-card.png">
+<meta name="twitter:creator" content="@LucyStats">
+<meta name="twitter:card" content="summary_large_image">
+</head><body class="nav-fixed fullcontent"><header id="custom-header">
+  <div id="header_viz"></div>
+</header>
+
+<script>
+  $( document ).ready(() => {
+
+    //javascript for intro loader
+
+    //Function to immitate R's seq
+    function seq(start, end, increment) {
+      var length = Math.round((end - start)/increment);
+      return Array(length).fill().map((_, idx) => start + idx*increment)
+    }
+
+
+    //define the pdf of the distribution.
+    var logistic = function(x, theta, i) {
+        var mu = 0.1;
+        sign = 1
+        var y = sign * (1 / (Math.sqrt(2 * Math.PI) * theta)) * (1 / x) *
+            Math.exp(-Math.pow((Math.log(x) - mu), 2) / (2 * Math.pow(theta, 2)))
+        return y;
+    }
+
+    var width   = $("#custom-header").width() ,
+        height  = $("#custom-header").outerHeight(),
+        padding = 0,
+        numOfLines = 20,
+        xs = seq(0.01, 5, .01),
+        colors = ['rgb(165,0,38)', 'rgb(215,48,39)', 'rgb(244,109,67)', 'rgb(253,174,97)', 'rgb(254,224,144)',
+            'rgb(224,243,248)', 'rgb(171,217,233)', 'rgb(116,173,209)', 'rgb(69,117,180)', 'rgb(49,54,149)'
+        ];
+  
+    console.log("trying to run this shit.")
+    //define the svg.
+    var svg = d3.select("#header_viz").append("svg")
+        .attr("width", width)
+        .attr("height", height + 2 * padding)
+        .append("g")
+
+
+    var animatelines = function(whichline) {
+        d3.selectAll(".line").style("opacity","0.5");
+
+        //Select All of the lines and process them one by one
+        d3.selectAll(".line").each(function(d,i){
+            // Get the length of each line in turn
+            var totalLength = d3.select("#line" + i).node().getTotalLength();
+
+            d3.selectAll("#line" + i).attr("stroke-dasharray", totalLength + " " + totalLength)
+              .attr("stroke-dashoffset", totalLength)
+              .transition()
+              .duration(5000)
+              .delay(100*i)
+              .attr("stroke-dashoffset", 0)
+              .style("stroke-width",2)
+        })
+
+        writeGreeting()
+    }
+
+
+
+    // The Scales:
+    var thetaMap = d3.scaleLinear() //name the values from 0 to 20 and make their values from .1-.7
+        .domain([0, numOfLines])
+        .range([0.8, 0.085])
+
+    var yPos = d3.scaleLinear() //scalling for creating horizontal lines
+        .domain([0, numOfLines])
+        .range([0, 4])
+
+    var x = d3.scaleLinear()
+        .domain([0, 5])
+        .range([0, width]);
+
+    var y = d3.scaleLinear()
+        .domain([0, 4.5])
+        .range([height, 0]);
+
+    // The line functions:
+    var logistic = d3.range(numOfLines).map(function(i) {
+        var odd = true
+        var toReturn = xs.map(function(num) {
+            return {
+                "x": num,
+                "y": logistic(num, thetaMap(i), i)
+            }
+        })
+        return toReturn;
+    })
+
+    //make a greeting message for after the line animation.
+    function writeGreeting(){
+
+        var text_scale = width < 500 ? 1 : 0.65;
+        console.log(text_scale);
+        var intro_text = "Live Free or Dichotomize";
+
+        var title = svg.append("text")
+            .attr("font-size", 30)
+            .attr("font-family", "optima")
+            .attr("text-anchor", "end")
+            .attr("fill-opacity", 0.65)
+            .attr("x", width < 500 ? x(4.8) : x(4.2))
+            .attr("y", width < 500 ? y(3.12) : y(2.1) )
+            .attr("opacity", 0)
+            .text(intro_text)
+            .attr("font-size", function(d) { return ( text_scale*width - 8) / this.getComputedTextLength() * 24 + "px"; })
+            .text("")
+            .attr("opacity", 1);
+
+        (function drawGreeting (i, start, greeting) {
+            setTimeout(function () {
+
+                //add next letter to the greeting in progress
+                start += greeting[i];
+
+                title.html(start) //append this to the html
+
+                if (start.length < greeting.length) { //if the in progress greeting is less than the full, keep going.
+                    drawGreeting(i+1,start,greeting);      //  increment i and call again.
+                };
+            }, 100)
+        })(0, "", intro_text);
+    }
+
+
+    // The d3 stuff
+    var line = d3.line()
+        // .interpolate("basis")
+        .x(function(d) { return x(d.x); })
+        .y(function(d) { return y(d.y); });
+
+
+    svg.selectAll(".line")
+        .data(logistic)
+        .enter().append("path")
+        .attr("class", "line")
+        .attr("id" , function(d, i){ return "line" + i;})
+        .attr("d", line)
+        .style("stroke-width", 2)
+        .style("stroke", function(d, i) { return colors[i % 10] })
+        .style("opacity", 0)
+        .style("fill", "none")
+        .on("mouseover", function(d){
+            d3.select(this).style("stroke", "black")
+        })
+        .on("mouseout", function(d,i){
+            d3.select(this).style("stroke", colors[i % 10])
+        })
+
+    // var introMessage = isMobile ? "tap" : "click"
+    // var introMessage = "click"
+    //
+    // var intro = svg.append("text")
+    //     .text(introMessage)
+    //     .attr("font-size", 35)
+    //     .attr("font-family", "optima")
+    //     .attr("text-anchor", "middle")
+    //     .attr("x", x(2.5))
+    //     .attr("y", y(2.01))
+
+    //kick it off on a click. (or tap)
+    animatelines(2)
+    // d3.select("svg").on("click", function() { animatelines(2) })
+
+})
+
+</script>
+<link href="../../site_libs/htmltools-fill-0.5.8.1/fill.css" rel="stylesheet">
+<script src="../../site_libs/htmlwidgets-1.6.4/htmlwidgets.js"></script>
+<script src="../../site_libs/d3-bundle-5.16.0/d3-bundle.min.js"></script>
+<script src="../../site_libs/d3-lasso-0.0.5/d3-lasso.min.js"></script>
+<script src="../../site_libs/save-svg-as-png-1.4.17/save-svg-as-png.min.js"></script>
+<script src="../../site_libs/flatbush-4.4.0/flatbush.min.js"></script>
+<link href="../../site_libs/ggiraphjs-0.8.10/ggiraphjs.min.css" rel="stylesheet">
+<script src="../../site_libs/ggiraphjs-0.8.10/ggiraphjs.min.js"></script>
+<script src="../../site_libs/girafe-binding-0.8.12/girafe.js"></script>
+
+
+
+
+
+
+<div id="quarto-search-results"></div>
+  <header id="quarto-header" class="headroom fixed-top">
+    <nav class="navbar navbar-expand-lg " data-bs-theme="dark">
+      <div class="navbar-container container-fluid">
+      <div class="navbar-brand-container mx-auto">
+    <a class="navbar-brand" href="../../index.html">
+    <span class="navbar-title"></span>
+    </a>
+  </div>
+            <div id="quarto-search" class="" title="Search"></div>
+          <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarCollapse" aria-controls="navbarCollapse" role="menu" aria-expanded="false" aria-label="Toggle navigation" onclick="if (window.quartoToggleHeadroom) { window.quartoToggleHeadroom(); }">
+  <span class="navbar-toggler-icon"></span>
+</button>
+          <div class="collapse navbar-collapse" id="navbarCollapse">
+            <ul class="navbar-nav navbar-nav-scroll me-auto">
+  <li class="nav-item">
+    <a class="nav-link" href="../../index.html"> 
+<span class="menu-text">Home</span></a>
+  </li>  
+  <li class="nav-item">
+    <a class="nav-link" href="../../about.html"> 
+<span class="menu-text">About</span></a>
+  </li>  
+  <li class="nav-item compact">
+    <a class="nav-link" href="../../index.xml"> <i class="bi bi-rss" role="img">
+</i> 
+<span class="menu-text"></span></a>
+  </li>  
+</ul>
+          </div> <!-- /navcollapse -->
+            <div class="quarto-navbar-tools">
+</div>
+      </div> <!-- /container-fluid -->
+    </nav>
+</header>
+<!-- content -->
+<div id="quarto-content" class="quarto-container page-columns page-rows-contents page-layout-article page-navbar">
+<!-- sidebar -->
+<!-- margin-sidebar -->
+    
+<!-- main -->
+<main class="content" id="quarto-document-content">
+
+<header id="title-block-header" class="quarto-title-block default">
+<div class="quarto-title">
+<h1 class="title">Elevator Dings: A Severance Analysis</h1>
+  <div class="quarto-categories">
+    <div class="quarto-category">rstats</div>
+    <div class="quarto-category">severance</div>
+    <div class="quarto-category">data visualization</div>
+  </div>
+  </div>
+
+<div>
+  <div class="description">
+    This data consists of all elevator dings in the Severance episodes along with the episode number, time stamp, pitch of the ding, and the action associated.
+  </div>
+</div>
+
+
+<div class="quarto-title-meta">
+
+    <div>
+    <div class="quarto-title-meta-heading">Author</div>
+    <div class="quarto-title-meta-contents">
+             <p>Lucy D’Agostino McGowan </p>
+          </div>
+  </div>
+    
+    <div>
+    <div class="quarto-title-meta-heading">Published</div>
+    <div class="quarto-title-meta-contents">
+      <p class="date">March 20, 2025</p>
+    </div>
+  </div>
+  
+    
+  </div>
+  
+
+
+</header>
+
+
+<p>This analysis was made possible by the <a href="https://lucymcgowan.github.io/mdr">mdr</a> R package, which used data originally compiled by <a href="https://www.reddit.com/r/SeveranceAppleTVPlus/comments/w8imx3/a_complete_analysis_of_all_of_the_ding_sounds/">Sam_Badi on Reddit</a>. The data consists of all elevator dings in the Severance episodes along with the episode number, time stamp, pitch of the ding, and the action associated. Examining the plot below, we see across all dings the <code>G</code> is associated with both innie and outies going to sleep, the <code>C#</code> is consistently associated with both innies and outies waking up. (Spoiler: There is one notable exception, at the beginning of episode 4 in season 2, we hear a G when Irving wakes up, not a C# – maybe this is a sign that things are not what they seem for this episode?. In general a <code>Bb</code> plays when they enter the elevator, however there are a few <code>B♮</code> thrown in there at the beginning of episode 5 and again in season 2 episode 2 when Helena descends (Spoiler: Perhaps a nod to the audience that this is not actually Helly) and in season 2 episode 9.</p>
+<div class="cell" data-layout-align="center">
+<div class="cell-output-display">
+<div class="girafe html-widget html-fill-item" id="htmlwidget-2756f79f2ee279509ac0" style="width:100%;height:162px;"></div>
+<script type="application/json" data-for="htmlwidget-2756f79f2ee279509ac0">{"x":{"html":"<?xml version=\"1.0\" encoding=\"UTF-8\"?>\n<svg xmlns='http://www.w3.org/2000/svg' xmlns:xlink='http://www.w3.org/1999/xlink' class='ggiraph-svg' role='graphics-document' id='svg_d208c188_6d93_4ae5_a611_5c953921ca43' viewBox='0 0 1440 360'>\n <defs id='svg_d208c188_6d93_4ae5_a611_5c953921ca43_defs'>\n  <clipPath id='svg_d208c188_6d93_4ae5_a611_5c953921ca43_c1'>\n   <rect x='0' y='0' width='1440' height='360'/>\n  <\/clipPath>\n  <clipPath id='svg_d208c188_6d93_4ae5_a611_5c953921ca43_c2'>\n   <rect x='147.32' y='5.48' width='1122.46' height='251.7'/>\n  <\/clipPath>\n <\/defs>\n <g id='svg_d208c188_6d93_4ae5_a611_5c953921ca43_rootg' class='ggiraph-svg-rootg'>\n  <g clip-path='url(#svg_d208c188_6d93_4ae5_a611_5c953921ca43_c1)'>\n   <rect x='0' y='0' width='1440' height='360' fill='#FFFFFF' fill-opacity='1' stroke='#FFFFFF' stroke-opacity='1' stroke-width='0.75' stroke-linejoin='round' stroke-linecap='round' class='ggiraph-svg-bg'/>\n   <rect x='0' y='0' width='1440' height='360' fill='#030303' fill-opacity='1' stroke='#030303' stroke-opacity='1' stroke-width='1.07' stroke-linejoin='round' stroke-linecap='round'/>\n  <\/g>\n  <g clip-path='url(#svg_d208c188_6d93_4ae5_a611_5c953921ca43_c2)'>\n   <rect x='147.32' y='5.48' width='1122.46' height='251.7' fill='#030303' fill-opacity='1' stroke='#030303' stroke-opacity='1' stroke-width='1.07' stroke-linejoin='round' stroke-linecap='round'/>\n   <polyline points='147.32,221.22 1269.78,221.22' fill='none' stroke='#EBEBEB' stroke-opacity='1' stroke-width='1.07' stroke-linejoin='round' stroke-linecap='butt'/>\n   <polyline points='147.32,161.29 1269.78,161.29' fill='none' stroke='#EBEBEB' stroke-opacity='1' stroke-width='1.07' stroke-linejoin='round' stroke-linecap='butt'/>\n   <polyline points='147.32,101.36 1269.78,101.36' fill='none' stroke='#EBEBEB' stroke-opacity='1' stroke-width='1.07' stroke-linejoin='round' stroke-linecap='butt'/>\n   <polyline points='147.32,41.44 1269.78,41.44' fill='none' stroke='#EBEBEB' stroke-opacity='1' stroke-width='1.07' stroke-linejoin='round' stroke-linecap='butt'/>\n   <polyline points='198.34,257.18 198.34,5.48' fill='none' stroke='#EBEBEB' stroke-opacity='1' stroke-width='1.07' stroke-linejoin='round' stroke-linecap='butt'/>\n   <polyline points='266.37,257.18 266.37,5.48' fill='none' stroke='#EBEBEB' stroke-opacity='1' stroke-width='1.07' stroke-linejoin='round' stroke-linecap='butt'/>\n   <polyline points='289.05,257.18 289.05,5.48' fill='none' stroke='#EBEBEB' stroke-opacity='1' stroke-width='1.07' stroke-linejoin='round' stroke-linecap='butt'/>\n   <polyline points='323.06,257.18 323.06,5.48' fill='none' stroke='#EBEBEB' stroke-opacity='1' stroke-width='1.07' stroke-linejoin='round' stroke-linecap='butt'/>\n   <polyline points='425.10,257.18 425.10,5.48' fill='none' stroke='#EBEBEB' stroke-opacity='1' stroke-width='1.07' stroke-linejoin='round' stroke-linecap='butt'/>\n   <polyline points='572.50,257.18 572.50,5.48' fill='none' stroke='#EBEBEB' stroke-opacity='1' stroke-width='1.07' stroke-linejoin='round' stroke-linecap='butt'/>\n   <polyline points='595.17,257.18 595.17,5.48' fill='none' stroke='#EBEBEB' stroke-opacity='1' stroke-width='1.07' stroke-linejoin='round' stroke-linecap='butt'/>\n   <polyline points='708.55,257.18 708.55,5.48' fill='none' stroke='#EBEBEB' stroke-opacity='1' stroke-width='1.07' stroke-linejoin='round' stroke-linecap='butt'/>\n   <polyline points='742.57,257.18 742.57,5.48' fill='none' stroke='#EBEBEB' stroke-opacity='1' stroke-width='1.07' stroke-linejoin='round' stroke-linecap='butt'/>\n   <polyline points='889.96,257.18 889.96,5.48' fill='none' stroke='#EBEBEB' stroke-opacity='1' stroke-width='1.07' stroke-linejoin='round' stroke-linecap='butt'/>\n   <polyline points='1048.69,257.18 1048.69,5.48' fill='none' stroke='#EBEBEB' stroke-opacity='1' stroke-width='1.07' stroke-linejoin='round' stroke-linecap='butt'/>\n   <polyline points='1071.37,257.18 1071.37,5.48' fill='none' stroke='#EBEBEB' stroke-opacity='1' stroke-width='1.07' stroke-linejoin='round' stroke-linecap='butt'/>\n   <polyline points='1139.40,257.18 1139.40,5.48' fill='none' stroke='#EBEBEB' stroke-opacity='1' stroke-width='1.07' stroke-linejoin='round' stroke-linecap='butt'/>\n   <polyline points='1207.42,257.18 1207.42,5.48' fill='none' stroke='#EBEBEB' stroke-opacity='1' stroke-width='1.07' stroke-linejoin='round' stroke-linecap='butt'/>\n   <circle id='svg_d208c188_6d93_4ae5_a611_5c953921ca43_e1' cx='198.34' cy='161.29' r='8.27pt' fill='#C15C58' fill-opacity='0.8' stroke='none' title='S1E1, 08:48:00&amp;lt;br&amp;gt;oMark&amp;lt;br&amp;gt;enters elevator: ID beeps, down arrow turns on'/>\n   <polygon id='svg_d208c188_6d93_4ae5_a611_5c953921ca43_e2' points='209.68,24.29 224.53,50.01 194.83,50.01' fill='#C15C58' fill-opacity='0.8' stroke='none' title='S1E1, 09:07:00&amp;lt;br&amp;gt;oMark&amp;lt;br&amp;gt;goes to sleep in the elevator'/>\n   <polygon id='svg_d208c188_6d93_4ae5_a611_5c953921ca43_e3' points='210.00,112.39 232.04,112.39 232.04,90.34 210.00,90.34' fill='#5BA9D0' fill-opacity='0.8' stroke='none' title='S1E1, 09:12:00&amp;lt;br&amp;gt;iMark&amp;lt;br&amp;gt;wakes up in the elevator'/>\n   <circle id='svg_d208c188_6d93_4ae5_a611_5c953921ca43_e4' cx='232.36' cy='161.29' r='8.27pt' fill='#5BA9D0' fill-opacity='0.8' stroke='none' title='S1E1, 33:27:00&amp;lt;br&amp;gt;iMark&amp;lt;br&amp;gt;enters elevator: ID beeps, up arrow turns on'/>\n   <polygon id='svg_d208c188_6d93_4ae5_a611_5c953921ca43_e5' points='243.70,24.29 258.54,50.01 228.85,50.01' fill='#5BA9D0' fill-opacity='0.8' stroke='none' title='S1E1, 33:39:00&amp;lt;br&amp;gt;iMark&amp;lt;br&amp;gt;goes to sleep in the elevator'/>\n   <polygon id='svg_d208c188_6d93_4ae5_a611_5c953921ca43_e6' points='244.01,112.39 266.06,112.39 266.06,90.34 244.01,90.34' fill='#C15C58' fill-opacity='0.8' stroke='none' title='S1E1, 33:43:00&amp;lt;br&amp;gt;oMark&amp;lt;br&amp;gt;wakes up in the elevator'/>\n   <polygon id='svg_d208c188_6d93_4ae5_a611_5c953921ca43_e7' points='255.35,112.39 277.40,112.39 277.40,90.34 255.35,90.34' fill='#C15C58' fill-opacity='0.8' stroke='none' title='S1E2, 05:14:00&amp;lt;br&amp;gt;Helena&amp;lt;br&amp;gt;wakes up in the elevator'/>\n   <circle id='svg_d208c188_6d93_4ae5_a611_5c953921ca43_e8' cx='289.05' cy='161.29' r='8.27pt' fill='#5BA9D0' fill-opacity='0.8' stroke='none' title='S1E3, 50:19:00&amp;lt;br&amp;gt;iMark&amp;lt;br&amp;gt;enters elevator: ID beeps, up arrow turns on'/>\n   <polygon id='svg_d208c188_6d93_4ae5_a611_5c953921ca43_e9' points='300.39,24.29 315.23,50.01 285.54,50.01' fill='#5BA9D0' fill-opacity='0.8' stroke='none' title='S1E3, 50:27:00&amp;lt;br&amp;gt;iMark&amp;lt;br&amp;gt;goes to sleep in the elevator'/>\n   <polygon id='svg_d208c188_6d93_4ae5_a611_5c953921ca43_e10' points='300.70,112.39 322.75,112.39 322.75,90.34 300.70,90.34' fill='#C15C58' fill-opacity='0.8' stroke='none' title='S1E3, 50:37:00&amp;lt;br&amp;gt;oMark&amp;lt;br&amp;gt;wakes up in the elevator'/>\n   <circle id='svg_d208c188_6d93_4ae5_a611_5c953921ca43_e11' cx='323.06' cy='161.29' r='8.27pt' fill='#5BA9D0' fill-opacity='0.8' stroke='none' title='S1E4, 01:56:00&amp;lt;br&amp;gt;Helly&amp;lt;br&amp;gt;Milchick signs Helly into the elevator. The elevator doors make the high frequency as they open'/>\n   <polygon id='svg_d208c188_6d93_4ae5_a611_5c953921ca43_e12' points='334.40,24.29 349.25,50.01 319.55,50.01' fill='#5BA9D0' fill-opacity='0.8' stroke='none' title='S1E4, 02:11:00&amp;lt;br&amp;gt;Helly&amp;lt;br&amp;gt;goes to sleep in the elevator'/>\n   <polygon id='svg_d208c188_6d93_4ae5_a611_5c953921ca43_e13' points='334.71,112.39 356.76,112.39 356.76,90.34 334.71,90.34' fill='#5BA9D0' fill-opacity='0.8' stroke='none' title='S1E4, 02:12:00&amp;lt;br&amp;gt;Helly&amp;lt;br&amp;gt;wakes up in the elevator'/>\n   <circle id='svg_d208c188_6d93_4ae5_a611_5c953921ca43_e14' cx='357.08' cy='161.29' r='8.27pt' fill='#5BA9D0' fill-opacity='0.8' stroke='none' title='S1E4, 21:07:00&amp;lt;br&amp;gt;Helly&amp;lt;br&amp;gt;signs into the elevator'/>\n   <polygon id='svg_d208c188_6d93_4ae5_a611_5c953921ca43_e15' points='391.09,24.29 405.94,50.01 376.24,50.01' fill='#5BA9D0' fill-opacity='0.8' stroke='none' title='S1E4, 21:41:00&amp;lt;br&amp;gt;Helly&amp;lt;br&amp;gt;goes to sleep in the elevator'/>\n   <polygon id='svg_d208c188_6d93_4ae5_a611_5c953921ca43_e16' points='391.40,112.39 413.45,112.39 413.45,90.34 391.40,90.34' fill='#5BA9D0' fill-opacity='0.8' stroke='none' title='S1E4, 21:43:00&amp;lt;br&amp;gt;Helly&amp;lt;br&amp;gt;wakes up in the elevator'/>\n   <circle id='svg_d208c188_6d93_4ae5_a611_5c953921ca43_e17' cx='413.77' cy='161.29' r='8.27pt' fill='#5BA9D0' fill-opacity='0.8' stroke='none' title='S1E4, 44:13:00&amp;lt;br&amp;gt;Helly&amp;lt;br&amp;gt;scans into the elevator'/>\n   <polygon id='svg_d208c188_6d93_4ae5_a611_5c953921ca43_e18' points='425.10,24.29 439.95,50.01 410.26,50.01' fill='#5BA9D0' fill-opacity='0.8' stroke='none' title='S1E5, 00:12:00&amp;lt;br&amp;gt;Helly&amp;lt;br&amp;gt;goes to sleep in the elevator'/>\n   <polygon id='svg_d208c188_6d93_4ae5_a611_5c953921ca43_e19' points='425.42,112.39 447.47,112.39 447.47,90.34 425.42,90.34' fill='#C15C58' fill-opacity='0.8' stroke='none' title='S1E5, 00:16:00&amp;lt;br&amp;gt;Helena&amp;lt;br&amp;gt;wakes up in the elevator'/>\n   <circle id='svg_d208c188_6d93_4ae5_a611_5c953921ca43_e20' cx='447.78' cy='221.22' r='8.27pt' fill='#C15C58' fill-opacity='0.8' stroke='none' title='S1E5, 00:35:00&amp;lt;br&amp;gt;Helena&amp;lt;br&amp;gt;Elevator doors open, Helena inside'/>\n   <circle id='svg_d208c188_6d93_4ae5_a611_5c953921ca43_e21' cx='459.12' cy='221.22' r='8.27pt' fill='#C15C58' fill-opacity='0.8' stroke='none' title='S1E5, 00:43:00&amp;lt;br&amp;gt;Helena&amp;lt;br&amp;gt;Elevator doors close again, Helena still inside'/>\n   <circle id='svg_d208c188_6d93_4ae5_a611_5c953921ca43_e22' cx='470.46' cy='221.22' r='8.27pt' fill='#C15C58' fill-opacity='0.8' stroke='none' title='S1E5, 01:26:00&amp;lt;br&amp;gt;Helena&amp;lt;br&amp;gt;Elevator doors open to Mark'/>\n   <circle id='svg_d208c188_6d93_4ae5_a611_5c953921ca43_e23' cx='481.79' cy='161.29' r='8.27pt' fill='#5BA9D0' fill-opacity='0.8' stroke='none' title='S1E5, 02:16:00&amp;lt;br&amp;gt;iMark&amp;lt;br&amp;gt;Graner scans Mark into the elevator, doors begin to close'/>\n   <polygon id='svg_d208c188_6d93_4ae5_a611_5c953921ca43_e24' points='493.13,24.29 507.98,50.01 478.28,50.01' fill='#5BA9D0' fill-opacity='0.8' stroke='none' title='S1E5, 02:24:00&amp;lt;br&amp;gt;iMark&amp;lt;br&amp;gt;goes to sleep in the elevator'/>\n   <polygon id='svg_d208c188_6d93_4ae5_a611_5c953921ca43_e25' points='493.45,112.39 515.49,112.39 515.49,90.34 493.45,90.34' fill='#C15C58' fill-opacity='0.8' stroke='none' title='S1E5, 02:29:00&amp;lt;br&amp;gt;oMark&amp;lt;br&amp;gt;wakes up in the elevator'/>\n   <circle id='svg_d208c188_6d93_4ae5_a611_5c953921ca43_e26' cx='515.81' cy='161.29' r='8.27pt' fill='#C15C58' fill-opacity='0.8' stroke='none' title='S1E5, 02:36:00&amp;lt;br&amp;gt;oMark&amp;lt;br&amp;gt;Elevator doors close behind oMark'/>\n   <polygon id='svg_d208c188_6d93_4ae5_a611_5c953921ca43_e27' points='527.15,24.29 541.99,50.01 512.30,50.01' fill='#C15C58' fill-opacity='0.8' stroke='none' title='S1E5, 04:28:00&amp;lt;br&amp;gt;oMark&amp;lt;br&amp;gt;goes to sleep in the elevator'/>\n   <polygon id='svg_d208c188_6d93_4ae5_a611_5c953921ca43_e28' points='527.46,112.39 549.51,112.39 549.51,90.34 527.46,90.34' fill='#5BA9D0' fill-opacity='0.8' stroke='none' title='S1E5, 04:29:00&amp;lt;br&amp;gt;iMark&amp;lt;br&amp;gt;wakes up in the elevator'/>\n   <circle id='svg_d208c188_6d93_4ae5_a611_5c953921ca43_e29' cx='549.82' cy='161.29' r='8.27pt' fill='#5BA9D0' fill-opacity='0.8' stroke='none' title='S1E5, 08:32:00&amp;lt;br&amp;gt;iMark&amp;lt;br&amp;gt;Elevator up button turns on; cut to oMark leaving'/>\n   <circle id='svg_d208c188_6d93_4ae5_a611_5c953921ca43_e30' cx='561.16' cy='161.29' r='8.27pt' fill='#5BA9D0' fill-opacity='0.8' stroke='none' title='S1E5, 19:32:00&amp;lt;br&amp;gt;iMark&amp;lt;br&amp;gt;Elevator doors open to Mark, Helly inside'/>\n   <polygon id='svg_d208c188_6d93_4ae5_a611_5c953921ca43_e31' points='561.47,112.39 583.52,112.39 583.52,90.34 561.47,90.34' fill='#5BA9D0' fill-opacity='0.8' stroke='none' title='S1E6, 27:41:00&amp;lt;br&amp;gt;iDylan&amp;lt;br&amp;gt;wakes up at home'/>\n   <polygon id='svg_d208c188_6d93_4ae5_a611_5c953921ca43_e32' points='572.81,112.39 594.86,112.39 594.86,90.34 572.81,90.34' fill='#C15C58' fill-opacity='0.8' stroke='none' title='S1E6, 28:26:00&amp;lt;br&amp;gt;oDylan&amp;lt;br&amp;gt;wakes back up'/>\n   <polygon id='svg_d208c188_6d93_4ae5_a611_5c953921ca43_e33' points='595.17,24.29 610.02,50.01 580.33,50.01' fill='#C15C58' fill-opacity='0.8' stroke='none' title='S1E8, 04:45:00&amp;lt;br&amp;gt;oMark&amp;lt;br&amp;gt;MDR&amp;#39;s outie forms go to sleep in the elevator, four G pitches'/>\n   <polygon id='svg_d208c188_6d93_4ae5_a611_5c953921ca43_e34' points='606.51,24.29 621.36,50.01 591.66,50.01' fill='#C15C58' fill-opacity='0.8' stroke='none' title='S1E8, 04:46:00&amp;lt;br&amp;gt;oDylan&amp;lt;br&amp;gt;MDR&amp;#39;s outie forms go to sleep in the elevator, four G pitches'/>\n   <polygon id='svg_d208c188_6d93_4ae5_a611_5c953921ca43_e35' points='617.85,24.29 632.70,50.01 603.00,50.01' fill='#C15C58' fill-opacity='0.8' stroke='none' title='S1E8, 04:47:00&amp;lt;br&amp;gt;oIrving&amp;lt;br&amp;gt;MDR&amp;#39;s outie forms go to sleep in the elevator, four G pitches'/>\n   <polygon id='svg_d208c188_6d93_4ae5_a611_5c953921ca43_e36' points='629.19,24.29 644.03,50.01 614.34,50.01' fill='#C15C58' fill-opacity='0.8' stroke='none' title='S1E8, 04:48:00&amp;lt;br&amp;gt;Helena&amp;lt;br&amp;gt;MDR&amp;#39;s outie forms go to sleep in the elevator, four G pitches'/>\n   <polygon id='svg_d208c188_6d93_4ae5_a611_5c953921ca43_e37' points='629.50,112.39 651.55,112.39 651.55,90.34 629.50,90.34' fill='#5BA9D0' fill-opacity='0.8' stroke='none' title='S1E8, 04:49:00&amp;lt;br&amp;gt;MDR&amp;lt;br&amp;gt;The innies wake up in the elevator'/>\n   <circle id='svg_d208c188_6d93_4ae5_a611_5c953921ca43_e38' cx='663.2' cy='161.29' r='8.27pt' fill='#5BA9D0' fill-opacity='0.8' stroke='none' title='S1E8, 29:17:00&amp;lt;br&amp;gt;iIrving&amp;lt;br&amp;gt;Elevator opens for Irving. Does not ding for Helly soon after.'/>\n   <circle id='svg_d208c188_6d93_4ae5_a611_5c953921ca43_e39' cx='674.54' cy='161.29' r='8.27pt' fill='#5BA9D0' fill-opacity='0.8' stroke='none' title='S1E8, 30:15:00&amp;lt;br&amp;gt;Helly&amp;lt;br&amp;gt;Doors close for Helly. Did not ding for Irving soon before.'/>\n   <circle id='svg_d208c188_6d93_4ae5_a611_5c953921ca43_e40' cx='685.88' cy='161.29' r='8.27pt' fill='#5BA9D0' fill-opacity='0.8' stroke='none' title='S1E8, 30:41:00&amp;lt;br&amp;gt;Helly&amp;lt;br&amp;gt;Doors close again for Helly'/>\n   <circle id='svg_d208c188_6d93_4ae5_a611_5c953921ca43_e41' cx='697.21' cy='161.29' r='8.27pt' fill='#5BA9D0' fill-opacity='0.8' stroke='none' title='S1E8, 31:05:00&amp;lt;br&amp;gt;iMark&amp;lt;br&amp;gt;Doors open for Mark'/>\n   <polygon id='svg_d208c188_6d93_4ae5_a611_5c953921ca43_e42' points='708.55,24.29 723.40,50.01 693.71,50.01' fill='#C15C58' fill-opacity='0.8' stroke='none' title='S1E9, 00:13:00&amp;lt;br&amp;gt;oMDR&amp;lt;br&amp;gt;go to sleep on the outside'/>\n   <polygon id='svg_d208c188_6d93_4ae5_a611_5c953921ca43_e43' points='708.87,112.39 730.92,112.39 730.92,90.34 708.87,90.34' fill='#5BA9D0' fill-opacity='0.8' stroke='none' title='S1E9, 00:16:00&amp;lt;br&amp;gt;iMDR&amp;lt;br&amp;gt;wake up on the outside'/>\n   <polygon id='svg_d208c188_6d93_4ae5_a611_5c953921ca43_e44' points='731.54,112.39 753.59,112.39 753.59,90.34 731.54,90.34' fill='#5BA9D0' fill-opacity='0.8' stroke='none' title='S2E1, 00:30:00&amp;lt;br&amp;gt;iMark&amp;lt;br&amp;gt;wakes up in long hallway'/>\n   <circle id='svg_d208c188_6d93_4ae5_a611_5c953921ca43_e45' cx='753.9' cy='161.29' r='8.27pt' fill='#5BA9D0' fill-opacity='0.8' stroke='none' title='S2E1, 13:07:00&amp;lt;br&amp;gt;iMark&amp;lt;br&amp;gt;Doors open for Mark'/>\n   <polygon id='svg_d208c188_6d93_4ae5_a611_5c953921ca43_e46' points='765.24,24.29 780.09,50.01 750.40,50.01' fill='#5BA9D0' fill-opacity='0.8' stroke='none' title='S2E1, 13:12:00&amp;lt;br&amp;gt;iMark&amp;lt;br&amp;gt;goes to sleep in elevator'/>\n   <polygon id='svg_d208c188_6d93_4ae5_a611_5c953921ca43_e47' points='765.56,112.39 787.60,112.39 787.60,90.34 765.56,90.34' fill='#C15C58' fill-opacity='0.8' stroke='none' title='S2E1, 13:15:00&amp;lt;br&amp;gt;iMark&amp;lt;br&amp;gt;wakes up in elevator'/>\n   <polygon id='svg_d208c188_6d93_4ae5_a611_5c953921ca43_e48' points='776.89,52.46 798.94,52.46 798.94,30.41 776.89,30.41' fill='#5BA9D0' fill-opacity='0.8' stroke='none' title='S2E1, 13:21:00&amp;lt;br&amp;gt;iMark&amp;lt;br&amp;gt;wakes up in elevator'/>\n   <circle id='svg_d208c188_6d93_4ae5_a611_5c953921ca43_e49' cx='799.26' cy='161.29' r='8.27pt' fill='#5BA9D0' fill-opacity='0.8' stroke='none' title='S2E1, 15:24:00&amp;lt;br&amp;gt;iMark&amp;lt;br&amp;gt;Doors open for Mark'/>\n   <circle id='svg_d208c188_6d93_4ae5_a611_5c953921ca43_e50' cx='810.59' cy='161.29' r='8.27pt' fill='#5BA9D0' fill-opacity='0.8' stroke='none' title='S2E1, 15:29:00&amp;lt;br&amp;gt;iMark&amp;lt;br&amp;gt;Doors open for Mark'/>\n   <circle id='svg_d208c188_6d93_4ae5_a611_5c953921ca43_e51' cx='821.93' cy='161.29' r='8.27pt' fill='#5BA9D0' fill-opacity='0.8' stroke='none' title='S2E1, 18:40:00&amp;lt;br&amp;gt;iMark&amp;lt;br&amp;gt;Doors open for Mark'/>\n   <polygon id='svg_d208c188_6d93_4ae5_a611_5c953921ca43_e52' points='833.27,24.29 848.12,50.01 818.42,50.01' fill='#5BA9D0' fill-opacity='0.8' stroke='none' title='S2E1, 19:12:00&amp;lt;br&amp;gt;iMark&amp;lt;br&amp;gt;goes to sleep in elevator'/>\n   <polygon id='svg_d208c188_6d93_4ae5_a611_5c953921ca43_e53' points='833.58,112.39 855.63,112.39 855.63,90.34 833.58,90.34' fill='#5BA9D0' fill-opacity='0.8' stroke='none' title='S2E1, 20:06:00&amp;lt;br&amp;gt;iMark&amp;lt;br&amp;gt;wakes up in elevator'/>\n   <circle id='svg_d208c188_6d93_4ae5_a611_5c953921ca43_e54' cx='855.95' cy='161.29' r='8.27pt' fill='#5BA9D0' fill-opacity='0.8' stroke='none' title='S2E1, 20:50:00&amp;lt;br&amp;gt;iDylan&amp;lt;br&amp;gt;Doors open for Dylan'/>\n   <circle id='svg_d208c188_6d93_4ae5_a611_5c953921ca43_e55' cx='867.28' cy='161.29' r='8.27pt' fill='#5BA9D0' fill-opacity='0.8' stroke='none' title='S2E1, 21:18:00&amp;lt;br&amp;gt;iIrving&amp;lt;br&amp;gt;Doors open for Irving'/>\n   <circle id='svg_d208c188_6d93_4ae5_a611_5c953921ca43_e56' cx='878.62' cy='221.22' r='8.27pt' fill='#5BA9D0' fill-opacity='0.8' stroke='none' title='S2E1, 22:00:00&amp;lt;br&amp;gt;Helena&amp;lt;br&amp;gt;Doors open for &amp;#39;Helly&amp;#39;'/>\n   <circle id='svg_d208c188_6d93_4ae5_a611_5c953921ca43_e57' cx='889.96' cy='161.29' r='8.27pt' fill='#C15C58' fill-opacity='0.8' stroke='none' title='S2E2, 37:00:00&amp;lt;br&amp;gt;oMark&amp;lt;br&amp;gt;Doors open for Mark'/>\n   <circle id='svg_d208c188_6d93_4ae5_a611_5c953921ca43_e58' cx='901.3' cy='161.29' r='8.27pt' fill='#C15C58' fill-opacity='0.8' stroke='none' title='S2E2, 37:02:00&amp;lt;br&amp;gt;oMark&amp;lt;br&amp;gt;Doors open for Mark'/>\n   <circle id='svg_d208c188_6d93_4ae5_a611_5c953921ca43_e59' cx='912.64' cy='161.29' r='8.27pt' fill='#C15C58' fill-opacity='0.8' stroke='none' title='S2E2, 37:10:00&amp;lt;br&amp;gt;oMark&amp;lt;br&amp;gt;Doors open for Mark'/>\n   <polygon id='svg_d208c188_6d93_4ae5_a611_5c953921ca43_e60' points='923.97,24.29 938.82,50.01 909.13,50.01' fill='#C15C58' fill-opacity='0.8' stroke='none' title='S2E2, 37:26:00&amp;lt;br&amp;gt;oMark&amp;lt;br&amp;gt;goes to sleep in elevator'/>\n   <polygon id='svg_d208c188_6d93_4ae5_a611_5c953921ca43_e61' points='924.29,112.39 946.34,112.39 946.34,90.34 924.29,90.34' fill='#C15C58' fill-opacity='0.8' stroke='none' title='S2E2, 37:31:00&amp;lt;br&amp;gt;oMark&amp;lt;br&amp;gt;we see a zoom in on Mark&amp;#39;s eye'/>\n   <polygon id='svg_d208c188_6d93_4ae5_a611_5c953921ca43_e62' points='935.63,112.39 957.67,112.39 957.67,90.34 935.63,90.34' fill='#C15C58' fill-opacity='0.8' stroke='none' title='S2E2, 37:37:00&amp;lt;br&amp;gt;oMark&amp;lt;br&amp;gt;we see the door and presume Mark is inside waking up (but no visual confirmation)'/>\n   <circle id='svg_d208c188_6d93_4ae5_a611_5c953921ca43_e63' cx='957.99' cy='161.29' r='8.27pt' fill='#C15C58' fill-opacity='0.8' stroke='none' title='S2E2, 37:39:00&amp;lt;br&amp;gt;oMark&amp;lt;br&amp;gt;Doors open for Mark'/>\n   <circle id='svg_d208c188_6d93_4ae5_a611_5c953921ca43_e64' cx='969.33' cy='161.29' r='8.27pt' fill='#C15C58' fill-opacity='0.8' stroke='none' title='S2E2, 39:45:00&amp;lt;br&amp;gt;oMark&amp;lt;br&amp;gt;Doors open for Mark'/>\n   <polygon id='svg_d208c188_6d93_4ae5_a611_5c953921ca43_e65' points='980.66,24.29 995.51,50.01 965.82,50.01' fill='#C15C58' fill-opacity='0.8' stroke='none' title='S2E2, 39:52:00&amp;lt;br&amp;gt;oMark&amp;lt;br&amp;gt;goes to sleep in elevator'/>\n   <circle id='svg_d208c188_6d93_4ae5_a611_5c953921ca43_e66' cx='992' cy='161.29' r='8.27pt' fill='#C15C58' fill-opacity='0.8' stroke='none' title='S2E2, 40:20:00&amp;lt;br&amp;gt;oDylan&amp;lt;br&amp;gt;Doors open for Dylan'/>\n   <polygon id='svg_d208c188_6d93_4ae5_a611_5c953921ca43_e67' points='1003.34,24.29 1018.19,50.01 988.49,50.01' fill='#C15C58' fill-opacity='0.8' stroke='none' title='S2E2, 40:27:00&amp;lt;br&amp;gt;oDylan&amp;lt;br&amp;gt;goes to sleep in elevator'/>\n   <circle id='svg_d208c188_6d93_4ae5_a611_5c953921ca43_e68' cx='1014.68' cy='161.29' r='8.27pt' fill='#C15C58' fill-opacity='0.8' stroke='none' title='S2E2, 40:51:00&amp;lt;br&amp;gt;oIrving&amp;lt;br&amp;gt;Doors open for Irving'/>\n   <polygon id='svg_d208c188_6d93_4ae5_a611_5c953921ca43_e69' points='1026.02,24.29 1040.86,50.01 1011.17,50.01' fill='#C15C58' fill-opacity='0.8' stroke='none' title='S2E2, 40:57:00&amp;lt;br&amp;gt;oIrving&amp;lt;br&amp;gt;goes to sleep in elevator'/>\n   <circle id='svg_d208c188_6d93_4ae5_a611_5c953921ca43_e70' cx='1037.35' cy='161.29' r='8.27pt' fill='#C15C58' fill-opacity='0.8' stroke='none' title='S2E2, 41:33:00&amp;lt;br&amp;gt;Helena&amp;lt;br&amp;gt;Doors open for Helena'/>\n   <polygon id='svg_d208c188_6d93_4ae5_a611_5c953921ca43_e71' points='1037.67,52.46 1059.72,52.46 1059.72,30.41 1037.67,30.41' fill='#5BA9D0' fill-opacity='0.8' stroke='none' title='S2E4, 00:15:00&amp;lt;br&amp;gt;iIrving&amp;lt;br&amp;gt;Irving wakes up on a frozen lake at Woe&amp;#39;s Hollow'/>\n   <polygon id='svg_d208c188_6d93_4ae5_a611_5c953921ca43_e72' points='1049.01,112.39 1071.05,112.39 1071.05,90.34 1049.01,90.34' fill='#5BA9D0' fill-opacity='0.8' stroke='none' title='S2E4, 47:14:00&amp;lt;br&amp;gt;Helly&amp;lt;br&amp;gt;Helly wakes up after Milchick removes the Glasgow'/>\n   <circle id='svg_d208c188_6d93_4ae5_a611_5c953921ca43_e73' cx='1071.37' cy='161.29' r='8.27pt' fill='#5BA9D0' fill-opacity='0.8' stroke='none' title='S2E5, 03:30:00&amp;lt;br&amp;gt;Exports hall man [Doctor]&amp;lt;br&amp;gt;Export hall doors open'/>\n   <circle id='svg_d208c188_6d93_4ae5_a611_5c953921ca43_e74' cx='1082.71' cy='161.29' r='8.27pt' fill='#5BA9D0' fill-opacity='0.8' stroke='none' title='S2E5, 03:43:00&amp;lt;br&amp;gt;Exports hall man [Doctor]&amp;lt;br&amp;gt;Export hall doors close'/>\n   <circle id='svg_d208c188_6d93_4ae5_a611_5c953921ca43_e75' cx='1094.04' cy='161.29' r='8.27pt' fill='#C15C58' fill-opacity='0.8' stroke='none' title='S2E5, 09:27:00&amp;lt;br&amp;gt;Helena&amp;lt;br&amp;gt;Doors open for Helena'/>\n   <polygon id='svg_d208c188_6d93_4ae5_a611_5c953921ca43_e76' points='1094.36,112.39 1116.41,112.39 1116.41,90.34 1094.36,90.34' fill='#5BA9D0' fill-opacity='0.8' stroke='none' title='S2E5, 09:47:00&amp;lt;br&amp;gt;Helena&amp;lt;br&amp;gt;Helly wakes up on severed floor'/>\n   <circle id='svg_d208c188_6d93_4ae5_a611_5c953921ca43_e77' cx='1116.72' cy='161.29' r='8.27pt' fill='#5BA9D0' fill-opacity='0.8' stroke='none' title='S2E5, 34:05:00&amp;lt;br&amp;gt;iMark&amp;lt;br&amp;gt;Doors open for Mark'/>\n   <circle id='svg_d208c188_6d93_4ae5_a611_5c953921ca43_e78' cx='1128.06' cy='161.29' r='8.27pt' fill='#5BA9D0' fill-opacity='0.8' stroke='none' title='S2E5, 35:56:00&amp;lt;br&amp;gt;iMark&amp;lt;br&amp;gt;Doors close for Mark after Milchick threatens him on the elevator'/>\n   <polygon id='svg_d208c188_6d93_4ae5_a611_5c953921ca43_e79' points='1128.37,112.39 1150.42,112.39 1150.42,90.34 1128.37,90.34' fill='#5BA9D0' fill-opacity='0.8' stroke='none' title='S2E7, 10:50:00&amp;lt;br&amp;gt;Gemma&amp;lt;br&amp;gt;Gemma wakes up in Dentist room (Wellington)'/>\n   <polygon id='svg_d208c188_6d93_4ae5_a611_5c953921ca43_e80' points='1139.71,112.39 1161.76,112.39 1161.76,90.34 1139.71,90.34' fill='#5BA9D0' fill-opacity='0.8' stroke='none' title='S2E7, 34:29:00&amp;lt;br&amp;gt;Gemma&amp;lt;br&amp;gt;Gemma wakes up to a Christmas scene where she is writing thank you notes (Allentown)'/>\n   <circle id='svg_d208c188_6d93_4ae5_a611_5c953921ca43_e81' cx='1162.07' cy='161.29' r='8.27pt' fill='#C15C58' fill-opacity='0.8' stroke='none' title='S2E7, 42:18:00&amp;lt;br&amp;gt;Gemma&amp;lt;br&amp;gt;Doors open for Gemma'/>\n   <polygon id='svg_d208c188_6d93_4ae5_a611_5c953921ca43_e82' points='1173.41,24.29 1188.26,50.01 1158.56,50.01' fill='#C15C58' fill-opacity='0.8' stroke='none' title='S2E7, 42:25:00&amp;lt;br&amp;gt;Gemma&amp;lt;br&amp;gt;Gemma transitions in exports hall elevator'/>\n   <polygon id='svg_d208c188_6d93_4ae5_a611_5c953921ca43_e83' points='1173.72,112.39 1195.77,112.39 1195.77,90.34 1173.72,90.34' fill='#5BA9D0' fill-opacity='0.8' stroke='none' title='S2E7, 43:32:00&amp;lt;br&amp;gt;Gemma&amp;lt;br&amp;gt;Ms.Casey wakes up in exports hall'/>\n   <circle id='svg_d208c188_6d93_4ae5_a611_5c953921ca43_e84' cx='1196.09' cy='161.29' r='8.27pt' fill='#5BA9D0' fill-opacity='0.8' stroke='none' title='S2E7, 45:15:00&amp;lt;br&amp;gt;Gemma&amp;lt;br&amp;gt;Doors open for Ms. Casey in exports hall'/>\n   <circle id='svg_d208c188_6d93_4ae5_a611_5c953921ca43_e85' cx='1207.42' cy='221.22' r='8.27pt' fill='#5BA9D0' fill-opacity='0.8' stroke='none' title='S2E9, 13:13:00&amp;lt;br&amp;gt;Helena&amp;lt;br&amp;gt;Doors open for Helly/Helena on the severed floor'/>\n   <circle id='svg_d208c188_6d93_4ae5_a611_5c953921ca43_e86' cx='1218.76' cy='161.29' r='8.27pt' fill='#5BA9D0' fill-opacity='0.8' stroke='none' title='S2E9, 40:05:00&amp;lt;br&amp;gt;iDylan&amp;lt;br&amp;gt;Doors close for Dylan'/>\n  <\/g>\n  <g clip-path='url(#svg_d208c188_6d93_4ae5_a611_5c953921ca43_c1)'>\n   <polyline points='147.32,257.18 147.32,5.48' fill='none' stroke='#CFE0E1' stroke-opacity='1' stroke-width='1.07' stroke-linejoin='round' stroke-linecap='butt'/>\n   <text x='57.38' y='228.22' font-size='15pt' font-family='Krub' fill='#CFE0E1' fill-opacity='1'>B natural<\/text>\n   <text x='117.9' y='168.29' font-size='15pt' font-family='Krub' fill='#CFE0E1' fill-opacity='1'>Bb<\/text>\n   <text x='119.67' y='108.37' font-size='15pt' font-family='Krub' fill='#CFE0E1' fill-opacity='1'>C#<\/text>\n   <text x='129.07' y='48.44' font-size='15pt' font-family='Krub' fill='#CFE0E1' fill-opacity='1'>G<\/text>\n   <polyline points='147.32,257.18 1269.78,257.18' fill='none' stroke='#CFE0E1' stroke-opacity='1' stroke-width='1.07' stroke-linejoin='round' stroke-linecap='butt'/>\n   <text transform='translate(178.26,301.99) rotate(-45.00)' font-size='15pt' font-family='Krub' fill='#CFE0E1' fill-opacity='1'>S1E1<\/text>\n   <text transform='translate(245.19,303.10) rotate(-45.00)' font-size='15pt' font-family='Krub' fill='#CFE0E1' fill-opacity='1'>S1E2<\/text>\n   <text transform='translate(267.68,303.28) rotate(-45.00)' font-size='15pt' font-family='Krub' fill='#CFE0E1' fill-opacity='1'>S1E3<\/text>\n   <text transform='translate(302.09,302.88) rotate(-45.00)' font-size='15pt' font-family='Krub' fill='#CFE0E1' fill-opacity='1'>S1E4<\/text>\n   <text transform='translate(403.65,303.36) rotate(-45.00)' font-size='15pt' font-family='Krub' fill='#CFE0E1' fill-opacity='1'>S1E5<\/text>\n   <text transform='translate(550.75,303.66) rotate(-45.00)' font-size='15pt' font-family='Krub' fill='#CFE0E1' fill-opacity='1'>S1E6<\/text>\n   <text transform='translate(573.61,303.48) rotate(-45.00)' font-size='15pt' font-family='Krub' fill='#CFE0E1' fill-opacity='1'>S1E8<\/text>\n   <text transform='translate(686.80,303.66) rotate(-45.00)' font-size='15pt' font-family='Krub' fill='#CFE0E1' fill-opacity='1'>S1E9<\/text>\n   <text transform='translate(721.38,303.10) rotate(-45.00)' font-size='15pt' font-family='Krub' fill='#CFE0E1' fill-opacity='1'>S2E1<\/text>\n   <text transform='translate(867.67,304.20) rotate(-45.00)' font-size='15pt' font-family='Krub' fill='#CFE0E1' fill-opacity='1'>S2E2<\/text>\n   <text transform='translate(1026.62,303.99) rotate(-45.00)' font-size='15pt' font-family='Krub' fill='#CFE0E1' fill-opacity='1'>S2E4<\/text>\n   <text transform='translate(1048.81,304.47) rotate(-45.00)' font-size='15pt' font-family='Krub' fill='#CFE0E1' fill-opacity='1'>S2E5<\/text>\n   <text transform='translate(1117.89,303.42) rotate(-45.00)' font-size='15pt' font-family='Krub' fill='#CFE0E1' fill-opacity='1'>S2E7<\/text>\n   <text transform='translate(1184.57,304.77) rotate(-45.00)' font-size='15pt' font-family='Krub' fill='#CFE0E1' fill-opacity='1'>S2E9<\/text>\n   <text x='626.42' y='324.63' font-size='15pt' font-family='Krub' fill='#CFE0E1' fill-opacity='1'>Episode and Time<\/text>\n   <text x='5.48' y='19.48' font-size='15pt' font-family='Krub' fill='#CFE0E1' fill-opacity='1'>Pitch<\/text>\n   <rect x='1280.74' y='20.13' width='153.78' height='119.89' fill='#030303' fill-opacity='1' stroke='#030303' stroke-opacity='1' stroke-width='1.07' stroke-linejoin='round' stroke-linecap='round'/>\n   <circle cx='1300.39' cy='63.68' r='8.27pt' fill='#CFE0E1' fill-opacity='0.8' stroke='none'/>\n   <polygon points='1300.39,74.88 1315.24,100.59 1285.55,100.59' fill='#CFE0E1' fill-opacity='0.8' stroke='none'/>\n   <polygon points='1289.37,131.39 1311.42,131.39 1311.42,109.34 1289.37,109.34' fill='#CFE0E1' fill-opacity='0.8' stroke='none'/>\n   <text x='1320.05' y='69.28' font-size='12pt' font-family='Krub' fill='#CFE0E1' fill-opacity='1'>elevator opens<\/text>\n   <text x='1320.05' y='97.62' font-size='12pt' font-family='Krub' fill='#CFE0E1' fill-opacity='1'>sleeps<\/text>\n   <text x='1320.05' y='125.97' font-size='12pt' font-family='Krub' fill='#CFE0E1' fill-opacity='1'>wakes up<\/text>\n   <rect x='1280.74' y='150.98' width='82.87' height='91.54' fill='#030303' fill-opacity='1' stroke='#030303' stroke-opacity='1' stroke-width='1.07' stroke-linejoin='round' stroke-linecap='round'/>\n   <circle cx='1300.39' cy='194.52' r='8.27pt' fill='#5BA9D0' fill-opacity='0.8' stroke='#5BA9D0' stroke-opacity='0.8' stroke-width='0.71' stroke-linejoin='round' stroke-linecap='round'/>\n   <circle cx='1300.39' cy='222.87' r='8.27pt' fill='#C15C58' fill-opacity='0.8' stroke='#C15C58' stroke-opacity='0.8' stroke-width='0.71' stroke-linejoin='round' stroke-linecap='round'/>\n   <text x='1320.05' y='200.12' font-size='12pt' font-family='Krub' fill='#CFE0E1' fill-opacity='1'>innie<\/text>\n   <text x='1320.05' y='228.47' font-size='12pt' font-family='Krub' fill='#CFE0E1' fill-opacity='1'>outie<\/text>\n   <text x='1269.78' y='341.52' font-size='7.5pt' font-family='Krub' fill='#CFE0E1' fill-opacity='1'><\/text>\n   <text x='1144.58' y='352.32' font-size='7.5pt' font-family='Krub' fill='#CFE0E1' fill-opacity='1'>livefreeordichotomize.com<\/text>\n  <\/g>\n <\/g>\n<\/svg>","js":null,"uid":"svg_d208c188_6d93_4ae5_a611_5c953921ca43","ratio":4,"settings":{"tooltip":{"css":".tooltip_SVGID_ { padding:5px;background:black;color:white;border-radius:2px;text-align:left; ; position:absolute;pointer-events:none;z-index:999;}","placement":"doc","opacity":0.9,"offx":10,"offy":10,"use_cursor_pos":true,"use_fill":false,"use_stroke":false,"delay_over":200,"delay_out":500},"hover":{"css":".hover_data_SVGID_ { fill:orange;stroke:black;cursor:pointer; }\ntext.hover_data_SVGID_ { stroke:none;fill:orange; }\ncircle.hover_data_SVGID_ { fill:orange;stroke:black; }\nline.hover_data_SVGID_, polyline.hover_data_SVGID_ { fill:none;stroke:orange; }\nrect.hover_data_SVGID_, polygon.hover_data_SVGID_, path.hover_data_SVGID_ { fill:orange;stroke:none; }\nimage.hover_data_SVGID_ { stroke:orange; }","reactive":true,"nearest_distance":null},"hover_inv":{"css":""},"hover_key":{"css":".hover_key_SVGID_ { fill:orange;stroke:black;cursor:pointer; }\ntext.hover_key_SVGID_ { stroke:none;fill:orange; }\ncircle.hover_key_SVGID_ { fill:orange;stroke:black; }\nline.hover_key_SVGID_, polyline.hover_key_SVGID_ { fill:none;stroke:orange; }\nrect.hover_key_SVGID_, polygon.hover_key_SVGID_, path.hover_key_SVGID_ { fill:orange;stroke:none; }\nimage.hover_key_SVGID_ { stroke:orange; }","reactive":true},"hover_theme":{"css":".hover_theme_SVGID_ { fill:orange;stroke:black;cursor:pointer; }\ntext.hover_theme_SVGID_ { stroke:none;fill:orange; }\ncircle.hover_theme_SVGID_ { fill:orange;stroke:black; }\nline.hover_theme_SVGID_, polyline.hover_theme_SVGID_ { fill:none;stroke:orange; }\nrect.hover_theme_SVGID_, polygon.hover_theme_SVGID_, path.hover_theme_SVGID_ { fill:orange;stroke:none; }\nimage.hover_theme_SVGID_ { stroke:orange; }","reactive":true},"select":{"css":".select_data_SVGID_ { fill:red;stroke:black;cursor:pointer; }\ntext.select_data_SVGID_ { stroke:none;fill:red; }\ncircle.select_data_SVGID_ { fill:red;stroke:black; }\nline.select_data_SVGID_, polyline.select_data_SVGID_ { fill:none;stroke:red; }\nrect.select_data_SVGID_, polygon.select_data_SVGID_, path.select_data_SVGID_ { fill:red;stroke:none; }\nimage.select_data_SVGID_ { stroke:red; }","type":"multiple","only_shiny":true,"selected":[]},"select_inv":{"css":""},"select_key":{"css":".select_key_SVGID_ { fill:red;stroke:black;cursor:pointer; }\ntext.select_key_SVGID_ { stroke:none;fill:red; }\ncircle.select_key_SVGID_ { fill:red;stroke:black; }\nline.select_key_SVGID_, polyline.select_key_SVGID_ { fill:none;stroke:red; }\nrect.select_key_SVGID_, polygon.select_key_SVGID_, path.select_key_SVGID_ { fill:red;stroke:none; }\nimage.select_key_SVGID_ { stroke:red; }","type":"single","only_shiny":true,"selected":[]},"select_theme":{"css":".select_theme_SVGID_ { fill:red;stroke:black;cursor:pointer; }\ntext.select_theme_SVGID_ { stroke:none;fill:red; }\ncircle.select_theme_SVGID_ { fill:red;stroke:black; }\nline.select_theme_SVGID_, polyline.select_theme_SVGID_ { fill:none;stroke:red; }\nrect.select_theme_SVGID_, polygon.select_theme_SVGID_, path.select_theme_SVGID_ { fill:red;stroke:none; }\nimage.select_theme_SVGID_ { stroke:red; }","type":"single","only_shiny":true,"selected":[]},"zoom":{"min":1,"max":1,"duration":300},"toolbar":{"position":"topright","pngname":"diagram","tooltips":null,"fixed":false,"hidden":[],"delay_over":200,"delay_out":500},"sizing":{"rescale":true,"width":1}}},"evals":[],"jsHooks":[]}</script>
+</div>
+</div>
+<p><em>This post was originally posted on my Severance themed site [<a href="https://mdr.lucymcgowan.com/analysis-elevator-dings/">found here</a>]</em>.</p>
+
+
+
+</main> <!-- /main -->
+<script id="quarto-html-after-body" type="application/javascript">
+window.document.addEventListener("DOMContentLoaded", function (event) {
+  const toggleBodyColorMode = (bsSheetEl) => {
+    const mode = bsSheetEl.getAttribute("data-mode");
+    const bodyEl = window.document.querySelector("body");
+    if (mode === "dark") {
+      bodyEl.classList.add("quarto-dark");
+      bodyEl.classList.remove("quarto-light");
+    } else {
+      bodyEl.classList.add("quarto-light");
+      bodyEl.classList.remove("quarto-dark");
+    }
+  }
+  const toggleBodyColorPrimary = () => {
+    const bsSheetEl = window.document.querySelector("link#quarto-bootstrap");
+    if (bsSheetEl) {
+      toggleBodyColorMode(bsSheetEl);
+    }
+  }
+  toggleBodyColorPrimary();  
+  const icon = "";
+  const anchorJS = new window.AnchorJS();
+  anchorJS.options = {
+    placement: 'right',
+    icon: icon
+  };
+  anchorJS.add('.anchored');
+  const isCodeAnnotation = (el) => {
+    for (const clz of el.classList) {
+      if (clz.startsWith('code-annotation-')) {                     
+        return true;
+      }
+    }
+    return false;
+  }
+  const onCopySuccess = function(e) {
+    // button target
+    const button = e.trigger;
+    // don't keep focus
+    button.blur();
+    // flash "checked"
+    button.classList.add('code-copy-button-checked');
+    var currentTitle = button.getAttribute("title");
+    button.setAttribute("title", "Copied!");
+    let tooltip;
+    if (window.bootstrap) {
+      button.setAttribute("data-bs-toggle", "tooltip");
+      button.setAttribute("data-bs-placement", "left");
+      button.setAttribute("data-bs-title", "Copied!");
+      tooltip = new bootstrap.Tooltip(button, 
+        { trigger: "manual", 
+          customClass: "code-copy-button-tooltip",
+          offset: [0, -8]});
+      tooltip.show();    
+    }
+    setTimeout(function() {
+      if (tooltip) {
+        tooltip.hide();
+        button.removeAttribute("data-bs-title");
+        button.removeAttribute("data-bs-toggle");
+        button.removeAttribute("data-bs-placement");
+      }
+      button.setAttribute("title", currentTitle);
+      button.classList.remove('code-copy-button-checked');
+    }, 1000);
+    // clear code selection
+    e.clearSelection();
+  }
+  const getTextToCopy = function(trigger) {
+      const codeEl = trigger.previousElementSibling.cloneNode(true);
+      for (const childEl of codeEl.children) {
+        if (isCodeAnnotation(childEl)) {
+          childEl.remove();
+        }
+      }
+      return codeEl.innerText;
+  }
+  const clipboard = new window.ClipboardJS('.code-copy-button:not([data-in-quarto-modal])', {
+    text: getTextToCopy
+  });
+  clipboard.on('success', onCopySuccess);
+  if (window.document.getElementById('quarto-embedded-source-code-modal')) {
+    const clipboardModal = new window.ClipboardJS('.code-copy-button[data-in-quarto-modal]', {
+      text: getTextToCopy,
+      container: window.document.getElementById('quarto-embedded-source-code-modal')
+    });
+    clipboardModal.on('success', onCopySuccess);
+  }
+    var localhostRegex = new RegExp(/^(?:http|https):\/\/localhost\:?[0-9]*\//);
+    var mailtoRegex = new RegExp(/^mailto:/);
+      var filterRegex = new RegExp("https:\/\/www\.livefreeordichotomize\.com");
+    var isInternal = (href) => {
+        return filterRegex.test(href) || localhostRegex.test(href) || mailtoRegex.test(href);
+    }
+    // Inspect non-navigation links and adorn them if external
+ 	var links = window.document.querySelectorAll('a[href]:not(.nav-link):not(.navbar-brand):not(.toc-action):not(.sidebar-link):not(.sidebar-item-toggle):not(.pagination-link):not(.no-external):not([aria-hidden]):not(.dropdown-item):not(.quarto-navigation-tool):not(.about-link)');
+    for (var i=0; i<links.length; i++) {
+      const link = links[i];
+      if (!isInternal(link.href)) {
+        // undo the damage that might have been done by quarto-nav.js in the case of
+        // links that we want to consider external
+        if (link.dataset.originalHref !== undefined) {
+          link.href = link.dataset.originalHref;
+        }
+      }
+    }
+  function tippyHover(el, contentFn, onTriggerFn, onUntriggerFn) {
+    const config = {
+      allowHTML: true,
+      maxWidth: 500,
+      delay: 100,
+      arrow: false,
+      appendTo: function(el) {
+          return el.parentElement;
+      },
+      interactive: true,
+      interactiveBorder: 10,
+      theme: 'quarto',
+      placement: 'bottom-start',
+    };
+    if (contentFn) {
+      config.content = contentFn;
+    }
+    if (onTriggerFn) {
+      config.onTrigger = onTriggerFn;
+    }
+    if (onUntriggerFn) {
+      config.onUntrigger = onUntriggerFn;
+    }
+    window.tippy(el, config); 
+  }
+  const noterefs = window.document.querySelectorAll('a[role="doc-noteref"]');
+  for (var i=0; i<noterefs.length; i++) {
+    const ref = noterefs[i];
+    tippyHover(ref, function() {
+      // use id or data attribute instead here
+      let href = ref.getAttribute('data-footnote-href') || ref.getAttribute('href');
+      try { href = new URL(href).hash; } catch {}
+      const id = href.replace(/^#\/?/, "");
+      const note = window.document.getElementById(id);
+      if (note) {
+        return note.innerHTML;
+      } else {
+        return "";
+      }
+    });
+  }
+  const xrefs = window.document.querySelectorAll('a.quarto-xref');
+  const processXRef = (id, note) => {
+    // Strip column container classes
+    const stripColumnClz = (el) => {
+      el.classList.remove("page-full", "page-columns");
+      if (el.children) {
+        for (const child of el.children) {
+          stripColumnClz(child);
+        }
+      }
+    }
+    stripColumnClz(note)
+    if (id === null || id.startsWith('sec-')) {
+      // Special case sections, only their first couple elements
+      const container = document.createElement("div");
+      if (note.children && note.children.length > 2) {
+        container.appendChild(note.children[0].cloneNode(true));
+        for (let i = 1; i < note.children.length; i++) {
+          const child = note.children[i];
+          if (child.tagName === "P" && child.innerText === "") {
+            continue;
+          } else {
+            container.appendChild(child.cloneNode(true));
+            break;
+          }
+        }
+        if (window.Quarto?.typesetMath) {
+          window.Quarto.typesetMath(container);
+        }
+        return container.innerHTML
+      } else {
+        if (window.Quarto?.typesetMath) {
+          window.Quarto.typesetMath(note);
+        }
+        return note.innerHTML;
+      }
+    } else {
+      // Remove any anchor links if they are present
+      const anchorLink = note.querySelector('a.anchorjs-link');
+      if (anchorLink) {
+        anchorLink.remove();
+      }
+      if (window.Quarto?.typesetMath) {
+        window.Quarto.typesetMath(note);
+      }
+      if (note.classList.contains("callout")) {
+        return note.outerHTML;
+      } else {
+        return note.innerHTML;
+      }
+    }
+  }
+  for (var i=0; i<xrefs.length; i++) {
+    const xref = xrefs[i];
+    tippyHover(xref, undefined, function(instance) {
+      instance.disable();
+      let url = xref.getAttribute('href');
+      let hash = undefined; 
+      if (url.startsWith('#')) {
+        hash = url;
+      } else {
+        try { hash = new URL(url).hash; } catch {}
+      }
+      if (hash) {
+        const id = hash.replace(/^#\/?/, "");
+        const note = window.document.getElementById(id);
+        if (note !== null) {
+          try {
+            const html = processXRef(id, note.cloneNode(true));
+            instance.setContent(html);
+          } finally {
+            instance.enable();
+            instance.show();
+          }
+        } else {
+          // See if we can fetch this
+          fetch(url.split('#')[0])
+          .then(res => res.text())
+          .then(html => {
+            const parser = new DOMParser();
+            const htmlDoc = parser.parseFromString(html, "text/html");
+            const note = htmlDoc.getElementById(id);
+            if (note !== null) {
+              const html = processXRef(id, note);
+              instance.setContent(html);
+            } 
+          }).finally(() => {
+            instance.enable();
+            instance.show();
+          });
+        }
+      } else {
+        // See if we can fetch a full url (with no hash to target)
+        // This is a special case and we should probably do some content thinning / targeting
+        fetch(url)
+        .then(res => res.text())
+        .then(html => {
+          const parser = new DOMParser();
+          const htmlDoc = parser.parseFromString(html, "text/html");
+          const note = htmlDoc.querySelector('main.content');
+          if (note !== null) {
+            // This should only happen for chapter cross references
+            // (since there is no id in the URL)
+            // remove the first header
+            if (note.children.length > 0 && note.children[0].tagName === "HEADER") {
+              note.children[0].remove();
+            }
+            const html = processXRef(null, note);
+            instance.setContent(html);
+          } 
+        }).finally(() => {
+          instance.enable();
+          instance.show();
+        });
+      }
+    }, function(instance) {
+    });
+  }
+      let selectedAnnoteEl;
+      const selectorForAnnotation = ( cell, annotation) => {
+        let cellAttr = 'data-code-cell="' + cell + '"';
+        let lineAttr = 'data-code-annotation="' +  annotation + '"';
+        const selector = 'span[' + cellAttr + '][' + lineAttr + ']';
+        return selector;
+      }
+      const selectCodeLines = (annoteEl) => {
+        const doc = window.document;
+        const targetCell = annoteEl.getAttribute("data-target-cell");
+        const targetAnnotation = annoteEl.getAttribute("data-target-annotation");
+        const annoteSpan = window.document.querySelector(selectorForAnnotation(targetCell, targetAnnotation));
+        const lines = annoteSpan.getAttribute("data-code-lines").split(",");
+        const lineIds = lines.map((line) => {
+          return targetCell + "-" + line;
+        })
+        let top = null;
+        let height = null;
+        let parent = null;
+        if (lineIds.length > 0) {
+            //compute the position of the single el (top and bottom and make a div)
+            const el = window.document.getElementById(lineIds[0]);
+            top = el.offsetTop;
+            height = el.offsetHeight;
+            parent = el.parentElement.parentElement;
+          if (lineIds.length > 1) {
+            const lastEl = window.document.getElementById(lineIds[lineIds.length - 1]);
+            const bottom = lastEl.offsetTop + lastEl.offsetHeight;
+            height = bottom - top;
+          }
+          if (top !== null && height !== null && parent !== null) {
+            // cook up a div (if necessary) and position it 
+            let div = window.document.getElementById("code-annotation-line-highlight");
+            if (div === null) {
+              div = window.document.createElement("div");
+              div.setAttribute("id", "code-annotation-line-highlight");
+              div.style.position = 'absolute';
+              parent.appendChild(div);
+            }
+            div.style.top = top - 2 + "px";
+            div.style.height = height + 4 + "px";
+            div.style.left = 0;
+            let gutterDiv = window.document.getElementById("code-annotation-line-highlight-gutter");
+            if (gutterDiv === null) {
+              gutterDiv = window.document.createElement("div");
+              gutterDiv.setAttribute("id", "code-annotation-line-highlight-gutter");
+              gutterDiv.style.position = 'absolute';
+              const codeCell = window.document.getElementById(targetCell);
+              const gutter = codeCell.querySelector('.code-annotation-gutter');
+              gutter.appendChild(gutterDiv);
+            }
+            gutterDiv.style.top = top - 2 + "px";
+            gutterDiv.style.height = height + 4 + "px";
+          }
+          selectedAnnoteEl = annoteEl;
+        }
+      };
+      const unselectCodeLines = () => {
+        const elementsIds = ["code-annotation-line-highlight", "code-annotation-line-highlight-gutter"];
+        elementsIds.forEach((elId) => {
+          const div = window.document.getElementById(elId);
+          if (div) {
+            div.remove();
+          }
+        });
+        selectedAnnoteEl = undefined;
+      };
+        // Handle positioning of the toggle
+    window.addEventListener(
+      "resize",
+      throttle(() => {
+        elRect = undefined;
+        if (selectedAnnoteEl) {
+          selectCodeLines(selectedAnnoteEl);
+        }
+      }, 10)
+    );
+    function throttle(fn, ms) {
+    let throttle = false;
+    let timer;
+      return (...args) => {
+        if(!throttle) { // first call gets through
+            fn.apply(this, args);
+            throttle = true;
+        } else { // all the others get throttled
+            if(timer) clearTimeout(timer); // cancel #2
+            timer = setTimeout(() => {
+              fn.apply(this, args);
+              timer = throttle = false;
+            }, ms);
+        }
+      };
+    }
+      // Attach click handler to the DT
+      const annoteDls = window.document.querySelectorAll('dt[data-target-cell]');
+      for (const annoteDlNode of annoteDls) {
+        annoteDlNode.addEventListener('click', (event) => {
+          const clickedEl = event.target;
+          if (clickedEl !== selectedAnnoteEl) {
+            unselectCodeLines();
+            const activeEl = window.document.querySelector('dt[data-target-cell].code-annotation-active');
+            if (activeEl) {
+              activeEl.classList.remove('code-annotation-active');
+            }
+            selectCodeLines(clickedEl);
+            clickedEl.classList.add('code-annotation-active');
+          } else {
+            // Unselect the line
+            unselectCodeLines();
+            clickedEl.classList.remove('code-annotation-active');
+          }
+        });
+      }
+  const findCites = (el) => {
+    const parentEl = el.parentElement;
+    if (parentEl) {
+      const cites = parentEl.dataset.cites;
+      if (cites) {
+        return {
+          el,
+          cites: cites.split(' ')
+        };
+      } else {
+        return findCites(el.parentElement)
+      }
+    } else {
+      return undefined;
+    }
+  };
+  var bibliorefs = window.document.querySelectorAll('a[role="doc-biblioref"]');
+  for (var i=0; i<bibliorefs.length; i++) {
+    const ref = bibliorefs[i];
+    const citeInfo = findCites(ref);
+    if (citeInfo) {
+      tippyHover(citeInfo.el, function() {
+        var popup = window.document.createElement('div');
+        citeInfo.cites.forEach(function(cite) {
+          var citeDiv = window.document.createElement('div');
+          citeDiv.classList.add('hanging-indent');
+          citeDiv.classList.add('csl-entry');
+          var biblioDiv = window.document.getElementById('ref-' + cite);
+          if (biblioDiv) {
+            citeDiv.innerHTML = biblioDiv.innerHTML;
+          }
+          popup.appendChild(citeDiv);
+        });
+        return popup.innerHTML;
+      });
+    }
+  }
+});
+</script>
+<script src="https://utteranc.es/client.js" repo="lfod/lfod.github.io" issue-term="pathname" theme="github-light" crossorigin="anonymous" async="">
+</script>
+</div> <!-- /content -->
+
+
+
+
+</body></html>
