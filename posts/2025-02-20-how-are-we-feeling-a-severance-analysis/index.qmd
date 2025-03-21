@@ -48,4 +48,4 @@ df |>
 
 
 
-*This post was originally posted on my Severance themed site [[found here](https://mdr.lucymcgowan.com/analysis-whos-talking/)]*.
+*This post was originally posted on my Severance themed site [[found here](https://mdr.lucymcgowan.com/analysis-feeling-over-time/)]*.
