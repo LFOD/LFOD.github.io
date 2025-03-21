@@ -1,0 +1,69 @@
+---
+title: "Elevator Dings: A Severance Analysis"
+author: "Lucy D'Agostino McGowan"
+date: "2025-03-20"
+categories: ["rstats", "severance", "data visualization"]
+description: "This data consists of all elevator dings in the Severance episodes along with the episode number, time stamp, pitch of the ding, and the action associated.  "
+---
+
+
+This analysis was made possible by the [mdr](https://lucymcgowan.github.io/mdr) R package, which used data originally compiled by [Sam_Badi on Reddit](https://www.reddit.com/r/SeveranceAppleTVPlus/comments/w8imx3/a_complete_analysis_of_all_of_the_ding_sounds/). The data consists of all elevator dings in the Severance episodes along with the episode number, time stamp, pitch of the ding, and the action associated. Examining the plot below, we see across all dings the `G` is associated with both innie and outies going to sleep, the  `C#` is consistently associated with both innies and outies waking up. (Spoiler: There is one notable exception, at the beginning of episode 4 in season 2, we hear a G when Irving wakes up, not a C# -- maybe this is a sign that things are not what they seem for this episode?. In general a `Bb` plays when they enter the elevator, however there are a few `B♮` thrown in there at the beginning of episode 5 and again in season 2 episode 2 when Helena descends (Spoiler: Perhaps a nod to the audience that this is not actually Helly) and in season 2 episode 9.
+
+
+```{r}
+#| echo: false
+#| message: false
+#| warning: false
+#| fig-width: 20
+#| fig-align: center
+library(mdr)
+library(ggiraph)
+library(tidyverse)
+
+set.seed(266) # on irving
+
+df <- elevator_dings |>
+  mutate(
+    i = 1:n(),
+    ep = season*10 + episode,
+    id = glue::glue("S{season}E{episode}")) |>
+  filter(!is.na(pitch), !is.na(io))
+
+first_i <- df |>
+  group_by(season, episode) |>
+  slice(1) |>
+  pull(i)
+
+p <- ggplot(df, aes(x = i, y = pitch, color = io, shape = action,
+                    tooltip = glue::glue("S{season}E{episode}, {hms::as_hms(time)}<br>{character}<br>{note}"))) +
+  geom_point_interactive(size = 10, alpha = 0.8) +
+  scale_shape_manual(values = c("elevator opens" = 16, "sleeps" = 17, "wakes up" = 15)) +
+  scale_color_manual(values = c("#5BA9D0", "#C15C58")) +
+  guides(
+    shape = guide_legend(override.aes = list(color = "#CFE0E1"))
+  ) +
+  scale_x_continuous("Episode and Time",
+                     breaks = first_i,
+                     labels = unique(df$id)) +
+  labs(
+    y = "Pitch",
+    color = "",
+    shape = ""
+  ) +
+  theme_mdr() +
+  theme(
+    text = element_text(size = 20),
+    axis.title = element_text(size = 20),
+    axis.title.y = element_text(angle = 0),
+    axis.text = element_text(size = 20),
+    axis.text.x = element_text(angle = 45, hjust = 1, size = 20),
+    panel.grid.minor = element_blank())  
+
+ggiraph::girafe(ggobj = p)
+```
+
+
+
+
+
+*This post was originally posted on my Severance themed site [[found here](https://mdr.lucymcgowan.com/analysis-elevator-dings/)]*.
