@@ -2,6 +2,7 @@
   {
     "listing": "/index.html",
     "items": [
+      "/posts/2025-02-05-whos-talking-a-severance-analysis/index.html",
       "/posts/2024-10-30-spooky-season/index.html",
       "/posts/2023-08-04-visual-diagnostic-tools-for-causal-inference/index.html",
       "/posts/2023-07-26-visual-diagnostic-tool-for-causal-inference/index.html",
@@ -54,8 +55,8 @@
       "/posts/2017-09-25-commentary-and-follow-up-to-p-0-005-suggestion/index.html",
       "/posts/2017-09-24-simulated-annealing/index.html",
       "/posts/2017-09-03-plumber-slack-bot/index.html",
-      "/posts/2017-08-14-pvalues_can_be_inappropriate/index.html",
       "/posts/2017-08-30-exponential-power-series/index.html",
+      "/posts/2017-08-14-pvalues_can_be_inappropriate/index.html",
       "/posts/2017-08-08-how-to-make-an-rmarkdown-website/index.html",
       "/posts/2017-07-24-twitter-trees/index.html",
       "/posts/2017-07-18-the-making-of-we-r-ladies/index.html",
