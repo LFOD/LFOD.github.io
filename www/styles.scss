@@ -324,8 +324,8 @@ img {
 .sidenote, .marginnote { 
   float: right;
   clear: right;
-  margin-right: -60%;
-  width: 50%;
+  margin-right: calc(-1 * var(--margin-note-width, 200px) - 1rem);
+  width: var(--margin-note-width, 200px);
   margin-top: 0;
   margin-bottom: 0;
   font-size: 1.1rem;
@@ -337,40 +337,20 @@ img {
 /* Quarto-specific margin note fixes */
 .quarto-container-page .marginnote {
   position: absolute;
-  right: -250px;
-  width: 200px;
-  margin-right: 0;
+  left: 100%;
+  margin-left: 1rem;
+  max-width: 200px;
   font-size: 0.9rem;
   line-height: 1.4;
   padding: 0.5rem;
   background: transparent;
   float: none;
+  box-sizing: border-box;
 }
 
 /* Ensure parent has relative positioning */
 .quarto-container-page p:has(.marginnote) {
   position: relative;
-}
-
-/* Handle overflow and ensure margin notes don't cause horizontal scroll */
-.quarto-container-page {
-  overflow-x: hidden;
-}
-
-/* Adjust margin notes for narrower screens */
-@media (max-width: 1400px) {
-  .quarto-container-page .marginnote {
-    right: -200px;
-    width: 180px;
-  }
-}
-
-@media (max-width: 1200px) {
-  .quarto-container-page .marginnote {
-    right: -180px;
-    width: 160px;
-    font-size: 0.85rem;
-  }
 }
 
 .table-caption { 
@@ -439,8 +419,12 @@ h1 .code, h2 .code, h3 .code {
   font-size: 0.80em; 
 }
 
-.marginnote .code, .sidenote .code { 
+.code, .sidenote .code { 
   font-size: 1rem;
+}
+
+.marginnote { 
+  font-size: 0.85rem;
 }
 
 pre {
