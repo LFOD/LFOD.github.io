@@ -33,8 +33,8 @@ Simulated annealing is a way of solving this problem. `r margin_note('The best w
 This is all fun and easy to write/read about, but I find these algorithms make more sense when I can get in and watch them work and fiddle with them, which is why I have made an interactive that allows you to watch simulated annealing try and solve the traveling salesman problem. 
 
 <div id = 'viz' class = "fullwidth"></div>
-<link rel="stylesheet" href="/js/travelingSalesman/style.css">
-<script src="/js/travelingSalesman/bundle.js"></script>
+<link rel="stylesheet" href="/media/js/travelingSalesman/style.css">
+<script src="/media/js/travelingSalesman/bundle.js"></script>
 
 `r margin_note('Click to add or remove cities. Use slider to take manual control of the temperature schedule. To slow down the visualization increase the step delay.')`
 
