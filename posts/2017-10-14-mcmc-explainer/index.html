@@ -435,7 +435,7 @@ window.Quarto = {
 <p><label for="tufte-mn-" class="margin-toggle">⊕</label><input type="checkbox" id="tufte-mn-" class="margin-toggle"><span class="marginnote">Turns out they actually make <a href="https://www.uniquebirdhouseboutique.com/category/bird-accessories/seed-catchers-birdseed-tray/">products to catch spilled seeds</a> so this convoluted example isn’t too crazy. <img src="https://www.uniquebirdhouseboutique.com/wp-content/uploads/2013/04/seedhoop.jpg" class="img-fluid"></span></p>
 <p>Your proposal distribution is another random uniform with a width of 2, aka <span class="math inline">\(U(-1,1)\)</span>.</p>
 <p>You can fiddle with the sliders below to change the true mean of seeds dropped by two birds, the true percentage of times the Cardinal is at the feeder, the size of your observation data and how wide your proposals are. Play around with the dials to see how the algorithm reacts. The plot below will show the real-time results of MCMC running including the current 95% credible interval (aka what people think a confidence interval is) and the acceptance rate. The algorithms proposed values for the proportion that are rejected are displayed as red circles.</p>
-<link rel="stylesheet" href="../../js/mcmcExplainer/style.css">
+<link rel="stylesheet" href="../../media/js/mcmcExplainer/style.css">
 <div class="fullwidth">
 <div id="data_plot">
 
@@ -453,7 +453,7 @@ window.Quarto = {
 
 </div>
 </div>
-<script src="../../js/mcmcExplainer/bundle.js"></script>
+<script src="../../media/js/mcmcExplainer/bundle.js"></script>
 <p>Here are a few experiments you may want to run to explore the algorithm’s behavior:</p>
 <ul>
 <li>Can you fool the credible interval? Try setting the true means of the two birds very close and your number of observations really low, intuitively this will be much harder to discern between each bird in the data.</li>
