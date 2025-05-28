@@ -8,10 +8,10 @@
     }
     
     const MAX_MARGIN_NOTE_WIDTH_PX = 350;
+    
     // Find the main content container - specifically the Quarto document content
     const mainContent = document.querySelector('main.content#quarto-document-content');
     
-    console.log("Running the margin note script some more")
     if (!mainContent) return;
     
     // Get the body's bounding box as the outer limit
@@ -31,10 +31,7 @@
     
     // Apply the CSS variable to the root element
     document.documentElement.style.setProperty('--margin-note-width', `${marginNoteWidth}px`);
-    
-    // Log for debugging
-    console.log(`Body right: ${bodyRight}px, Content right: ${contentRight}px, Available: ${availableSpace}px, Margin width: ${marginNoteWidth}px`);
-    
+      
     // Only manipulate display for Quarto-specific margin notes
     const marginNotes = document.querySelectorAll('.quarto-container-page .marginnote');
     marginNotes.forEach(note => {
