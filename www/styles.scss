@@ -25,6 +25,12 @@ $body-color: #3a4145;
 .navbar-dark {
   background-color: #fffff8;
 }
+
+// Make sure we have nice vertical alignment of nav items including icons
+.navbar-nav {
+  align-items: baseline;
+}
+
 .quarto-title-banner {
     color: #3a4145;
     background: #fffff8;
