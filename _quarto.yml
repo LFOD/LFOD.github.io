@@ -31,6 +31,9 @@ format:
     include-in-header: www/banner.html
     theme: 
       - www/styles.scss
+    include-after-body:
+      - text: |
+          <script src="/media/js/margin-notes.js"></script>
 
 
 

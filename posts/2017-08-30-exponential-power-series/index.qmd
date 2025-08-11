@@ -54,10 +54,10 @@ svg text {
 </style>
 
 <div class = "fullwidth" id = "viz"></div>
-<script src="https://cdn.rawgit.com/gka/d3-jetpack/master/build/d3v4%2Bjetpack.js"></script>
+<script src="/media/js/utils/d3-jetpack.js"></script>
 <script src="https://d3js.org/d3-scale-chromatic.v1.min.js"></script>
 <script src="https://rawgit.com/nstrayer/slid3r/master/dist/slid3r.js"></script>
-<script src="/js/bundle.js"></script>
+<script src="/media/js/exponentialPowerSeries/bundle.js"></script>
 
 
 `r tufte::margin_note('Note that as you increase the exponent the number of steps you need to get a good estimate increases with it, why might this be?')`
