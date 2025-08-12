@@ -3,7 +3,7 @@ title: "Good vibes only"
 author: "Lucy D'Agostino McGowan"
 date: "2025-08-10"
 categories: ["rstats", "vibe code", "shiny app", "user conference"]
-description: "This data consists of all elevator dings in the Severance episodes along with the episode number, time stamp, pitch of the ding, and the action associated.  "
+description: "Inspired by the practical problem of chairing a useR conference session, this talk walks through building a Slido replacement in pure “vibe coding” mode — no specs, no tests, just a vision and a stubborn refusal to stop until it worked (sort of). We’ll explore the chaotic joy, the accidental brilliance, and the inevitable questionable code that got us there."
 ---
 
 I just wrapped up my first useR conference since Brussels in 2017, and it was just the best. The #rstats community is one of a kind and it was delightful seeing old friends and hearing about all of the amazing things folks are building. 
