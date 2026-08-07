@@ -2,7 +2,7 @@
 <html xmlns="http://www.w3.org/1999/xhtml" lang="en" xml:lang="en"><head>
 
 <meta charset="utf-8">
-<meta name="generator" content="quarto-1.10.18">
+<meta name="generator" content="quarto-1.7.29">
 
 <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
 
@@ -12,16 +12,10 @@
 
 <title>Graph detective –</title>
 <style>
-/* Default styles provided by pandoc.
-** See https://pandoc.org/MANUAL.html#variables-for-html for config info.
-*/
+code{white-space: pre-wrap;}
 span.smallcaps{font-variant: small-caps;}
-div.columns{display: flex; gap: 1.5em;}
-div.column{flex: auto;}
-@media screen {
-div.columns{gap: min(4vw, 1.5em);}
-div.column{overflow-x: auto;}
-}
+div.columns{display: flex; gap: min(4vw, 1.5em);}
+div.column{flex: auto; overflow-x: auto;}
 div.hanging-indent{margin-left: 1.5em; text-indent: -1.5em;}
 ul.task-list{list-style: none;}
 ul.task-list li input[type="checkbox"] {
@@ -80,10 +74,10 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 <script src="../../site_libs/quarto-html/tippy.umd.min.js"></script>
 <script src="../../site_libs/quarto-html/anchor.min.js"></script>
 <link href="../../site_libs/quarto-html/tippy.css" rel="stylesheet">
-<link href="../../site_libs/quarto-html/quarto-syntax-highlighting-64a204ab8560d761af7679ceaba22944.css" rel="stylesheet" id="quarto-text-highlighting-styles">
+<link href="../../site_libs/quarto-html/quarto-syntax-highlighting-0815c480559380816a4d1ea211a47e91.css" rel="stylesheet" id="quarto-text-highlighting-styles">
 <script src="../../site_libs/bootstrap/bootstrap.min.js"></script>
 <link href="../../site_libs/bootstrap/bootstrap-icons.css" rel="stylesheet">
-<link href="../../site_libs/bootstrap/bootstrap-c40d7498fe02e743d4dec6c02f111ce1.min.css" rel="stylesheet" append-hash="true" id="quarto-bootstrap" data-mode="light">
+<link href="../../site_libs/bootstrap/bootstrap-3a52104fcab6d64c1ff9c030508fb24f.min.css" rel="stylesheet" append-hash="true" id="quarto-bootstrap" data-mode="light">
 <script id="quarto-search-options" type="application/json">{
   "location": "navbar",
   "copy-button": false,
@@ -142,7 +136,7 @@ ga('send', {
 <meta property="og:title" content="Graph detective –">
 <meta property="og:description" content="A plot has been floating around on Twitter from Georgia where the x-axis is all scampled. Let’s look into it and see if we can fix it!">
 <meta property="og:image" content="https://www.livefreeordichotomize.com/posts/2020-05-17-graph-detective/index_files/figure-html/unnamed-chunk-3-1.png">
-<meta property="og:site_name" content="">
+<meta property="og:site_name" content=" ">
 <meta property="og:image:height" content="960">
 <meta property="og:image:width" content="1728">
 <meta name="twitter:title" content="Live Free or Dichotomize">
@@ -344,7 +338,7 @@ const typesetMath = (el) => {
     var macros = [];
     for (var i = 0; i < mathElements.length; i++) {
       var texText = mathElements[i].firstChild;
-      if (mathElements[i].tagName == "SPAN" && texText && texText.data) {
+      if (mathElements[i].tagName == "SPAN") {
         window.katex.render(texText.data, mathElements[i], {
           displayMode: mathElements[i].classList.contains('display'),
           throwOnError: false,
@@ -459,7 +453,7 @@ From GA DPH, wtf?<br><br>"On the official Georgia COVID stats web page is this g
 </blockquote>
 <script async="" src="https://platform.twitter.com/widgets.js" charset="utf-8"></script>
 <div class="cell">
-<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb1"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb1-1"><a href="#cb1-1" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(tidyverse)</span>
+<div class="sourceCode cell-code" id="cb1"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb1-1"><a href="#cb1-1" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(tidyverse)</span>
 <span id="cb1-2"><a href="#cb1-2" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(ggridges)</span>
 <span id="cb1-3"><a href="#cb1-3" aria-hidden="true" tabindex="-1"></a></span>
 <span id="cb1-4"><a href="#cb1-4" aria-hidden="true" tabindex="-1"></a>d <span class="ot">&lt;-</span> <span class="fu">read_csv</span>(<span class="st">"https://github.com/nytimes/covid-19-data/raw/master/us-counties.csv"</span>)</span>
@@ -467,7 +461,7 @@ From GA DPH, wtf?<br><br>"On the official Georgia COVID stats web page is this g
 <span id="cb1-6"><a href="#cb1-6" aria-hidden="true" tabindex="-1"></a>  <span class="fu">filter</span>(state <span class="sc">==</span> <span class="st">"Georgia"</span>,</span>
 <span id="cb1-7"><a href="#cb1-7" aria-hidden="true" tabindex="-1"></a>         county <span class="sc">%in%</span> <span class="fu">c</span>(<span class="st">"Cobb"</span>, <span class="st">"DeKalb"</span>, <span class="st">"Fulton"</span>, <span class="st">"Gwinnett"</span>, <span class="st">"Hall"</span>)) <span class="sc">%&gt;%</span></span>
 <span id="cb1-8"><a href="#cb1-8" aria-hidden="true" tabindex="-1"></a>  <span class="fu">group_by</span>(county) <span class="sc">%&gt;%</span></span>
-<span id="cb1-9"><a href="#cb1-9" aria-hidden="true" tabindex="-1"></a>  <span class="fu">mutate</span>(<span class="at">case =</span> <span class="fu">c</span>(cases[<span class="dv">1</span>], <span class="fu">diff</span>(cases))) </span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<span id="cb1-9"><a href="#cb1-9" aria-hidden="true" tabindex="-1"></a>  <span class="fu">mutate</span>(<span class="at">case =</span> <span class="fu">c</span>(cases[<span class="dv">1</span>], <span class="fu">diff</span>(cases))) </span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </div>
 <p>I pulled in the NY Times data to look at this. It looks like their estimates are different from the ones in the original graph (this is not unusual, I’ve noticed for my county the counts are quite different depending on which sources you pull from), so I am going to recreate the original atrocity using the NY Times data for comparison.</p>
 <!-- ```{r} -->
@@ -481,7 +475,7 @@ From GA DPH, wtf?<br><br>"On the official Georgia COVID stats web page is this g
 <section id="remake-their-silly-plot-with-ny-times-data" class="level2">
 <h2 class="anchored" data-anchor-id="remake-their-silly-plot-with-ny-times-data">Remake their silly plot with NY Times data</h2>
 <div class="cell">
-<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb2"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb2-1"><a href="#cb2-1" aria-hidden="true" tabindex="-1"></a>d <span class="sc">%&gt;%</span></span>
+<div class="sourceCode cell-code" id="cb2"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb2-1"><a href="#cb2-1" aria-hidden="true" tabindex="-1"></a>d <span class="sc">%&gt;%</span></span>
 <span id="cb2-2"><a href="#cb2-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">filter</span>(date <span class="sc">&gt;=</span> <span class="st">"2020-04-26"</span>, date <span class="sc">&lt;=</span> <span class="st">"2020-05-09"</span>) <span class="sc">%&gt;%</span></span>
 <span id="cb2-3"><a href="#cb2-3" aria-hidden="true" tabindex="-1"></a>  <span class="fu">mutate</span>(</span>
 <span id="cb2-4"><a href="#cb2-4" aria-hidden="true" tabindex="-1"></a>    <span class="at">date =</span> <span class="fu">format</span>(date, <span class="st">"%d%b%Y"</span>),</span>
@@ -514,7 +508,7 @@ From GA DPH, wtf?<br><br>"On the official Georgia COVID stats web page is this g
 <span id="cb2-31"><a href="#cb2-31" aria-hidden="true" tabindex="-1"></a>        <span class="at">legend.background =</span> <span class="fu">element_rect</span>(<span class="at">fill =</span> <span class="st">"#182F4E"</span>),</span>
 <span id="cb2-32"><a href="#cb2-32" aria-hidden="true" tabindex="-1"></a>        <span class="at">legend.text =</span> <span class="fu">element_text</span>(<span class="at">color =</span> <span class="st">"white"</span>),</span>
 <span id="cb2-33"><a href="#cb2-33" aria-hidden="true" tabindex="-1"></a>        <span class="at">legend.title =</span> <span class="fu">element_text</span>(<span class="at">color =</span> <span class="st">"white"</span>),</span>
-<span id="cb2-34"><a href="#cb2-34" aria-hidden="true" tabindex="-1"></a>        <span class="at">title =</span> <span class="fu">element_text</span>(<span class="at">color =</span> <span class="st">"white"</span>))</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<span id="cb2-34"><a href="#cb2-34" aria-hidden="true" tabindex="-1"></a>        <span class="at">title =</span> <span class="fu">element_text</span>(<span class="at">color =</span> <span class="st">"white"</span>))</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output-display">
 <div>
 <figure class="figure">
@@ -528,7 +522,7 @@ From GA DPH, wtf?<br><br>"On the official Georgia COVID stats web page is this g
 <section id="shuffled-still-bad-plot" class="level2">
 <h2 class="anchored" data-anchor-id="shuffled-still-bad-plot">Shuffled, still bad, plot</h2>
 <div class="cell">
-<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb3"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb3-1"><a href="#cb3-1" aria-hidden="true" tabindex="-1"></a>d <span class="sc">%&gt;%</span></span>
+<div class="sourceCode cell-code" id="cb3"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb3-1"><a href="#cb3-1" aria-hidden="true" tabindex="-1"></a>d <span class="sc">%&gt;%</span></span>
 <span id="cb3-2"><a href="#cb3-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">filter</span>(date <span class="sc">&gt;=</span> <span class="st">"2020-04-26"</span>, date <span class="sc">&lt;=</span> <span class="st">"2020-05-09"</span>) <span class="sc">%&gt;%</span></span>
 <span id="cb3-3"><a href="#cb3-3" aria-hidden="true" tabindex="-1"></a>  <span class="fu">mutate</span>(</span>
 <span id="cb3-4"><a href="#cb3-4" aria-hidden="true" tabindex="-1"></a>    <span class="at">date =</span> <span class="fu">format</span>(date, <span class="st">"%d%b%Y"</span>),</span>
@@ -561,7 +555,7 @@ From GA DPH, wtf?<br><br>"On the official Georgia COVID stats web page is this g
 <span id="cb3-31"><a href="#cb3-31" aria-hidden="true" tabindex="-1"></a>        <span class="at">legend.background =</span> <span class="fu">element_rect</span>(<span class="at">fill =</span> <span class="st">"#182F4E"</span>),</span>
 <span id="cb3-32"><a href="#cb3-32" aria-hidden="true" tabindex="-1"></a>        <span class="at">legend.text =</span> <span class="fu">element_text</span>(<span class="at">color =</span> <span class="st">"white"</span>),</span>
 <span id="cb3-33"><a href="#cb3-33" aria-hidden="true" tabindex="-1"></a>        <span class="at">legend.title =</span> <span class="fu">element_text</span>(<span class="at">color =</span> <span class="st">"white"</span>),</span>
-<span id="cb3-34"><a href="#cb3-34" aria-hidden="true" tabindex="-1"></a>        <span class="at">title =</span> <span class="fu">element_text</span>(<span class="at">color =</span> <span class="st">"white"</span>))</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<span id="cb3-34"><a href="#cb3-34" aria-hidden="true" tabindex="-1"></a>        <span class="at">title =</span> <span class="fu">element_text</span>(<span class="at">color =</span> <span class="st">"white"</span>))</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output-display">
 <div>
 <figure class="figure">
@@ -579,7 +573,7 @@ From GA DPH, wtf?<br><br>"On the official Georgia COVID stats web page is this g
 <div class="no-row-height column-margin column-container"><div class="">
 <p>Why am I not using something sensible like <code>scale_x_date(date_breaks = "1 day", guide = guide_axis(n.dodge = 2))</code>, well I was, but there was a weird issue that it either cut off half of the bars on the first &amp; last date, or added an extra date to either side. I had a weird hack that fixed it, but then it didn’t nicely match up with the other plot, so here we are.</p>
 </div></div><div class="cell">
-<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb4"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb4-1"><a href="#cb4-1" aria-hidden="true" tabindex="-1"></a>d <span class="sc">%&gt;%</span></span>
+<div class="sourceCode cell-code" id="cb4"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb4-1"><a href="#cb4-1" aria-hidden="true" tabindex="-1"></a>d <span class="sc">%&gt;%</span></span>
 <span id="cb4-2"><a href="#cb4-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">filter</span>(date <span class="sc">&gt;=</span> <span class="st">"2020-04-26"</span>, date <span class="sc">&lt;=</span> <span class="st">"2020-05-09"</span>) <span class="sc">%&gt;%</span></span>
 <span id="cb4-3"><a href="#cb4-3" aria-hidden="true" tabindex="-1"></a>  <span class="fu">mutate</span>(</span>
 <span id="cb4-4"><a href="#cb4-4" aria-hidden="true" tabindex="-1"></a>    <span class="at">date =</span> <span class="fu">format</span>(date, <span class="st">"%d%b%Y"</span>), </span>
@@ -610,7 +604,7 @@ From GA DPH, wtf?<br><br>"On the official Georgia COVID stats web page is this g
 <span id="cb4-29"><a href="#cb4-29" aria-hidden="true" tabindex="-1"></a>        <span class="at">legend.background =</span> <span class="fu">element_rect</span>(<span class="at">fill =</span> <span class="st">"#182F4E"</span>),</span>
 <span id="cb4-30"><a href="#cb4-30" aria-hidden="true" tabindex="-1"></a>        <span class="at">legend.text =</span> <span class="fu">element_text</span>(<span class="at">color =</span> <span class="st">"white"</span>),</span>
 <span id="cb4-31"><a href="#cb4-31" aria-hidden="true" tabindex="-1"></a>        <span class="at">legend.title =</span> <span class="fu">element_text</span>(<span class="at">color =</span> <span class="st">"white"</span>),</span>
-<span id="cb4-32"><a href="#cb4-32" aria-hidden="true" tabindex="-1"></a>        <span class="at">title =</span> <span class="fu">element_text</span>(<span class="at">color =</span> <span class="st">"white"</span>))</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<span id="cb4-32"><a href="#cb4-32" aria-hidden="true" tabindex="-1"></a>        <span class="at">title =</span> <span class="fu">element_text</span>(<span class="at">color =</span> <span class="st">"white"</span>))</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output-display">
 <div>
 <figure class="figure">
@@ -624,7 +618,7 @@ From GA DPH, wtf?<br><br>"On the official Georgia COVID stats web page is this g
 <section id="overlaid-histograms" class="level2">
 <h2 class="anchored" data-anchor-id="overlaid-histograms">Overlaid Histograms</h2>
 <div class="cell">
-<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb5"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb5-1"><a href="#cb5-1" aria-hidden="true" tabindex="-1"></a>d <span class="sc">%&gt;%</span></span>
+<div class="sourceCode cell-code" id="cb5"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb5-1"><a href="#cb5-1" aria-hidden="true" tabindex="-1"></a>d <span class="sc">%&gt;%</span></span>
 <span id="cb5-2"><a href="#cb5-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">filter</span>(date <span class="sc">&gt;=</span> <span class="st">"2020-04-26"</span>, date <span class="sc">&lt;=</span> <span class="st">"2020-05-09"</span>) <span class="sc">%&gt;%</span></span>
 <span id="cb5-3"><a href="#cb5-3" aria-hidden="true" tabindex="-1"></a>  <span class="fu">ggplot</span>(<span class="fu">aes</span>(<span class="at">x =</span> date, <span class="at">y =</span> case, <span class="at">group =</span> county, <span class="at">fill =</span> county)) <span class="sc">+</span></span>
 <span id="cb5-4"><a href="#cb5-4" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_col</span>(<span class="at">position =</span> <span class="st">"identity"</span>, <span class="at">alpha =</span> <span class="fl">0.75</span>) <span class="sc">+</span> </span>
@@ -648,7 +642,7 @@ From GA DPH, wtf?<br><br>"On the official Georgia COVID stats web page is this g
 <span id="cb5-22"><a href="#cb5-22" aria-hidden="true" tabindex="-1"></a>        <span class="at">legend.background =</span> <span class="fu">element_rect</span>(<span class="at">fill =</span> <span class="st">"#182F4E"</span>),</span>
 <span id="cb5-23"><a href="#cb5-23" aria-hidden="true" tabindex="-1"></a>        <span class="at">legend.text =</span> <span class="fu">element_text</span>(<span class="at">color =</span> <span class="st">"white"</span>),</span>
 <span id="cb5-24"><a href="#cb5-24" aria-hidden="true" tabindex="-1"></a>        <span class="at">legend.title =</span> <span class="fu">element_text</span>(<span class="at">color =</span> <span class="st">"white"</span>),</span>
-<span id="cb5-25"><a href="#cb5-25" aria-hidden="true" tabindex="-1"></a>        <span class="at">title =</span> <span class="fu">element_text</span>(<span class="at">color =</span> <span class="st">"white"</span>)) </span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<span id="cb5-25"><a href="#cb5-25" aria-hidden="true" tabindex="-1"></a>        <span class="at">title =</span> <span class="fu">element_text</span>(<span class="at">color =</span> <span class="st">"white"</span>)) </span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output-display">
 <div>
 <figure class="figure">
@@ -662,7 +656,7 @@ From GA DPH, wtf?<br><br>"On the official Georgia COVID stats web page is this g
 <section id="facet-histograms" class="level2">
 <h2 class="anchored" data-anchor-id="facet-histograms">Facet Histograms</h2>
 <div class="cell">
-<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb6"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb6-1"><a href="#cb6-1" aria-hidden="true" tabindex="-1"></a>d <span class="sc">%&gt;%</span></span>
+<div class="sourceCode cell-code" id="cb6"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb6-1"><a href="#cb6-1" aria-hidden="true" tabindex="-1"></a>d <span class="sc">%&gt;%</span></span>
 <span id="cb6-2"><a href="#cb6-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">filter</span>(date <span class="sc">&gt;=</span> <span class="st">"2020-04-26"</span>, date <span class="sc">&lt;=</span> <span class="st">"2020-05-09"</span>) <span class="sc">%&gt;%</span></span>
 <span id="cb6-3"><a href="#cb6-3" aria-hidden="true" tabindex="-1"></a>  <span class="fu">ggplot</span>(<span class="fu">aes</span>(<span class="at">x =</span> date, <span class="at">y =</span> case, <span class="at">group =</span> county, <span class="at">fill =</span> county)) <span class="sc">+</span></span>
 <span id="cb6-4"><a href="#cb6-4" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_col</span>() <span class="sc">+</span> </span>
@@ -687,7 +681,7 @@ From GA DPH, wtf?<br><br>"On the official Georgia COVID stats web page is this g
 <span id="cb6-23"><a href="#cb6-23" aria-hidden="true" tabindex="-1"></a>        <span class="at">legend.text =</span> <span class="fu">element_text</span>(<span class="at">color =</span> <span class="st">"white"</span>),</span>
 <span id="cb6-24"><a href="#cb6-24" aria-hidden="true" tabindex="-1"></a>        <span class="at">legend.title =</span> <span class="fu">element_text</span>(<span class="at">color =</span> <span class="st">"white"</span>),</span>
 <span id="cb6-25"><a href="#cb6-25" aria-hidden="true" tabindex="-1"></a>        <span class="at">title =</span> <span class="fu">element_text</span>(<span class="at">color =</span> <span class="st">"white"</span>)) <span class="sc">+</span></span>
-<span id="cb6-26"><a href="#cb6-26" aria-hidden="true" tabindex="-1"></a>  <span class="fu">facet_grid</span>(county<span class="sc">~</span>.)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<span id="cb6-26"><a href="#cb6-26" aria-hidden="true" tabindex="-1"></a>  <span class="fu">facet_grid</span>(county<span class="sc">~</span>.)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output-display">
 <div>
 <figure class="figure">
@@ -701,7 +695,7 @@ From GA DPH, wtf?<br><br>"On the official Georgia COVID stats web page is this g
 <section id="maybe-a-combo" class="level2">
 <h2 class="anchored" data-anchor-id="maybe-a-combo">Maybe a combo?</h2>
 <div class="cell">
-<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb7"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb7-1"><a href="#cb7-1" aria-hidden="true" tabindex="-1"></a>d <span class="sc">%&gt;%</span></span>
+<div class="sourceCode cell-code" id="cb7"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb7-1"><a href="#cb7-1" aria-hidden="true" tabindex="-1"></a>d <span class="sc">%&gt;%</span></span>
 <span id="cb7-2"><a href="#cb7-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">filter</span>(date <span class="sc">&gt;=</span> <span class="st">"2020-04-26"</span>, date <span class="sc">&lt;=</span> <span class="st">"2020-05-09"</span>) <span class="sc">%&gt;%</span></span>
 <span id="cb7-3"><a href="#cb7-3" aria-hidden="true" tabindex="-1"></a>  <span class="fu">ggplot</span>(<span class="fu">aes</span>(<span class="at">x =</span> date, <span class="at">y =</span> county, <span class="at">fill =</span> county, <span class="at">height =</span> case)) <span class="sc">+</span></span>
 <span id="cb7-4"><a href="#cb7-4" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_density_ridges</span>(<span class="at">scale =</span> <span class="dv">4</span>, <span class="at">stat =</span> <span class="st">"identity"</span>) <span class="sc">+</span> </span>
@@ -725,7 +719,7 @@ From GA DPH, wtf?<br><br>"On the official Georgia COVID stats web page is this g
 <span id="cb7-22"><a href="#cb7-22" aria-hidden="true" tabindex="-1"></a>        <span class="at">legend.background =</span> <span class="fu">element_rect</span>(<span class="at">fill =</span> <span class="st">"#182F4E"</span>),</span>
 <span id="cb7-23"><a href="#cb7-23" aria-hidden="true" tabindex="-1"></a>        <span class="at">legend.text =</span> <span class="fu">element_text</span>(<span class="at">color =</span> <span class="st">"white"</span>),</span>
 <span id="cb7-24"><a href="#cb7-24" aria-hidden="true" tabindex="-1"></a>        <span class="at">legend.title =</span> <span class="fu">element_text</span>(<span class="at">color =</span> <span class="st">"white"</span>),</span>
-<span id="cb7-25"><a href="#cb7-25" aria-hidden="true" tabindex="-1"></a>        <span class="at">title =</span> <span class="fu">element_text</span>(<span class="at">color =</span> <span class="st">"white"</span>)) </span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<span id="cb7-25"><a href="#cb7-25" aria-hidden="true" tabindex="-1"></a>        <span class="at">title =</span> <span class="fu">element_text</span>(<span class="at">color =</span> <span class="st">"white"</span>)) </span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output-display">
 <div>
 <figure class="figure">
@@ -739,7 +733,7 @@ From GA DPH, wtf?<br><br>"On the official Georgia COVID stats web page is this g
 <section id="line-plot" class="level2">
 <h2 class="anchored" data-anchor-id="line-plot">Line plot</h2>
 <div class="cell">
-<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb8"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb8-1"><a href="#cb8-1" aria-hidden="true" tabindex="-1"></a>d <span class="sc">%&gt;%</span></span>
+<div class="sourceCode cell-code" id="cb8"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb8-1"><a href="#cb8-1" aria-hidden="true" tabindex="-1"></a>d <span class="sc">%&gt;%</span></span>
 <span id="cb8-2"><a href="#cb8-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">filter</span>(date <span class="sc">&gt;=</span> <span class="st">"2020-04-26"</span>, date <span class="sc">&lt;=</span> <span class="st">"2020-05-09"</span>) <span class="sc">%&gt;%</span></span>
 <span id="cb8-3"><a href="#cb8-3" aria-hidden="true" tabindex="-1"></a>  <span class="fu">ggplot</span>(<span class="fu">aes</span>(<span class="at">x =</span> date, <span class="at">y =</span> case, <span class="at">color =</span> county)) <span class="sc">+</span></span>
 <span id="cb8-4"><a href="#cb8-4" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_line</span>() <span class="sc">+</span> </span>
@@ -764,7 +758,7 @@ From GA DPH, wtf?<br><br>"On the official Georgia COVID stats web page is this g
 <span id="cb8-23"><a href="#cb8-23" aria-hidden="true" tabindex="-1"></a>        <span class="at">legend.background =</span> <span class="fu">element_rect</span>(<span class="at">fill =</span> <span class="st">"#182F4E"</span>),</span>
 <span id="cb8-24"><a href="#cb8-24" aria-hidden="true" tabindex="-1"></a>        <span class="at">legend.text =</span> <span class="fu">element_text</span>(<span class="at">color =</span> <span class="st">"white"</span>),</span>
 <span id="cb8-25"><a href="#cb8-25" aria-hidden="true" tabindex="-1"></a>        <span class="at">legend.title =</span> <span class="fu">element_text</span>(<span class="at">color =</span> <span class="st">"white"</span>),</span>
-<span id="cb8-26"><a href="#cb8-26" aria-hidden="true" tabindex="-1"></a>        <span class="at">title =</span> <span class="fu">element_text</span>(<span class="at">color =</span> <span class="st">"white"</span>))</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<span id="cb8-26"><a href="#cb8-26" aria-hidden="true" tabindex="-1"></a>        <span class="at">title =</span> <span class="fu">element_text</span>(<span class="at">color =</span> <span class="st">"white"</span>))</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output-display">
 <div>
 <figure class="figure">
@@ -786,7 +780,7 @@ Would something like a bump chart be better? You could encode severity in size m
 </blockquote>
 <script async="" src="https://platform.twitter.com/widgets.js" charset="utf-8"></script>
 <div class="cell">
-<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb9"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb9-1"><a href="#cb9-1" aria-hidden="true" tabindex="-1"></a>d <span class="sc">%&gt;%</span></span>
+<div class="sourceCode cell-code" id="cb9"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb9-1"><a href="#cb9-1" aria-hidden="true" tabindex="-1"></a>d <span class="sc">%&gt;%</span></span>
 <span id="cb9-2"><a href="#cb9-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">filter</span>(date <span class="sc">&gt;=</span> <span class="st">"2020-04-26"</span>, date <span class="sc">&lt;=</span> <span class="st">"2020-05-09"</span>) <span class="sc">%&gt;%</span></span>
 <span id="cb9-3"><a href="#cb9-3" aria-hidden="true" tabindex="-1"></a>  <span class="fu">group_by</span>(date) <span class="sc">%&gt;%</span></span>
 <span id="cb9-4"><a href="#cb9-4" aria-hidden="true" tabindex="-1"></a>  <span class="fu">mutate</span>(<span class="at">rank =</span> <span class="fu">rank</span>(<span class="sc">-</span>case, <span class="at">ties =</span> <span class="st">"first"</span>)) <span class="sc">%&gt;%</span></span>
@@ -816,7 +810,7 @@ Would something like a bump chart be better? You could encode severity in size m
 <span id="cb9-28"><a href="#cb9-28" aria-hidden="true" tabindex="-1"></a>        <span class="at">legend.background =</span> <span class="fu">element_rect</span>(<span class="at">fill =</span> <span class="st">"#182F4E"</span>),</span>
 <span id="cb9-29"><a href="#cb9-29" aria-hidden="true" tabindex="-1"></a>        <span class="at">legend.text =</span> <span class="fu">element_text</span>(<span class="at">color =</span> <span class="st">"white"</span>),</span>
 <span id="cb9-30"><a href="#cb9-30" aria-hidden="true" tabindex="-1"></a>        <span class="at">legend.title =</span> <span class="fu">element_text</span>(<span class="at">color =</span> <span class="st">"white"</span>),</span>
-<span id="cb9-31"><a href="#cb9-31" aria-hidden="true" tabindex="-1"></a>        <span class="at">title =</span> <span class="fu">element_text</span>(<span class="at">color =</span> <span class="st">"white"</span>))</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<span id="cb9-31"><a href="#cb9-31" aria-hidden="true" tabindex="-1"></a>        <span class="at">title =</span> <span class="fu">element_text</span>(<span class="at">color =</span> <span class="st">"white"</span>))</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output-display">
 <div>
 <figure class="figure">
@@ -830,10 +824,10 @@ Would something like a bump chart be better? You could encode severity in size m
 <section id="plotly" class="level2">
 <h2 class="anchored" data-anchor-id="plotly">Plotly</h2>
 <div class="cell">
-<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb10"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb10-1"><a href="#cb10-1" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(plotly)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="sourceCode cell-code" id="cb10"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb10-1"><a href="#cb10-1" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(plotly)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </div>
 <div class="cell">
-<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb11"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb11-1"><a href="#cb11-1" aria-hidden="true" tabindex="-1"></a>d <span class="sc">%&gt;%</span></span>
+<div class="sourceCode cell-code" id="cb11"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb11-1"><a href="#cb11-1" aria-hidden="true" tabindex="-1"></a>d <span class="sc">%&gt;%</span></span>
 <span id="cb11-2"><a href="#cb11-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">filter</span>(date <span class="sc">&gt;=</span> <span class="st">"2020-04-26"</span>, date <span class="sc">&lt;=</span> <span class="st">"2020-05-09"</span>) <span class="sc">%&gt;%</span></span>
 <span id="cb11-3"><a href="#cb11-3" aria-hidden="true" tabindex="-1"></a>  <span class="fu">ggplot</span>(<span class="fu">aes</span>(<span class="at">x =</span> date, <span class="at">y =</span> case, <span class="at">fill =</span> county)) <span class="sc">+</span></span>
 <span id="cb11-4"><a href="#cb11-4" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_col</span>(<span class="at">position =</span> <span class="st">"identity"</span>, <span class="at">alpha =</span> <span class="fl">0.75</span>) <span class="sc">+</span> </span>
@@ -859,7 +853,7 @@ Would something like a bump chart be better? You could encode severity in size m
 <span id="cb11-24"><a href="#cb11-24" aria-hidden="true" tabindex="-1"></a>        <span class="at">legend.title =</span> <span class="fu">element_text</span>(<span class="at">color =</span> <span class="st">"white"</span>),</span>
 <span id="cb11-25"><a href="#cb11-25" aria-hidden="true" tabindex="-1"></a>        <span class="at">title =</span> <span class="fu">element_text</span>(<span class="at">color =</span> <span class="st">"white"</span>)) <span class="ot">-&gt;</span> p</span>
 <span id="cb11-26"><a href="#cb11-26" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb11-27"><a href="#cb11-27" aria-hidden="true" tabindex="-1"></a><span class="fu">ggplotly</span>(p)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<span id="cb11-27"><a href="#cb11-27" aria-hidden="true" tabindex="-1"></a><span class="fu">ggplotly</span>(p)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output-display">
 <div class="plotly html-widget html-fill-item-overflow-hidden html-fill-item" id="htmlwidget-391a2ee6630957c74085" style="width:100%;height:361px;"></div>
 <script type="application/json" data-for="htmlwidget-391a2ee6630957c74085">{"x":{"data":[{"orientation":"v","width":[0.90000000000145519,0.90000000000145519,0.90000000000145519,0.90000000000145519,0.90000000000145519,0.90000000000145519,0.90000000000145519,0.90000000000145519,0.90000000000145519,0.90000000000145519,0.90000000000145519,0.90000000000145519,0.90000000000145519,0.90000000000145519],"base":[0,0,0,0,0,0,0,0,0,0,0,0,0,0],"x":[18378,18379,18380,18381,18382,18383,18384,18385,18386,18387,18388,18389,18390,18391],"y":[33,55,56,42,40,58,70,19,71,48,111,26,48,56],"text":["date: 2020-04-26<br />case:  33<br />county: Cobb","date: 2020-04-27<br />case:  55<br />county: Cobb","date: 2020-04-28<br />case:  56<br />county: Cobb","date: 2020-04-29<br />case:  42<br />county: Cobb","date: 2020-04-30<br />case:  40<br />county: Cobb","date: 2020-05-01<br />case:  58<br />county: Cobb","date: 2020-05-02<br />case:  70<br />county: Cobb","date: 2020-05-03<br />case:  19<br />county: Cobb","date: 2020-05-04<br />case:  71<br />county: Cobb","date: 2020-05-05<br />case:  48<br />county: Cobb","date: 2020-05-06<br />case: 111<br />county: Cobb","date: 2020-05-07<br />case:  26<br />county: Cobb","date: 2020-05-08<br />case:  48<br />county: Cobb","date: 2020-05-09<br />case:  56<br />county: Cobb"],"type":"bar","textposition":"none","marker":{"autocolorscale":false,"color":"rgba(88,84,168,0.75)","line":{"width":1.8897637795275593,"color":"transparent"}},"name":"Cobb","legendgroup":"Cobb","showlegend":true,"xaxis":"x","yaxis":"y","hoverinfo":"text","frame":null},{"orientation":"v","width":[0.90000000000145519,0.90000000000145519,0.90000000000145519,0.90000000000145519,0.90000000000145519,0.90000000000145519,0.90000000000145519,0.90000000000145519,0.90000000000145519,0.90000000000145519,0.90000000000145519,0.90000000000145519,0.90000000000145519,0.90000000000145519],"base":[0,0,0,0,0,0,0,0,0,0,0,0,0,0],"x":[18378,18379,18380,18381,18382,18383,18384,18385,18386,18387,18388,18389,18390,18391],"y":[12,55,52,73,47,46,75,36,71,29,73,39,49,44],"text":["date: 2020-04-26<br />case:  12<br />county: DeKalb","date: 2020-04-27<br />case:  55<br />county: DeKalb","date: 2020-04-28<br />case:  52<br />county: DeKalb","date: 2020-04-29<br />case:  73<br />county: DeKalb","date: 2020-04-30<br />case:  47<br />county: DeKalb","date: 2020-05-01<br />case:  46<br />county: DeKalb","date: 2020-05-02<br />case:  75<br />county: DeKalb","date: 2020-05-03<br />case:  36<br />county: DeKalb","date: 2020-05-04<br />case:  71<br />county: DeKalb","date: 2020-05-05<br />case:  29<br />county: DeKalb","date: 2020-05-06<br />case:  73<br />county: DeKalb","date: 2020-05-07<br />case:  39<br />county: DeKalb","date: 2020-05-08<br />case:  49<br />county: DeKalb","date: 2020-05-09<br />case:  44<br />county: DeKalb"],"type":"bar","textposition":"none","marker":{"autocolorscale":false,"color":"rgba(70,134,142,0.75)","line":{"width":1.8897637795275593,"color":"transparent"}},"name":"DeKalb","legendgroup":"DeKalb","showlegend":true,"xaxis":"x","yaxis":"y","hoverinfo":"text","frame":null},{"orientation":"v","width":[0.90000000000145519,0.90000000000145519,0.90000000000145519,0.90000000000145519,0.90000000000145519,0.90000000000145519,0.90000000000145519,0.90000000000145519,0.90000000000145519,0.90000000000145519,0.90000000000145519,0.90000000000145519,0.90000000000145519,0.90000000000145519],"base":[0,0,0,0,0,0,0,0,0,0,0,0,0,0],"x":[18378,18379,18380,18381,18382,18383,18384,18385,18386,18387,18388,18389,18390,18391],"y":[2,135,73,32,36,59,48,53,76,108,85,10,57,68],"text":["date: 2020-04-26<br />case:   2<br />county: Fulton","date: 2020-04-27<br />case: 135<br />county: Fulton","date: 2020-04-28<br />case:  73<br />county: Fulton","date: 2020-04-29<br />case:  32<br />county: Fulton","date: 2020-04-30<br />case:  36<br />county: Fulton","date: 2020-05-01<br />case:  59<br />county: Fulton","date: 2020-05-02<br />case:  48<br />county: Fulton","date: 2020-05-03<br />case:  53<br />county: Fulton","date: 2020-05-04<br />case:  76<br />county: Fulton","date: 2020-05-05<br />case: 108<br />county: Fulton","date: 2020-05-06<br />case:  85<br />county: Fulton","date: 2020-05-07<br />case:  10<br />county: Fulton","date: 2020-05-08<br />case:  57<br />county: Fulton","date: 2020-05-09<br />case:  68<br />county: Fulton"],"type":"bar","textposition":"none","marker":{"autocolorscale":false,"color":"rgba(149,134,72,0.75)","line":{"width":1.8897637795275593,"color":"transparent"}},"name":"Fulton","legendgroup":"Fulton","showlegend":true,"xaxis":"x","yaxis":"y","hoverinfo":"text","frame":null},{"orientation":"v","width":[0.90000000000145519,0.90000000000145519,0.90000000000145519,0.90000000000145519,0.90000000000145519,0.90000000000145519,0.90000000000145519,0.90000000000145519,0.90000000000145519,0.90000000000145519,0.90000000000145519,0.90000000000145519,0.90000000000145519,0.90000000000145519],"base":[0,0,0,0,0,0,0,0,0,0,0,0,0,0],"x":[18378,18379,18380,18381,18382,18383,18384,18385,18386,18387,18388,18389,18390,18391],"y":[44,41,75,124,49,55,86,46,77,45,120,32,68,81],"text":["date: 2020-04-26<br />case:  44<br />county: Gwinnett","date: 2020-04-27<br />case:  41<br />county: Gwinnett","date: 2020-04-28<br />case:  75<br />county: Gwinnett","date: 2020-04-29<br />case: 124<br />county: Gwinnett","date: 2020-04-30<br />case:  49<br />county: Gwinnett","date: 2020-05-01<br />case:  55<br />county: Gwinnett","date: 2020-05-02<br />case:  86<br />county: Gwinnett","date: 2020-05-03<br />case:  46<br />county: Gwinnett","date: 2020-05-04<br />case:  77<br />county: Gwinnett","date: 2020-05-05<br />case:  45<br />county: Gwinnett","date: 2020-05-06<br />case: 120<br />county: Gwinnett","date: 2020-05-07<br />case:  32<br />county: Gwinnett","date: 2020-05-08<br />case:  68<br />county: Gwinnett","date: 2020-05-09<br />case:  81<br />county: Gwinnett"],"type":"bar","textposition":"none","marker":{"autocolorscale":false,"color":"rgba(143,93,55,0.75)","line":{"width":1.8897637795275593,"color":"transparent"}},"name":"Gwinnett","legendgroup":"Gwinnett","showlegend":true,"xaxis":"x","yaxis":"y","hoverinfo":"text","frame":null},{"orientation":"v","width":[0.90000000000145519,0.90000000000145519,0.90000000000145519,0.90000000000145519,0.90000000000145519,0.90000000000145519,0.90000000000145519,0.90000000000145519,0.90000000000145519,0.90000000000145519,0.90000000000145519,0.90000000000145519,0.90000000000145519,0.90000000000145519],"base":[0,0,0,0,0,0,0,0,0,0,0,0,0,0],"x":[18378,18379,18380,18381,18382,18383,18384,18385,18386,18387,18388,18389,18390,18391],"y":[1,65,87,76,85,136,212,6,76,70,68,42,41,5],"text":["date: 2020-04-26<br />case:   1<br />county: Hall","date: 2020-04-27<br />case:  65<br />county: Hall","date: 2020-04-28<br />case:  87<br />county: Hall","date: 2020-04-29<br />case:  76<br />county: Hall","date: 2020-04-30<br />case:  85<br />county: Hall","date: 2020-05-01<br />case: 136<br />county: Hall","date: 2020-05-02<br />case: 212<br />county: Hall","date: 2020-05-03<br />case:   6<br />county: Hall","date: 2020-05-04<br />case:  76<br />county: Hall","date: 2020-05-05<br />case:  70<br />county: Hall","date: 2020-05-06<br />case:  68<br />county: Hall","date: 2020-05-07<br />case:  42<br />county: Hall","date: 2020-05-08<br />case:  41<br />county: Hall","date: 2020-05-09<br />case:   5<br />county: Hall"],"type":"bar","textposition":"none","marker":{"autocolorscale":false,"color":"rgba(93,152,219,0.75)","line":{"width":1.8897637795275593,"color":"transparent"}},"name":"Hall","legendgroup":"Hall","showlegend":true,"xaxis":"x","yaxis":"y","hoverinfo":"text","frame":null}],"layout":{"margin":{"t":46.684931506849317,"r":7.3059360730593621,"b":43.105022831050235,"l":43.105022831050235},"plot_bgcolor":"rgba(24,47,78,1)","paper_bgcolor":"rgba(24,47,78,1)","font":{"color":"rgba(0,0,0,1)","family":"","size":14.611872146118724},"title":{"text":"Top 5 Counties with the Greatest Number of Confirmed COVID-19 Cases","font":{"color":"rgba(255,255,255,1)","family":"","size":17.534246575342465},"x":0,"xref":"paper"},"xaxis":{"domain":[0,1],"automargin":true,"type":"linear","autorange":false,"range":[18376.855,18392.145],"tickmode":"array","ticktext":["28Apr2020","03May2020","08May2020"],"tickvals":[18380,18385,18390],"categoryorder":"array","categoryarray":["28Apr2020","03May2020","08May2020"],"nticks":null,"ticks":"outside","tickcolor":"rgba(51,51,51,1)","ticklen":3.6529680365296811,"tickwidth":0.66417600664176002,"showticklabels":true,"tickfont":{"color":"rgba(255,255,255,1)","family":"","size":11.68949771689498},"tickangle":-0,"showline":true,"linecolor":"rgba(255,255,255,1)","linewidth":0.66417600664176002,"showgrid":false,"gridcolor":null,"gridwidth":0,"zeroline":false,"anchor":"y","title":{"text":"date","font":{"color":"rgba(255,255,255,1)","family":"","size":14.611872146118724}},"hoverformat":".2f"},"yaxis":{"domain":[0,1],"automargin":true,"type":"linear","autorange":false,"range":[-10.600000000000001,222.59999999999999],"tickmode":"array","ticktext":["0","50","100","150","200"],"tickvals":[0,50,100,150,200],"categoryorder":"array","categoryarray":["0","50","100","150","200"],"nticks":null,"ticks":"outside","tickcolor":"rgba(51,51,51,1)","ticklen":3.6529680365296811,"tickwidth":0.66417600664176002,"showticklabels":true,"tickfont":{"color":"rgba(255,255,255,1)","family":"","size":11.68949771689498},"tickangle":-0,"showline":true,"linecolor":"rgba(255,255,255,1)","linewidth":0.66417600664176002,"showgrid":false,"gridcolor":null,"gridwidth":0,"zeroline":false,"anchor":"x","title":{"text":"case","font":{"color":"rgba(255,255,255,1)","family":"","size":14.611872146118724}},"hoverformat":".2f"},"shapes":[{"type":"rect","fillcolor":null,"line":{"color":null,"width":0,"linetype":[]},"yref":"paper","xref":"paper","x0":0,"x1":1,"y0":0,"y1":1}],"showlegend":true,"legend":{"bgcolor":"rgba(24,47,78,1)","bordercolor":"transparent","borderwidth":1.8897637795275593,"font":{"color":"rgba(255,255,255,1)","family":"","size":11.68949771689498},"title":{"text":"County","font":{"color":"rgba(255,255,255,1)","family":"","size":14.611872146118724}}},"hovermode":"closest","barmode":"relative"},"config":{"doubleClick":"reset","modeBarButtonsToAdd":["hoverclosest","hovercompare"],"showSendToCloud":false},"source":"A","attrs":{"b2cb2afb5a3b":{"x":{},"y":{},"fill":{},"type":"bar"}},"cur_data":"b2cb2afb5a3b","visdat":{"b2cb2afb5a3b":["function (y) ","x"]},"highlight":{"on":"plotly_click","persistent":false,"dynamic":false,"selectize":false,"opacityDim":0.20000000000000001,"selected":{"opacity":1},"debounce":0},"shinyEvents":["plotly_hover","plotly_click","plotly_selected","plotly_relayout","plotly_brushed","plotly_brushing","plotly_clickannotation","plotly_doubleclick","plotly_deselect","plotly_afterplot","plotly_sunburstclick"],"base_url":"https://plot.ly"},"evals":[],"jsHooks":[]}</script>
@@ -880,7 +874,7 @@ Maybe this is a job for a bar chart race! <a href="https://t.co/BnTvHxKZ6f">http
 <p>The barchart races I’ve seen are typically cumulative, so I’m not sure this is exactly the right use case (and in this particular case, the rankings of the cumulative counts don’t change much over these 15 days), but let’s see how it looks.</p>
 <p><label for="tufte-mn-" class="margin-toggle">⊕</label><input type="checkbox" id="tufte-mn-" class="margin-toggle"><span class="marginnote">I learned how to do this from <a href="https://twitter.com/michael_toth">Michael Toth</a>’s blogpost <a href="https://michaeltoth.me/how-to-create-a-bar-chart-race-in-r-mapping-united-states-city-population-1790-2010.html">How to Create a Bar Chart Race in R - Mapping United States City Population 1790-2010</a></span></p>
 <div class="cell">
-<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb12"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb12-1"><a href="#cb12-1" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(gganimate)</span>
+<div class="sourceCode cell-code" id="cb12"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb12-1"><a href="#cb12-1" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(gganimate)</span>
 <span id="cb12-2"><a href="#cb12-2" aria-hidden="true" tabindex="-1"></a>d <span class="sc">%&gt;%</span></span>
 <span id="cb12-3"><a href="#cb12-3" aria-hidden="true" tabindex="-1"></a>  <span class="fu">filter</span>(date <span class="sc">&gt;=</span> <span class="st">"2020-04-26"</span>, date <span class="sc">&lt;=</span> <span class="st">"2020-05-09"</span>) <span class="sc">%&gt;%</span></span>
 <span id="cb12-4"><a href="#cb12-4" aria-hidden="true" tabindex="-1"></a>  <span class="fu">group_by</span>(date) <span class="sc">%&gt;%</span></span>
@@ -914,10 +908,10 @@ Maybe this is a job for a bar chart race! <a href="https://t.co/BnTvHxKZ6f">http
 <span id="cb12-32"><a href="#cb12-32" aria-hidden="true" tabindex="-1"></a>  <span class="fu">labs</span>(</span>
 <span id="cb12-33"><a href="#cb12-33" aria-hidden="true" tabindex="-1"></a>    <span class="at">title =</span> <span class="st">"Top 5 Counties with the Greatest Number of Confirmed </span><span class="sc">\n</span><span class="st">COVID-19 Cases"</span>,</span>
 <span id="cb12-34"><a href="#cb12-34" aria-hidden="true" tabindex="-1"></a>    <span class="at">subtitle =</span> <span class="st">"Date: {as.Date(frame_time)}"</span>,</span>
-<span id="cb12-35"><a href="#cb12-35" aria-hidden="true" tabindex="-1"></a>    <span class="at">caption =</span> <span class="st">"Data: NY Times</span><span class="sc">\n</span><span class="st">Graph: @LucyStats"</span>) <span class="ot">-&gt;</span> p</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<span id="cb12-35"><a href="#cb12-35" aria-hidden="true" tabindex="-1"></a>    <span class="at">caption =</span> <span class="st">"Data: NY Times</span><span class="sc">\n</span><span class="st">Graph: @LucyStats"</span>) <span class="ot">-&gt;</span> p</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </div>
 <div class="cell">
-<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb13"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb13-1"><a href="#cb13-1" aria-hidden="true" tabindex="-1"></a>p</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="sourceCode cell-code" id="cb13"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb13-1"><a href="#cb13-1" aria-hidden="true" tabindex="-1"></a>p</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </div>
 <p><img src="../../media/data/gganimation-greatest-covid-cases.gif" class="img-fluid"></p>
 
@@ -977,14 +971,13 @@ Maybe this is a job for a bar chart race! <a href="https://t.co/BnTvHxKZ6f">http
       e.clearSelection();
     }
     const getTextToCopy = function(trigger) {
-      const outerScaffold = trigger.parentElement.cloneNode(true);
-      const codeEl = outerScaffold.querySelector('code');
-      for (const childEl of codeEl.children) {
-        if (isCodeAnnotation(childEl)) {
-          childEl.remove();
+        const codeEl = trigger.previousElementSibling.cloneNode(true);
+        for (const childEl of codeEl.children) {
+          if (isCodeAnnotation(childEl)) {
+            childEl.remove();
+          }
         }
-      }
-      return codeEl.innerText;
+        return codeEl.innerText;
     }
     const clipboard = new window.ClipboardJS('.code-copy-button:not([data-in-quarto-modal])', {
       text: getTextToCopy

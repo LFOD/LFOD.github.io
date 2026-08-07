@@ -2,7 +2,7 @@
 <html xmlns="http://www.w3.org/1999/xhtml" lang="en" xml:lang="en"><head>
 
 <meta charset="utf-8">
-<meta name="generator" content="quarto-1.10.18">
+<meta name="generator" content="quarto-1.7.29">
 
 <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
 
@@ -12,16 +12,10 @@
 
 <title>One year to dissertate –</title>
 <style>
-/* Default styles provided by pandoc.
-** See https://pandoc.org/MANUAL.html#variables-for-html for config info.
-*/
+code{white-space: pre-wrap;}
 span.smallcaps{font-variant: small-caps;}
-div.columns{display: flex; gap: 1.5em;}
-div.column{flex: auto;}
-@media screen {
-div.columns{gap: min(4vw, 1.5em);}
-div.column{overflow-x: auto;}
-}
+div.columns{display: flex; gap: min(4vw, 1.5em);}
+div.column{flex: auto; overflow-x: auto;}
 div.hanging-indent{margin-left: 1.5em; text-indent: -1.5em;}
 ul.task-list{list-style: none;}
 ul.task-list li input[type="checkbox"] {
@@ -80,10 +74,10 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 <script src="../../site_libs/quarto-html/tippy.umd.min.js"></script>
 <script src="../../site_libs/quarto-html/anchor.min.js"></script>
 <link href="../../site_libs/quarto-html/tippy.css" rel="stylesheet">
-<link href="../../site_libs/quarto-html/quarto-syntax-highlighting-64a204ab8560d761af7679ceaba22944.css" rel="stylesheet" id="quarto-text-highlighting-styles">
+<link href="../../site_libs/quarto-html/quarto-syntax-highlighting-0815c480559380816a4d1ea211a47e91.css" rel="stylesheet" id="quarto-text-highlighting-styles">
 <script src="../../site_libs/bootstrap/bootstrap.min.js"></script>
 <link href="../../site_libs/bootstrap/bootstrap-icons.css" rel="stylesheet">
-<link href="../../site_libs/bootstrap/bootstrap-c40d7498fe02e743d4dec6c02f111ce1.min.css" rel="stylesheet" append-hash="true" id="quarto-bootstrap" data-mode="light">
+<link href="../../site_libs/bootstrap/bootstrap-3a52104fcab6d64c1ff9c030508fb24f.min.css" rel="stylesheet" append-hash="true" id="quarto-bootstrap" data-mode="light">
 <script id="quarto-search-options" type="application/json">{
   "location": "navbar",
   "copy-button": false,
@@ -142,7 +136,7 @@ ga('send', {
 <meta property="og:title" content="One year to dissertate –">
 <meta property="og:description" content="I’ve compiled some resources that I used when completing my dissertation and I wanted to share them with YOU! Throughout this post, I link to a bunch of different templates that I used throughout my process. You can find them all in a GitHub repo. This how-to has gotten a biiiiiit long. This post contains the whole kit-and-kaboodle, but I will also be releasing these in a series of smaller posts over the next couple of weeks.">
 <meta property="og:image" content="https://www.livefreeordichotomize.com/media/images/2018-09-14/dissertation-expectations.png">
-<meta property="og:site_name" content="">
+<meta property="og:site_name" content=" ">
 <meta property="og:image:height" content="1184">
 <meta property="og:image:width" content="924">
 <meta name="twitter:title" content="Live Free or Dichotomize">
@@ -567,7 +561,7 @@ Here is the introduction to my thesis.</code></pre>
 <li>Update the <code>params.tex</code> file with your information (name, title, university, etc.).</li>
 <li>My set up assumes you are using the <code>nomencl</code> LaTeX package to handle your list of abbreviations. To do this, the first time an abbreviation is used in your dissertation, include it like this <code>\nomenclature{&lt;abbreviation&gt;}{&lt;description&gt;}</code> (I have an example of this in the <a href="https://github.com/LucyMcGowan/dissertation-toolkit/blob/master/thesis/01-chapter1.Rmd"><code>01-chapter1.Rmd</code> file</a>). After you compile your <strong>bookdown</strong> book, a file called <code>_main.nlo</code> will be created. In your terminal, navigate to your <code>thesis</code> folder and run the following:</li>
 </ul>
-<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb3"><pre class="sourceCode bash code-with-copy"><code class="sourceCode bash"><span id="cb3-1"><a href="#cb3-1" aria-hidden="true" tabindex="-1"></a><span class="ex">makeindex</span> _main.nlo <span class="at">-s</span> nomencl.ist <span class="at">-o</span> _main.nls</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="sourceCode" id="cb3"><pre class="sourceCode bash code-with-copy"><code class="sourceCode bash"><span id="cb3-1"><a href="#cb3-1" aria-hidden="true" tabindex="-1"></a><span class="ex">makeindex</span> _main.nlo <span class="at">-s</span> nomencl.ist <span class="at">-o</span> _main.nls</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <ul>
 <li>Recompile your <strong>bookdown</strong> book, and a list of abbreviations will automagically be added.</li>
 </ul>
@@ -575,7 +569,7 @@ Here is the introduction to my thesis.</code></pre>
 <li>As I mentioned in the <em>File naming</em> section, I have a separate .Rmd file for each chapter. These will be automatically compiled when you compile the <code>index.Rmd</code> file with <strong>bookdown</strong>. The book is compiled using the <code>render_book()</code> function:</li>
 </ol>
 <div class="cell">
-<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb4"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb4-1"><a href="#cb4-1" aria-hidden="true" tabindex="-1"></a>bookdown<span class="sc">::</span><span class="fu">render_book</span>(<span class="st">"index.Rmd"</span>)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="sourceCode cell-code" id="cb4"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb4-1"><a href="#cb4-1" aria-hidden="true" tabindex="-1"></a>bookdown<span class="sc">::</span><span class="fu">render_book</span>(<span class="st">"index.Rmd"</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </div>
 <p><strong>File sharing</strong></p>
 <p>I have gone through <em>many</em> iterations of file sharing, and this is where I have landed.</p>
@@ -586,7 +580,7 @@ Here is the introduction to my thesis.</code></pre>
 <li>knit the .Rmd file to a <code>word_document</code> and send this to Google Drive for comments / revisions from co-authors. I do this using the <strong>googledrive</strong> R package 📦.</li>
 </ol>
 <div class="cell">
-<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb5"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb5-1"><a href="#cb5-1" aria-hidden="true" tabindex="-1"></a><span class="co"># uncomment run the line below if googledrive package is not installed</span></span>
+<div class="sourceCode cell-code" id="cb5"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb5-1"><a href="#cb5-1" aria-hidden="true" tabindex="-1"></a><span class="co"># uncomment run the line below if googledrive package is not installed</span></span>
 <span id="cb5-2"><a href="#cb5-2" aria-hidden="true" tabindex="-1"></a><span class="co"># install.packages("googledrive")</span></span>
 <span id="cb5-3"><a href="#cb5-3" aria-hidden="true" tabindex="-1"></a></span>
 <span id="cb5-4"><a href="#cb5-4" aria-hidden="true" tabindex="-1"></a><span class="co">#---- render your chapter as a Word document</span></span>
@@ -608,7 +602,7 @@ Here is the introduction to my thesis.</code></pre>
 <span id="cb5-20"><a href="#cb5-20" aria-hidden="true" tabindex="-1"></a>id <span class="ot">&lt;-</span> <span class="st">"pasted File Id"</span></span>
 <span id="cb5-21"><a href="#cb5-21" aria-hidden="true" tabindex="-1"></a>googledrive<span class="sc">::</span><span class="fu">drive_update</span>(</span>
 <span id="cb5-22"><a href="#cb5-22" aria-hidden="true" tabindex="-1"></a>    googledrive<span class="sc">::</span><span class="fu">as_id</span>(id), </span>
-<span id="cb5-23"><a href="#cb5-23" aria-hidden="true" tabindex="-1"></a>    <span class="st">"01-chapter1.docx"</span>)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<span id="cb5-23"><a href="#cb5-23" aria-hidden="true" tabindex="-1"></a>    <span class="st">"01-chapter1.docx"</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </div>
 <ol start="5" type="1">
 <li>Incorporate Google Drive suggestions <em>by hand</em> into the .Rmd file. This seems like a major pain, but the problem of <em>round tripping</em> from R to Google Drive is still an open question in the #rstats field. On the bright side, I find stepping through the Google Drive revisions is a good opportunity to thoroughly read through them.</li>
@@ -764,14 +758,13 @@ Here is the introduction to my thesis.</code></pre>
       e.clearSelection();
     }
     const getTextToCopy = function(trigger) {
-      const outerScaffold = trigger.parentElement.cloneNode(true);
-      const codeEl = outerScaffold.querySelector('code');
-      for (const childEl of codeEl.children) {
-        if (isCodeAnnotation(childEl)) {
-          childEl.remove();
+        const codeEl = trigger.previousElementSibling.cloneNode(true);
+        for (const childEl of codeEl.children) {
+          if (isCodeAnnotation(childEl)) {
+            childEl.remove();
+          }
         }
-      }
-      return codeEl.innerText;
+        return codeEl.innerText;
     }
     const clipboard = new window.ClipboardJS('.code-copy-button:not([data-in-quarto-modal])', {
       text: getTextToCopy

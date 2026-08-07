@@ -2,7 +2,7 @@
 <html xmlns="http://www.w3.org/1999/xhtml" lang="en" xml:lang="en"><head>
 
 <meta charset="utf-8">
-<meta name="generator" content="quarto-1.10.18">
+<meta name="generator" content="quarto-1.7.29">
 
 <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
 
@@ -12,16 +12,10 @@
 
 <title>PheWAS-ME, an app for exploration of multimorbidity patterns in PheWAS –</title>
 <style>
-/* Default styles provided by pandoc.
-** See https://pandoc.org/MANUAL.html#variables-for-html for config info.
-*/
+code{white-space: pre-wrap;}
 span.smallcaps{font-variant: small-caps;}
-div.columns{display: flex; gap: 1.5em;}
-div.column{flex: auto;}
-@media screen {
-div.columns{gap: min(4vw, 1.5em);}
-div.column{overflow-x: auto;}
-}
+div.columns{display: flex; gap: min(4vw, 1.5em);}
+div.column{flex: auto; overflow-x: auto;}
 div.hanging-indent{margin-left: 1.5em; text-indent: -1.5em;}
 ul.task-list{list-style: none;}
 ul.task-list li input[type="checkbox"] {
@@ -80,10 +74,10 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 <script src="../../site_libs/quarto-html/tippy.umd.min.js"></script>
 <script src="../../site_libs/quarto-html/anchor.min.js"></script>
 <link href="../../site_libs/quarto-html/tippy.css" rel="stylesheet">
-<link href="../../site_libs/quarto-html/quarto-syntax-highlighting-64a204ab8560d761af7679ceaba22944.css" rel="stylesheet" id="quarto-text-highlighting-styles">
+<link href="../../site_libs/quarto-html/quarto-syntax-highlighting-0815c480559380816a4d1ea211a47e91.css" rel="stylesheet" id="quarto-text-highlighting-styles">
 <script src="../../site_libs/bootstrap/bootstrap.min.js"></script>
 <link href="../../site_libs/bootstrap/bootstrap-icons.css" rel="stylesheet">
-<link href="../../site_libs/bootstrap/bootstrap-c40d7498fe02e743d4dec6c02f111ce1.min.css" rel="stylesheet" append-hash="true" id="quarto-bootstrap" data-mode="light">
+<link href="../../site_libs/bootstrap/bootstrap-3a52104fcab6d64c1ff9c030508fb24f.min.css" rel="stylesheet" append-hash="true" id="quarto-bootstrap" data-mode="light">
 <script id="quarto-search-options" type="application/json">{
   "location": "navbar",
   "copy-button": false,
@@ -142,7 +136,7 @@ ga('send', {
 <meta property="og:title" content="PheWAS-ME, an app for exploration of multimorbidity patterns in PheWAS –">
 <meta property="og:description" content="This post is a longer-form and less-formal accompaniment to the manuscript “PheWAS-ME: A web-app for interactive exploration of multimorbidity patterns in PheWAS” and accompanying application. As the first of three papers that make up my PhD dissertation, the project represents a significant collaborative effort bringing together Electronic Health Records (EHR) and Biobank data using R and Shiny.">
 <meta property="og:image" content="https://www.livefreeordichotomize.com/media/phewas_me/whole_app.png">
-<meta property="og:site_name" content="">
+<meta property="og:site_name" content=" ">
 <meta property="og:image:height" content="2470">
 <meta property="og:image:width" content="4290">
 <meta name="twitter:title" content="Live Free or Dichotomize">
@@ -578,7 +572,7 @@ PheWAS-ME: A web-app for interactive exploration of multimorbidity patterns in P
 <p>In this system, a single message-passing reactive value is supplied to all of the separate components. When a component needs to modify the state, it sends a message through that reactive value to the main app.</p>
 <p>As an example, if the user removes a code using the network plot. The network plot module sends a list to the message passing reactive variable containing an action type: <code>'delete code'</code>, and then a payload: <code>'008.12'</code>. Then at the main app level, an <code>observeEvent()</code> chunk that watches that message passing reactive reads the message and modifies the appropriate state variables, in this case, the selected codes list.</p>
 <div class="cell">
-<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb1"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb1-1"><a href="#cb1-1" aria-hidden="true" tabindex="-1"></a>shiny<span class="sc">::</span><span class="fu">observeEvent</span>(<span class="fu">app_interaction</span>(),{</span>
+<div class="sourceCode cell-code" id="cb1"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb1-1"><a href="#cb1-1" aria-hidden="true" tabindex="-1"></a>shiny<span class="sc">::</span><span class="fu">observeEvent</span>(<span class="fu">app_interaction</span>(),{</span>
 <span id="cb1-2"><a href="#cb1-2" aria-hidden="true" tabindex="-1"></a>  action_type <span class="ot">&lt;-</span> <span class="fu">app_interaction</span>() <span class="sc">%&gt;%</span> <span class="fu">pluck</span>(<span class="st">'type'</span>)</span>
 <span id="cb1-3"><a href="#cb1-3" aria-hidden="true" tabindex="-1"></a>  action_payload <span class="ot">&lt;-</span> <span class="fu">app_interaction</span>() <span class="sc">%&gt;%</span> <span class="fu">pluck</span>(<span class="st">'payload'</span>)</span>
 <span id="cb1-4"><a href="#cb1-4" aria-hidden="true" tabindex="-1"></a>  </span>
@@ -597,7 +591,7 @@ PheWAS-ME: A web-app for interactive exploration of multimorbidity patterns in P
 <span id="cb1-17"><a href="#cb1-17" aria-hidden="true" tabindex="-1"></a>      ...</span>
 <span id="cb1-18"><a href="#cb1-18" aria-hidden="true" tabindex="-1"></a>    )</span>
 <span id="cb1-19"><a href="#cb1-19" aria-hidden="true" tabindex="-1"></a>  ...</span>
-<span id="cb1-20"><a href="#cb1-20" aria-hidden="true" tabindex="-1"></a>})</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<span id="cb1-20"><a href="#cb1-20" aria-hidden="true" tabindex="-1"></a>})</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </div>
 <p>By isolating all state modification in a single observable chunk, the primary app state is only ever modified in a single place. This isolation reduces the amount of overhead required to reason about state changes, both for Shiny and the programmer.</p>
 </section>
@@ -636,7 +630,7 @@ PheWAS-ME: A web-app for interactive exploration of multimorbidity patterns in P
 <p>Our solution was to offload the layout calculation to another thread using a technology called ‘web workers.’ <a href="https://developer.mozilla.org/en-US/docs/Web/API/Web_Workers_API/Using_web_workers">Web workers</a> allow javascript code to run on another thread and communicate with the main thread through a series of asynchronous callbacks.</p>
 <p><label for="tufte-mn-" class="margin-toggle">⊕</label><input type="checkbox" id="tufte-mn-" class="margin-toggle"><span class="marginnote"><img src="https://www.barbarianmeetscoding.com/images/barbaric-basics-web-workers.jpg" class="img-fluid"> Web workers are there own threads with their own event loops, so they don’t slow down your main page. Source: <a href="https://www.barbarianmeetscoding.com/blog/2015/02/13/barbaric-basics-web-workers">Barbaric Basics.</a></span></p>
 <div class="cell">
-<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb2"><pre class="sourceCode js code-with-copy"><code class="sourceCode javascript"><span id="cb2-1"><a href="#cb2-1" aria-hidden="true" tabindex="-1"></a><span class="co">// Function to send new network data to webworker</span></span>
+<div class="sourceCode cell-code" id="cb2"><pre class="sourceCode js code-with-copy"><code class="sourceCode javascript"><span id="cb2-1"><a href="#cb2-1" aria-hidden="true" tabindex="-1"></a><span class="co">// Function to send new network data to webworker</span></span>
 <span id="cb2-2"><a href="#cb2-2" aria-hidden="true" tabindex="-1"></a><span class="kw">function</span> <span class="fu">send_new_job</span>(network_data<span class="op">,</span> callbacks){</span>
 <span id="cb2-3"><a href="#cb2-3" aria-hidden="true" tabindex="-1"></a></span>
 <span id="cb2-4"><a href="#cb2-4" aria-hidden="true" tabindex="-1"></a>  <span class="kw">const</span> {on_progress_report<span class="op">,</span> on_finish<span class="op">,</span> on_layout_data} <span class="op">=</span> callbacks<span class="op">;</span></span>
@@ -655,7 +649,7 @@ PheWAS-ME: A web-app for interactive exploration of multimorbidity patterns in P
 <span id="cb2-17"><a href="#cb2-17" aria-hidden="true" tabindex="-1"></a>      <span class="cf">case</span> <span class="st">"end"</span><span class="op">:</span> <span class="cf">return</span> <span class="fu">on_finish</span>(<span class="bu">event</span><span class="op">.</span><span class="at">data</span>)<span class="op">;</span></span>
 <span id="cb2-18"><a href="#cb2-18" aria-hidden="true" tabindex="-1"></a>    }</span>
 <span id="cb2-19"><a href="#cb2-19" aria-hidden="true" tabindex="-1"></a>  }<span class="op">;</span></span>
-<span id="cb2-20"><a href="#cb2-20" aria-hidden="true" tabindex="-1"></a>}<span class="op">;</span></span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<span id="cb2-20"><a href="#cb2-20" aria-hidden="true" tabindex="-1"></a>}<span class="op">;</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </div>
 <p>When the network plot receives new data, it spins up one of these web-worker threads, sends the data to it to run the layout simulation. The simulation web worker sends back occasional updates on the node positions to the main thread to update the plot, assuring the user it is doing something and not frozen. This adaptation meant that massive networks could be laid out and rendered without causing any perceivable slowdowns on the main app.</p>
 <iframe src="https://giphy.com/embed/RGe5NHijYCuZm2R25D" width="480" height="340" frameborder="0" class="giphy-embed" allowfullscreen="">
@@ -676,7 +670,7 @@ PheWAS-ME: A web-app for interactive exploration of multimorbidity patterns in P
 <section id="an-r-package" class="level3">
 <h3 class="anchored" data-anchor-id="an-r-package">An R Package</h3>
 <p>As mentioned before, the application lives in an R package. Because of this, running it locally is as easy as installing the package from GitHub using…</p>
-<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb3"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb3-1"><a href="#cb3-1" aria-hidden="true" tabindex="-1"></a>devtools<span class="sc">::</span><span class="fu">install_github</span>(<span class="st">'tbilab/meToolkit'</span>)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="sourceCode" id="cb3"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb3-1"><a href="#cb3-1" aria-hidden="true" tabindex="-1"></a>devtools<span class="sc">::</span><span class="fu">install_github</span>(<span class="st">'tbilab/meToolkit'</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <p>…and then starting an app up with the function <code>run_me()</code>.</p>
 <p>If you want to learn how to make an app that loads directly to a given dataset or preload data, check out the online documentation for the package at <a href="https://prod.tbilab.org/phewas_me_manual/">prod.tbilab.org/phewas_me_manual</a>.</p>
 <p><label for="tufte-mn-" class="margin-toggle">⊕</label><input type="checkbox" id="tufte-mn-" class="margin-toggle"><span class="marginnote">The package’s beautiful website, courtesy of <a href="https://pkgdown.r-lib.org/">pkgdown!</a></span> <img src="../../media/phewas_me/package_site.png" class="img-fluid"></p>
@@ -742,14 +736,13 @@ PheWAS-ME: A web-app for interactive exploration of multimorbidity patterns in P
       e.clearSelection();
     }
     const getTextToCopy = function(trigger) {
-      const outerScaffold = trigger.parentElement.cloneNode(true);
-      const codeEl = outerScaffold.querySelector('code');
-      for (const childEl of codeEl.children) {
-        if (isCodeAnnotation(childEl)) {
-          childEl.remove();
+        const codeEl = trigger.previousElementSibling.cloneNode(true);
+        for (const childEl of codeEl.children) {
+          if (isCodeAnnotation(childEl)) {
+            childEl.remove();
+          }
         }
-      }
-      return codeEl.innerText;
+        return codeEl.innerText;
     }
     const clipboard = new window.ClipboardJS('.code-copy-button:not([data-in-quarto-modal])', {
       text: getTextToCopy
