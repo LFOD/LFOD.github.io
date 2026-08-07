@@ -1,0 +1,1341 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml" lang="en" xml:lang="en"><head>
+
+<meta charset="utf-8">
+<meta name="generator" content="quarto-1.10.18">
+
+<meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
+
+<meta name="author" content="Lucy D’Agostino McGowan">
+<meta name="dcterms.date" content="2026-08-03">
+<meta name="description" content="For each episode we count the number of words each of the four main characters (Mark, Helly, Dylan, and Irving) speak for in each minute and visualize them.">
+
+<title>How to do your own online health research like a scientist – a biostatistician’s step‑by‑step guide –</title>
+<style>
+/* Default styles provided by pandoc.
+** See https://pandoc.org/MANUAL.html#variables-for-html for config info.
+*/
+span.smallcaps{font-variant: small-caps;}
+div.columns{display: flex; gap: 1.5em;}
+div.column{flex: auto;}
+@media screen {
+div.columns{gap: min(4vw, 1.5em);}
+div.column{overflow-x: auto;}
+}
+div.hanging-indent{margin-left: 1.5em; text-indent: -1.5em;}
+ul.task-list{list-style: none;}
+ul.task-list li input[type="checkbox"] {
+  width: 0.8em;
+  margin: 0 0.8em 0.2em -1em; /* quarto-specific, see https://github.com/quarto-dev/quarto-cli/issues/4556 */ 
+  vertical-align: middle;
+}
+</style>
+
+
+<script src="../../site_libs/quarto-nav/quarto-nav.js"></script>
+<script src="../../site_libs/quarto-nav/headroom.min.js"></script>
+<script src="../../site_libs/clipboard/clipboard.min.js"></script>
+<script src="../../site_libs/quarto-search/autocomplete.umd.js"></script>
+<script src="../../site_libs/quarto-search/fuse.min.js"></script>
+<script src="../../site_libs/quarto-search/quarto-search.js"></script>
+<meta name="quarto:offset" content="../../">
+<script src="../../site_libs/quarto-html/quarto.js" type="module"></script>
+<script src="../../site_libs/quarto-html/tabsets/tabsets.js" type="module"></script>
+<script src="../../site_libs/quarto-html/popper.min.js"></script>
+<script src="../../site_libs/quarto-html/tippy.umd.min.js"></script>
+<script src="../../site_libs/quarto-html/anchor.min.js"></script>
+<link href="../../site_libs/quarto-html/tippy.css" rel="stylesheet">
+<link href="../../site_libs/quarto-html/quarto-syntax-highlighting-64a204ab8560d761af7679ceaba22944.css" rel="stylesheet" id="quarto-text-highlighting-styles">
+<script src="../../site_libs/bootstrap/bootstrap.min.js"></script>
+<link href="../../site_libs/bootstrap/bootstrap-icons.css" rel="stylesheet">
+<link href="../../site_libs/bootstrap/bootstrap-c40d7498fe02e743d4dec6c02f111ce1.min.css" rel="stylesheet" append-hash="true" id="quarto-bootstrap" data-mode="light">
+<script id="quarto-search-options" type="application/json">{
+  "location": "navbar",
+  "copy-button": false,
+  "collapse-after": 3,
+  "panel-placement": "end",
+  "type": "overlay",
+  "limit": 50,
+  "keyboard-shortcut": [
+    "f",
+    "/",
+    "s"
+  ],
+  "show-item-context": false,
+  "language": {
+    "search-no-results-text": "No results",
+    "search-matching-documents-text": "matching documents",
+    "search-copy-link-title": "Copy link to search",
+    "search-hide-matches-text": "Hide additional matches",
+    "search-more-match-text": "more match in this document",
+    "search-more-matches-text": "more matches in this document",
+    "search-clear-button-title": "Clear",
+    "search-text-placeholder": "",
+    "search-detached-cancel-button-title": "Cancel",
+    "search-submit-button-title": "Submit",
+    "search-label": "Search"
+  }
+}</script>
+
+<script type="text/javascript">
+
+(function(i,s,o,g,r,a,m){i['GoogleAnalyticsObject']=r;i[r]=i[r]||function(){
+  (i[r].q=i[r].q||[]).push(arguments)},i[r].l=1*new Date();a=s.createElement(o),
+  m=s.getElementsByTagName(o)[0];a.async=1;a.src=g;m.parentNode.insertBefore(a,m)
+  })(window,document,'script','https://www.google-analytics.com/analytics.js','ga');
+ga('create', 'UA-92165973-1', 'auto');
+
+ga('send', {
+  hitType: 'pageview',
+  'anonymizeIp': true,
+});
+</script>
+<script src="https://code.jquery.com/jquery-3.2.1.min.js" integrity="sha256-hwg4gsxgFZhOsEEamdOYGBf13FyQuiTwlAQgxVSNgt4=" crossorigin="anonymous"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/d3/4.9.1/d3.min.js"></script>
+
+<style>
+  #custom-header {
+    height: 30vh;
+    width: 100%;
+    position:relative;
+    z-index:1;
+    margin:0 auto;
+  }
+</style>
+
+
+<meta property="og:title" content="How to do your own online health research like a scientist – a biostatistician’s step‑by‑step guide –">
+<meta property="og:description" content="For each episode we count the number of words each of the four main characters (Mark, Helly, Dylan, and Irving) speak for in each minute and visualize them.">
+<meta property="og:site_name" content="">
+<meta name="twitter:title" content="Live Free or Dichotomize">
+<meta name="twitter:description" content="For each episode we count the number of words each of the four main characters (Mark, Helly, Dylan, and Irving) speak for in each minute and visualize them.">
+<meta name="twitter:image" content="https://www.livefreeordichotomize.com/posts/2026-08-03-how-to-do-your-own-health-research-like-a-scientist/media/lfod-card.png">
+<meta name="twitter:creator" content="@LucyStats">
+<meta name="twitter:card" content="summary_large_image">
+</head><body class="nav-fixed fullcontent quarto-light"><header id="custom-header">
+  <div id="header_viz"></div>
+</header>
+
+<script>
+  $( document ).ready(() => {
+
+    //javascript for intro loader
+
+    //Function to immitate R's seq
+    function seq(start, end, increment) {
+      var length = Math.round((end - start)/increment);
+      return Array(length).fill().map((_, idx) => start + idx*increment)
+    }
+
+
+    //define the pdf of the distribution.
+    var logistic = function(x, theta, i) {
+        var mu = 0.1;
+        sign = 1
+        var y = sign * (1 / (Math.sqrt(2 * Math.PI) * theta)) * (1 / x) *
+            Math.exp(-Math.pow((Math.log(x) - mu), 2) / (2 * Math.pow(theta, 2)))
+        return y;
+    }
+
+    var width   = $("#custom-header").width() ,
+        height  = $("#custom-header").outerHeight(),
+        padding = 0,
+        numOfLines = 20,
+        xs = seq(0.01, 5, .01),
+        colors = ['rgb(165,0,38)', 'rgb(215,48,39)', 'rgb(244,109,67)', 'rgb(253,174,97)', 'rgb(254,224,144)',
+            'rgb(224,243,248)', 'rgb(171,217,233)', 'rgb(116,173,209)', 'rgb(69,117,180)', 'rgb(49,54,149)'
+        ];
+  
+    console.log("trying to run this shit.")
+    //define the svg.
+    var svg = d3.select("#header_viz").append("svg")
+        .attr("width", width)
+        .attr("height", height + 2 * padding)
+        .append("g")
+
+
+    var animatelines = function(whichline) {
+        d3.selectAll(".line").style("opacity","0.5");
+
+        //Select All of the lines and process them one by one
+        d3.selectAll(".line").each(function(d,i){
+            // Get the length of each line in turn
+            var totalLength = d3.select("#line" + i).node().getTotalLength();
+
+            d3.selectAll("#line" + i).attr("stroke-dasharray", totalLength + " " + totalLength)
+              .attr("stroke-dashoffset", totalLength)
+              .transition()
+              .duration(5000)
+              .delay(100*i)
+              .attr("stroke-dashoffset", 0)
+              .style("stroke-width",2)
+        })
+
+        writeGreeting()
+    }
+
+
+
+    // The Scales:
+    var thetaMap = d3.scaleLinear() //name the values from 0 to 20 and make their values from .1-.7
+        .domain([0, numOfLines])
+        .range([0.8, 0.085])
+
+    var yPos = d3.scaleLinear() //scalling for creating horizontal lines
+        .domain([0, numOfLines])
+        .range([0, 4])
+
+    var x = d3.scaleLinear()
+        .domain([0, 5])
+        .range([0, width]);
+
+    var y = d3.scaleLinear()
+        .domain([0, 4.5])
+        .range([height, 0]);
+
+    // The line functions:
+    var logistic = d3.range(numOfLines).map(function(i) {
+        var odd = true
+        var toReturn = xs.map(function(num) {
+            return {
+                "x": num,
+                "y": logistic(num, thetaMap(i), i)
+            }
+        })
+        return toReturn;
+    })
+
+    //make a greeting message for after the line animation.
+    function writeGreeting(){
+
+        var text_scale = width < 500 ? 1 : 0.65;
+        console.log(text_scale);
+        var intro_text = "Live Free or Dichotomize";
+
+        var title = svg.append("text")
+            .attr("font-size", 30)
+            .attr("font-family", "optima")
+            .attr("text-anchor", "end")
+            .attr("fill-opacity", 0.65)
+            .attr("x", width < 500 ? x(4.8) : x(4.2))
+            .attr("y", width < 500 ? y(3.12) : y(2.1) )
+            .attr("opacity", 0)
+            .text(intro_text)
+            .attr("font-size", function(d) { return ( text_scale*width - 8) / this.getComputedTextLength() * 24 + "px"; })
+            .text("")
+            .attr("opacity", 1);
+
+        (function drawGreeting (i, start, greeting) {
+            setTimeout(function () {
+
+                //add next letter to the greeting in progress
+                start += greeting[i];
+
+                title.html(start) //append this to the html
+
+                if (start.length < greeting.length) { //if the in progress greeting is less than the full, keep going.
+                    drawGreeting(i+1,start,greeting);      //  increment i and call again.
+                };
+            }, 100)
+        })(0, "", intro_text);
+    }
+
+
+    // The d3 stuff
+    var line = d3.line()
+        // .interpolate("basis")
+        .x(function(d) { return x(d.x); })
+        .y(function(d) { return y(d.y); });
+
+
+    svg.selectAll(".line")
+        .data(logistic)
+        .enter().append("path")
+        .attr("class", "line")
+        .attr("id" , function(d, i){ return "line" + i;})
+        .attr("d", line)
+        .style("stroke-width", 2)
+        .style("stroke", function(d, i) { return colors[i % 10] })
+        .style("opacity", 0)
+        .style("fill", "none")
+        .on("mouseover", function(d){
+            d3.select(this).style("stroke", "black")
+        })
+        .on("mouseout", function(d,i){
+            d3.select(this).style("stroke", colors[i % 10])
+        })
+
+    // var introMessage = isMobile ? "tap" : "click"
+    // var introMessage = "click"
+    //
+    // var intro = svg.append("text")
+    //     .text(introMessage)
+    //     .attr("font-size", 35)
+    //     .attr("font-family", "optima")
+    //     .attr("text-anchor", "middle")
+    //     .attr("x", x(2.5))
+    //     .attr("y", y(2.01))
+
+    //kick it off on a click. (or tap)
+    animatelines(2)
+    // d3.select("svg").on("click", function() { animatelines(2) })
+
+})
+
+</script>
+
+
+
+
+
+
+<div id="quarto-search-results"></div>
+  <header id="quarto-header" class="headroom fixed-top">
+    <nav class="navbar navbar-expand-lg " data-bs-theme="dark">
+      <div class="navbar-container container-fluid">
+      <div class="navbar-brand-container mx-auto">
+    <a class="navbar-brand" href="../../index.html">
+    <span class="navbar-title"></span>
+    </a>
+  </div>
+            <div id="quarto-search" class="" title="Search"></div>
+          <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarCollapse" aria-controls="navbarCollapse" role="menu" aria-expanded="false" aria-label="Toggle navigation" onclick="if (window.quartoToggleHeadroom) { window.quartoToggleHeadroom(); }">
+  <span class="navbar-toggler-icon"></span>
+</button>
+          <div class="collapse navbar-collapse" id="navbarCollapse">
+            <ul class="navbar-nav navbar-nav-scroll me-auto">
+  <li class="nav-item">
+    <a class="nav-link" href="../../index.html"> 
+<span class="menu-text">Home</span></a>
+  </li>  
+  <li class="nav-item">
+    <a class="nav-link" href="../../about.html"> 
+<span class="menu-text">About</span></a>
+  </li>  
+  <li class="nav-item compact">
+    <a class="nav-link" href="../../index.xml"> <i class="bi bi-rss" role="img">
+</i> 
+<span class="menu-text"></span></a>
+  </li>  
+</ul>
+          </div> <!-- /navcollapse -->
+            <div class="quarto-navbar-tools">
+</div>
+      </div> <!-- /container-fluid -->
+    </nav>
+</header>
+<!-- content -->
+<div id="quarto-content" class="quarto-container page-columns page-rows-contents page-layout-article page-navbar">
+<!-- sidebar -->
+<!-- margin-sidebar -->
+    
+<!-- main -->
+<main class="content" id="quarto-document-content">
+
+<header id="title-block-header" class="quarto-title-block default">
+<div class="quarto-title">
+<h1 class="title">How to do your own online health research like a scientist – a biostatistician’s step‑by‑step guide</h1>
+  <div class="quarto-categories">
+    <div class="quarto-category">health research</div>
+  </div>
+  </div>
+
+<div>
+  <div class="description">
+    For each episode we count the number of words each of the four main characters (Mark, Helly, Dylan, and Irving) speak for in each minute and visualize them.
+  </div>
+</div>
+
+
+<div class="quarto-title-meta">
+
+    <div>
+    <div class="quarto-title-meta-heading">Author</div>
+    <div class="quarto-title-meta-contents">
+             <p>Lucy D’Agostino McGowan </p>
+          </div>
+  </div>
+    
+    <div>
+    <div class="quarto-title-meta-heading">Published</div>
+    <div class="quarto-title-meta-contents">
+      <p class="date">August 3, 2026</p>
+    </div>
+  </div>
+  
+    
+  </div>
+  
+
+
+</header>
+
+
+<div class="theconversation-article-body">
+<p>
+The instinct to “do your own research” when it comes to your health is a good one. The challenge often is not lack of information, but the opposite.
+</p>
+<p>
+People are surrounded by studies, headlines, forums, family and friends, often all speaking at once in different directions and with different levels of reliability. How do you move through this <a href="https://theconversation.com/exhausted-by-the-news-here-are-6-strategies-to-stay-informed-without-getting-overwhelmed-or-misled-by-misinformation-248807">abundance of information</a> without getting lost in it?
+</p>
+<p>
+<a href="https://scholar.google.com/citations?user=0hoQtKwAAAAJ&amp;hl=en">I am a biostatistician</a> by training. In my work, I study how medical evidence is generated and interpreted. I have been on the other side of that process, trying to make sense of medical information that could affect my health or the health of my loved ones.
+</p>
+<p>
+Over time, I’ve found myself returning to the same road map when doing my own research to answer personal health questions. By sharing how I approach this process as a scientist, I’m hoping this method can help others sift through medical information carefully.
+</p>
+<h2 class="anchored">
+Framing the question
+</h2>
+<p>
+Before trying to answer a medical question, you first need to frame it in a way that can be answered with evidence.
+</p>
+<p>
+In practice, this means identifying four things. First is the exposure or intervention, such as the medication, treatment, lifestyle change or other intervention you care about. Second is the outcome, such as whether you get sick or your symptoms improve. Third is the population, that is, whether you’re answering this question for yourself or someone else. And fourth is the time frame.
+</p>
+<p>
+Suppose I’m interested in helping my pregnant sister understand whether taking fish oil, which contain <a href="https://theconversation.com/prenatal-supplements-largely-lack-the-recommended-amount-of-omega-3-fatty-acids-to-help-prevent-preterm-birth-new-research-244231">omega-3 fatty acids</a> – specifically DHA – during pregnancy will help lower her chances of having a preterm birth.
+</p>
+<p>
+We can put these variables in what I call an evidence table.
+</p>
+<table>
+<thead>
+<tr>
+<th>
+</th>
+<th>
+The Question
+</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>
+<strong><em>Exposure</em></strong>
+</td>
+<td>
+DHA
+</td>
+</tr>
+<tr>
+<td>
+<strong><em>Outcome</em></strong>
+</td>
+<td>
+Preterm birth
+</td>
+</tr>
+<tr>
+<td>
+<strong><em>Population</em></strong>
+</td>
+<td>
+Pregnant women
+</td>
+</tr>
+<tr>
+<td>
+<strong><em>Time Frame</em></strong>
+</td>
+<td>
+Duration of pregnancy
+</td>
+</tr>
+</tbody>
+</table>
+<p>
+Laying out the variables this way helps you be precise about exactly what question you’re asking. It will also help make sure the studies you draw on actually match these variables.
+</p>
+<h2 class="anchored">
+Systematic reviews
+</h2>
+<p>
+Now, I turn to the medical literature.
+</p>
+<p>
+In medical research, different groups of researchers often study similar problems in different ways, across different populations and settings. This means that <a href="https://theconversation.com/a-study-showed-isnt-enough-scientific-knowledge-builds-incrementally-as-researchers-investigate-and-revisit-questions-271929">no single study</a> usually gives the full picture for every person interested in a particular health question.
+</p>
+<p>
+The first thing I usually look for are <a href="https://theconversation.com/how-to-boil-down-a-pile-of-diverse-research-papers-into-one-cohesive-picture-75742">systematic reviews</a>. These are studies that bring available work related to a particular scientific question together to try to understand all of the existing evidence.
+</p>
+<p>
+I typically search for systematic reviews in a <a href="https://pubmed.ncbi.nlm.nih.gov/">medical database such as PubMed</a>. PubMed is a free, publicly available database of biomedical literature maintained by the National Library of Medicine. One important caveat, however, is that just because a study appears in PubMed <a href="https://politifact.com/factchecks/2021/dec/21/blog-posting/no-5g-technology-does-not-cause-covid-19-symptoms/">does not mean</a> it is necessarily of high quality or trustworthy. PubMed indexes articles from thousands of journals, so the presence of a study there is not necessarily a stamp of approval. However, PubMed is still a good place to find good research as long as you know how to filter out the weaker studies.
+</p>
+<figure class="figure">
+<iframe width="440" height="260" src="https://www.youtube.com/embed/NijldKW32H4?wmode=transparent&amp;start=0" frameborder="0" allowfullscreen="">
+</iframe>
+<figcaption>
+<span class="caption">Systematic reviews and meta-analyses bring together existing research on a topic.</span>
+</figcaption>
+</figure>
+<p>
+In the case of the question on how taking fish oil – specifically DHA – affects pregnancy, I might start by searching for something like “DHA preterm birth systematic review” in PubMed. When I did this in July 2026, I got 23 results.
+</p>
+<p>
+The <a href="https://doi.org/10.1016/j.ajp.2020.102353">top result</a> was a systematic review published in 2020 titled “Risk factors for postpartum depression: An evidence-based systematic review of systematic reviews and meta-analyses.” This might be a good place to start if I were interested in assessing the effects of DHA on postpartum depression, but the outcome I am interested in is preterm birth.
+</p>
+<p>
+To double-check my assessment, I can add these components to my evidence table. There is a mismatch between my question and the evidence provided in this study. This is one of the most important factors to consider when deciding whether a study will be helpful: Does the evidence match your question of interest?
+</p>
+<table>
+<thead>
+<tr>
+<th>
+</th>
+<th>
+The Question
+</th>
+<th>
+The Evidence
+</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>
+<strong><em>Exposure</em></strong>
+</td>
+<td>
+DHA
+</td>
+<td>
+fish and PUFA intake
+</td>
+</tr>
+<tr>
+<td>
+<strong><em>Outcome</em></strong>
+</td>
+<td>
+<strong>Preterm birth</strong>
+</td>
+<td>
+<strong>Postpartum depression</strong>
+</td>
+</tr>
+<tr>
+<td>
+<strong><em>Population</em></strong>
+</td>
+<td>
+Pregnant women
+</td>
+<td>
+Pregnant women
+</td>
+</tr>
+<tr>
+<td>
+<strong><em>Time Frame</em></strong>
+</td>
+<td>
+Duration of pregnancy
+</td>
+<td>
+Duration of pregnancy
+</td>
+</tr>
+</tbody>
+</table>
+<p>
+The <a href="https://doi.org/10.1002/14651858.CD003402">second result</a> in my PubMed search was titled “Omega-3 fatty acid addition during pregnancy.” It was published in the <a href="https://www.cochrane.org/products-and-services/cochrane-library">Cochrane Library</a>, which is a top publisher of systematic reviews. Reading through this article, I see that the exposure (a combination of DHA and another omega-3 fatty acid called EPA), study population (pregnant women) and outcome (preterm birth) match what I am interested in.
+</p>
+<table>
+<thead>
+<tr>
+<th>
+</th>
+<th>
+The Question
+</th>
+<th>
+The Evidence
+</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>
+<strong><em>Exposure</em></strong>
+</td>
+<td>
+DHA
+</td>
+<td>
+DHA and EPA
+</td>
+</tr>
+<tr>
+<td>
+<strong><em>Outcome</em></strong>
+</td>
+<td>
+Preterm birth
+</td>
+<td>
+Preterm birth
+</td>
+</tr>
+<tr>
+<td>
+<strong><em>Population</em></strong>
+</td>
+<td>
+Pregnant women
+</td>
+<td>
+Pregnant women
+</td>
+</tr>
+<tr>
+<td>
+<strong><em>Time Frame</em></strong>
+</td>
+<td>
+Duration of pregnancy
+</td>
+<td>
+Duration of pregnancy
+</td>
+</tr>
+</tbody>
+</table>
+<p>
+The results suggest that the incidence of preterm birth was lower among women who took DHA and EPA compared to those who didn’t.
+</p>
+<p>
+Excellent. I tell my sister that taking DHA could be a good idea.
+</p>
+<h2 class="anchored">
+Systematic reviews with mixed results
+</h2>
+<p>
+Sometimes constructing evidence tables can be an interactive process where I begin with a vague question and hone in on what I am interested in as I accumulate evidence.
+</p>
+<p>
+Suppose I am interested in understanding whether <a href="https://theconversation.com/zinc-is-a-metal-essential-to-life-scientists-have-discovered-a-protein-that-helps-keep-cells-alive-when-zinc-levels-are-low-183083">zinc</a> helps with respiratory infections – a useful question, as a mom of three little ones who hates having a cold!
+</p>
+<p>
+Let’s start a new evidence table.
+</p>
+<table>
+<thead>
+<tr>
+<th>
+</th>
+<th>
+The Question
+</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>
+<strong><em>Exposure</em></strong>
+</td>
+<td>
+Zinc
+</td>
+</tr>
+<tr>
+<td>
+<strong><em>Outcome</em></strong>
+</td>
+<td>
+Respiratory infection
+</td>
+</tr>
+<tr>
+<td>
+<strong><em>Population</em></strong>
+</td>
+<td>
+Adult (me!)
+</td>
+</tr>
+<tr>
+<td>
+<strong><em>Time Frame</em></strong>
+</td>
+<td>
+?
+</td>
+</tr>
+</tbody>
+</table>
+<p>
+Several issues stand out. My initial question didn’t really define a time frame, which may make it difficult to assess the evidence. Additionally, my outcome is pretty vague – do I want to know whether zinc will prevent respiratory infections or make them less severe?
+</p>
+<p>
+To start, I will again go to PubMed, searching for “zinc respiratory infection systematic review.” When I did this in July 2026, I got 81 results.
+</p>
+<p>
+The <a href="https://doi.org/10.1111/all.15997">top result</a> was a systematic review published in 2024 titled “A systematic review and meta-analysis on nutritional and dietary interventions for the treatment of acute respiratory infection in pediatric patients: An EAACI taskforce.” This might be a good place to start if I were interested in assessing whether I should give my children a zinc supplement. But I’m trying to decide whether I – an adult – should take zinc.
+</p>
+<p>
+This is another important factor when trying to decide whether some medical evidence will be useful for me: Was the study based on people similar to me?
+</p>
+<table>
+<thead>
+<tr>
+<th>
+</th>
+<th>
+The Question
+</th>
+<th>
+The Evidence
+</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>
+<strong><em>Exposure</em></strong>
+</td>
+<td>
+Zinc
+</td>
+<td>
+Zinc
+</td>
+</tr>
+<tr>
+<td>
+<strong><em>Outcome</em></strong>
+</td>
+<td>
+Shorter duration of respiratory infection
+</td>
+<td>
+Shorter duration of respiratory infection
+</td>
+</tr>
+<tr>
+<td>
+<strong><em>Population</em></strong>
+</td>
+<td>
+<strong>Adult (me!)</strong>
+</td>
+<td>
+<strong>Children</strong>
+</td>
+</tr>
+<tr>
+<td>
+<strong><em>Time Frame</em></strong>
+</td>
+<td>
+During an acute illness
+</td>
+<td>
+During an acute illness
+</td>
+</tr>
+</tbody>
+</table>
+<p>
+This study did help me hone my question of interest: I want to know whether adults with a cold could take zinc to feel better faster.
+</p>
+<p>
+The <a href="https://doi.org/10.1002/14651858.CD014914">third result</a> was titled “Zinc for prevention and treatment of the common cold,” also published in the Cochrane Library. This study looked at both children and adults (excellent, it covers my case) and was published in 2024 (also excellent – it is recent).
+</p>
+<p>
+The results suggest that zinc does not seem to reduce the chance of getting a cold (bummer) or number of colds (double bummer), but it may reduce the duration of the cold by around two days on average (I’ll take it).
+</p>
+<p>
+Systematic reviews that are done well will also report a <a href="https://doi.org/10.1093/aje/kwae332">grade of certainty</a> in the evidence. This is generally based on the quality of the studies that make up the estimate and typically ranges from very low (1) to high (4). This review was classified as low (2). How should you interpret that number?
+</p>
+<p>
+You can think of certainty grades as a signal of how much confidence you can place in the findings rather than a simple pass or fail. A high rating suggests future research is unlikely to change the conclusion much, so you can be fairly confident acting on it.
+</p>
+<p>
+A low rating, like for this study on zinc, means that the true effect could turn out to be different from what the systematic review found. It may be reasonable to tentatively believe the result, but hold it more loosely and be open to revising your view as more evidence comes in.
+</p>
+<table>
+<thead>
+<tr>
+<th>
+</th>
+<th>
+The Question
+</th>
+<th>
+The Evidence
+</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>
+<strong><em>Exposure</em></strong>
+</td>
+<td>
+Zinc
+</td>
+<td>
+Zinc
+</td>
+</tr>
+<tr>
+<td>
+<strong><em>Outcome</em></strong>
+</td>
+<td>
+Shorter duration of respiratory infection
+</td>
+<td>
+Shorter duration of respiratory infection
+</td>
+</tr>
+<tr>
+<td>
+<strong><em>Population</em></strong>
+</td>
+<td>
+Adult (me!)
+</td>
+<td>
+Children and Adults
+</td>
+</tr>
+<tr>
+<td>
+<strong><em>Time Frame</em></strong>
+</td>
+<td>
+During an acute illness
+</td>
+<td>
+During an acute illness
+</td>
+</tr>
+</tbody>
+</table>
+<p>
+Sometimes there is a clear pattern in the evidence, sometimes the results are mixed, and sometimes there simply has not yet been research to synthesize in a review.
+</p>
+<p>
+If the answer to your question is in the systematic review, then you can use that evidence, weighted by its certainty grade, to help guide your decision. If not, the next place to look is individual randomized controlled trials.
+</p>
+<h2 class="anchored">
+Randomized studies
+</h2>
+<p>
+More often, your question of interest might not have been answered definitively yet in the medical literature. When there are no good systematic reviews available, I look for a <a href="https://theconversation.com/what-is-a-clinical-trial-a-health-policy-expert-explains-137221">randomized controlled trial</a> to help answer my question. Randomized trials assign people to different treatments by chance and follow them over time.
+</p>
+<p>
+Continuing with the zinc example, suppose the systematic review left me uncertain because of its low certainty grade. I might go back to PubMed and search something like “zinc randomized trial common cold.” Alternatively, I can look in the citations of the systematic review for the individual randomized trials the researchers used.
+</p>
+<p>
+At this point, the goal is not to read everything but to find a well-designed study that is relevant to my question.
+</p>
+<p>
+For example, I would look for a trial where participants are similar to me (adults, not just children) and start zinc early in the course of a cold, and where the researchers are measuring outcomes (such as duration of symptoms) that I care about.
+</p>
+<h2 class="anchored">
+Observational or laboratory studies
+</h2>
+<p>
+Sometimes there simply are no randomized trials to answer a particular question. This can happen for a few reasons, generally related to the <a href="https://theconversation.com/trans-youth-are-significantly-more-likely-to-attempt-suicide-when-gender-dysphoria-is-met-with-conversion-therapy-than-with-hormone-treatment-207592">ethical implications or feasibility</a> of randomizing people to certain exposures.
+</p>
+<p>
+Here, you can turn to two types of evidence: observational studies in humans or laboratory studies in animals or cells.
+</p>
+<p>
+<a href="https://theconversation.com/in-defence-of-observational-science-randomised-experiments-arent-the-only-way-to-the-truth-49807">Observational studies</a> just watch what happens to people who happen to have a certain exposure. This might involve, for example, tracking patients through <a href="https://theconversation.com/one-way-to-speed-up-clinical-trials-skip-right-to-the-data-with-electronic-medical-records-202935">electronic health records</a> where information is collected during routine medical visits, following patients in a public health registry or analyzing population survey data collected over time.
+</p>
+<p>
+Because observational studies don’t randomly assign people to a specific treatment, they cannot rule out the possibility that people who happened to have the exposure differed from those who did not in other ways. Factors including age, diet or overall health can influence outcomes and make it unclear whether it’s the exposure itself driving the results or these factors.
+</p>
+<p>
+Randomization solves this problem because exposures are <a href="https://theconversation.com/what-is-a-clinical-trial-a-health-policy-expert-explains-137221">assigned by chance</a>, ensuring that the groups being compared are similar in every way on average except for the exposure itself. Thus, you can more confidently attribute differences in the outcomes to the exposure.
+</p>
+<figure class="align-center zoomable figure">
+<a aria-label="Zoomable image" href="https://images.theconversation.com/files/751453/original/file-20260731-70-et22t0.jpg?ixlib=rb-4.1.1&amp;q=45&amp;auto=format&amp;w=1000&amp;fit=clip"><img alt="Person wearing protective glasses and nitrile gloves holding up a mice to examine" src="https://images.theconversation.com/files/751453/original/file-20260731-70-et22t0.jpg?ixlib=rb-4.1.1&amp;q=45&amp;auto=format&amp;w=754&amp;fit=clip" srcset="https://images.theconversation.com/files/751453/original/file-20260731-70-et22t0.jpg?ixlib=rb-4.1.1&amp;q=45&amp;auto=format&amp;w=600&amp;h=400&amp;fit=crop&amp;dpr=1 600w, https://images.theconversation.com/files/751453/original/file-20260731-70-et22t0.jpg?ixlib=rb-4.1.1&amp;q=30&amp;auto=format&amp;w=600&amp;h=400&amp;fit=crop&amp;dpr=2 1200w, https://images.theconversation.com/files/751453/original/file-20260731-70-et22t0.jpg?ixlib=rb-4.1.1&amp;q=15&amp;auto=format&amp;w=600&amp;h=400&amp;fit=crop&amp;dpr=3 1800w, https://images.theconversation.com/files/751453/original/file-20260731-70-et22t0.jpg?ixlib=rb-4.1.1&amp;q=45&amp;auto=format&amp;w=754&amp;h=503&amp;fit=crop&amp;dpr=1 754w, https://images.theconversation.com/files/751453/original/file-20260731-70-et22t0.jpg?ixlib=rb-4.1.1&amp;q=30&amp;auto=format&amp;w=754&amp;h=503&amp;fit=crop&amp;dpr=2 1508w, https://images.theconversation.com/files/751453/original/file-20260731-70-et22t0.jpg?ixlib=rb-4.1.1&amp;q=15&amp;auto=format&amp;w=754&amp;h=503&amp;fit=crop&amp;dpr=3 2262w" sizes="(min-width: 1466px) 754px, (max-width: 599px) 100vw, (min-width: 600px) 600px, 237px" class="figure-img"></a>
+<figcaption>
+<span class="caption">Mice and other animal models are great for preliminary research, but findings may not directly apply to people.</span> <span class="attribution"><a class="source" href="https://www.gettyimages.com/detail/photo/germany-research-laboratory-young-scientist-royalty-free-image/544546123">Westend61/Getty Images</a></span>
+</figcaption>
+</figure>
+<p>
+Laboratory studies <a href="https://theconversation.com/expanding-alzheimers-research-with-primates-could-overcome-the-problem-with-treatments-that-show-promise-in-mice-but-dont-help-humans-188207">in animals</a> <a href="https://theconversation.com/mammary-glands-in-a-dish-what-miniature-organs-reveal-about-evolution-lactation-regeneration-and-breast-cancer-228171">or cells</a> can help identify a potential biological mechanism behind an exposure’s effect. However, while animal and cell models can suggest something is biological plausible in people, results do not always translate directly to humans. Further research in people is needed to confirm whether the effect holds.
+</p>
+<p>
+Now I return to PubMed with a different set of expectations. Instead of looking for randomized trials, I shift my search to wherever evidence exists on the topic.
+</p>
+<p>
+Say I’m looking for what’s known about how microplastics affect human health. When I looked up “microplastics health outcomes” in July 2026, the <a href="https://doi.org/10.1021/acs.est.3c09524">second result</a> was a study titled “Effects of Microplastic Exposure on Human Digestive, Reproductive, and Respiratory Health: A Rapid Systematic Review.” This systematic review used both human observational studies and animal experiments to assess whether microplastic exposure is linked to health effects. Ideally, systematic reviews would include randomized controlled trials on people, but we still may be able to learn something from these other studies.
+</p>
+<p>
+The evidence they report is based on three human studies (so not much here) and 28 animal studies. The review reports that microplastics are “suspected” to have a harmful effect on human reproductive, digestive and respiratory health, while also emphasizing that the evidence is still developing and further research is needed to clarify risks and mechanisms.
+</p>
+<p>
+What this research shows is that there is a plausible signal worth taking seriously, but not yet enough direct human evidence to draw a firm conclusion.
+</p>
+<p>
+This is a case where it is reasonable to stay cautious and watch for updated evidence over time, rather than treat findings as settled.
+</p>
+<h2 class="anchored">
+Personal anecdotes
+</h2>
+<p>
+Sometimes there is very little information in the medical literature at all about your question of interest. That might be because the condition you are interested in is rare and has not been studied. Other times, it could be that the exposure or question is relatively new, and the research simply has not caught up yet.
+</p>
+<p>
+At this point it can be tempting to turn to anecdotes instead. Examples include patient forums, social media groups and personal stories shared by friends or family. These can be valuable sources of community and lived experience, and they often capture questions that the formal medical literature has not fully addressed.
+</p>
+<p>
+Like any other source of information, however, it is important to consider what population is actually being represented.
+</p>
+<figure class="align-center zoomable figure">
+<a aria-label="Zoomable image" href="https://images.theconversation.com/files/751454/original/file-20260731-60-fbqr95.jpg?ixlib=rb-4.1.1&amp;q=45&amp;auto=format&amp;w=1000&amp;fit=clip"><img alt="Close-up of group of people holding phones around a table" src="https://images.theconversation.com/files/751454/original/file-20260731-60-fbqr95.jpg?ixlib=rb-4.1.1&amp;q=45&amp;auto=format&amp;w=754&amp;fit=clip" srcset="https://images.theconversation.com/files/751454/original/file-20260731-60-fbqr95.jpg?ixlib=rb-4.1.1&amp;q=45&amp;auto=format&amp;w=600&amp;h=396&amp;fit=crop&amp;dpr=1 600w, https://images.theconversation.com/files/751454/original/file-20260731-60-fbqr95.jpg?ixlib=rb-4.1.1&amp;q=30&amp;auto=format&amp;w=600&amp;h=396&amp;fit=crop&amp;dpr=2 1200w, https://images.theconversation.com/files/751454/original/file-20260731-60-fbqr95.jpg?ixlib=rb-4.1.1&amp;q=15&amp;auto=format&amp;w=600&amp;h=396&amp;fit=crop&amp;dpr=3 1800w, https://images.theconversation.com/files/751454/original/file-20260731-60-fbqr95.jpg?ixlib=rb-4.1.1&amp;q=45&amp;auto=format&amp;w=754&amp;h=498&amp;fit=crop&amp;dpr=1 754w, https://images.theconversation.com/files/751454/original/file-20260731-60-fbqr95.jpg?ixlib=rb-4.1.1&amp;q=30&amp;auto=format&amp;w=754&amp;h=498&amp;fit=crop&amp;dpr=2 1508w, https://images.theconversation.com/files/751454/original/file-20260731-60-fbqr95.jpg?ixlib=rb-4.1.1&amp;q=15&amp;auto=format&amp;w=754&amp;h=498&amp;fit=crop&amp;dpr=3 2262w" sizes="(min-width: 1466px) 754px, (max-width: 599px) 100vw, (min-width: 600px) 600px, 237px" class="figure-img"></a>
+<figcaption>
+<span class="caption">Personal anecdotes from online or the people you know may not apply to your situation.</span> <span class="attribution"><a class="source" href="https://www.gettyimages.com/detail/photo/friends-socialising-splitting-bill-paying-for-food-royalty-free-image/1181221531">10’000 Hours/DigitalVision via Getty Images</a></span>
+</figcaption>
+</figure>
+<p>
+Online patient communities, for example, can <a href="https://doi.org/10.1108/ITP-03-2021-0197">disproportionately include</a> people who felt they were not served well by the medical system or for whom standard treatments have not worked, which may be part of why they are participating in these spaces.
+</p>
+<p>
+While the stories of these patients are important, they are not neutral samples. They reflect a subset of experiences that may not match your own situation.
+</p>
+<p>
+As a result, I tend to treat anecdotal evidence as useful for identifying questions worth investigating or for better understanding the range of lived experiences. But it is not a substitute for evidence gathered through systematic study.
+</p>
+<h2 class="anchored">
+Vetting your research
+</h2>
+<p>
+As you read individual studies, here are a few other important things to consider.
+</p>
+<p>
+Keep an eye out for <a href="https://catalogofbias.org/biases/">potential sources of bias</a>. A few checks I like to do include who funded the study and whether the authors disclose any conflicts of interest. A study funded by a company with a stake in the outcome is not automatically wrong, but it is worth noting.
+</p>
+<p>
+Acknowledge that medical research is often complicated, and even people who do this for a living can disagree on how to <a href="https://theconversation.com/medical-guidelines-that-embrace-the-humility-of-uncertainty-could-help-doctors-choose-treatments-with-more-research-evidence-behind-them-183328">interpret a given body of evidence</a>. Trusted sources, such as your doctor, specialist or public health organizations with relevant expertise, can help you interpret what evidence means for your specific situation. Cross-checking multiple sources is often more useful than relying on any single one.
+</p>
+<p>
+Doing your own research is a noble goal. Sometimes it leads to clarity and certainty, and other times it leads to well-informed uncertainty. Knowing the difference is one of the most important parts of the work.<!-- Below is The Conversation's page counter tag. Please DO NOT REMOVE. --><img src="https://counter.theconversation.com/content/282559/count.gif?distributor=republish-lightbox-basic" alt="The Conversation" width="1" height="1" style="border: none !important; box-shadow: none !important; margin: 0 !important; max-height: 1px !important; max-width: 1px !important; min-height: 1px !important; min-width: 1px !important; opacity: 0 !important; outline: none !important; padding: 0 !important" referrerpolicy="no-referrer-when-downgrade"><!-- End of code. If you don't see any code above, please get new code from the Advanced tab after you click the republish button. The page counter does not collect any personal data. More info: https://theconversation.com/republishing-guidelines -->
+</p>
+<p>
+<span><a href="https://theconversation.com/profiles/lucy-mcgowan-2669051">Lucy McGowan</a>, Associate Professor of Statistical Sciences, <em><a href="https://theconversation.com/institutions/wake-forest-university-1709">Wake Forest University</a></em></span>
+</p>
+<p>
+This article is republished from <a href="https://theconversation.com">The Conversation</a> under a Creative Commons license. Read the <a href="https://theconversation.com/how-to-do-your-own-online-health-research-like-a-scientist-a-biostatisticians-step-by-step-guide-282559">original article</a>.
+</p>
+</div>
+
+
+
+</main> <!-- /main -->
+<script id="quarto-html-after-body" type="application/javascript">
+  window.document.addEventListener("DOMContentLoaded", function (event) {
+    const icon = "";
+    const anchorJS = new window.AnchorJS();
+    anchorJS.options = {
+      placement: 'right',
+      icon: icon
+    };
+    anchorJS.add('.anchored');
+    const isCodeAnnotation = (el) => {
+      for (const clz of el.classList) {
+        if (clz.startsWith('code-annotation-')) {                     
+          return true;
+        }
+      }
+      return false;
+    }
+    const onCopySuccess = function(e) {
+      // button target
+      const button = e.trigger;
+      // don't keep focus
+      button.blur();
+      // flash "checked"
+      button.classList.add('code-copy-button-checked');
+      var currentTitle = button.getAttribute("title");
+      button.setAttribute("title", "Copied!");
+      let tooltip;
+      if (window.bootstrap) {
+        button.setAttribute("data-bs-toggle", "tooltip");
+        button.setAttribute("data-bs-placement", "left");
+        button.setAttribute("data-bs-title", "Copied!");
+        tooltip = new bootstrap.Tooltip(button, 
+          { trigger: "manual", 
+            customClass: "code-copy-button-tooltip",
+            offset: [0, -8]});
+        tooltip.show();    
+      }
+      setTimeout(function() {
+        if (tooltip) {
+          tooltip.hide();
+          button.removeAttribute("data-bs-title");
+          button.removeAttribute("data-bs-toggle");
+          button.removeAttribute("data-bs-placement");
+        }
+        button.setAttribute("title", currentTitle);
+        button.classList.remove('code-copy-button-checked');
+      }, 1000);
+      // clear code selection
+      e.clearSelection();
+    }
+    const getTextToCopy = function(trigger) {
+      const outerScaffold = trigger.parentElement.cloneNode(true);
+      const codeEl = outerScaffold.querySelector('code');
+      for (const childEl of codeEl.children) {
+        if (isCodeAnnotation(childEl)) {
+          childEl.remove();
+        }
+      }
+      return codeEl.innerText;
+    }
+    const clipboard = new window.ClipboardJS('.code-copy-button:not([data-in-quarto-modal])', {
+      text: getTextToCopy
+    });
+    clipboard.on('success', onCopySuccess);
+    if (window.document.getElementById('quarto-embedded-source-code-modal')) {
+      const clipboardModal = new window.ClipboardJS('.code-copy-button[data-in-quarto-modal]', {
+        text: getTextToCopy,
+        container: window.document.getElementById('quarto-embedded-source-code-modal')
+      });
+      clipboardModal.on('success', onCopySuccess);
+    }
+      var localhostRegex = new RegExp(/^(?:http|https):\/\/localhost\:?[0-9]*\//);
+      var mailtoRegex = new RegExp(/^mailto:/);
+        var filterRegex = new RegExp("https:\/\/www\.livefreeordichotomize\.com");
+      var isInternal = (href) => {
+          return filterRegex.test(href) || localhostRegex.test(href) || mailtoRegex.test(href);
+      }
+      // Inspect non-navigation links and adorn them if external
+     var links = window.document.querySelectorAll('a[href]:not(.nav-link):not(.navbar-brand):not(.toc-action):not(.sidebar-link):not(.sidebar-item-toggle):not(.pagination-link):not(.no-external):not([aria-hidden]):not(.dropdown-item):not(.quarto-navigation-tool):not(.about-link)');
+      for (var i=0; i<links.length; i++) {
+        const link = links[i];
+        if (!isInternal(link.href)) {
+          // undo the damage that might have been done by quarto-nav.js in the case of
+          // links that we want to consider external
+          if (link.dataset.originalHref !== undefined) {
+            link.href = link.dataset.originalHref;
+          }
+        }
+      }
+    function tippyHover(el, contentFn, onTriggerFn, onUntriggerFn) {
+      const config = {
+        allowHTML: true,
+        maxWidth: 500,
+        delay: 100,
+        arrow: false,
+        appendTo: function(el) {
+            return el.parentElement;
+        },
+        interactive: true,
+        interactiveBorder: 10,
+        theme: 'quarto',
+        placement: 'bottom-start',
+      };
+      if (contentFn) {
+        config.content = contentFn;
+      }
+      if (onTriggerFn) {
+        config.onTrigger = onTriggerFn;
+      }
+      if (onUntriggerFn) {
+        config.onUntrigger = onUntriggerFn;
+      }
+      window.tippy(el, config); 
+    }
+    const noterefs = window.document.querySelectorAll('a[role="doc-noteref"]');
+    for (var i=0; i<noterefs.length; i++) {
+      const ref = noterefs[i];
+      tippyHover(ref, function() {
+        // use id or data attribute instead here
+        let href = ref.getAttribute('data-footnote-href') || ref.getAttribute('href');
+        try { href = new URL(href).hash; } catch {}
+        const id = href.replace(/^#\/?/, "");
+        const note = window.document.getElementById(id);
+        if (note) {
+          return note.innerHTML;
+        } else {
+          return "";
+        }
+      });
+    }
+    const xrefs = window.document.querySelectorAll('a.quarto-xref');
+    const processXRef = (id, note) => {
+      // Strip column container classes
+      const stripColumnClz = (el) => {
+        el.classList.remove("page-full", "page-columns");
+        if (el.children) {
+          for (const child of el.children) {
+            stripColumnClz(child);
+          }
+        }
+      }
+      stripColumnClz(note)
+      if (id === null || id.startsWith('sec-')) {
+        // Special case sections, only their first couple elements
+        const container = document.createElement("div");
+        if (note.children && note.children.length > 2) {
+          container.appendChild(note.children[0].cloneNode(true));
+          for (let i = 1; i < note.children.length; i++) {
+            const child = note.children[i];
+            if (child.tagName === "P" && child.innerText === "") {
+              continue;
+            } else {
+              container.appendChild(child.cloneNode(true));
+              break;
+            }
+          }
+          if (window.Quarto?.typesetMath) {
+            window.Quarto.typesetMath(container);
+          }
+          return container.innerHTML
+        } else {
+          if (window.Quarto?.typesetMath) {
+            window.Quarto.typesetMath(note);
+          }
+          return note.innerHTML;
+        }
+      } else {
+        // Remove any anchor links if they are present
+        const anchorLink = note.querySelector('a.anchorjs-link');
+        if (anchorLink) {
+          anchorLink.remove();
+        }
+        if (window.Quarto?.typesetMath) {
+          window.Quarto.typesetMath(note);
+        }
+        if (note.classList.contains("callout")) {
+          return note.outerHTML;
+        } else {
+          return note.innerHTML;
+        }
+      }
+    }
+    for (var i=0; i<xrefs.length; i++) {
+      const xref = xrefs[i];
+      tippyHover(xref, undefined, function(instance) {
+        instance.disable();
+        let url = xref.getAttribute('href');
+        let hash = undefined; 
+        if (url.startsWith('#')) {
+          hash = url;
+        } else {
+          try { hash = new URL(url).hash; } catch {}
+        }
+        if (hash) {
+          const id = hash.replace(/^#\/?/, "");
+          const note = window.document.getElementById(id);
+          if (note !== null) {
+            try {
+              const html = processXRef(id, note.cloneNode(true));
+              instance.setContent(html);
+            } finally {
+              instance.enable();
+              instance.show();
+            }
+          } else {
+            // See if we can fetch this
+            fetch(url.split('#')[0])
+            .then(res => res.text())
+            .then(html => {
+              const parser = new DOMParser();
+              const htmlDoc = parser.parseFromString(html, "text/html");
+              const note = htmlDoc.getElementById(id);
+              if (note !== null) {
+                const html = processXRef(id, note);
+                instance.setContent(html);
+              } 
+            }).finally(() => {
+              instance.enable();
+              instance.show();
+            });
+          }
+        } else {
+          // See if we can fetch a full url (with no hash to target)
+          // This is a special case and we should probably do some content thinning / targeting
+          fetch(url)
+          .then(res => res.text())
+          .then(html => {
+            const parser = new DOMParser();
+            const htmlDoc = parser.parseFromString(html, "text/html");
+            const note = htmlDoc.querySelector('main.content');
+            if (note !== null) {
+              // This should only happen for chapter cross references
+              // (since there is no id in the URL)
+              // remove the first header
+              if (note.children.length > 0 && note.children[0].tagName === "HEADER") {
+                note.children[0].remove();
+              }
+              const html = processXRef(null, note);
+              instance.setContent(html);
+            } 
+          }).finally(() => {
+            instance.enable();
+            instance.show();
+          });
+        }
+      }, function(instance) {
+      });
+    }
+        let selectedAnnoteEl;
+        const selectorForAnnotation = ( cell, annotation) => {
+          let cellAttr = 'data-code-cell="' + cell + '"';
+          let lineAttr = 'data-code-annotation="' +  annotation + '"';
+          const selector = 'span[' + cellAttr + '][' + lineAttr + ']';
+          return selector;
+        }
+        const selectCodeLines = (annoteEl) => {
+          const doc = window.document;
+          const targetCell = annoteEl.getAttribute("data-target-cell");
+          const targetAnnotation = annoteEl.getAttribute("data-target-annotation");
+          const annoteSpan = window.document.querySelector(selectorForAnnotation(targetCell, targetAnnotation));
+          const lines = annoteSpan.getAttribute("data-code-lines").split(",");
+          const lineIds = lines.map((line) => {
+            return targetCell + "-" + line;
+          })
+          let top = null;
+          let height = null;
+          let parent = null;
+          if (lineIds.length > 0) {
+              //compute the position of the single el (top and bottom and make a div)
+              const el = window.document.getElementById(lineIds[0]);
+              top = el.offsetTop;
+              height = el.offsetHeight;
+              parent = el.parentElement.parentElement;
+            if (lineIds.length > 1) {
+              const lastEl = window.document.getElementById(lineIds[lineIds.length - 1]);
+              const bottom = lastEl.offsetTop + lastEl.offsetHeight;
+              height = bottom - top;
+            }
+            if (top !== null && height !== null && parent !== null) {
+              // cook up a div (if necessary) and position it 
+              let div = window.document.getElementById("code-annotation-line-highlight");
+              if (div === null) {
+                div = window.document.createElement("div");
+                div.setAttribute("id", "code-annotation-line-highlight");
+                div.style.position = 'absolute';
+                parent.appendChild(div);
+              }
+              div.style.top = top - 2 + "px";
+              div.style.height = height + 4 + "px";
+              div.style.left = 0;
+              let gutterDiv = window.document.getElementById("code-annotation-line-highlight-gutter");
+              if (gutterDiv === null) {
+                gutterDiv = window.document.createElement("div");
+                gutterDiv.setAttribute("id", "code-annotation-line-highlight-gutter");
+                gutterDiv.style.position = 'absolute';
+                const codeCell = window.document.getElementById(targetCell);
+                const gutter = codeCell.querySelector('.code-annotation-gutter');
+                gutter.appendChild(gutterDiv);
+              }
+              gutterDiv.style.top = top - 2 + "px";
+              gutterDiv.style.height = height + 4 + "px";
+            }
+            selectedAnnoteEl = annoteEl;
+          }
+        };
+        const unselectCodeLines = () => {
+          const elementsIds = ["code-annotation-line-highlight", "code-annotation-line-highlight-gutter"];
+          elementsIds.forEach((elId) => {
+            const div = window.document.getElementById(elId);
+            if (div) {
+              div.remove();
+            }
+          });
+          selectedAnnoteEl = undefined;
+        };
+          // Handle positioning of the toggle
+      window.addEventListener(
+        "resize",
+        throttle(() => {
+          elRect = undefined;
+          if (selectedAnnoteEl) {
+            selectCodeLines(selectedAnnoteEl);
+          }
+        }, 10)
+      );
+      function throttle(fn, ms) {
+      let throttle = false;
+      let timer;
+        return (...args) => {
+          if(!throttle) { // first call gets through
+              fn.apply(this, args);
+              throttle = true;
+          } else { // all the others get throttled
+              if(timer) clearTimeout(timer); // cancel #2
+              timer = setTimeout(() => {
+                fn.apply(this, args);
+                timer = throttle = false;
+              }, ms);
+          }
+        };
+      }
+        // Attach click handler to the DT
+        const annoteDls = window.document.querySelectorAll('dt[data-target-cell]');
+        for (const annoteDlNode of annoteDls) {
+          annoteDlNode.addEventListener('click', (event) => {
+            const clickedEl = event.target;
+            if (clickedEl !== selectedAnnoteEl) {
+              unselectCodeLines();
+              const activeEl = window.document.querySelector('dt[data-target-cell].code-annotation-active');
+              if (activeEl) {
+                activeEl.classList.remove('code-annotation-active');
+              }
+              selectCodeLines(clickedEl);
+              clickedEl.classList.add('code-annotation-active');
+            } else {
+              // Unselect the line
+              unselectCodeLines();
+              clickedEl.classList.remove('code-annotation-active');
+            }
+          });
+        }
+    const findCites = (el) => {
+      const parentEl = el.parentElement;
+      if (parentEl) {
+        const cites = parentEl.dataset.cites;
+        if (cites) {
+          return {
+            el,
+            cites: cites.split(' ')
+          };
+        } else {
+          return findCites(el.parentElement)
+        }
+      } else {
+        return undefined;
+      }
+    };
+    var bibliorefs = window.document.querySelectorAll('a[role="doc-biblioref"]');
+    for (var i=0; i<bibliorefs.length; i++) {
+      const ref = bibliorefs[i];
+      const citeInfo = findCites(ref);
+      if (citeInfo) {
+        tippyHover(citeInfo.el, function() {
+          var popup = window.document.createElement('div');
+          citeInfo.cites.forEach(function(cite) {
+            var citeDiv = window.document.createElement('div');
+            citeDiv.classList.add('hanging-indent');
+            citeDiv.classList.add('csl-entry');
+            var biblioDiv = window.document.getElementById('ref-' + cite);
+            if (biblioDiv) {
+              citeDiv.innerHTML = biblioDiv.innerHTML;
+            }
+            popup.appendChild(citeDiv);
+          });
+          return popup.innerHTML;
+        });
+      }
+    }
+  });
+  </script>
+<script src="https://utteranc.es/client.js" repo="lfod/lfod.github.io" issue-term="pathname" theme="github-light" crossorigin="anonymous" async="">
+</script>
+</div> <!-- /content -->
+<script src="../../media/js/margin-notes.js"></script>
+
+
+
+
+</body></html>

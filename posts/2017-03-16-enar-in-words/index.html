@@ -2,7 +2,7 @@
 <html xmlns="http://www.w3.org/1999/xhtml" lang="en" xml:lang="en"><head>
 
 <meta charset="utf-8">
-<meta name="generator" content="quarto-1.7.33">
+<meta name="generator" content="quarto-1.10.18">
 
 <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
 
@@ -12,10 +12,16 @@
 
 <title>ENAR in words –</title>
 <style>
-code{white-space: pre-wrap;}
+/* Default styles provided by pandoc.
+** See https://pandoc.org/MANUAL.html#variables-for-html for config info.
+*/
 span.smallcaps{font-variant: small-caps;}
-div.columns{display: flex; gap: min(4vw, 1.5em);}
-div.column{flex: auto; overflow-x: auto;}
+div.columns{display: flex; gap: 1.5em;}
+div.column{flex: auto;}
+@media screen {
+div.columns{gap: min(4vw, 1.5em);}
+div.column{overflow-x: auto;}
+}
 div.hanging-indent{margin-left: 1.5em; text-indent: -1.5em;}
 ul.task-list{list-style: none;}
 ul.task-list li input[type="checkbox"] {
@@ -74,10 +80,10 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 <script src="../../site_libs/quarto-html/tippy.umd.min.js"></script>
 <script src="../../site_libs/quarto-html/anchor.min.js"></script>
 <link href="../../site_libs/quarto-html/tippy.css" rel="stylesheet">
-<link href="../../site_libs/quarto-html/quarto-syntax-highlighting-ea385d0e468b0dd5ea5bf0780b1290d9.css" rel="stylesheet" id="quarto-text-highlighting-styles">
+<link href="../../site_libs/quarto-html/quarto-syntax-highlighting-64a204ab8560d761af7679ceaba22944.css" rel="stylesheet" id="quarto-text-highlighting-styles">
 <script src="../../site_libs/bootstrap/bootstrap.min.js"></script>
 <link href="../../site_libs/bootstrap/bootstrap-icons.css" rel="stylesheet">
-<link href="../../site_libs/bootstrap/bootstrap-a352e09829cb685a2c0ff66da4a11ece.min.css" rel="stylesheet" append-hash="true" id="quarto-bootstrap" data-mode="light">
+<link href="../../site_libs/bootstrap/bootstrap-c40d7498fe02e743d4dec6c02f111ce1.min.css" rel="stylesheet" append-hash="true" id="quarto-bootstrap" data-mode="light">
 <script id="quarto-search-options" type="application/json">{
   "location": "navbar",
   "copy-button": false,
@@ -136,7 +142,7 @@ ga('send', {
 <meta property="og:title" content="ENAR in words –">
 <meta property="og:description" content="I had an absolutely delightful time at ENAR this year. Lots of talk about the intersection between data science &amp; statistics, diversity, and great advancements in statistical methods. Since there was quite a bit of twitter action, I thought I’d do a quick tutorial in scraping twitter data in R.">
 <meta property="og:image" content="https://www.livefreeordichotomize.com/posts/2017-03-16-enar-in-words/index_files/figure-html/unnamed-chunk-1-1.png">
-<meta property="og:site_name" content=" ">
+<meta property="og:site_name" content="">
 <meta property="og:image:height" content="960">
 <meta property="og:image:width" content="1344">
 <meta name="twitter:title" content="Live Free or Dichotomize">
@@ -452,18 +458,18 @@ ga('send', {
 <div class="no-row-height column-margin column-container"><div class="">
 <p>My original tutorial used <code>twitteR</code>, but <a href="https://twitter.com/ma_salmon">Maëlle</a> kindly pointed out that it is on the way out and <code>rtweet</code> is the better option, so it’s been updated!</p>
 </div></div><div class="cell">
-<div class="sourceCode cell-code" id="cb1"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb1-1"><a href="#cb1-1" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(<span class="st">'rtweet'</span>)</span>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb1"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb1-1"><a href="#cb1-1" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(<span class="st">'rtweet'</span>)</span>
 <span id="cb1-2"><a href="#cb1-2" aria-hidden="true" tabindex="-1"></a></span>
 <span id="cb1-3"><a href="#cb1-3" aria-hidden="true" tabindex="-1"></a>twitter_token <span class="ot">&lt;-</span> <span class="fu">create_token</span>(</span>
 <span id="cb1-4"><a href="#cb1-4" aria-hidden="true" tabindex="-1"></a>  <span class="at">app =</span> <span class="st">"PASTE_YOUR_APP_NAME_HERE"</span>,</span>
 <span id="cb1-5"><a href="#cb1-5" aria-hidden="true" tabindex="-1"></a>  <span class="at">consumer_key =</span> <span class="st">"PASTE_YOUR_CONSUMER_KEY_HERE"</span>,</span>
 <span id="cb1-6"><a href="#cb1-6" aria-hidden="true" tabindex="-1"></a>  <span class="at">consumer_secret =</span> <span class="st">"PASTE_YOUR_CONSUMER_SECRET_HERE"</span>)</span>
 <span id="cb1-7"><a href="#cb1-7" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb1-8"><a href="#cb1-8" aria-hidden="true" tabindex="-1"></a>dat <span class="ot">&lt;-</span> <span class="fu">search_tweets</span>(<span class="st">'#ENAR2017'</span>, <span class="at">n =</span> <span class="fl">1e4</span>, <span class="at">since =</span> <span class="st">'2017-03-10'</span>, <span class="at">token =</span> twitter_token)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<span id="cb1-8"><a href="#cb1-8" aria-hidden="true" tabindex="-1"></a>dat <span class="ot">&lt;-</span> <span class="fu">search_tweets</span>(<span class="st">'#ENAR2017'</span>, <span class="at">n =</span> <span class="fl">1e4</span>, <span class="at">since =</span> <span class="st">'2017-03-10'</span>, <span class="at">token =</span> twitter_token)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 </div>
 <p>If you would like to practice with the ENAR tweet data, you can load mine in with the following code &amp; continue with the example.</p>
 <div class="cell">
-<div class="sourceCode cell-code" id="cb2"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb2-1"><a href="#cb2-1" aria-hidden="true" tabindex="-1"></a><span class="fu">load</span>(<span class="fu">url</span>(<span class="st">"https://github.com/LFOD/real-blog/raw/master/data/enar_data.rda"</span>))</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb2"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb2-1"><a href="#cb2-1" aria-hidden="true" tabindex="-1"></a><span class="fu">load</span>(<span class="fu">url</span>(<span class="st">"https://github.com/LFOD/real-blog/raw/master/data/enar_data.rda"</span>))</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 </div>
 </section>
 <section id="wrangle-tweets" class="level2 page-columns page-full">
@@ -474,16 +480,16 @@ ga('send', {
 <p>For more details on how to analyze text, check out their book <a href="http://tidytextmining.com">Text Mining with R</a>, the code below is modified from one of their examples.</p>
 </div></div><p>We will then use the <code>wordcloud</code> package to display our results.</p>
 <div class="cell">
-<div class="sourceCode cell-code" id="cb3"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb3-1"><a href="#cb3-1" aria-hidden="true" tabindex="-1"></a><span class="co">#load packages</span></span>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb3"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb3-1"><a href="#cb3-1" aria-hidden="true" tabindex="-1"></a><span class="co">#load packages</span></span>
 <span id="cb3-2"><a href="#cb3-2" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(<span class="st">'dplyr'</span>)</span>
 <span id="cb3-3"><a href="#cb3-3" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(<span class="st">'purrr'</span>)</span>
 <span id="cb3-4"><a href="#cb3-4" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(<span class="st">'stringr'</span>)</span>
 <span id="cb3-5"><a href="#cb3-5" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(<span class="st">'tidytext'</span>)</span>
-<span id="cb3-6"><a href="#cb3-6" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(<span class="st">'wordcloud'</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<span id="cb3-6"><a href="#cb3-6" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(<span class="st">'wordcloud'</span>)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 </div>
 <p>We are going to get rid of unwanted symbols and links, split the tweets into individual words, and filter out some stop words.</p>
 <div class="cell">
-<div class="sourceCode cell-code" id="cb4"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb4-1"><a href="#cb4-1" aria-hidden="true" tabindex="-1"></a><span class="co">#this will drop links &amp; symbols</span></span>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb4"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb4-1"><a href="#cb4-1" aria-hidden="true" tabindex="-1"></a><span class="co">#this will drop links &amp; symbols</span></span>
 <span id="cb4-2"><a href="#cb4-2" aria-hidden="true" tabindex="-1"></a>drop_pattern <span class="ot">&lt;-</span> <span class="st">"https://t.co/[A-Za-z</span><span class="sc">\\</span><span class="st">d]+|http://[A-Za-z</span><span class="sc">\\</span><span class="st">d]+|&amp;amp;|&amp;lt;|&amp;gt;|RT|https|ht"</span></span>
 <span id="cb4-3"><a href="#cb4-3" aria-hidden="true" tabindex="-1"></a><span class="co">#this pattern is great for twitter, includes # and @ symbols</span></span>
 <span id="cb4-4"><a href="#cb4-4" aria-hidden="true" tabindex="-1"></a>unnest_pattern <span class="ot">&lt;-</span> <span class="st">"([^A-Za-z_</span><span class="sc">\\</span><span class="st">d#@']|'(?![A-Za-z_</span><span class="sc">\\</span><span class="st">d#@]))"</span></span>
@@ -497,11 +503,11 @@ ga('send', {
 <span id="cb4-12"><a href="#cb4-12" aria-hidden="true" tabindex="-1"></a>                <span class="at">pattern =</span> unnest_pattern) <span class="sc">%&gt;%</span></span>
 <span id="cb4-13"><a href="#cb4-13" aria-hidden="true" tabindex="-1"></a>  <span class="fu">filter</span>(<span class="sc">!</span>(word <span class="sc">%in%</span> stop_words<span class="sc">$</span>word),</span>
 <span id="cb4-14"><a href="#cb4-14" aria-hidden="true" tabindex="-1"></a>         <span class="fu">str_detect</span>(word, <span class="st">"[a-z]"</span>),</span>
-<span id="cb4-15"><a href="#cb4-15" aria-hidden="true" tabindex="-1"></a>         <span class="sc">!</span><span class="fu">grepl</span>(<span class="st">"@"</span>, word )) </span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<span id="cb4-15"><a href="#cb4-15" aria-hidden="true" tabindex="-1"></a>         <span class="sc">!</span><span class="fu">grepl</span>(<span class="st">"@"</span>, word )) </span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 </div>
 <p>Now it’s plotting time!</p>
 <div class="cell">
-<div class="sourceCode cell-code" id="cb5"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb5-1"><a href="#cb5-1" aria-hidden="true" tabindex="-1"></a>cols <span class="ot">&lt;-</span> <span class="fu">c</span>(<span class="fu">brewer.pal</span>(<span class="dv">8</span>,<span class="st">"Dark2"</span>), <span class="fu">rep</span>(<span class="fu">brewer.pal</span>(<span class="dv">8</span>,<span class="st">"Dark2"</span>), <span class="at">each =</span> <span class="dv">5</span>) ) <span class="co">#make some colors for our plot</span></span>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb5"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb5-1"><a href="#cb5-1" aria-hidden="true" tabindex="-1"></a>cols <span class="ot">&lt;-</span> <span class="fu">c</span>(<span class="fu">brewer.pal</span>(<span class="dv">8</span>,<span class="st">"Dark2"</span>), <span class="fu">rep</span>(<span class="fu">brewer.pal</span>(<span class="dv">8</span>,<span class="st">"Dark2"</span>), <span class="at">each =</span> <span class="dv">5</span>) ) <span class="co">#make some colors for our plot</span></span>
 <span id="cb5-2"><a href="#cb5-2" aria-hidden="true" tabindex="-1"></a></span>
 <span id="cb5-3"><a href="#cb5-3" aria-hidden="true" tabindex="-1"></a>tweets <span class="sc">%&gt;%</span></span>
 <span id="cb5-4"><a href="#cb5-4" aria-hidden="true" tabindex="-1"></a>  <span class="fu">count</span>(word) <span class="sc">%&gt;%</span></span>
@@ -509,19 +515,19 @@ ga('send', {
 <span id="cb5-6"><a href="#cb5-6" aria-hidden="true" tabindex="-1"></a>                 n,</span>
 <span id="cb5-7"><a href="#cb5-7" aria-hidden="true" tabindex="-1"></a>                 <span class="at">min.freq =</span> <span class="dv">5</span>,</span>
 <span id="cb5-8"><a href="#cb5-8" aria-hidden="true" tabindex="-1"></a>                 <span class="at">random.order =</span> <span class="cn">FALSE</span>,</span>
-<span id="cb5-9"><a href="#cb5-9" aria-hidden="true" tabindex="-1"></a>                 <span class="at">colors =</span> cols))</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<span id="cb5-9"><a href="#cb5-9" aria-hidden="true" tabindex="-1"></a>                 <span class="at">colors =</span> cols))</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 </div>
 <p>You did it! Easy as <a href="https://potpieshop.files.wordpress.com/2016/03/pi-day.jpg?w=665">π</a>.</p>
 <p><img src="https://media.giphy.com/media/fBZXu9v0qjjTq/giphy.gif" class="img-fluid"></p>
 <p>For giggles, let’s try another word cloud package <a href="https://github.com/lchiffon/wordcloud2"><code>wordcloud2</code></a>. This one is interactive (but not on CRAN, you can install using <code>devtools::install_github("lchiffon/wordcloud2")</code>).</p>
 <p>For a word cloud similar to the one above, we can use the <code>wordcloud2</code> function.</p>
 <div class="cell">
-<div class="sourceCode cell-code" id="cb6"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb6-1"><a href="#cb6-1" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(<span class="st">'wordcloud2'</span>)</span>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb6"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb6-1"><a href="#cb6-1" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(<span class="st">'wordcloud2'</span>)</span>
 <span id="cb6-2"><a href="#cb6-2" aria-hidden="true" tabindex="-1"></a></span>
 <span id="cb6-3"><a href="#cb6-3" aria-hidden="true" tabindex="-1"></a>tweets <span class="sc">%&gt;%</span></span>
 <span id="cb6-4"><a href="#cb6-4" aria-hidden="true" tabindex="-1"></a>  <span class="fu">count</span>(word) <span class="sc">%&gt;%</span></span>
 <span id="cb6-5"><a href="#cb6-5" aria-hidden="true" tabindex="-1"></a>  <span class="fu">filter</span>(n <span class="sc">&gt;</span> <span class="dv">2</span>) <span class="sc">%&gt;%</span></span>
-<span id="cb6-6"><a href="#cb6-6" aria-hidden="true" tabindex="-1"></a>  <span class="fu">wordcloud2</span>(<span class="at">size =</span> <span class="dv">3</span>, <span class="at">minRotation =</span> <span class="sc">-</span>pi<span class="sc">/</span><span class="dv">2</span>, <span class="at">maxRotation =</span> <span class="sc">-</span>pi<span class="sc">/</span><span class="dv">2</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<span id="cb6-6"><a href="#cb6-6" aria-hidden="true" tabindex="-1"></a>  <span class="fu">wordcloud2</span>(<span class="at">size =</span> <span class="dv">3</span>, <span class="at">minRotation =</span> <span class="sc">-</span>pi<span class="sc">/</span><span class="dv">2</span>, <span class="at">maxRotation =</span> <span class="sc">-</span>pi<span class="sc">/</span><span class="dv">2</span>)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 <div class="cell-output-display">
 <div class="wordcloud2 html-widget html-fill-item-overflow-hidden html-fill-item" id="htmlwidget-a6e5e675240e97e0373d" style="width:100%;height:464px;"></div>
 <script type="application/json" data-for="htmlwidget-a6e5e675240e97e0373d">{"x":{"word":["#biostat","#biostatistics","#causalinference","#datascience","#diversity","#drscarlettbellamy","#enar2017","#personalizedmedicine","#rlady","#rstats","'get","45pm","abt","academic","accuracy","adaptive","adding","address","adherence","advice","afternoon","alzheimer's","amazing","analysis","assays","association","award","awards","ba","ballroom","basket","bayesian","bellamy","bingo","biomarkers","biostat","biostatistician","biostatisticians","biostatistics","books","bottom","brilliant","browse","calc","career","chairs","change","chen","choice","cited","classic","clinical","colleage","colleague","coming","communities","comparative","competition","conference","confidence","congrats","constant","contribute","contributions","cool","create","cunanan","cv","dance","data","day","dc","decision","dependent","designs","diff","discusses","discussing","discussion","discussions","distinguised","diverse","diversify","doctoral","doug","dr","driven","east","editor","effectiveness","ehr","emrs","enar","engaging","enjoyed","error","estimation","evaluating","evidence","expect","expensive","experts","favorite","fay","fei","fellow","field","filling","final","flexible","folks","forward","found","framework","free","friends","fun","funding","future","gao","generation","github","giving","glickman","graduate","gurstelle","happening","hard","harnessing","health","hear","heterogeneous","history","hope","huge","hypothesis","impact","imposteriors","including","index","inference","info","innovative","inspiring","integrating","international","intl","introducing","involved","james","jiang","jin","jon","journals","junior","keynote","kids","kristen","leaders","leading","learning","list","louise","love","loving","machine","marvin","materials","meeting","methodological","methods","microbial","mig","minute","missed","model","modeling","models","morn","morning","multi","multiple","nig","nonparametric","o'malley","office","official","opportunities","options","outcome","outstanding","page","paired","panel","paper","participants","party","patient","people","phd","pioneering","poe","policy","poster","power","powerhouse","ppl","precision","presentation","president","presidential","prez","program","promotion","puzzled","question","questions","quick","rab","real","recommended","relevant","research","researcher","resources","rig","rna","robots","rocks","ryan","sample","scarlett","science","score","scraping","sd","seq","session","sessions","shaping","shiny","shout","shrinkage","similar","single","skills","smart","smartphon","start","statistics","stats","stoked","story","student","students","study","talk","talking","talks","tang","test","testing","time","tomorrow","trial","trials","tue","tutorial","twitter","variety","voic","walked","wang","wasteful","watching","web","wed","week","wiley","wilson","winners","wins","won","wonderful","workshop","world","wrapping","wrong","yue","zelen"],"freq":[3,18,12,3,54,4,409,3,3,8,3,7,10,6,3,6,10,11,3,6,6,4,3,10,3,3,9,5,7,3,3,6,11,5,3,9,4,21,21,38,4,3,4,3,11,5,3,4,3,3,3,9,3,4,7,3,5,6,5,3,6,6,4,6,11,4,3,3,5,43,11,8,4,3,5,3,7,6,6,3,3,7,3,9,3,5,4,3,4,5,3,4,3,6,3,3,3,7,4,6,5,5,4,6,4,3,3,3,4,6,3,4,6,4,3,4,3,4,16,7,18,7,14,3,4,4,3,8,4,6,11,4,4,4,3,4,3,3,34,4,6,3,6,5,5,11,3,3,3,4,5,3,4,4,5,17,10,3,6,5,12,50,3,5,10,7,3,34,12,3,10,5,3,3,3,9,6,9,3,5,4,3,5,3,4,3,4,6,10,3,6,4,3,10,22,3,3,8,10,9,3,3,7,29,4,3,4,4,9,11,6,4,10,7,3,3,3,6,6,4,6,4,21,6,37,7,5,3,3,3,5,11,4,3,11,4,6,32,10,3,7,7,4,4,3,3,10,3,4,9,4,7,3,36,9,3,29,6,10,3,5,5,12,7,5,4,3,5,8,3,4,3,3,5,7,7,3,5,4,4,14,3,4,3,68,6,5,6,5,3],"fontFamily":"Segoe UI","fontWeight":"bold","color":"random-dark","minSize":0,"weightFactor":1.320293398533007,"backgroundColor":"white","gridSize":0,"minRotation":-1.570796326794897,"maxRotation":-1.570796326794897,"shuffle":true,"rotateRatio":0.4,"shape":"circle","ellipticity":0.65,"figBase64":null,"hover":null},"evals":[],"jsHooks":{"render":[{"code":"function(el,x){\n                        console.log(123);\n                        if(!iii){\n                          window.location.reload();\n                          iii = False;\n\n                        }\n  }","data":null}]}}</script>
@@ -529,10 +535,10 @@ ga('send', {
 </div>
 <p>Try the following to make an <code>R</code> shaped cloud using the <code>letterCloud</code> function!</p>
 <div class="cell">
-<div class="sourceCode cell-code" id="cb7"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb7-1"><a href="#cb7-1" aria-hidden="true" tabindex="-1"></a>tweets <span class="sc">%&gt;%</span></span>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb7"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb7-1"><a href="#cb7-1" aria-hidden="true" tabindex="-1"></a>tweets <span class="sc">%&gt;%</span></span>
 <span id="cb7-2"><a href="#cb7-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">count</span>(word) <span class="sc">%&gt;%</span></span>
 <span id="cb7-3"><a href="#cb7-3" aria-hidden="true" tabindex="-1"></a>  <span class="fu">filter</span>(n <span class="sc">&gt;</span> <span class="dv">1</span>) <span class="sc">%&gt;%</span></span>
-<span id="cb7-4"><a href="#cb7-4" aria-hidden="true" tabindex="-1"></a>  <span class="fu">letterCloud</span>(<span class="at">size =</span> <span class="dv">3</span>, <span class="at">word =</span> <span class="st">"R"</span>) </span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<span id="cb7-4"><a href="#cb7-4" aria-hidden="true" tabindex="-1"></a>  <span class="fu">letterCloud</span>(<span class="at">size =</span> <span class="dv">3</span>, <span class="at">word =</span> <span class="st">"R"</span>) </span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 </div>
 <p>Happy scraping!</p>
 
@@ -591,13 +597,14 @@ ga('send', {
       e.clearSelection();
     }
     const getTextToCopy = function(trigger) {
-        const codeEl = trigger.previousElementSibling.cloneNode(true);
-        for (const childEl of codeEl.children) {
-          if (isCodeAnnotation(childEl)) {
-            childEl.remove();
-          }
+      const outerScaffold = trigger.parentElement.cloneNode(true);
+      const codeEl = outerScaffold.querySelector('code');
+      for (const childEl of codeEl.children) {
+        if (isCodeAnnotation(childEl)) {
+          childEl.remove();
         }
-        return codeEl.innerText;
+      }
+      return codeEl.innerText;
     }
     const clipboard = new window.ClipboardJS('.code-copy-button:not([data-in-quarto-modal])', {
       text: getTextToCopy
